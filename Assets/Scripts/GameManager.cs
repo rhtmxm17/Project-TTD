@@ -3,6 +3,7 @@ using Firebase.Database;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GameManager : SingletonBehaviour<GameManager>
 {
@@ -13,6 +14,7 @@ public class GameManager : SingletonBehaviour<GameManager>
     public static SoundManager Sound => SoundManager.Instance;
     public static FirebaseAuth Auth => BackendManager.Auth;
     public static FirebaseDatabase Database => BackendManager.Database;
+    public static PlayerInput Input { get; private set; } = null;
 
     // GameManager 싱글톤 프리팹 생성
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -25,5 +27,6 @@ public class GameManager : SingletonBehaviour<GameManager>
     {
         RegisterSingleton(this);
         DontDestroyOnLoad(this);
+        Input = GetComponent<PlayerInput>();
     }
 }
