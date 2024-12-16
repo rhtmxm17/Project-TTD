@@ -17,6 +17,15 @@ public class UI_Manager : BaseUI
 
     private void Init()
     {
+        // 로긴패널
+        GetUI("LoginPanel");
+        GetUI<Button>("LobbyButton").onClick.AddListener(() => Open("LobbyPanel"));
+        GetUI<Button>("ProfileButton").onClick.AddListener(() => Open("ProfilePopUp"));
+
+        // 프로필팝업
+        GetUI<Button>("ProfileBackButton").onClick.AddListener(() => GoBack("ProfilePopUp"));
+
+
         // 로비패널
         GetUI("LobbyPanel");
         GetUI<TMP_Text>("TestText").text = "Tear To Dragon 티어 투 드래곤";
