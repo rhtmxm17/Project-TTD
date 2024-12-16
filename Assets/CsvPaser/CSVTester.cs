@@ -20,6 +20,8 @@ public class CSVTester : MonoBehaviour
     public void GetData()
     {
 
+#if UNITY_EDITOR
+
         GoogleSheet.GetSheetData(path, gid, this, (b, s) =>
         {
 
@@ -55,6 +57,8 @@ public class CSVTester : MonoBehaviour
             }
 
         });
-    
+
+#endif
+
     }
 }

@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
+#if UNITY_EDITOR
 using Unity.EditorCoroutines.Editor;
+#endif
 using UnityEngine.Networking;
 
 
@@ -16,9 +18,9 @@ public static class GoogleSheet
     /// <param name="process">다운로드 완료시 실행할 함수</param>
     public static void GetSheetData(string documentID, string sheetID, object onwer, Action<bool, string> process = null)
     {
-
+#if UNITY_EDITOR
         EditorCoroutineUtility.StartCoroutine(GetSheetDataCo(documentID, sheetID, process), onwer);
-
+#endif
     }
 
     /// <summary>
