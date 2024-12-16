@@ -1,5 +1,6 @@
 using Firebase.Database;
 using Firebase.Extensions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,7 +31,7 @@ public class UserDatabaseTester : MonoBehaviour
         // Firebase.Database.ServerValue.Timestamp;
         dummyUserDBRef.Child(TimerReferenceKey).SetValueAsync(Time.time);
 
-        gold = Random.Range(0f, 10000f);
+        gold = UnityEngine.Random.Range(0f, 10000f);
         dummyUserDBRef.Child(GoldReferenceKey).SetValueAsync(gold);
 
     }
@@ -87,5 +88,66 @@ public class UserDatabaseTester : MonoBehaviour
                 storedTime = ((float)(double)userDatas[TimerReferenceKey]);
                 gold = ((float)(double)userDatas[GoldReferenceKey]);
             });
+    }
+
+    [ContextMenu("출석 보상 수령 테스트")]
+    private void TryGetDailyAttendanceReward()
+    {
+        // 서버에서 날짜를 갱신해서 열어두는 쪽이 훨씬 좋겠지만...
+        // 당장은 날짜 확인을 위해 스스로 갱신하자
+        dummyUserDBRef.Child("Profile/AttendanceDate").SetValueAsync(ServerValue.Timestamp).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsFaulted || task.IsCanceled)
+            {
+                Debug.Log("요청 실패");
+                return;
+            }
+
+            dummyUserDBRef.Child("Profile").GetValueAsync().ContinueWithOnMainThread(task =>
+            {
+                if (task.IsFaulted || task.IsCanceled)
+                {
+                    Debug.Log("요청 실패");
+                    return;
+                }
+
+                Dictionary<string, object> profile = task.Result.Value as Dictionary<string, object>;
+                DateTime attendanceDate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                DateTime rewardedDate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+                attendanceDate = attendanceDate.AddMilliseconds((long)profile["AttendanceDate"]);
+                Debug.Log(attendanceDate.Date);
+
+                if (profile.ContainsKey("RewardedDate"))
+                {
+                    rewardedDate = rewardedDate.AddMilliseconds((long)profile["RewardedDate"]);
+                }
+
+                // 마지막으로 보상을 수령한 날짜와 현재 날짜가 다르다면
+                if (attendanceDate.Date != rewardedDate.Date)
+                {
+
+                    Dictionary<string, object> update = new Dictionary<string, object>()
+                    {
+                        { "Profile/RewardedDate", profile["AttendanceDate"] },
+                        { GoldReferenceKey, UnityEngine.Random.Range(100, 1000) } // 갱신 확인용
+                    };
+                    dummyUserDBRef.UpdateChildrenAsync(update).ContinueWithOnMainThread(task =>
+                    {
+                        if (task.IsFaulted || task.IsCanceled)
+                        {
+                            Debug.Log("요청 실패");
+                            return;
+                        }
+
+                        Debug.Log("일일 보상 획득 성공");
+                    });
+                }
+                else
+                {
+                    Debug.Log("이미 오늘의 일일 보상을 획득함");
+                }
+            });
+        });
     }
 }
