@@ -4,12 +4,23 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class UI_Manager : BaseUI
 {
     [SerializeField] Button stageButton;
+    [SerializeField] string _nickName;
+    // TODO :
+    // 닉네임 없으면 설정하게 해주기
+    // 준비물 : 
+    // 닉네임 있나 없나 확인, 없으면 만드는 팝업창 띄우기
+    // TMP_Text(닉넹미 입력 메세지) & TMP_InputField(닉네임입력)
+    // _nickName = TMP_InputField
+    // ID && Nick 있으면, 그냥 메인패널
+    [SerializeField] string _userID;
+    private bool _isLoggedIn;
 
-
-
+    
+    Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
     private void Start()
     {
         Init();
@@ -21,9 +32,28 @@ public class UI_Manager : BaseUI
         GetUI("LoginPanel");
         GetUI<Button>("LobbyButton").onClick.AddListener(() => Open("LobbyPanel"));
         GetUI<Button>("ProfileButton").onClick.AddListener(() => Open("ProfilePopUp"));
+        // 게스트로그인 버튼
+        // GetUI<Button>("GuestLoginButton").onClick.AddListener(() => Open("ProfilePopUp"));
+        GetUI<Button>("GuestLoginButton").onClick.AddListener(GuestLogin);
 
         // 프로필팝업
         GetUI<Button>("ProfileBackButton").onClick.AddListener(() => GoBack("ProfilePopUp"));
+        // 프로필이름텍스트
+        GetUI<TMP_Text>("ProfileNameText").text = _nickName;
+        if (_nickName != null)
+        {
+            GetUI<TMP_Text>("ProfileNameText").text = "닉네임을 생성하세요";
+        }
+        GetUI<TMP_Text>("UserIDText").text = "프로필아이디";
+        // 닉네임 정도는 설정할 수 있는게 좋지 않으려나
+        GetUI<TMP_Text>("StatusText").text = "게스트 로그인 입니다.";
+        // 정보저장을위해 이메일 로그인 유도
+
+        GetUI("NickNamePopUp");
+        // _nickName =  GetUI<TMP_InputField>("NickNameInputField").text;
+        GetUI<Button>("GuestLoginButton").onClick.AddListener(ConfrimNickName);
+        GetUI<Button>("NickBackButton").onClick.AddListener(() => GoBack("NickNamePopUp"));
+
 
 
         // 로비패널
@@ -85,5 +115,44 @@ public class UI_Manager : BaseUI
       //  Debug.Log($"{gameObject.name}");
       //  Debug.Log($"뒤로가기");
         */
+    }
+
+    public void GuestLogin()
+    {
+        
+        auth.SignInAnonymouslyAsync().ContinueWith(task => {
+            if (task.IsCanceled)
+            {
+                Debug.LogError("SignInAnonymouslyAsync was canceled.");
+                return;
+            }
+            if (task.IsFaulted)
+            {
+                Debug.LogError("SignInAnonymouslyAsync encountered an error: " + task.Exception);
+                return;
+            }
+
+            Firebase.Auth.AuthResult result = task.Result;
+            Debug.LogFormat("User signed in successfully: {0} ({1})",
+                result.User.DisplayName, result.User.UserId);
+            _nickName = result.User.DisplayName;
+            _userID = result.User.UserId;
+
+            Debug.Log($"UserName = {result.User.DisplayName} \n유저ID: {result.User.UserId}");
+        });
+
+
+        Debug.Log($"UserName 닉네임 : {_nickName}");
+        Debug.Log($"UserID 아이디 : {_userID}");
+
+        if (_nickName == "")
+        {
+            Open("NickNamePopUp");
+        }
+    }
+    
+    private void ConfrimNickName()
+    {
+        _nickName = GetUI<TMP_InputField>("NickNameInputField").text;
     }
 }
