@@ -12,13 +12,13 @@ public class BackendManager : SingletonBehaviour<BackendManager>
     private static FirebaseAuth auth;
     private static FirebaseDatabase database;
 
-    private static DatabaseReference userDataRef;
+    private static DatabaseReference usersDataRef;
     private static DatabaseReference currentUserDataRef;
 
     public static FirebaseAuth Auth => auth;
     public static FirebaseDatabase Database => database;
 
-    public static DatabaseReference UserDataRef => userDataRef;
+    public static DatabaseReference UserDataRef => usersDataRef;
     public static DatabaseReference CurrentUserDataRef => currentUserDataRef;
 
     private void Awake()
@@ -43,7 +43,7 @@ public class BackendManager : SingletonBehaviour<BackendManager>
                 // Set a flag here to indicate whether Firebase is ready to use by your app.
                 Debug.Log("FirebaseApp 종속성 검사 완료");
 
-                userDataRef = database.RootReference.Child($"Users");
+                usersDataRef = database.RootReference.Child($"Users");
                 auth.IdTokenChanged += Auth_IdTokenChanged;
             }
             else
@@ -54,7 +54,8 @@ public class BackendManager : SingletonBehaviour<BackendManager>
                 auth = null;
                 database = null;
 
-                userDataRef = null;
+                usersDataRef = null;
+                currentUserDataRef = null;
             }
         });
     }
