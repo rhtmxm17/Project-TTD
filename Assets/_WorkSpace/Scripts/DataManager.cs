@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Firebase.Extensions;
+using UnityEngine.Events;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -19,6 +22,8 @@ public class DataManager : SingletonScriptable<DataManager>
     [SerializeField] List<CharacterData> characterDataList;
     private Dictionary<int, CharacterData> characterDataIdDic; // id 기반 검색용
 
+    public UnityEvent onLoadUserDataCompleted;
+
     public CharacterData GetCharacterData(int id)
     {
         if (false == characterDataIdDic.ContainsKey(id))
@@ -28,6 +33,16 @@ public class DataManager : SingletonScriptable<DataManager>
         }
 
         return characterDataIdDic[id];
+    }
+
+    private void OnEnable() => IndexData();
+
+    /// <summary>
+    /// 색인 생성
+    /// </summary>
+    private void IndexData()
+    {
+        characterDataIdDic = characterDataList.ToDictionary(item => item.Id);
     }
 
 #if UNITY_EDITOR
@@ -40,9 +55,7 @@ public class DataManager : SingletonScriptable<DataManager>
     private void GetCharacterDataFromSheet()
     {
         GetDataFromSheet<CharacterData>("0", characterDataFolder, characterDataList);
-
-        // 색인 생성
-        characterDataIdDic = characterDataList.ToDictionary(item => item.Id);
+        IndexData();
     }
 
     private void GetDataFromSheet<T>(string sheetId, Object dataFolder, List<T> dataList) where T : ScriptableObject, ISheetManageable
@@ -101,8 +114,47 @@ public class DataManager : SingletonScriptable<DataManager>
     }
 #endif
 
+    [ContextMenu("유저데이터 테스트")]
     public void LoadUserData()
     {
-        // TODO: DB에서 유저 데이터 긁어서 SO에 넣기(ex: 캐릭터 레벨)
+        if (Application.isPlaying == false)
+        {
+            Debug.LogWarning("플레이모드가 아닐 경우 오작동할 수 있습니다");
+        }
+
+        BackendManager.Instance.UseDummyUserDataRef(0); // 테스트코드
+
+        BackendManager.CurrentUserDataRef.GetValueAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsFaulted || task.IsCanceled)
+            {
+                Debug.LogError($"접속 실패!!");
+                return;
+            }
+
+            Dictionary<string, object> userData = task.Result.Value as Dictionary<string, object>;
+
+            // 캐릭터 데이터가 존재한다면
+            if (userData.ContainsKey("Characters"))
+            {
+                Dictionary<string, object> charactersData = userData["Characters"] as Dictionary<string, object>;
+
+                // DB의 데이터(레벨)값을 캐싱
+                foreach (KeyValuePair<string, object> dataPair in charactersData)
+                {
+                    // DB에서 가져온 키값 문자열 int로 파싱하기 vs 문자열을 키값으로 쓰기
+                    if (false == int.TryParse(dataPair.Key, out int id))
+                    {
+                        Debug.LogWarning($"잘못된 키 값({dataPair.Key})");
+                        continue;
+                    }
+
+                    characterDataIdDic[id].Level.Value = ((int)(long)dataPair.Value);
+                }
+            }
+
+            onLoadUserDataCompleted?.Invoke();
+        });
+
     }
 }

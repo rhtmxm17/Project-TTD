@@ -69,4 +69,14 @@ public class BackendManager : SingletonBehaviour<BackendManager>
             currentUserDataRef = database.RootReference.Child($"Users/{auth.CurrentUser.UserId}");
         }
     }
+
+    /// <summary>
+    /// 개발용 메서드, 인증이 적용되지 않은 가상의 유저 데이터를 사용합니다
+    /// DB에 규칙이 추가되면 사용이 불가능해집니다
+    /// </summary>
+    /// <param name="number">더미 UID 뒤에 붙일 번호</param>
+    public void UseDummyUserDataRef(int number)
+    {
+        currentUserDataRef = database.RootReference.Child($"Users/Dummy{number}");
+    }
 }
