@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 [CreateAssetMenu(menuName = "ScriptableObjects/CharacterData")]
 public class CharacterData : ScriptableObject
@@ -10,12 +13,15 @@ public class CharacterData : ScriptableObject
     [System.Serializable]
     public struct Status
     {
-        public int Range;
+        public float Range;
 
     }
 
     [SerializeField] int id;
     public int Id => id;
+
+    [SerializeField] string name;
+    public string Name => name;
 
     [SerializeField] GameObject modelPrefab;
     public GameObject ModelPrefab => modelPrefab;
@@ -28,4 +34,48 @@ public class CharacterData : ScriptableObject
 
     [SerializeField] Sprite faceIconSprite;
     public Sprite FaceIconSprite => faceIconSprite;
+
+#if UNITY_EDITOR
+    private enum Column
+    {
+        ID,
+        NAME,
+        RANGE,
+        SHAPE,
+        SKILL_SPRITE,
+    }
+
+    [ContextMenu("ParseTest")]
+    private void ParseTest()
+    {
+        string[] testStream = { "2", "이름이름", "5.5", "SampleUnit", "Skill_Icon_Sample" };
+        ParseCsvLine(testStream);
+    }
+
+    public void ParseCsvLine(string[] cells)
+    {
+        // ID
+        if (false == int.TryParse(cells[(int)Column.ID], out id))
+        {
+            Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+            return;
+        }
+
+        // NAME
+        name = cells[(int)Column.NAME];
+
+        // RANGE
+        if (false == float.TryParse(cells[(int)Column.RANGE], out statusTable.Range))
+        {
+            Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+            return;
+        }
+
+        // SHAPE
+        modelPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/_WorkSpace/Prefabs/{cells[(int)Column.SHAPE]}.prefab");
+
+        // SKILL_SPRITE
+        skillSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/_WorkSpace/Sprites/{cells[(int)Column.SKILL_SPRITE]}.asset");
+    }
+#endif
 }
