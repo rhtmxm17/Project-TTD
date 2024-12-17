@@ -20,7 +20,8 @@ public class Combatable : MonoBehaviour
 
     Trackable trackable;
     Coroutine curCombatCoroutine = null;
-
+    private Coroutine skillRoutine;
+    
     Func<Transform, Transform> foundEnemyLogic = null;
     Func<Transform, Transform> foundNearEnemyLogic = null;
     Func<Transform, Transform> foundFarEnemyLogic = null;
@@ -54,7 +55,38 @@ public class Combatable : MonoBehaviour
         }
     }
 
+    #region 스킬_추가 
+    public void OnSkillCommanded(string name)
+    {
+        if (curCombatCoroutine != null)
+        {
+            //자동 공격 중지
+            StopCoroutine(curCombatCoroutine);
+            curCombatCoroutine = null; 
+        }
 
+        if (skillRoutine != null)
+        {
+            StopCoroutine(skillRoutine);
+            skillRoutine = null;    
+        }
+        
+        skillRoutine = StartCoroutine(SkillRoutine(name));
+    }
+
+    private IEnumerator SkillRoutine(string name)
+    {   
+        Debug.Log($"{name} 캐릭터 : 스킬 사용 개시");
+
+        yield return new WaitForSeconds(1.5f);
+        
+        Debug.Log($"{name} 캐릭터 : 스킬 종료, 자동 공격 시작");
+        //스킬 사용 종료 후 자동 공격 다시 시작
+        curCombatCoroutine = StartCoroutine(CombatCO());
+    }  
+    
+    #endregion
+     
     [ContextMenu("OnDead")]
     public void OnDead()
     {

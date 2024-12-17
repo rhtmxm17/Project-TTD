@@ -7,6 +7,9 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
+/// <summary>
+/// 팝업에 관련된 기능들
+/// </summary>
 public class PopupContoller : MonoBehaviour
 {
   [SerializeField] PlayerInput input;
@@ -14,6 +17,7 @@ public class PopupContoller : MonoBehaviour
 
   private void Update()
   {
+    // 팝업의 외부를 터치할 경우 화면을 닫는 시스템
     if(input.actions["Click"].WasPressedThisFrame())
     {
       if (EventSystem.current.currentSelectedGameObject == true) 

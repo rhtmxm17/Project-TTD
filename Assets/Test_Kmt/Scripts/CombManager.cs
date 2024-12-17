@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class CombManager : MonoBehaviour
@@ -12,18 +13,41 @@ public class CombManager : MonoBehaviour
 
     public UnityEvent ListClearedEvent = new UnityEvent();
 
-    #region InitTest
-    [SerializeField] CharacterData testCharacterData;
-    [SerializeField] Image skillButtonImage;
+    /// <summary>
+    /// 2024.12.17 백선명 수정
+    ///     - Character Data 설정 받아오는 코드 추가
+    /// </summary>
 
+    #region InitTest 
+    [SerializeField] private List<Image> skillImageList;
+    [SerializeField] private List<CharacterData> characterDataList;
+    
     private void Start()
     {
-        if (testCharacterData == null)
+        if (characterDataList.Count < 1 || skillImageList.Count < 1)
             return;
-
-        Instantiate(testCharacterData.ModelPrefab, charList[0].transform);
-        skillButtonImage.sprite = testCharacterData.SkillSprite;
+        
+        SpawnCharacterDataSet();
     }
+
+    private void SpawnCharacterDataSet()
+    {
+
+        for (int i = 0; i < charList.Count; i++)
+        {
+            GameObject instance = Instantiate(characterDataList[i].ModelPrefab, charList[i].transform.position, Quaternion.identity);
+            instance.transform.SetParent(charList[i].transform);  
+            charList[i].GetComponent<SpriteRenderer>().sprite = characterDataList[i].FaceIconSprite;
+
+            skillImageList[i].sprite = characterDataList[i].SkillSprite;
+            
+            CharacterCombatable combatable = charList[i].GetComponent<CharacterCombatable>();
+            
+            skillImageList[i].GetComponentInParent<Button>().onClick.AddListener(()=>combatable.OnSkillCommanded(combatable.gameObject.name));
+            
+        }
+    }
+ 
     #endregion
 
     public Transform GetNearestTrackable(Transform fromTransform)

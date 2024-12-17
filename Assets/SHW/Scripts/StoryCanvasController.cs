@@ -10,4 +10,9 @@ public class StoryCanvasController : MonoBehaviour
     {
         Instantiate(storyPrefab);
     }
+
+    public void CloseStory()
+    {
+        Destroy(gameObject);
+    }
 }
