@@ -30,6 +30,18 @@ public class UI_Manager : BaseUI
     private void Init()
     {
         // 로긴패널
+        SetLoginPanel();
+
+        // 로비패널
+        SetLobbyPanel();
+
+        // 스테이지패널
+        SetStagePanel(); 
+
+    }
+    private void SetLoginPanel()
+    {
+        // 로긴패널
         GetUI("LoginPanel");
         GetUI<Button>("LobbyButton").onClick.AddListener(() => Open("LobbyPanel"));
         GetUI<Button>("ProfileButton").onClick.AddListener(() => Open("ProfilePopUp"));
@@ -54,13 +66,26 @@ public class UI_Manager : BaseUI
         // _nickName =  GetUI<TMP_InputField>("NickNameInputField").text;
         // GetUI<Button>("NickBackButton").onClick.AddListener(() => GoBack("NickNamePopUp"));
         // GetUI<Button>("NickConfirmButton").onClick.AddListener(ConfrimNickName);
-        
 
 
+        // 이메일로그인 Button
+        GetUI<Button>("EmailLoginButton").onClick.AddListener(() => Open("EmailLogin"));
 
-        // 로비패널
+        // Email가입 버튼
+        GetUI<Button>("SignUpButton").onClick.AddListener(() => Open("SignUpPanel"));
+
+    }
+
+    private void SetSignUpPanel()
+    {
+
+
+    }
+
+    private void SetLobbyPanel()
+    {
         GetUI("LobbyPanel");
-        GetUI<TMP_Text>("TestText").text = "Tear To Dragon 티어 투 드래곤";
+        GetUI<TMP_Text>("TestText").text = "Tears To Dragon 티어즈 투 드래곤";
         // 스테이지버튼
         stageButton = GetUI<Button>("StageButton");
         stageButton.onClick.AddListener(() => Open("StagePanel"));
@@ -74,14 +99,12 @@ public class UI_Manager : BaseUI
         GetUI("StagePanel").SetActive(false);
         // 뒤로가기 버튼
         GetUI<Button>("BackButton").onClick.AddListener(() => GoBack("PopUpPanel"));
-
-
-        // 스테이지패널
-        GetUI<Button>("StageBackButton").onClick.AddListener(() => GoBack("StagePanel")); 
-
-
-
     }
+    private void SetStagePanel()
+    {
+        GetUI<Button>("StageBackButton").onClick.AddListener(() => GoBack("StagePanel"));
+    }
+
 
     /// <summary>
     /// 패널이름 넣기
@@ -118,6 +141,20 @@ public class UI_Manager : BaseUI
       //  Debug.Log($"뒤로가기");
         */
     }
+    public void LinkLoginAuth()
+    {
+
+    }
+
+    public void EmailSignUp()
+    {
+
+    }
+
+    public void EmailLogin()
+    {
+
+    }
 
     public void GuestLogin()
     {
@@ -142,16 +179,16 @@ public class UI_Manager : BaseUI
 
             Debug.Log($"UserName = {result.User.DisplayName} \n유저ID: {result.User.UserId}");
         });
-
-
         Debug.Log($"UserName 닉네임 : {Nickname}");
         Debug.Log($"UserID 아이디 : {_userID}");
 
-        if (Nickname == "")
-        {
-            Debug.Log("닉네임 없음");
-            Open("NickNamePopUp");
-        }
+
+       // if (Nickname == "") // 지금익명로긴에서는 안됨 *보류
+       // {
+       //     Debug.Log("닉네임 없음");
+       //     Open("NickNamePopUp");
+       // }
+
     }
     
 
