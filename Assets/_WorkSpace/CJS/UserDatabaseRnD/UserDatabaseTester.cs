@@ -34,6 +34,19 @@ public class UserDatabaseTester : MonoBehaviour
         gold = UnityEngine.Random.Range(0f, 10000f);
         dummyUserDBRef.Child(GoldReferenceKey).SetValueAsync(gold);
 
+        GameManager.Input.actions["Fire"].started += GetUserDataTest;
+        GameManager.Data.onLoadUserDataCompleted.AddListener(TestLog);
+    }
+
+    private void GetUserDataTest(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        TestLog();
+        GameManager.Data.LoadUserData();
+    }
+
+    private void TestLog()
+    {
+        Debug.Log(GameManager.Data.GetCharacterData(2).Level.Value);
     }
 
     [ContextMenu("누적된 보상 수령 테스트")]

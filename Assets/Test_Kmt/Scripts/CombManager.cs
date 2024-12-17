@@ -2,13 +2,53 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class CombManager : MonoBehaviour
 {
+
     [SerializeField]
     List<GameObject> charList;
 
-    public UnityEvent ListClearedEvent = new UnityEvent(); 
+    public UnityEvent ListClearedEvent = new UnityEvent();
+
+    /// <summary>
+    /// 2024.12.17 백선명 수정
+    ///     - Character Data 설정 받아오는 코드 추가
+    /// </summary>
+
+    #region InitTest 
+    [SerializeField] private List<Image> skillImageList;
+    [SerializeField] private List<CharacterData> characterDataList;
+    
+    private void Start()
+    {
+        if (characterDataList.Count < 1 || skillImageList.Count < 1)
+            return;
+        
+        SpawnCharacterDataSet();
+    }
+
+    private void SpawnCharacterDataSet()
+    {
+
+        for (int i = 0; i < charList.Count; i++)
+        {
+            GameObject instance = Instantiate(characterDataList[i].ModelPrefab, charList[i].transform.position, Quaternion.identity);
+            instance.transform.SetParent(charList[i].transform);  
+            charList[i].GetComponent<SpriteRenderer>().sprite = characterDataList[i].FaceIconSprite;
+
+            skillImageList[i].sprite = characterDataList[i].SkillSprite;
+            
+            CharacterCombatable combatable = charList[i].GetComponent<CharacterCombatable>();
+            
+            skillImageList[i].GetComponentInParent<Button>().onClick.AddListener(()=>combatable.OnSkillCommanded(combatable.gameObject.name));
+            
+        }
+    }
+ 
+    #endregion
 
     public Transform GetNearestTrackable(Transform fromTransform)
     {
