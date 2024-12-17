@@ -8,7 +8,7 @@ public class GameManager : SingletonBehaviour<GameManager>
     /*
      모든 장면에서 사용되는 클래스만 등록할것
      */
-
+    
     public static SoundManager Sound => SoundManager.Instance;
     public static Firebase.Auth.FirebaseAuth Auth => BackendManager.Auth;
     public static Firebase.Database.FirebaseDatabase Database => BackendManager.Database;
