@@ -69,10 +69,11 @@ public class Combatable : MonoBehaviour
 
     private IEnumerator SkillRoutine(string name)
     {   
-        // TODO: 조립식 스킬 구조
-        Debug.Log($"{name}스킬 사용 개시");
-        yield return new WaitForSeconds(1.5f);
-         
+        Debug.Log($"{name} 캐릭터 : 스킬 사용 개시");
+
+        yield return GameManager.WaitManager.Wait(1.5f);
+        
+        Debug.Log($"{name} 캐릭터 : 스킬 종료, 자동 공격 시작");
         //스킬 사용 종료 후 자동 공격 다시 시작
         curCombatCoroutine = StartCoroutine(CombatCO());
     }  

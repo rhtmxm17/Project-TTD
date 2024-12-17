@@ -47,13 +47,7 @@ public class CombManager : MonoBehaviour
             
         }
     }
-
-    private void Test()
-    {
-        Debug.Log("Test");
-    }
-    
-    
+ 
     #endregion
 
     public Transform GetNearestTrackable(Transform fromTransform)
