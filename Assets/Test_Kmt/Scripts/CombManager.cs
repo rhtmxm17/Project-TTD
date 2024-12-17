@@ -2,13 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class CombManager : MonoBehaviour
 {
+
     [SerializeField]
     List<GameObject> charList;
 
-    public UnityEvent ListClearedEvent = new UnityEvent(); 
+    public UnityEvent ListClearedEvent = new UnityEvent();
+
+    #region InitTest
+    [SerializeField] CharacterData testCharacterData;
+    [SerializeField] Image skillButtonImage;
+
+    private void Start()
+    {
+        if (testCharacterData == null)
+            return;
+
+        Instantiate(testCharacterData.ModelPrefab, charList[0].transform);
+        skillButtonImage.sprite = testCharacterData.SkillSprite;
+    }
+    #endregion
 
     public Transform GetNearestTrackable(Transform fromTransform)
     {
