@@ -1,3 +1,5 @@
+using Firebase.Auth;
+using Firebase.Extensions;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -8,7 +10,7 @@ using UnityEngine.UI;
 public class UI_Manager : BaseUI
 {
     [SerializeField] Button stageButton;
-    [SerializeField] string _nickName;
+    [SerializeField] public string Nickname;
     // TODO :
     // 닉네임 없으면 설정하게 해주기
     // 준비물 : 
@@ -38,8 +40,8 @@ public class UI_Manager : BaseUI
         // 프로필팝업
         GetUI<Button>("ProfileBackButton").onClick.AddListener(() => GoBack("ProfilePopUp"));
         // 프로필이름텍스트
-        GetUI<TMP_Text>("ProfileNameText").text = _nickName;
-        if (_nickName != null)
+        GetUI<TMP_Text>("ProfileNameText").text = Nickname;
+        if (Nickname != null)
         {
             GetUI<TMP_Text>("ProfileNameText").text = "닉네임을 생성하세요";
         }
@@ -50,8 +52,9 @@ public class UI_Manager : BaseUI
 
         GetUI("NickNamePopUp");
         // _nickName =  GetUI<TMP_InputField>("NickNameInputField").text;
-        GetUI<Button>("GuestLoginButton").onClick.AddListener(ConfrimNickName);
-        GetUI<Button>("NickBackButton").onClick.AddListener(() => GoBack("NickNamePopUp"));
+        // GetUI<Button>("NickBackButton").onClick.AddListener(() => GoBack("NickNamePopUp"));
+        // GetUI<Button>("NickConfirmButton").onClick.AddListener(ConfrimNickName);
+        
 
 
 
@@ -119,7 +122,7 @@ public class UI_Manager : BaseUI
     public void GuestLogin()
     {
         Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
-        auth.SignInAnonymouslyAsync().ContinueWith(task => {
+        auth.SignInAnonymouslyAsync().ContinueWithOnMainThread(task => {
             if (task.IsCanceled)
             {
                 Debug.LogError("SignInAnonymouslyAsync was canceled.");
@@ -134,24 +137,22 @@ public class UI_Manager : BaseUI
             Firebase.Auth.AuthResult result = task.Result;
             Debug.LogFormat("User signed in successfully: {0} ({1})",
                 result.User.DisplayName, result.User.UserId);
-            _nickName = result.User.DisplayName;
+            Nickname = result.User.DisplayName;
             _userID = result.User.UserId;
 
             Debug.Log($"UserName = {result.User.DisplayName} \n유저ID: {result.User.UserId}");
         });
 
 
-        Debug.Log($"UserName 닉네임 : {_nickName}");
+        Debug.Log($"UserName 닉네임 : {Nickname}");
         Debug.Log($"UserID 아이디 : {_userID}");
 
-        if (_nickName == "")
+        if (Nickname == "")
         {
+            Debug.Log("닉네임 없음");
             Open("NickNamePopUp");
         }
     }
     
-    private void ConfrimNickName()
-    {
-        _nickName = GetUI<TMP_InputField>("NickNameInputField").text;
-    }
+
 }
