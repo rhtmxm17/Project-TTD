@@ -7,7 +7,7 @@ using UnityEditor;
 #endif
 
 [CreateAssetMenu(menuName = "ScriptableObjects/CharacterData")]
-public class CharacterData : ScriptableObject
+public class CharacterData : ScriptableObject, ISheetManageable
 {
     // 능력치 표 내지는 계산식으로 변경 필요함
     [System.Serializable]
@@ -39,17 +39,14 @@ public class CharacterData : ScriptableObject
     private enum Column
     {
         ID,
+        /// <summary>
+        /// 사용되지 않음(DataManager에서 사용)
+        /// </summary>
+        FILE_NAME,
         NAME,
         RANGE,
         SHAPE,
         SKILL_SPRITE,
-    }
-
-    [ContextMenu("ParseTest")]
-    private void ParseTest()
-    {
-        string[] testStream = { "2", "이름이름", "5.5", "SampleUnit", "Skill_Icon_Sample" };
-        ParseCsvLine(testStream);
     }
 
     public void ParseCsvLine(string[] cells)
