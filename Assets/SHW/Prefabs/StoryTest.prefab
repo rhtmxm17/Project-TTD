@@ -279,7 +279,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC774\uB984\uCE78"
+  m_text: '{name}'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5b7e2e63840f74144b95ba697fffe934, type: 2}
   m_sharedMaterial: {fileID: 6086472556309017595, guid: 5b7e2e63840f74144b95ba697fffe934,
@@ -361,8 +361,9 @@ GameObject:
   - component: {fileID: 8503873658166485397}
   - component: {fileID: 8503873658166485394}
   - component: {fileID: 8503873658166485395}
+  - component: {fileID: 4446411000527836240}
   m_Layer: 5
-  m_Name: Prolog
+  m_Name: StoryTest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -382,6 +383,7 @@ RectTransform:
   m_Children:
   - {fileID: 8503873658584551805}
   - {fileID: 8503873658215226892}
+  - {fileID: 2060482429411839077}
   - {fileID: 1776750867960466836}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -453,6 +455,19 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &4446411000527836240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8503873658166485392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e61a2a88a666d4d49ab0ac8d1dff0b5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  storyPrefab: {fileID: 0}
 --- !u!1 &8503873658215226893
 GameObject:
   m_ObjectHideFlags: 0
@@ -595,7 +610,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uD504\uB9AC\uD339\uC2DD\uC73C\uB85C \uC2A4\uD1A0\uB9AC \uC0DD\uC131 \uC131\uACF5"
+  m_text: '{context}'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5b7e2e63840f74144b95ba697fffe934, type: 2}
   m_sharedMaterial: {fileID: 6086472556309017595, guid: 5b7e2e63840f74144b95ba697fffe934,
@@ -841,20 +856,20 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8553145118355775990}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8503873658475993164}
   - {fileID: 8864615238376093788}
-  m_Father: {fileID: 1776750867960466836}
-  m_RootOrder: 1
+  m_Father: {fileID: 8503873658166485396}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 100}
+  m_AnchoredPosition: {x: 0, y: 20}
+  m_SizeDelta: {x: -40, y: 100}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!1 &8988235784978860279
 GameObject:
@@ -978,10 +993,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8503873658166485392}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 4446411000527836240}
+        m_TargetAssemblyTypeName: StoryCanvasController, Assembly-CSharp
+        m_MethodName: CloseStory
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1010,7 +1025,7 @@ PrefabInstance:
     - target: {fileID: 5128184611668071494, guid: 5026b0eed6ff8024eba036691b070fc4,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5128184611668071494, guid: 5026b0eed6ff8024eba036691b070fc4,
         type: 3}
