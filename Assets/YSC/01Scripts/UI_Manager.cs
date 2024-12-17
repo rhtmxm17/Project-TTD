@@ -25,6 +25,7 @@ public class UI_Manager : BaseUI
     private void Start()
     {
         Init();
+        System.Environment.SetEnvironmentVariable("USE_AUTH_EMULATOR", "no");
     }
 
     private void Init()
