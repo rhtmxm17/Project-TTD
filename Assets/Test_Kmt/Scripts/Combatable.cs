@@ -63,7 +63,12 @@ public class Combatable : MonoBehaviour
             //자동 공격 중지
             StopCoroutine(curCombatCoroutine);
         }
-         
+
+        if (skillRoutine != null)
+        {
+            StopCoroutine(skillRoutine);
+        }
+        
         skillRoutine = StartCoroutine(SkillRoutine(name));
     }
 
