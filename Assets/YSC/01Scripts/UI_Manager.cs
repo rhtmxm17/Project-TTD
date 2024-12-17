@@ -20,7 +20,6 @@ public class UI_Manager : BaseUI
     private bool _isLoggedIn;
 
     
-    Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
     private void Start()
     {
         Init();
@@ -119,7 +118,7 @@ public class UI_Manager : BaseUI
 
     public void GuestLogin()
     {
-        
+        Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
         auth.SignInAnonymouslyAsync().ContinueWith(task => {
             if (task.IsCanceled)
             {
