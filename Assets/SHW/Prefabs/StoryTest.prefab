@@ -467,7 +467,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e61a2a88a666d4d49ab0ac8d1dff0b5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  storyPrefab: {fileID: 0}
+  storyPrefab: {fileID: 8503873658166485392}
 --- !u!1 &8503873658215226893
 GameObject:
   m_ObjectHideFlags: 0
@@ -842,6 +842,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2060482429411839077}
+  - component: {fileID: 4494507456363279678}
+  - component: {fileID: 3530026250488211543}
   m_Layer: 5
   m_Name: Dialog_UI
   m_TagString: Untagged
@@ -871,6 +873,41 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 20}
   m_SizeDelta: {x: -40, y: 100}
   m_Pivot: {x: 0.5, y: 0}
+--- !u!114 &4494507456363279678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8553145118355775990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bc07939cfac6774784e4952838bc3f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  name: "\uD14C\uC2A4\uD2B8"
+  dialogues:
+  - name: "\uD14C\uC2A4\uD130"
+    contexts:
+    - "\uD14C\uC2A4\uD2B8 \uC2DC\uC791\uD569\uB2C8\uB2E4"
+    - "\uB2E4\uC74C \uD14D\uC2A4\uD2B8 \uCD9C\uB825\uD569\uB2C8\uB2E4"
+    - "\uD14D\uC2A4\uD2B8 \uCD9C\uB825\uC744 \uB05D\uB0C5\uB2C8\uB2E4."
+--- !u!114 &3530026250488211543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8553145118355775990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c73064822d6d04e46aa42b024d19d911, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialogueData: {fileID: 4494507456363279678}
+  nameText: {fileID: 2149010087021755023}
+  dialogueText: {fileID: 8503873658390615049}
+  dialogues: []
 --- !u!1 &8988235784978860279
 GameObject:
   m_ObjectHideFlags: 0
