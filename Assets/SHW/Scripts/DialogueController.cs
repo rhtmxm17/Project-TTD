@@ -75,8 +75,6 @@ public class DialogueController : MonoBehaviour
                 StoryEnd();
                 return;
             }
-
-            dialogueText.DOPlay();
             StoryPrint(nameCounter, dialogueCounter);
         }
         
@@ -91,8 +89,7 @@ public class DialogueController : MonoBehaviour
         
         dialogueText.text = "";
         
-        dialogueText.DOText(dialogues[nameCount].contexts[dialogueCounter],
-            3f,true,ScrambleMode.None);
+        dialogueText.DOText(dialogues[nameCount].contexts[dialogueCounter],1,true,ScrambleMode.None);
         
         // 출력중 클릭했을 때 진행하던 글자 출력을 완료 하는 함수
         // FIXME : 조건문이 한번 클릭하면 프레임 내내 계속 클릭된걸로 인식.... 어떻게 고쳐야하나
