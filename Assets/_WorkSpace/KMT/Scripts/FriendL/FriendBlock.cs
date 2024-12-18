@@ -26,11 +26,14 @@ public class FriendBlock : MonoBehaviour
 
     private void Start()
     {
-        userRef = GameManager.Database.RootReference.Child("Users");
+        //userRef = GameManager.Database.RootReference.Child("Users");
     }
 
     public void InitData(in string uid, in string nickname)
-    { 
+    {
+        userRef = GameManager.Database.RootReference.Child("Users");
+
+
         this.uid = uid;    
         this.nickname = nickname;
 

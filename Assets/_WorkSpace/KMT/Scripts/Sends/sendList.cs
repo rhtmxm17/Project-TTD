@@ -16,12 +16,13 @@ public class sendList : MonoBehaviour
 
     private void Start()
     {
-        userRef = GameManager.Database.RootReference.Child("Users");
+        //userRef = GameManager.Database.RootReference.Child("Users");
     }
 
     [ContextMenu("refresh")]
     public void RefreshList()
     {
+        userRef = GameManager.Database.RootReference.Child("Users");
 
         userRef.Child(myUid).Child("friends").Child("보낸 친구 요청").GetValueAsync().ContinueWithOnMainThread(task => {
 

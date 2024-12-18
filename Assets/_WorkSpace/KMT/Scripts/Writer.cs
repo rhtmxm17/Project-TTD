@@ -20,8 +20,8 @@ public class Writer : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Database.SetPersistenceEnabled(false);
-        userNode = GameManager.Database.RootReference.Child("Users");
+        //GameManager.Database.SetPersistenceEnabled(false);
+        //userNode = GameManager.Database.RootReference.Child("Users");
     }
 
     private void Update()
@@ -36,6 +36,7 @@ public class Writer : MonoBehaviour
     [ContextMenu("readTest")]
     public void sendFirend()
     {
+        userNode = GameManager.Database.RootReference.Child("Users");
 
         userNode
             .OrderByChild("Profile/nickname")
@@ -64,6 +65,8 @@ public class Writer : MonoBehaviour
     [ContextMenu("find")]
     public void Find()
     {
+        userNode = GameManager.Database.RootReference.Child("Users");
+
         DataSnapshot myData = null;
 
         userNode
@@ -156,6 +159,8 @@ public class Writer : MonoBehaviour
     [ContextMenu("Write")]
     public void Write()
     {
+        userNode = GameManager.Database.RootReference.Child("Users");
+
         userNode.Child("Dummy0/Profile/nickname").SetValueAsync(findNick)
         .ContinueWithOnMainThread(task =>
         {
@@ -185,7 +190,8 @@ public class Writer : MonoBehaviour
     [ContextMenu("sendreq")]
     public void SendReq()
     {
-        
+        userNode = GameManager.Database.RootReference.Child("Users");
+
         Dictionary<string, object> updates = new Dictionary<string, object>
         {
             { $"{UserData.myUid}/friends/보낸 친구 요청/{UserData.otherUid}", " " },

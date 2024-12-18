@@ -15,12 +15,13 @@ public class AddPlayerPorifle : MonoBehaviour
     DatabaseReference userNode;
     private void Start()
     {
-        userNode = GameManager.Database.RootReference.Child("Users");
+        //userNode = GameManager.Database.RootReference.Child("Users");
     }
 
     [ContextMenu("Write")]
     public void Write()
     {
+        userNode = GameManager.Database.RootReference.Child("Users");
 
         /*Dictionary<string, object> updates = new Dictionary<string, object>
         { 
