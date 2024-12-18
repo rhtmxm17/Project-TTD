@@ -1178,7 +1178,7 @@ RectTransform:
   - {fileID: 1798873823}
   - {fileID: 580771907}
   m_Father: {fileID: 916989673}
-  m_RootOrder: 6
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -1237,7 +1237,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stageButton: {fileID: 0}
   Nickname: 
-  _userID: 
+  UserID: 
 --- !u!1 &362405916
 GameObject:
   m_ObjectHideFlags: 0
@@ -2646,7 +2646,7 @@ RectTransform:
   m_Children:
   - {fileID: 1346025441}
   m_Father: {fileID: 916989673}
-  m_RootOrder: 8
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.42883244, y: 0.358}
   m_AnchorMax: {x: 0.5725838, y: 0.46500003}
@@ -3929,10 +3929,10 @@ RectTransform:
   - {fileID: 856824789}
   - {fileID: 1884301057}
   - {fileID: 802115806}
-  - {fileID: 1864189003}
-  - {fileID: 329220117}
   - {fileID: 1834636200}
   - {fileID: 541581576}
+  - {fileID: 1864189003}
+  - {fileID: 329220117}
   - {fileID: 2123898992}
   m_Father: {fileID: 2014309242}
   m_RootOrder: 0
@@ -6857,7 +6857,7 @@ RectTransform:
   m_Children:
   - {fileID: 1384028896}
   m_Father: {fileID: 916989673}
-  m_RootOrder: 7
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.42883244, y: 0.358}
   m_AnchorMax: {x: 0.5725838, y: 0.46500003}
@@ -6995,7 +6995,7 @@ RectTransform:
   - {fileID: 2045694440}
   - {fileID: 433317045}
   m_Father: {fileID: 916989673}
-  m_RootOrder: 5
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -7744,7 +7744,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stageButton: {fileID: 0}
   Nickname: 
-  _userID: 
+  UserID: 
 --- !u!1 &2024461512
 GameObject:
   m_ObjectHideFlags: 0
@@ -7931,6 +7931,7 @@ GameObject:
   - component: {fileID: 2123898992}
   - component: {fileID: 2123898994}
   - component: {fileID: 2123898993}
+  - component: {fileID: 2123898995}
   m_Layer: 5
   m_Name: SignUpPanel
   m_TagString: Untagged
@@ -8001,3 +8002,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2123898991}
   m_CullTransparentMesh: 1
+--- !u!114 &2123898995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2123898991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbd2686c963fa4b41b11848bd0287a56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stageButton: {fileID: 0}
+  Nickname: 
+  UserID: 
+  _signUpIDInputField: {fileID: 0}
+  _signUpPWInputField: {fileID: 0}

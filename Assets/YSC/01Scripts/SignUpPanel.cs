@@ -1,5 +1,7 @@
 using Firebase.Auth;
+using Firebase.Database;
 using Firebase.Extensions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -81,8 +83,7 @@ public class SignUpPanel : UI_Manager
 
                 }
 
-
-                Debug.LogWarning("CreateUserWithEmailAndPasswordAsync encountered an error: " + task.Exception);
+                Debug.LogWarning("이메일/비밀번호 계정생성중 에러: " + task.Exception);
               //  _checkPopup.SetActive(true);
               //  _checkPopupMsg.text = $"{task.Exception} 에러가 일어났습니다.";
                 return;
@@ -95,9 +96,9 @@ public class SignUpPanel : UI_Manager
            // _checkPopupMsg.text = $"회원가입을 축하드립니다! \n{result.User.UserId}로 인증메일을 확인해주세요.";
            // gameObject.SetActive(false);
         });
-       
+        SaveUserData();
 
     }
-
+    
 
 }

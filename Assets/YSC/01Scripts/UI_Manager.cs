@@ -1,5 +1,7 @@
 using Firebase.Auth;
+using Firebase.Database;
 using Firebase.Extensions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -18,14 +20,14 @@ public class UI_Manager : BaseUI
     // TMP_Text(닉넹미 입력 메세지) & TMP_InputField(닉네임입력)
     // _nickName = TMP_InputField
     // ID && Nick 있으면, 그냥 메인패널
-    [SerializeField] string _userID;
+    [SerializeField] public string UserID;
     private bool _isLoggedIn;
 
     
     private void Start()
     {
         Init();
-        System.Environment.SetEnvironmentVariable("USE_AUTH_EMULATOR", "no");
+        // System.Environment.SetEnvironmentVariable("USE_AUTH_EMULATOR", "no");
     }
 
     private void Init()
@@ -173,24 +175,49 @@ public class UI_Manager : BaseUI
             }
 
             Firebase.Auth.AuthResult result = task.Result;
-            Debug.LogFormat("User signed in successfully: {0} ({1})",
-                result.User.DisplayName, result.User.UserId);
+            Debug.LogFormat("성공적으로 로그인했습니다 : {0} ({1})",result.User.DisplayName, result.User.UserId);
             Nickname = result.User.DisplayName;
-            _userID = result.User.UserId;
+            UserID = result.User.UserId;
 
-            Debug.Log($"UserName = {result.User.DisplayName} \n유저ID: {result.User.UserId}");
+            // Debug.Log($"UserName = {result.User.DisplayName} \n유저ID: {result.User.UserId}");
         });
-        Debug.Log($"UserName 닉네임 : {Nickname}");
-        Debug.Log($"UserID 아이디 : {_userID}");
+        //Debug.Log($"UserName 닉네임 : {Nickname}");
+        //Debug.Log($"UserID 아이디 : {UserID}");
+        SaveUserData();
 
-
-       // if (Nickname == "") // 지금익명로긴에서는 안됨 *보류
-       // {
-       //     Debug.Log("닉네임 없음");
-       //     Open("NickNamePopUp");
-       // }
+        if (Nickname == "") // 지금익명로긴에서는 안됨 *보류
+        {
+            Debug.Log("닉네임 없음");
+            Open("NickNamePopUp");
+        }
 
     }
-    
+    public void SaveUserData()
+    {
+        DatabaseReference userRef = BackendManager.Database.GetReference( $"Users/{UserID}");
+        Dictionary<string, object> userData = new Dictionary<string, object>()
+        {
+            {"UID", UserID},
+            {"Nickname", Nickname },
+            {"Last Login", DateTime.UtcNow.ToString("O")}
+        };
+        userRef.SetValueAsync( userData ).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted && !task.IsFaulted)
+            {
+                Debug.Log("사용자 데이터 저장 완료!");
+                return;
+            }
+            else
+            {
+                Debug.LogError($"사용자 데이터 저장 실패 {task.Exception}");
+            }
+        });
+        Debug.Log($"[DB]유저ID: {UserID}");
+        Debug.Log($"[DB]닉네임: {Nickname}");
+        Debug.Log($"[DB]마지막로그인: {DateTime.UtcNow.ToString("O")}");
+    }
+
+
 
 }
