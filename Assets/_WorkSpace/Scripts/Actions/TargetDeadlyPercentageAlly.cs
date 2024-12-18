@@ -28,7 +28,7 @@ public class TargetDeadlyPercentageAlly : Targeting
 
         foreach (SampleUnitClass allyUnit in self.Group.Members)
         {
-            float hpPercentage = allyUnit.status.hp / allyUnit.status.maxHp;
+            float hpPercentage = allyUnit.Status.hp / allyUnit.Status.maxHp;
             if (minValue > hpPercentage)
             {
                 minValue = hpPercentage;

@@ -8,15 +8,18 @@ using UnityEngine;
 public class SampleUnitClass
 {
     public Transform transform { get; }
+    public Animator UnitAnimator { get; }
     public SampleUnitGroupClass Group { get; }
-    public Status status { get; }
+    public StatusSet Status { get; }
 
-    public struct Status
+    public struct StatusSet
     {
         public float hp;
         public float maxHp;
         public float atk;
     }
+
+    public void Damaged(float damage) { }
 }
 
 /// <summary>
