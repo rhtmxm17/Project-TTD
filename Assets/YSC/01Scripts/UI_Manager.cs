@@ -1,3 +1,7 @@
+using Firebase.Auth;
+using Firebase.Database;
+using Firebase.Extensions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -8,7 +12,7 @@ using UnityEngine.UI;
 public class UI_Manager : BaseUI
 {
     [SerializeField] Button stageButton;
-    [SerializeField] string _nickName;
+    [SerializeField] public string Nickname;
     // TODO :
     // 닉네임 없으면 설정하게 해주기
     // 준비물 : 
@@ -16,16 +20,29 @@ public class UI_Manager : BaseUI
     // TMP_Text(닉넹미 입력 메세지) & TMP_InputField(닉네임입력)
     // _nickName = TMP_InputField
     // ID && Nick 있으면, 그냥 메인패널
-    [SerializeField] string _userID;
+    [SerializeField] public string UserID;
     private bool _isLoggedIn;
 
     
     private void Start()
     {
         Init();
+        // System.Environment.SetEnvironmentVariable("USE_AUTH_EMULATOR", "no");
     }
 
     private void Init()
+    {
+        // 로긴패널
+        SetLoginPanel();
+
+        // 로비패널
+        SetLobbyPanel();
+
+        // 스테이지패널
+        SetStagePanel(); 
+
+    }
+    private void SetLoginPanel()
     {
         // 로긴패널
         GetUI("LoginPanel");
@@ -38,8 +55,8 @@ public class UI_Manager : BaseUI
         // 프로필팝업
         GetUI<Button>("ProfileBackButton").onClick.AddListener(() => GoBack("ProfilePopUp"));
         // 프로필이름텍스트
-        GetUI<TMP_Text>("ProfileNameText").text = _nickName;
-        if (_nickName != null)
+        GetUI<TMP_Text>("ProfileNameText").text = Nickname;
+        if (Nickname != null)
         {
             GetUI<TMP_Text>("ProfileNameText").text = "닉네임을 생성하세요";
         }
@@ -50,14 +67,28 @@ public class UI_Manager : BaseUI
 
         GetUI("NickNamePopUp");
         // _nickName =  GetUI<TMP_InputField>("NickNameInputField").text;
-        GetUI<Button>("GuestLoginButton").onClick.AddListener(ConfrimNickName);
-        GetUI<Button>("NickBackButton").onClick.AddListener(() => GoBack("NickNamePopUp"));
+        // GetUI<Button>("NickBackButton").onClick.AddListener(() => GoBack("NickNamePopUp"));
+        // GetUI<Button>("NickConfirmButton").onClick.AddListener(ConfrimNickName);
 
 
+        // 이메일로그인 Button
+        GetUI<Button>("EmailLoginButton").onClick.AddListener(() => Open("EmailLogin"));
 
-        // 로비패널
+        // Email가입 버튼
+        GetUI<Button>("SignUpButton").onClick.AddListener(() => Open("SignUpPanel"));
+
+    }
+
+    private void SetSignUpPanel()
+    {
+
+
+    }
+
+    private void SetLobbyPanel()
+    {
         GetUI("LobbyPanel");
-        GetUI<TMP_Text>("TestText").text = "Tear To Dragon 티어 투 드래곤";
+        GetUI<TMP_Text>("TestText").text = "Tears To Dragon 티어즈 투 드래곤";
         // 스테이지버튼
         stageButton = GetUI<Button>("StageButton");
         stageButton.onClick.AddListener(() => Open("StagePanel"));
@@ -71,14 +102,12 @@ public class UI_Manager : BaseUI
         GetUI("StagePanel").SetActive(false);
         // 뒤로가기 버튼
         GetUI<Button>("BackButton").onClick.AddListener(() => GoBack("PopUpPanel"));
-
-
-        // 스테이지패널
-        GetUI<Button>("StageBackButton").onClick.AddListener(() => GoBack("StagePanel")); 
-
-
-
     }
+    private void SetStagePanel()
+    {
+        GetUI<Button>("StageBackButton").onClick.AddListener(() => GoBack("StagePanel"));
+    }
+
 
     /// <summary>
     /// 패널이름 넣기
@@ -115,11 +144,28 @@ public class UI_Manager : BaseUI
       //  Debug.Log($"뒤로가기");
         */
     }
+    public void LinkLoginAuth()
+    {
+
+    }
+
+    public void EmailSignUp()
+    {
+
+    }
+
+    public void EmailLogin()
+    {
+
+    }
 
     public void GuestLogin()
     {
-        Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
-        auth.SignInAnonymouslyAsync().ContinueWith(task => {
+        var _userdataRef = BackendManager.UserDataRef;
+        // irebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+        // auth.SignInAnonymouslyAsync().ContinueWithOnMainThread(task => {
+        BackendManager.Auth.SignInAnonymouslyAsync().ContinueWithOnMainThread(task => 
+        {
             if (task.IsCanceled)
             {
                 Debug.LogError("SignInAnonymouslyAsync was canceled.");
@@ -131,27 +177,86 @@ public class UI_Manager : BaseUI
                 return;
             }
 
-            Firebase.Auth.AuthResult result = task.Result;
-            Debug.LogFormat("User signed in successfully: {0} ({1})",
-                result.User.DisplayName, result.User.UserId);
-            _nickName = result.User.DisplayName;
-            _userID = result.User.UserId;
+            Firebase.Auth.AuthResult result = task.Result; // 계정생성
 
-            Debug.Log($"UserName = {result.User.DisplayName} \n유저ID: {result.User.UserId}");
+            Debug.LogFormat("성공적으로 로그인했습니다 : {0} ({1})",result.User.DisplayName, result.User.UserId);
+            Nickname = result.User.DisplayName;
+            UserID = result.User.UserId;
+            // UID Firebase저장하기
+            SaveUserData();
+            // Debug.Log($"UserName = {result.User.DisplayName} \n유저ID: {result.User.UserId}");
         });
+        //Debug.Log($"UserName 닉네임 : {Nickname}");
+        //Debug.Log($"UserID 아이디 : {UserID}");
+        
 
-
-        Debug.Log($"UserName 닉네임 : {_nickName}");
-        Debug.Log($"UserID 아이디 : {_userID}");
-
-        if (_nickName == "")
+        if (Nickname == "") // 지금익명로긴에서는 안됨 *보류
         {
+            Debug.Log("닉네임 없음");
             Open("NickNamePopUp");
         }
+
     }
-    
-    private void ConfrimNickName()
+
+    /// <summary>
+    /// UID존재하나 확인
+    /// </summary>
+    public void CheckUserData()
     {
-        _nickName = GetUI<TMP_InputField>("NickNameInputField").text;
+        DatabaseReference userRef = BackendManager.Database.GetReference($"Users/UserID");
+        Debug.Log($"{userRef.Child("UID")}");
+
+        userRef.GetValueAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted && task.Result.Exists)
+            {
+                var UserData = task.Result.Value as Dictionary<string, object>;
+                if (UserData != null)
+                {
+                    foreach (var entry in UserData)
+                    {
+                        if (entry.Value is Dictionary<string, object> userData && UserData.ContainsKey(UserID))
+                        {
+                            UserID = userData["UID"].ToString();
+                            Debug.Log($"기존 사용자 UID 확인: {UserID}");
+                            return;
+                        }
+                    }
+                }
+            }
+            GuestLogin();
+
+        });
     }
+
+
+    public void SaveUserData()
+    {
+        DatabaseReference userRef = BackendManager.Database.GetReference( $"Users/UserID/{UserID}"); //( $"Users/UserID/{UserID}")
+        Debug.Log($"유저레프 체크 : {userRef}");
+        Dictionary<string, object> userData = new Dictionary<string, object>()
+        {
+            {"UID", UserID},
+            //{"Nickname", Nickname },
+            {"Last Login", DateTime.UtcNow.ToString("O")}
+        };
+        userRef.SetValueAsync( userData ).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted && !task.IsFaulted)
+            {
+                Debug.Log("사용자 데이터 저장 완료!");
+                return;
+            }
+            else
+            {
+                Debug.LogError($"사용자 데이터 저장 실패 {task.Exception}");
+            }
+        });
+        Debug.Log($"[DB]유저ID: {UserID}");
+      //  Debug.Log($"[DB]닉네임: {Nickname}");
+        Debug.Log($"[DB]마지막로그인: {DateTime.UtcNow.ToString("O")}");
+    }
+
+
+
 }
