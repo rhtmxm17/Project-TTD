@@ -161,8 +161,11 @@ public class UI_Manager : BaseUI
 
     public void GuestLogin()
     {
-        Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
-        auth.SignInAnonymouslyAsync().ContinueWithOnMainThread(task => {
+        var _userdataRef = BackendManager.UserDataRef;
+        // irebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+        // auth.SignInAnonymouslyAsync().ContinueWithOnMainThread(task => {
+        BackendManager.Auth.SignInAnonymouslyAsync().ContinueWithOnMainThread(task => 
+        {
             if (task.IsCanceled)
             {
                 Debug.LogError("SignInAnonymouslyAsync was canceled.");
@@ -174,16 +177,18 @@ public class UI_Manager : BaseUI
                 return;
             }
 
-            Firebase.Auth.AuthResult result = task.Result;
+            Firebase.Auth.AuthResult result = task.Result; // 계정생성
+
             Debug.LogFormat("성공적으로 로그인했습니다 : {0} ({1})",result.User.DisplayName, result.User.UserId);
             Nickname = result.User.DisplayName;
             UserID = result.User.UserId;
-
+            // UID Firebase저장하기
+            SaveUserData();
             // Debug.Log($"UserName = {result.User.DisplayName} \n유저ID: {result.User.UserId}");
         });
         //Debug.Log($"UserName 닉네임 : {Nickname}");
         //Debug.Log($"UserID 아이디 : {UserID}");
-        SaveUserData();
+        
 
         if (Nickname == "") // 지금익명로긴에서는 안됨 *보류
         {
@@ -192,13 +197,47 @@ public class UI_Manager : BaseUI
         }
 
     }
+
+    /// <summary>
+    /// UID존재하나 확인
+    /// </summary>
+    public void CheckUserData()
+    {
+        DatabaseReference userRef = BackendManager.Database.GetReference($"Users/UserID");
+        Debug.Log($"{userRef.Child("UID")}");
+
+        userRef.GetValueAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted && task.Result.Exists)
+            {
+                var UserData = task.Result.Value as Dictionary<string, object>;
+                if (UserData != null)
+                {
+                    foreach (var entry in UserData)
+                    {
+                        if (entry.Value is Dictionary<string, object> userData && UserData.ContainsKey(UserID))
+                        {
+                            UserID = userData["UID"].ToString();
+                            Debug.Log($"기존 사용자 UID 확인: {UserID}");
+                            return;
+                        }
+                    }
+                }
+            }
+            GuestLogin();
+
+        });
+    }
+
+
     public void SaveUserData()
     {
-        DatabaseReference userRef = BackendManager.Database.GetReference( $"Users/{UserID}");
+        DatabaseReference userRef = BackendManager.Database.GetReference( $"Users/UserID/{UserID}"); //( $"Users/UserID/{UserID}")
+        Debug.Log($"유저레프 체크 : {userRef}");
         Dictionary<string, object> userData = new Dictionary<string, object>()
         {
             {"UID", UserID},
-            {"Nickname", Nickname },
+            //{"Nickname", Nickname },
             {"Last Login", DateTime.UtcNow.ToString("O")}
         };
         userRef.SetValueAsync( userData ).ContinueWithOnMainThread(task =>
@@ -214,7 +253,7 @@ public class UI_Manager : BaseUI
             }
         });
         Debug.Log($"[DB]유저ID: {UserID}");
-        Debug.Log($"[DB]닉네임: {Nickname}");
+      //  Debug.Log($"[DB]닉네임: {Nickname}");
         Debug.Log($"[DB]마지막로그인: {DateTime.UtcNow.ToString("O")}");
     }
 

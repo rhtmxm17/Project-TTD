@@ -61,28 +61,6 @@ public class SignUpPanel : UI_Manager
             }
             if (task.IsFaulted)
             {
-                // 일단 인증에러 팝업창나게하는거 중지
-                Firebase.FirebaseException exception = task.Exception.InnerException as Firebase.FirebaseException;
-                switch ((AuthError)exception.ErrorCode)
-                {
-
-                    case AuthError.EmailAlreadyInUse:
-                        Debug.LogWarning($"이메일이 이미 사용중입니다.");
-                       // _checkPopup.SetActive(true);
-                       // _checkPopupMsg.text = "이메일이 이미 사용중입니다.";
-                        break;
-                    case AuthError.WeakPassword:
-                        Debug.LogWarning($"비밀번호가 너무 쉽습니다.");
-                       // _checkPopup.SetActive(true);
-                       // _checkPopupMsg.text = "비밀번호가 너무 쉽습니다. \n다른비밀번호를 사용해주세요.";
-                        break;
-                    case AuthError.WrongPassword:
-                        Debug.LogWarning($"잘못된 비밀번호입니다.: {exception.ErrorCode}");
-                       // _checkPopupMsg.text = "비밀번호가 틀립니다.. \n바르게 입력하세요.";
-                        break;
-
-                }
-
                 Debug.LogWarning("이메일/비밀번호 계정생성중 에러: " + task.Exception);
               //  _checkPopup.SetActive(true);
               //  _checkPopupMsg.text = $"{task.Exception} 에러가 일어났습니다.";
@@ -90,8 +68,8 @@ public class SignUpPanel : UI_Manager
             }
             // 체크팝업 _checkPopup.SetActive(true);
 
-            // Firebase user has been created.
-            AuthResult result = task.Result;
+            // 계정생성.
+            Firebase.Auth.AuthResult result = task.Result;
             Debug.Log($"Firebase user created successfully: {result.User.DisplayName} ({result.User.UserId})");
            // _checkPopupMsg.text = $"회원가입을 축하드립니다! \n{result.User.UserId}로 인증메일을 확인해주세요.";
            // gameObject.SetActive(false);
