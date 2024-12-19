@@ -46,6 +46,8 @@ public class DialogueController : MonoBehaviour
 
     private void Start()
     {
+        input = GameManager.Input;
+        
         // 불러올 데이터를 셋팅
         dialogues = dialogueData.dialogues;
         
