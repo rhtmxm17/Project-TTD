@@ -15,6 +15,11 @@ public class PopupContoller : MonoBehaviour
   [SerializeField] PlayerInput input;
   [SerializeField] GameObject popup;
 
+  private void Start()
+  {
+    input = GameManager.Input;
+  }
+
   private void Update()
   {
     // 팝업의 외부를 터치할 경우 화면을 닫는 시스템
