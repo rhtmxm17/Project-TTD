@@ -10,6 +10,12 @@ using UnityEditor;
 [CreateAssetMenu(menuName = "ScriptableObjects/CharacterData")]
 public class CharacterData : ScriptableObject, ICsvRowParseable
 {
+    /// <summary>
+    /// 24.12.19 김민태
+    ///     - skill so 데이터 필드 추가
+    /// </summary>
+
+
     #region 유저 데이터
     /// <summary>
     /// 유저 데이터. DataManager의 LoadUserData()가 호출된 적이 있어야 정상적인 값을 갖는다<br/>
@@ -18,6 +24,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     /// </summary>
     [field: System.NonSerialized] public ReactiveProperty<int> Level { get; private set; } = new ReactiveProperty<int>();
     #endregion
+
 
     // 능력치 표 내지는 계산식으로 변경 필요함
     [System.Serializable]
@@ -39,11 +46,15 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     [SerializeField] Status statusTable;
     public Status StatusTable => statusTable;
 
+    [Header("Skill datas")]
     [SerializeField] Sprite skillSprite;
     public Sprite SkillSprite => skillSprite;
 
     [SerializeField] Sprite faceIconSprite;
     public Sprite FaceIconSprite => faceIconSprite;
+
+    [SerializeField] Skill skillDataSO;
+    public Skill SkillDataSO => skillDataSO;
 
 #if UNITY_EDITOR
     private enum Column

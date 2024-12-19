@@ -9,46 +9,67 @@ public class CombManager : MonoBehaviour
 {
 
     [SerializeField]
-    List<GameObject> charList;
+    public List<GameObject> charList;
 
     public UnityEvent ListClearedEvent = new UnityEvent();
 
-    /// <summary>
-    /// 2024.12.17 백선명 수정
-    ///     - Character Data 설정 받아오는 코드 추가
-    /// </summary>
+    /*    /// <summary>
+        /// 2024.12.17 백선명 수정
+        ///     - Character Data 설정 받아오는 코드 추가
+        /// 2024.12.19 김민태 수정
+        ///     - StageCharacterSetter 스크립트로 기능 분리
+        /// </summary>
 
-    #region InitTest 
-    [SerializeField] private List<Image> skillImageList;
-    [SerializeField] private List<CharacterData> characterDataList;
-    
-    private void Start()
-    {
-        if (characterDataList.Count < 1 || skillImageList.Count < 1)
-            return;
-        
-        SpawnCharacterDataSet();
-    }
 
-    private void SpawnCharacterDataSet()
-    {
+        #region InitTest 
+        [SerializeField] private List<Image> skillImageList;
+        [SerializeField] private List<CharacterData> characterDataList;
 
-        for (int i = 0; i < charList.Count; i++)
+        private void Start()
         {
-            GameObject instance = Instantiate(characterDataList[i].ModelPrefab, charList[i].transform.position, Quaternion.identity);
-            instance.transform.SetParent(charList[i].transform);  
-            charList[i].GetComponent<SpriteRenderer>().sprite = characterDataList[i].FaceIconSprite;
+            if (characterDataList.Count < 1 || skillImageList.Count < 1)
+                return;
 
-            skillImageList[i].sprite = characterDataList[i].SkillSprite;
-            
-            CharacterCombatable combatable = charList[i].GetComponent<CharacterCombatable>();
-            
-            skillImageList[i].GetComponentInParent<Button>().onClick.AddListener(()=>combatable.OnSkillCommanded(combatable.gameObject.name));
-            
+            SpawnCharacterDataSet();
+        }
+
+        private void SpawnCharacterDataSet()
+        {
+
+            for (int i = 0; i < charList.Count; i++)
+            {
+                GameObject instance = Instantiate(characterDataList[i].ModelPrefab, charList[i].transform.position, Quaternion.identity);
+                instance.transform.SetParent(charList[i].transform);  
+                charList[i].GetComponent<SpriteRenderer>().sprite = characterDataList[i].FaceIconSprite;
+
+                skillImageList[i].sprite = characterDataList[i].SkillSprite;
+
+                CharacterCombatable combatable = charList[i].GetComponent<CharacterCombatable>();
+
+                skillImageList[i].GetComponentInParent<Button>().onClick.AddListener(()=>combatable.OnSkillCommanded(combatable.gameObject.name));
+
+            }
+        }
+
+        #endregion
+    */
+
+
+    public void StartCombat(CombManager againstGroup)
+    {
+        foreach (GameObject character in charList)
+        { 
+            character.GetComponent<Combatable>().StartCombat(againstGroup);
         }
     }
- 
-    #endregion
+
+    public void EndCombat()
+    {
+        foreach (GameObject character in charList)
+        {
+            character.GetComponent<Combatable>().EndCombat();
+        }
+    }
 
     public Transform GetNearestTrackable(Transform fromTransform)
     {
