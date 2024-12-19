@@ -79,10 +79,10 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         }
 
         // SHAPE
-        modelPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/_WorkSpace/Prefabs/{cells[(int)Column.SHAPE]}.prefab");
+        modelPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{DataManager.PrefabsAssetFolder}/{cells[(int)Column.SHAPE]}.prefab");
 
         // SKILL_SPRITE
-        skillSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/_WorkSpace/Sprites/{cells[(int)Column.SKILL_SPRITE]}.asset");
+        skillSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataManager.SpritesAssetFolder}/{cells[(int)Column.SKILL_SPRITE]}.asset");
     }
 #endif
 

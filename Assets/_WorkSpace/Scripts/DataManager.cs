@@ -30,6 +30,8 @@ public class DataManager : SingletonScriptable<DataManager>
     [SerializeField] List<CharacterData> characterDataList;
     private Dictionary<int, CharacterData> characterDataIdDic; // id 기반 검색용
 
+    [SerializeField] List<StoryDirectingData> storyDirectingDataList;
+
     public UnityEvent onLoadUserDataCompleted;
 
     public CharacterData GetCharacterData(int id)
@@ -54,6 +56,10 @@ public class DataManager : SingletonScriptable<DataManager>
     }
 
 #if UNITY_EDITOR
+    public const string SoundsAssetFolder = "Assets/Imports/Sounds";
+    public const string PrefabsAssetFolder = "Assets/_WorkSpace/Prefabs";
+    public const string SpritesAssetFolder = "Assets/_WorkSpace/Sprites";
+
     [SerializeField] string documentID;
 
     [SerializeField] string characterSheetId;
@@ -65,6 +71,16 @@ public class DataManager : SingletonScriptable<DataManager>
         GetRowDataFromSheet<CharacterData>("0", characterDataFolder, characterDataList);
         IndexData();
     }
+
+    [SerializeField] Object storyDirectingDataFolder;
+
+    [ContextMenu("스토리 데이터 불러오기 테스트")]
+    private void GetStroyDataTest()
+    {
+        storyDirectingDataList.Clear();
+        GetSheetDataFromSheet<StoryDirectingData>("1890934115", storyDirectingDataFolder, storyDirectingDataList);
+    }
+
 
     private void GetRowDataFromSheet<T>(string sheetId, Object dataFolder, List<T> dataList) where T : ScriptableObject, ICsvRowParseable
     {
