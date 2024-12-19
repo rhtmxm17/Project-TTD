@@ -15,12 +15,13 @@ public class Combatable : MonoBehaviour
 
     [HideInInspector]
     public UnityEvent waveClearEvent = new UnityEvent();
+    protected UnityEvent interruptedEvent = new UnityEvent();
     [HideInInspector]
     public UnityEvent<GameObject> onDeadEvent = new UnityEvent<GameObject>();
 
-    Trackable trackable;
-    Coroutine curCombatCoroutine = null;
-    private Coroutine skillRoutine;
+    protected Trackable trackable;
+    protected Coroutine curActionCoroutine = null;
+    protected Coroutine moveCoroutine = null;
     
     Func<Transform, Transform> foundEnemyLogic = null;
     Func<Transform, Transform> foundNearEnemyLogic = null;
@@ -32,11 +33,6 @@ public class Combatable : MonoBehaviour
     {
         trackable = GetComponent<Trackable>();
         onDeadEvent.AddListener(GetComponentInParent<CombManager>().OnDead);
-
-        foundNearEnemyLogic = againistObjList.GetNearestTrackable;
-        foundFarEnemyLogic = againistObjList.GetFarestTrackable;
-
-        InitSearchLogic();
     }
 
     void InitSearchLogic()
@@ -55,34 +51,40 @@ public class Combatable : MonoBehaviour
         }
     }
 
-    #region 스킬_추가 
-    public void OnSkillCommanded(string name)
+    protected void StopCurActionCoroutine()//중지시키는거 더 고려
     {
-        if (curCombatCoroutine != null)
-        {
-            //자동 공격 중지
-            StopCoroutine(curCombatCoroutine);
-            curCombatCoroutine = null; 
-        }
 
-        if (skillRoutine != null)
-        {
-            StopCoroutine(skillRoutine);
-            skillRoutine = null;    
-        }
-        
-        skillRoutine = StartCoroutine(SkillRoutine(name));
+        if(curActionCoroutine != null)
+            StopCoroutine(curActionCoroutine);
+
+        if (moveCoroutine != null)
+            StopCoroutine(moveCoroutine);
+
     }
 
-    private IEnumerator SkillRoutine(string name)
+    Coroutine skillRoutine;
+
+    #region 스킬_추가 
+    public void OnSkillCommanded(Skill skillData)
+    {
+        StopCurActionCoroutine();
+        
+        curActionCoroutine = StartCoroutine(SkillRoutine(skillData));
+    }
+
+    private IEnumerator SkillRoutine(Skill skillData)
     {   
+        //TODO : 실제 스킬 발동시키기.
         Debug.Log($"{name} 캐릭터 : 스킬 사용 개시");
 
         yield return new WaitForSeconds(1.5f);
         
         Debug.Log($"{name} 캐릭터 : 스킬 종료, 자동 공격 시작");
+
+
         //스킬 사용 종료 후 자동 공격 다시 시작
-        curCombatCoroutine = StartCoroutine(CombatCO());
+        StopCurActionCoroutine();
+        curActionCoroutine = StartCoroutine(CombatCO());
     }  
     
     #endregion
@@ -90,56 +92,76 @@ public class Combatable : MonoBehaviour
     [ContextMenu("OnDead")]
     public void OnDead()
     {
+        Destroy(gameObject);
         onDeadEvent?.Invoke(gameObject);
     }
 
     [ContextMenu("ChangeToNear")]
     public void ChangeSearchLogicToNear()
     {
-        StopCoroutine(curCombatCoroutine);
+        StopCurActionCoroutine();
         searchLogicType = SearchLogic.NEAR_FIRST;
         InitSearchLogic();
-        curCombatCoroutine = StartCoroutine(CombatCO());
+        curActionCoroutine = StartCoroutine(CombatCO());
     }
 
     [ContextMenu("ChangeToFar")]
     public void ChangeSearchLogicToFar()
     {
-        StopCoroutine(curCombatCoroutine);
+        StopCurActionCoroutine();
         searchLogicType = SearchLogic.FAR_FIRST;
         InitSearchLogic();
-        curCombatCoroutine = StartCoroutine(CombatCO());
+        curActionCoroutine = StartCoroutine(CombatCO());
     }
 
     public void ChangeSearchLoginInCombat(SearchLogic searchLogic)
     {
-        StopCoroutine(curCombatCoroutine);
+        StopCurActionCoroutine();
         searchLogicType = searchLogic;
         InitSearchLogic();
-        curCombatCoroutine = StartCoroutine(CombatCO());
+        curActionCoroutine = StartCoroutine(CombatCO());
     }
     public void ChangeSearchLoginInCombat(Func<Transform, Transform> customSearchLogic)
     {
-        StopCoroutine(curCombatCoroutine);
+        StopCurActionCoroutine();
         foundEnemyLogic = customSearchLogic;
-        curCombatCoroutine = StartCoroutine(CombatCO());
+        curActionCoroutine = StartCoroutine(CombatCO());
     }
 
-    public void StartCombat(/*CombManager againistObjList;*/)
+    public void StartCombat(CombManager againstL)
     {
-        curCombatCoroutine = StartCoroutine(CombatCO());
+        againistObjList = againstL;
+
+        foundNearEnemyLogic = againistObjList.GetNearestTrackable;
+        foundFarEnemyLogic = againistObjList.GetFarestTrackable;
+
+        InitSearchLogic();
+
+        StopCurActionCoroutine();
+        curActionCoroutine = StartCoroutine(CombatCO());
     }
+
+    public void EndCombat()
+    {
+        againistObjList = null;
+        StopCurActionCoroutine();
+        waveClearEvent?.Invoke();
+
+    }
+
 
 
     //게임에서는 웨이브 자체를 전달. + 특성에 따라 추적 대상 함수등을 전달할수도..
-    IEnumerator CombatCO(/*CombManager againistObjList;*/)
+    IEnumerator CombatCO()
     {
 
         Transform ch = foundEnemyLogic.Invoke(transform);
 
-        while (ch != null)
+        //추적 대상이 있고, 웨이브가 진행중인 경우.
+        while (ch != null && againistObjList != null)
         {
-            yield return StartCoroutine(trackable.TrackingCO(ch));//이동 코루틴
+            moveCoroutine = StartCoroutine(trackable.TrackingCO(ch));
+            yield return moveCoroutine;//이동 코루틴
 
             if (ch == null)//이동중에 적이 쓰러진 경우.
             {
@@ -157,18 +179,10 @@ public class Combatable : MonoBehaviour
 
         }
 
-        waveClearEvent?.Invoke();
+        //전투가 끝난경우.
+        EndCombat();
 
     }
 
-    //테스트용 호출.
-    //실제 전투 시작시, 캐릭터/몬스터측 combatCO이런거 호출.
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            StartCombat();
-        }
-    }
 
 }
