@@ -10,7 +10,8 @@ namespace BSM_Character_State
     public class CharacterState : CommonBind
     { 
         [field: SerializeField] public int UnitID { get; set; }
-
+        public UnitType CurUnitType;
+        
         private Slider _hpBar;
         public int AttackDamage;
         private int _hp;  
@@ -27,8 +28,7 @@ namespace BSM_Character_State
                     //캐릭터 사망 조건            
                 } 
             }
-        }
-         
+        } 
         private void Awake()
         {
             Bind(); 

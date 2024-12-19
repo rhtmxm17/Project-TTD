@@ -7,8 +7,7 @@ using UnityEngine.UI;
 
 public class CharacterInfo : BaseUI
 {
-    [SerializeField] private TestSO _test;
-    
+
     private Image _characterSprite;
     private Button _characterInfoBtn;
     private Button _backBtn;
@@ -48,10 +47,6 @@ public class CharacterInfo : BaseUI
 
     private void CharacterInfoUpdate()
     {
-        _characterSprite.sprite = _test.sprite;
-        _nameText.text = "이름 : " + _test.name;
-        _atkText.text = "공격력 : " + _test.atk;
-        _hpText.text = "체력 : " + _test.hp; 
     }
     
     
