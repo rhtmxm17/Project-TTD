@@ -21,12 +21,18 @@ public class TargetNearEnemyLabel : Editor
 /// </summary>
 public class TargetNearEnemy : Targeting
 {
-    public override SampleUnitClass GetTarget(SampleUnitClass self)
+    public override Combatable GetTarget(Combatable self)
     {
-        SampleUnitClass result = null;
+        Combatable result = null;
         float minSqrMagnitude = float.MaxValue;
 
-        foreach (SampleUnitClass enemyUnit in self.Group.Enemy.Members)
+        if (null == self?.Group?.Enemy?.CharList)
+        {
+            Debug.LogWarning("의도되지 않은 동작: 적 그룹을 찾을 수 없는 상태에서 스킬 사용");
+            return null;
+        }
+
+        foreach (Combatable enemyUnit in self.Group.Enemy.CharList)
         {
             float sqrMagnitude = Vector3.SqrMagnitude(self.transform.position - enemyUnit.transform.position);
             if (minSqrMagnitude > sqrMagnitude)

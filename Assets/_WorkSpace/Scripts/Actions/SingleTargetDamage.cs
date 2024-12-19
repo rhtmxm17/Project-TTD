@@ -27,7 +27,7 @@ public class SingleTargetDamage : Skill
         waitPostDelay = new WaitForSeconds(postDelay);
     }
 
-    protected override IEnumerator SkillRoutineImplement(SampleUnitClass self)
+    protected override IEnumerator SkillRoutineImplement(Combatable self)
     {
         // 지정된 애니메이션 시작
         self.UnitAnimator.SetTrigger(animationHash);
@@ -35,8 +35,8 @@ public class SingleTargetDamage : Skill
         yield return waitPreDelay;
         
         // 실제로 공격이 적용되는 구간
-        SampleUnitClass target = targetingLogic.GetTarget(self); // 설정된 규칙에 따라 타겟 산출
-        target.Damaged(self.Status.atk * atkMultiplier); // 타겟에게 데미지 적용
+        Combatable target = targetingLogic.GetTarget(self); // 설정된 규칙에 따라 타겟 산출
+        target?.Damaged(self.AttackPoint.Value * atkMultiplier); // 타겟에게 데미지 적용
         
         // 히트스캔 이펙트 추가
 

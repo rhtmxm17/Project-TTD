@@ -9,65 +9,27 @@ public class CombManager : MonoBehaviour
 {
 
     [SerializeField]
-    public List<GameObject> charList;
+    public List<Combatable> CharList;
 
     public UnityEvent ListClearedEvent = new UnityEvent();
 
-    /*    /// <summary>
-        /// 2024.12.17 백선명 수정
-        ///     - Character Data 설정 받아오는 코드 추가
-        /// 2024.12.19 김민태 수정
-        ///     - StageCharacterSetter 스크립트로 기능 분리
-        /// </summary>
-
-
-        #region InitTest 
-        [SerializeField] private List<Image> skillImageList;
-        [SerializeField] private List<CharacterData> characterDataList;
-
-        private void Start()
-        {
-            if (characterDataList.Count < 1 || skillImageList.Count < 1)
-                return;
-
-            SpawnCharacterDataSet();
-        }
-
-        private void SpawnCharacterDataSet()
-        {
-
-            for (int i = 0; i < charList.Count; i++)
-            {
-                GameObject instance = Instantiate(characterDataList[i].ModelPrefab, charList[i].transform.position, Quaternion.identity);
-                instance.transform.SetParent(charList[i].transform);  
-                charList[i].GetComponent<SpriteRenderer>().sprite = characterDataList[i].FaceIconSprite;
-
-                skillImageList[i].sprite = characterDataList[i].SkillSprite;
-
-                CharacterCombatable combatable = charList[i].GetComponent<CharacterCombatable>();
-
-                skillImageList[i].GetComponentInParent<Button>().onClick.AddListener(()=>combatable.OnSkillCommanded(combatable.gameObject.name));
-
-            }
-        }
-
-        #endregion
-    */
-
+    public CombManager Enemy { get; private set; }
 
     public void StartCombat(CombManager againstGroup)
     {
-        foreach (GameObject character in charList)
+        Enemy = againstGroup;
+        foreach (Combatable character in CharList)
         { 
-            character.GetComponent<Combatable>().StartCombat(againstGroup);
+            character.StartCombat(againstGroup);
         }
     }
 
     public void EndCombat()
     {
-        foreach (GameObject character in charList)
+        Enemy = null;
+        foreach (Combatable character in CharList)
         {
-            character.GetComponent<Combatable>().EndCombat();
+            character.EndCombat();
         }
     }
 
@@ -77,13 +39,13 @@ public class CombManager : MonoBehaviour
     }
     public Transform GetNearestTrackable(Vector3 fromPos)
     {
-        if (charList.Count == 0)
+        if (CharList.Count == 0)
             return null;
 
         Transform ret = null;
         float minDist = float.MaxValue;
 
-        foreach (GameObject trObj in charList)
+        foreach (Combatable trObj in CharList)
         {
             float curDist = Vector3.SqrMagnitude(fromPos - trObj.transform.position);
 
@@ -104,13 +66,13 @@ public class CombManager : MonoBehaviour
     }
     public Transform GetFarestTrackable(Vector3 fromPos)
     {
-        if (charList.Count == 0)
+        if (CharList.Count == 0)
             return null;
 
         Transform ret = null;
         float maxDist = -1;
 
-        foreach (GameObject trObj in charList)
+        foreach (Combatable trObj in CharList)
         {
             float curDist = Vector3.SqrMagnitude(fromPos - trObj.transform.position);
 
@@ -124,12 +86,12 @@ public class CombManager : MonoBehaviour
         return ret;
     }
 
-    public void OnDead(GameObject deadTrObj)
+    public void OnDead(Combatable deadTrObj)
     {
-        charList.Remove(deadTrObj);
+        CharList.Remove(deadTrObj);
         Destroy(deadTrObj);//또는 사망처리 + 비활성화.
 
-        if (charList.Count <= 0)
+        if (CharList.Count <= 0)
         {
             //리스트가 비었을 때 ( 항목으 캐릭터가 모두 죽었을 경우 호출될 이벤트 )
             ListClearedEvent?.Invoke();
