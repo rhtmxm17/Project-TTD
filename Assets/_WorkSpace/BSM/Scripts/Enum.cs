@@ -7,6 +7,8 @@ public enum UnitType
 {
     NONE, WATER, FIRE, GRASS, GROUND, ELECTRIC
 }
+
+[System.Serializable]
 public enum BuffType
 {
     NONE,
