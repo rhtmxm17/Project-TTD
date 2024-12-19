@@ -10,7 +10,7 @@ public class DialogueData : MonoBehaviour
     
     // (테스트)
     // 해당 스토리의 챕터나 구별용 id 혹은 네임 설정
-    [SerializeField] private string name;
+    // [SerializeField] public string storyName;
     // 인스펙터 창에서 대사 설정
     [SerializeField] public Dialogue[] dialogues;
 }

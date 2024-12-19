@@ -38,8 +38,8 @@ public class DialogueController : MonoBehaviour
     private int maxDialogueCounter;
     private int maxNameCounter;
 
-    [SerializeField]  bool isAuto = false;
-    private int autoCounter = 0;
+    // [SerializeField]  bool isAuto = false;
+    // private int autoCounter = 0;
 
     // 대사의 카운트를 늘릴 변수
     private int nameCounter = 0;
