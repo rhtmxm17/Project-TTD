@@ -12,7 +12,7 @@ public class StageCharacterSetter : MonoBehaviour
     //스테이지 진입 시, 진형 설정에서 캐릭터 정보들을 받아올 것.
     [SerializeField] private List<CharacterData> characterDataList;
     //TODO : 필요시 나중에 타입 지정
-    [SerializeField] GameObject characterPrefab;
+    [SerializeField] Combatable characterPrefab;
 
     [Header("skills")]
     [SerializeField]
@@ -44,15 +44,18 @@ public class StageCharacterSetter : MonoBehaviour
 
     private void SpawnCharacterDataSet()
     {
-
-        List<GameObject> characters = new List<GameObject>();
+        CombManager group = GetComponent<CombManager>();
+        List<Combatable> characters = new List<Combatable>();
 
         for (int i = 0; i < characterDataList.Count; i++)
         {
 
-            GameObject charObj = Instantiate(characterPrefab, position[i], Quaternion.identity, transform);
+            Combatable charObj = Instantiate(characterPrefab, position[i], Quaternion.identity, transform);
             characters.Add(charObj);
-            Instantiate(characterDataList[i].ModelPrefab, charObj.transform).name = "Model";
+            GameObject model = Instantiate(characterDataList[i].ModelPrefab, charObj.transform);
+            model.name = "Model";
+
+            charObj.Initialize(model.GetComponent<Animator>(), group, characterDataList[i]);
 
             //테스트용 코드?
             charObj.GetComponent<SpriteRenderer>().sprite = characterDataList[i].FaceIconSprite;
@@ -67,7 +70,7 @@ public class StageCharacterSetter : MonoBehaviour
 
         }
 
-        GetComponent<CombManager>().charList = characters;
+        GetComponent<CombManager>().CharList = characters;
 
     }
 

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UniRx;
 
 [RequireComponent(typeof(Trackable))]
 public class Combatable : MonoBehaviour
@@ -17,7 +18,7 @@ public class Combatable : MonoBehaviour
     public UnityEvent waveClearEvent = new UnityEvent();
     protected UnityEvent interruptedEvent = new UnityEvent();
     [HideInInspector]
-    public UnityEvent<GameObject> onDeadEvent = new UnityEvent<GameObject>();
+    public UnityEvent<Combatable> onDeadEvent = new UnityEvent<Combatable>();
 
     protected Trackable trackable;
     protected Coroutine curActionCoroutine = null;
@@ -27,13 +28,45 @@ public class Combatable : MonoBehaviour
     Func<Transform, Transform> foundNearEnemyLogic = null;
     Func<Transform, Transform> foundFarEnemyLogic = null;
 
+
     public enum SearchLogic { NEAR_FIRST, FAR_FIRST }
 
     protected virtual void Awake()
     {
         trackable = GetComponent<Trackable>();
         onDeadEvent.AddListener(GetComponentInParent<CombManager>().OnDead);
+
+        AttackPoint = attackPoint.ToReadOnlyReactiveProperty();
+        Hp = hp.ToReadOnlyReactiveProperty();
+        MaxHp = maxHp.ToReadOnlyReactiveProperty();
     }
+
+    public void Initialize(Animator animator, CombManager Group, CharacterData data)
+    {
+        UnitAnimator = animator;
+        this.Group = Group;
+        data.SkillDataSO.onSkillCompleted += OnSkillCompleted;
+    }
+
+    #region TODO
+    public Animator UnitAnimator { get; private set; }
+    public CombManager Group { get; private set; }
+
+    private ReactiveProperty<float> attackPoint = new ReactiveProperty<float>();
+    public ReadOnlyReactiveProperty<float> AttackPoint { get; private set; }
+
+    private ReactiveProperty<float> hp = new ReactiveProperty<float>();
+    public ReadOnlyReactiveProperty<float> Hp;
+
+    private ReactiveProperty<float> maxHp = new ReactiveProperty<float>();
+    public ReadOnlyReactiveProperty<float> MaxHp;
+
+    public void Damaged(float damage)
+    {
+        Debug.Log($"피격데미지{damage}");
+    }
+
+    #endregion
 
     void InitSearchLogic()
     {
@@ -62,39 +95,43 @@ public class Combatable : MonoBehaviour
 
     }
 
-    Coroutine skillRoutine;
-
     #region 스킬_추가 
     public void OnSkillCommanded(Skill skillData)
     {
         StopCurActionCoroutine();
         
-        curActionCoroutine = StartCoroutine(SkillRoutine(skillData));
+        curActionCoroutine = StartCoroutine(skillData.SkillRoutine(this));
     }
 
-    private IEnumerator SkillRoutine(Skill skillData)
-    {   
-        //TODO : 실제 스킬 발동시키기.
-        Debug.Log($"{name} 캐릭터 : 스킬 사용 개시");
-
-        yield return new WaitForSeconds(1.5f);
-
-
-        Debug.Log($"{name} 캐릭터 : 스킬 종료, 자동 공격 시작");
-
-
-        //스킬 사용 종료 후 자동 공격 다시 시작
+    private void OnSkillCompleted()
+    {
         StopCurActionCoroutine();
         curActionCoroutine = StartCoroutine(TrackingCo());
-    }  
-    
+    }
+
+    //private IEnumerator SkillRoutine(Skill skillData)
+    //{   
+    //    //TODO : 실제 스킬 발동시키기.
+    //    Debug.Log($"{name} 캐릭터 : 스킬 사용 개시");
+
+    //    yield return new WaitForSeconds(1.5f);
+
+
+    //    Debug.Log($"{name} 캐릭터 : 스킬 종료, 자동 공격 시작");
+
+
+    //    //스킬 사용 종료 후 자동 공격 다시 시작
+    //    StopCurActionCoroutine();
+    //    curActionCoroutine = StartCoroutine(TrackingCo());
+    //}  
+
     #endregion
-     
+
     [ContextMenu("OnDead")]
     public void OnDead()
     {
         Destroy(gameObject);
-        onDeadEvent?.Invoke(gameObject);
+        onDeadEvent?.Invoke(this);
     }
 
     [ContextMenu("ChangeToNear")]

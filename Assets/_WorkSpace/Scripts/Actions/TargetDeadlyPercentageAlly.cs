@@ -21,14 +21,14 @@ public class TargetDeadlyPercentageAllyLabel : Editor
 /// </summary>
 public class TargetDeadlyPercentageAlly : Targeting
 {
-    public override SampleUnitClass GetTarget(SampleUnitClass self)
+    public override Combatable GetTarget(Combatable self)
     {
-        SampleUnitClass result = self;
+        Combatable result = self;
         float minValue = 1f;
 
-        foreach (SampleUnitClass allyUnit in self.Group.Members)
+        foreach (Combatable allyUnit in self.Group.CharList)
         {
-            float hpPercentage = allyUnit.Status.hp / allyUnit.Status.maxHp;
+            float hpPercentage = allyUnit.Hp.Value / allyUnit.MaxHp.Value;
             if (minValue > hpPercentage)
             {
                 minValue = hpPercentage;
