@@ -27,7 +27,7 @@ public class BaseUI : MonoBehaviour
 
             if (gameObjectDic.ContainsKey(child.gameObject.name))
             {
-                Debug.LogWarning($"이미 {child.gameObject.name} Object가 있어서 추가되지 않습니다. ");
+               // Debug.LogWarning($"이미 {child.gameObject.name} Object가 있어서 추가되지 않습니다. ");
                 continue;
             }
             gameObjectDic[child.gameObject.name] = child.gameObject;

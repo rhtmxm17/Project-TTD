@@ -12,7 +12,7 @@ using UnityEngine.UI;
 public class UI_Manager : BaseUI
 {
     [SerializeField] Button stageButton;
-    [SerializeField] public string Nickname;
+    [SerializeField] protected string Nickname;
     // TODO :
     // 닉네임 없으면 설정하게 해주기
     // 준비물 : 
@@ -20,7 +20,7 @@ public class UI_Manager : BaseUI
     // TMP_Text(닉넹미 입력 메세지) & TMP_InputField(닉네임입력)
     // _nickName = TMP_InputField
     // ID && Nick 있으면, 그냥 메인패널
-    [SerializeField] public string UserID;
+    [SerializeField] protected string UserID;
     private bool _isLoggedIn;
 
     
@@ -50,7 +50,7 @@ public class UI_Manager : BaseUI
         GetUI<Button>("ProfileButton").onClick.AddListener(() => Open("ProfilePopUp"));
         // 게스트로그인 버튼
         // GetUI<Button>("GuestLoginButton").onClick.AddListener(() => Open("ProfilePopUp"));
-        GetUI<Button>("GuestLoginButton").onClick.AddListener(GuestLogin);
+        GetUI<Button>("GuestLoginButton").onClick.AddListener(CheckUserData);
 
         // 프로필팝업
         GetUI<Button>("ProfileBackButton").onClick.AddListener(() => GoBack("ProfilePopUp"));
@@ -158,12 +158,16 @@ public class UI_Manager : BaseUI
     {
 
     }
-
+    
+    /// <summary>
+    /// 게스트로그인 :
+    /// 가입없이 바로 로그인하게 해줌
+    /// 
+    /// </summary>
     public void GuestLogin()
     {
         var _userdataRef = BackendManager.UserDataRef;
-        // irebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
-        // auth.SignInAnonymouslyAsync().ContinueWithOnMainThread(task => {
+        
         BackendManager.Auth.SignInAnonymouslyAsync().ContinueWithOnMainThread(task => 
         {
             if (task.IsCanceled)
@@ -180,34 +184,47 @@ public class UI_Manager : BaseUI
             Firebase.Auth.AuthResult result = task.Result; // 계정생성
 
             Debug.LogFormat("성공적으로 로그인했습니다 : {0} ({1})",result.User.DisplayName, result.User.UserId);
-            Nickname = result.User.DisplayName;
-            UserID = result.User.UserId;
+               Nickname = result.User.DisplayName;
+               UserID = result.User.UserId;
             // UID Firebase저장하기
-            SaveUserData();
+               SaveUserData();
             // Debug.Log($"UserName = {result.User.DisplayName} \n유저ID: {result.User.UserId}");
         });
         //Debug.Log($"UserName 닉네임 : {Nickname}");
         //Debug.Log($"UserID 아이디 : {UserID}");
         
 
-        if (Nickname == "") // 지금익명로긴에서는 안됨 *보류
+        if (Nickname == "") 
         {
             Debug.Log("닉네임 없음");
             Open("NickNamePopUp");
         }
-
+        // SaveUserData();
     }
 
     /// <summary>
     /// UID존재하나 확인
     /// </summary>
+    // TODO :
+    // 작동원리 / 구조 / 돌아가는거 파악제대로 해야됨
+    // 지금 안되고있었는데 닉네임설정창에서 설정(저장)하면서 하니까 됨
+    // 저장위치 똑같이 한거 같은데 상위 위치에서 저장되고 뭔가 뭔가임...
     public void CheckUserData()
     {
         DatabaseReference userRef = BackendManager.Database.GetReference($"Users/UserID");
-        Debug.Log($"{userRef.Child("UID")}");
+        userRef.Child(UserID);
+        Debug.Log($"userRef 확인 {userRef}");
 
         userRef.GetValueAsync().ContinueWithOnMainThread(task =>
         {
+            if (task.IsCanceled)
+            {
+                Debug.Log($"데이터읽기가 취소됐습니다 : {task.Exception}");
+            }
+            if (task.IsFaulted)
+            {
+                Debug.Log($"데이터를 불러오는데 뭔가 잘못됐습니다.");
+            }
             if (task.IsCompleted && task.Result.Exists)
             {
                 var UserData = task.Result.Value as Dictionary<string, object>;
@@ -215,7 +232,7 @@ public class UI_Manager : BaseUI
                 {
                     foreach (var entry in UserData)
                     {
-                        if (entry.Value is Dictionary<string, object> userData && UserData.ContainsKey(UserID))
+                        if (entry.Value is Dictionary<string, object> userData && UserData.ContainsKey("UID"))
                         {
                             UserID = userData["UID"].ToString();
                             Debug.Log($"기존 사용자 UID 확인: {UserID}");
@@ -224,6 +241,10 @@ public class UI_Manager : BaseUI
                     }
                 }
             }
+            Debug.Log($"태스크이즈컴플리티드: {task.IsCompleted}");
+            Debug.Log($"태스크리저트익시스츠: {task.Result.Exists}");
+            Debug.Log("기존 사용자 UID 못찾았습니다, UID생성");
+            Debug.Log($"기존 사용자 UID 확인: {UserID}");
             GuestLogin();
 
         });
@@ -237,7 +258,7 @@ public class UI_Manager : BaseUI
         Dictionary<string, object> userData = new Dictionary<string, object>()
         {
             {"UID", UserID},
-            //{"Nickname", Nickname },
+            {"Nickname", Nickname },
             {"Last Login", DateTime.UtcNow.ToString("O")}
         };
         userRef.SetValueAsync( userData ).ContinueWithOnMainThread(task =>
@@ -253,7 +274,7 @@ public class UI_Manager : BaseUI
             }
         });
         Debug.Log($"[DB]유저ID: {UserID}");
-      //  Debug.Log($"[DB]닉네임: {Nickname}");
+        Debug.Log($"[DB]닉네임: {Nickname}");
         Debug.Log($"[DB]마지막로그인: {DateTime.UtcNow.ToString("O")}");
     }
 
