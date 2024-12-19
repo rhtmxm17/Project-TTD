@@ -165,6 +165,9 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
                     continue;
                 }
 
+                // 0~10 범위를 0~1 범위로 변환
+                parsed.Position *= 0.1f;
+
                 // 파싱된 연출 정보를 현재 대사에 등록
                 tempDialogues[tempDialogues.Count - 1].Transitions.Add(parsed);
             }
