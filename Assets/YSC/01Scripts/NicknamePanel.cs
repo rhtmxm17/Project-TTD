@@ -23,7 +23,7 @@ public class NicknamePanel : UI_Manager
         GetUI<Button>("NickConfirmButton").onClick.AddListener(ConfrimNickName);
     }
 
-    private void MakeNickName() // 게스트로그인 현상태에선 안됨
+    private void MakeNickName() // 일단킵해두고있는데 ConfirmNickName에다가 이식해둠.
     {
         DatabaseReference userRef = BackendManager.Database.GetReference($"Users/UserID/{UserID}"); //( $"Users/UserID/{UserID}")
         Debug.Log($"유저레프 체크 : {userRef}");

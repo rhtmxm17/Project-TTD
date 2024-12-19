@@ -12,22 +12,30 @@ using UnityEngine.UI;
 public class UI_Manager : BaseUI
 {
     [SerializeField] Button stageButton;
-    [SerializeField] protected string Nickname;
-    // TODO :
-    // 닉네임 없으면 설정하게 해주기
-    // 준비물 : 
-    // 닉네임 있나 없나 확인, 없으면 만드는 팝업창 띄우기
-    // TMP_Text(닉넹미 입력 메세지) & TMP_InputField(닉네임입력)
-    // _nickName = TMP_InputField
-    // ID && Nick 있으면, 그냥 메인패널
+    // User Data
     [SerializeField] protected string UserID;
+    [SerializeField] protected string Nickname;
+    [SerializeField] protected string Email;
+    [SerializeField] protected bool IsVerified; // Email인증 된 유저인가/아닌가
     private bool _isLoggedIn;
 
-    
+
+    private TMP_InputField _emailLoginInputField;
+    private TMP_InputField _emailLoginPWInputField;
+
+
+
+
+
     private void Start()
     {
         Init();
-        // System.Environment.SetEnvironmentVariable("USE_AUTH_EMULATOR", "no");
+
+        // 아무래도 데이터들 다 불러와야되니까 시작을 하게된다면 로딩씬을 플레이하고 난뒤에??
+
+
+
+
     }
 
     private void Init()
@@ -39,27 +47,43 @@ public class UI_Manager : BaseUI
         SetLobbyPanel();
 
         // 스테이지패널
-        SetStagePanel(); 
+        SetStagePanel();
+
+        // 이메일 로긴 팝업
+        SetEmailLoginPanel();
+
+        // 프로필 팝업
+        SetProfilePopUp();
+
+
+
+        // 미사용중:
+        SetSignUpPanel();
+
+
+
 
     }
+
+
+    
     private void SetLoginPanel()
     {
         // 로긴패널
         GetUI("LoginPanel");
         GetUI<Button>("LobbyButton").onClick.AddListener(() => Open("LobbyPanel"));
-        GetUI<Button>("ProfileButton").onClick.AddListener(() => Open("ProfilePopUp"));
+        
         // 게스트로그인 버튼
         // GetUI<Button>("GuestLoginButton").onClick.AddListener(() => Open("ProfilePopUp"));
         GetUI<Button>("GuestLoginButton").onClick.AddListener(CheckUserData);
 
-        // 프로필팝업
-        GetUI<Button>("ProfileBackButton").onClick.AddListener(() => GoBack("ProfilePopUp"));
+
         // 프로필이름텍스트
-        GetUI<TMP_Text>("ProfileNameText").text = Nickname;
-        if (Nickname != null)
-        {
-            GetUI<TMP_Text>("ProfileNameText").text = "닉네임을 생성하세요";
-        }
+           //    GetUI<TMP_Text>("ProfileNameText").text = Nickname;
+           //    if (Nickname != null)
+           //    {
+           //        GetUI<TMP_Text>("ProfileNameText").text = "닉네임을 생성하세요";
+           //    }
         GetUI<TMP_Text>("UserIDText").text = "프로필아이디";
         // 닉네임 정도는 설정할 수 있는게 좋지 않으려나
         GetUI<TMP_Text>("StatusText").text = "게스트 로그인 입니다.";
@@ -72,19 +96,45 @@ public class UI_Manager : BaseUI
 
 
         // 이메일로그인 Button
-        GetUI<Button>("EmailLoginButton").onClick.AddListener(() => Open("EmailLogin"));
+        GetUI<Button>("EmailLoginButton").onClick.AddListener(() => Open("EmailLoginPopup"));
 
         // Email가입 버튼
         GetUI<Button>("SignUpButton").onClick.AddListener(() => Open("SignUpPanel"));
 
-    }
+        // Email 인증 버튼
+        GetUI<Button>("EmailAuthButton").onClick.AddListener(() => Open("EmailAuthPopup"));
+        
+        
+        // 인증메일 팝업창
+        GetUI("EmailAuthPopup");
+        // TODO:
+        // 프로필 창을 만들어서
+        // 닉네임(++변경버튼?), UID, 
+        // 이메일인증 & 이메일가입 버튼 추가해서 계정연동(인증)해서 할 수 있도록하기
+        // 프리펩화?
 
+
+
+    }
+    private void SetProfilePopUp()
+    {
+        // 프로필팝업
+        GetUI<Button>("ProfileButton").onClick.AddListener(() => Open("ProfilePopUp"));
+        GetUI<Button>("ProfileBackButton").onClick.AddListener(() => GoBack("ProfilePopUp"));
+    }
     private void SetSignUpPanel()
     {
 
 
     }
 
+    private void SetEmailLoginPanel()
+    {
+        GetUI("EmailLoginPopup");
+        _emailLoginInputField = GetUI<TMP_InputField>("EmailLoginInputField");
+        _emailLoginPWInputField = GetUI<TMP_InputField>("EmailLoginPWInputField");
+        GetUI<Button>("EmailLoginConfirmButton").onClick.AddListener(EmailLogin); 
+    }
     private void SetLobbyPanel()
     {
         GetUI("LobbyPanel");
@@ -156,9 +206,50 @@ public class UI_Manager : BaseUI
 
     public void EmailLogin()
     {
+        Debug.Log("LoginButton 테스트 로그");
+        
+        
+        string email = _emailLoginInputField.text;
+        if (email == "")
+        {
+            Debug.Log("이메일을 입력 해 주세요.");
+            // GetUI<TMP_Text>("NotificationText").text = "이메일을 입력 해 주세요.";
+            return;
+
+        }
+        string password = _emailLoginPWInputField.text;
+        if (password == "")
+        {
+            Debug.Log("비밀번호를 입력 하세요.");
+            // GetUI<TMP_Text>("NotificationText").text = "비밀번호를 입력 하세요.";
+            return;
+        }
+        BackendManager.Auth.SignInWithEmailAndPasswordAsync(email, password)
+           .ContinueWithOnMainThread(task =>
+           {
+               if (task.IsCanceled)
+               {
+                   Debug.LogWarning("SignInWithEmailAndPasswordAsync was canceled.");
+                   // GetUI<TMP_Text>("NotificationText").text = "로그인 인증이 취소되었습니다. ";
+                   // OpenNotifiaction();
+                   return;
+               }
+               if (task.IsFaulted)
+               {
+                   Debug.LogWarning("SignInWithEmailAndPasswordAsync encountered an error: " + task.Exception);
+                   // GetUI<TMP_Text>("NotificationText").text = $"올바른 아이디/비밀번호를\n 입력해주세요.";
+                   // OpenNotifiaction();
+                   return;
+               }
+
+               AuthResult result = task.Result;
+               Debug.Log($"User signed in successfully: {result.User.DisplayName} ({result.User.UserId})");
+               // CheckUserInfo();
+           });
+        GoBack("EmailLoginPopup");
 
     }
-    
+
     /// <summary>
     /// 게스트로그인 :
     /// 가입없이 바로 로그인하게 해줌
@@ -236,6 +327,9 @@ public class UI_Manager : BaseUI
                         {
                             UserID = userData["UID"].ToString();
                             Debug.Log($"기존 사용자 UID 확인: {UserID}");
+                            _isLoggedIn = true;
+                            // 자동시작
+                            // AutomaticStart(); 다른것들테스트해야되서 일단 비활성화 
                             return;
                         }
                     }
@@ -259,6 +353,8 @@ public class UI_Manager : BaseUI
         {
             {"UID", UserID},
             {"Nickname", Nickname },
+            // {"Email", Email },
+            // {"IsVerified", IsVerified },
             {"Last Login", DateTime.UtcNow.ToString("O")}
         };
         userRef.SetValueAsync( userData ).ContinueWithOnMainThread(task =>
@@ -276,6 +372,16 @@ public class UI_Manager : BaseUI
         Debug.Log($"[DB]유저ID: {UserID}");
         Debug.Log($"[DB]닉네임: {Nickname}");
         Debug.Log($"[DB]마지막로그인: {DateTime.UtcNow.ToString("O")}");
+    }
+    public void AutomaticStart()
+    {
+        if (_isLoggedIn)
+            Open("LobbyPanel");
+    }
+
+    public void CheckUserInfo()
+    {
+
     }
 
 
