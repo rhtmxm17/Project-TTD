@@ -10,12 +10,20 @@ using UnityEngine.Events;
 using UnityEditor;
 #endif
 
-public interface ISheetManageable
+public interface ICsvRowParseable
 {
 #if UNITY_EDITOR
-    public void ParseCsvLine(string[] cells);
+    public void ParseCsvRow(string[] cells);
 #endif
 }
+
+public interface ICsvSheetParseable
+{
+#if UNITY_EDITOR
+    public void ParseCsvSheet(string csv);
+#endif
+}
+
 
 public class DataManager : SingletonScriptable<DataManager>
 {
@@ -54,11 +62,11 @@ public class DataManager : SingletonScriptable<DataManager>
     [ContextMenu("시트에서 캐릭터 데이터 불러오기")]
     private void GetCharacterDataFromSheet()
     {
-        GetDataFromSheet<CharacterData>("0", characterDataFolder, characterDataList);
+        GetRowDataFromSheet<CharacterData>("0", characterDataFolder, characterDataList);
         IndexData();
     }
 
-    private void GetDataFromSheet<T>(string sheetId, Object dataFolder, List<T> dataList) where T : ScriptableObject, ISheetManageable
+    private void GetRowDataFromSheet<T>(string sheetId, Object dataFolder, List<T> dataList) where T : ScriptableObject, ICsvRowParseable
     {
         GoogleSheet.GetSheetData(documentID, sheetId, this, (succeed, result) =>
         {
@@ -84,7 +92,7 @@ public class DataManager : SingletonScriptable<DataManager>
                     if (System.IO.File.Exists(soPath))
                     {
                         soAsset = AssetDatabase.LoadAssetAtPath(soPath, typeof(T)) as T;
-                        soAsset.ParseCsvLine(cells);
+                        soAsset.ParseCsvRow(cells);
 
                         EditorUtility.SetDirty(soAsset);
                         AssetDatabase.SaveAssets();
@@ -93,7 +101,7 @@ public class DataManager : SingletonScriptable<DataManager>
                     {
                         soAsset = ScriptableObject.CreateInstance<T>();
 
-                        soAsset.ParseCsvLine(cells);
+                        soAsset.ParseCsvRow(cells);
 
                         AssetDatabase.CreateAsset(soAsset, soPath);
                     }
@@ -104,6 +112,47 @@ public class DataManager : SingletonScriptable<DataManager>
 
                 AssetDatabase.Refresh();
 
+            }
+            else
+            {
+                Debug.LogWarning("<color=red>읽기 실패!</color>");
+            }
+
+        });
+    }
+
+    private void GetSheetDataFromSheet<T>(string sheetId, Object dataFolder, List<T> dataList) where T : ScriptableObject, ICsvSheetParseable
+    {
+        GoogleSheet.GetSheetData(documentID, sheetId, this, (succeed, result) =>
+        {
+            if (succeed == true)
+            {
+                string soFolderPath = AssetDatabase.GetAssetPath(dataFolder);
+
+                // 1A 셀에는 파일명 겸 식별자 넣을것
+                string soPath = $"{soFolderPath}/{result.Substring(0, result.IndexOf(','))}.asset";
+
+                T soAsset;
+                if (System.IO.File.Exists(soPath))
+                {
+                    soAsset = AssetDatabase.LoadAssetAtPath(soPath, typeof(T)) as T;
+                    soAsset.ParseCsvSheet(result);
+
+                    EditorUtility.SetDirty(soAsset);
+                    AssetDatabase.SaveAssets();
+                }
+                else
+                {
+                    soAsset = ScriptableObject.CreateInstance<T>();
+
+                    soAsset.ParseCsvSheet(result);
+
+                    AssetDatabase.CreateAsset(soAsset, soPath);
+                }
+
+                AssetDatabase.Refresh();
+
+                dataList.Add(soAsset);
             }
             else
             {

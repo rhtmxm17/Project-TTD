@@ -8,7 +8,7 @@ using UnityEditor;
 #endif
 
 [CreateAssetMenu(menuName = "ScriptableObjects/CharacterData")]
-public class CharacterData : ScriptableObject, ISheetManageable
+public class CharacterData : ScriptableObject, ICsvRowParseable
 {
     #region 유저 데이터
     /// <summary>
@@ -59,7 +59,7 @@ public class CharacterData : ScriptableObject, ISheetManageable
         SKILL_SPRITE,
     }
 
-    public void ParseCsvLine(string[] cells)
+    public void ParseCsvRow(string[] cells)
     {
         // ID
         if (false == int.TryParse(cells[(int)Column.ID], out id))
