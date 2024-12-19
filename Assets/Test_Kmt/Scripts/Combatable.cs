@@ -78,13 +78,14 @@ public class Combatable : MonoBehaviour
         Debug.Log($"{name} 캐릭터 : 스킬 사용 개시");
 
         yield return new WaitForSeconds(1.5f);
-        
+
+
         Debug.Log($"{name} 캐릭터 : 스킬 종료, 자동 공격 시작");
 
 
         //스킬 사용 종료 후 자동 공격 다시 시작
         StopCurActionCoroutine();
-        curActionCoroutine = StartCoroutine(CombatCO());
+        curActionCoroutine = StartCoroutine(TrackingCo());
     }  
     
     #endregion
@@ -102,7 +103,7 @@ public class Combatable : MonoBehaviour
         StopCurActionCoroutine();
         searchLogicType = SearchLogic.NEAR_FIRST;
         InitSearchLogic();
-        curActionCoroutine = StartCoroutine(CombatCO());
+        curActionCoroutine = StartCoroutine(TrackingCo());
     }
 
     [ContextMenu("ChangeToFar")]
@@ -111,7 +112,7 @@ public class Combatable : MonoBehaviour
         StopCurActionCoroutine();
         searchLogicType = SearchLogic.FAR_FIRST;
         InitSearchLogic();
-        curActionCoroutine = StartCoroutine(CombatCO());
+        curActionCoroutine = StartCoroutine(TrackingCo());
     }
 
     public void ChangeSearchLoginInCombat(SearchLogic searchLogic)
@@ -119,13 +120,13 @@ public class Combatable : MonoBehaviour
         StopCurActionCoroutine();
         searchLogicType = searchLogic;
         InitSearchLogic();
-        curActionCoroutine = StartCoroutine(CombatCO());
+        curActionCoroutine = StartCoroutine(TrackingCo());
     }
     public void ChangeSearchLoginInCombat(Func<Transform, Transform> customSearchLogic)
     {
         StopCurActionCoroutine();
         foundEnemyLogic = customSearchLogic;
-        curActionCoroutine = StartCoroutine(CombatCO());
+        curActionCoroutine = StartCoroutine(TrackingCo());
     }
 
     public void StartCombat(CombManager againstL)
@@ -138,7 +139,7 @@ public class Combatable : MonoBehaviour
         InitSearchLogic();
 
         StopCurActionCoroutine();
-        curActionCoroutine = StartCoroutine(CombatCO());
+        curActionCoroutine = StartCoroutine(TrackingCo());
     }
 
     public void EndCombat()
@@ -150,7 +151,66 @@ public class Combatable : MonoBehaviour
     }
 
 
+    IEnumerator TrackingCo()
+    {
+        Transform ch = foundEnemyLogic.Invoke(transform);
+        float trackTime = 0.2f;
+        float time = 0;
+        int rangePow = 9;//사거리
 
+        while (ch != null && againistObjList != null)
+        {
+
+            Vector3 moveDir = (ch.position - transform.position).normalized;
+
+            while (ch != null && rangePow < Vector3.SqrMagnitude(ch.position - transform.position))
+            {
+                if (time > trackTime)
+                {
+                    time = 0;
+                    moveDir = (ch.position - transform.position).normalized;
+                }
+
+                transform.Translate(10 * moveDir.normalized * Time.deltaTime);
+                time += Time.deltaTime;
+                yield return null;
+            }
+
+
+            if (ch == null)//이동중에 적이 쓰러진 경우.
+            {
+                ch = foundEnemyLogic.Invoke(transform);//새로운 대상 탐색
+            }
+            else 
+            {
+                StopCurActionCoroutine();
+                curActionCoroutine = StartCoroutine(CombatCO(ch));
+                yield break;
+            }
+
+
+        }
+
+        //전투가 끝난경우.
+        EndCombat();
+
+    }
+
+    IEnumerator CombatCO(Transform ch)
+    {
+        while (ch != null && trackable.rangePow > Vector3.SqrMagnitude(ch.transform.position - transform.position))
+        {
+            //ch.transform.Rotate(Vector3.forward * 10);
+            ch.GetComponent<SpriteRenderer>().color = UnityEngine.Random.ColorHSV();
+            yield return new WaitForSeconds(1);
+        }
+
+        StopCurActionCoroutine();
+        curActionCoroutine = StartCoroutine(TrackingCo());
+        yield break;
+    }
+
+/*
     //게임에서는 웨이브 자체를 전달. + 특성에 따라 추적 대상 함수등을 전달할수도..
     IEnumerator CombatCO()
     {
@@ -171,7 +231,8 @@ public class Combatable : MonoBehaviour
 
             while (ch != null && trackable.rangePow > Vector3.SqrMagnitude(ch.transform.position - transform.position))
             {
-                ch.transform.Rotate(Vector3.forward * 10);
+                //ch.transform.Rotate(Vector3.forward * 10);
+                ch.GetComponent<SpriteRenderer>().color = UnityEngine. Random.ColorHSV();
                 yield return new WaitForSeconds(1);
             }
 
@@ -183,6 +244,6 @@ public class Combatable : MonoBehaviour
         EndCombat();
 
     }
-
+*/
 
 }

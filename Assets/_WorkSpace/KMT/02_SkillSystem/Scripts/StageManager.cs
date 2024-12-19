@@ -16,11 +16,13 @@ public class StageManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.S))
         {
             characterManager.StartCombat(monsetWaveQueue[0]);
+            monsetWaveQueue[0].StartCombat(characterManager);
         }
 
         if (Input.GetKeyDown(KeyCode.F))
         {
             characterManager.EndCombat();
+            monsetWaveQueue[0].EndCombat();
         }
     }
 }
