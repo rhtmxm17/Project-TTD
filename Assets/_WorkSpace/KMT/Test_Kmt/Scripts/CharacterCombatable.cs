@@ -13,7 +13,7 @@ public class CharacterCombatable : Combatable
     curState state = curState.WAITING;
 
     Vector3 originPos;
-    //TweenerCore<Vector3, Vector3, VectorOptions> moveTween = null;
+    SkillButton skillButton;
 
     protected override void Awake()
     {
@@ -22,6 +22,24 @@ public class CharacterCombatable : Combatable
         originPos = transform.position;
         waveClearEvent.AddListener(BackToOriginPos);
 
+    }
+
+    public void SetSkillButton(SkillButton skillButton)
+    {
+        this.skillButton = skillButton;
+    }
+
+    public override void OnSkillCommanded(Skill skillData)//필요할지는 모름
+    {
+        if (!skillButton.Interactable)
+        {
+            Debug.Log("쿨다운중");
+            return;
+        }
+
+        StartCoroutine(skillButton.StartCoolDown(5));//TODO : 쿨타임 지정
+        
+        base.OnSkillCommanded(skillData);
     }
 
     public override void StartCombat(CombManager againstL)
@@ -44,6 +62,8 @@ public class CharacterCombatable : Combatable
 
     IEnumerator BackToPosCO()
     {
+        yield return null;
+
         float trackTime = 0.2f;
         float time = 0;
 
