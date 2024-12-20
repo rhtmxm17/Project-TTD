@@ -23,6 +23,7 @@ public class Combatable : MonoBehaviour
     protected Trackable trackable;
     protected Coroutine curActionCoroutine = null;
     protected Coroutine moveCoroutine = null;
+    protected SkillButton SkillButton;
 
     Func<Transform, Transform> foundEnemyLogic = null;
     Func<Transform, Transform> foundNearEnemyLogic = null;
@@ -45,6 +46,7 @@ public class Combatable : MonoBehaviour
     {
         UnitAnimator = animator;
         this.Group = Group;
+
     }
 
     #region TODO
@@ -95,8 +97,9 @@ public class Combatable : MonoBehaviour
     }
 
     #region 스킬_추가 
-    public void OnSkillCommanded(Skill skillData)
+    public virtual void OnSkillCommanded(Skill skillData)
     {
+        
         StopCurActionCoroutine();
 
         curActionCoroutine = StartCoroutine(skillData.SkillRoutine(this, OnSkillCompleted));
