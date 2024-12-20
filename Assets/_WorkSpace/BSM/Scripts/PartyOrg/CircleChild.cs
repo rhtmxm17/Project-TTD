@@ -25,7 +25,9 @@ namespace _WorkSpace.BSM.Scripts.PartyOrg
             { UnitType.GROUND, 0 },
             { UnitType.ELECTRIC, 0 }
         };
-
+        
+        public int ReturnValue => _checkDict[_curUnitType];
+        public UnitType ReturnUnitType => _curUnitType;
 
         private void Awake()
         {
@@ -75,9 +77,6 @@ namespace _WorkSpace.BSM.Scripts.PartyOrg
  
             _checkDict[unitType] = 1;
         }
-        
-        public int ReturnValue => _checkDict[_curUnitType];
-        public UnitType ReturnUnitType => _curUnitType;
-
+         
     }
 }

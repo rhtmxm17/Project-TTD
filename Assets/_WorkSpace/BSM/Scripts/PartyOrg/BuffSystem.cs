@@ -18,7 +18,7 @@ namespace _WorkSpace.BSM.Scripts.PartyOrg
 
         private bool isCheck;
         private int _totalCount;
-
+        private Coroutine _delayCo;
         public int TotalCount
         {
             get => _totalCount;
@@ -29,16 +29,32 @@ namespace _WorkSpace.BSM.Scripts.PartyOrg
                 if (_totalCount < 5)
                 {
                     isCheck = false;
+
+                    if (_delayCo != null)
+                    {
+                        StopCoroutine(_delayCo);
+                        _delayCo = null;
+                    }
                 }
 
                 if (_totalCount == 5 && !isCheck)
                 {
                     isCheck = true;
-                    OnTypeUpdateEvent?.Invoke();
+
+                    if (_delayCo == null)
+                    {
+                        _delayCo = StartCoroutine(DelayCoroutine());
+                    } 
                 }
             }
         }
 
+        private IEnumerator DelayCoroutine()
+        {
+            yield return new WaitForSeconds(0.5f);
+            OnTypeUpdateEvent?.Invoke();
+        }
+        
         public UnityEvent OnTypeUpdateEvent = new();
 
         private BuffType _curBuffType;
