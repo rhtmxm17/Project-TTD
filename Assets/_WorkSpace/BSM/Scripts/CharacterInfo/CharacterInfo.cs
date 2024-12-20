@@ -4,13 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class CharacterInfo : BaseUI
 {
-    public CharacterData _data;
+    [SerializeField] protected CharacterData _data;
     
-    private CharacterList _characterList;
+    protected CharacterInfoManager _characterInfoManager;
     protected int _curIndex;
 
     protected override void Awake()
@@ -21,12 +23,14 @@ public class CharacterInfo : BaseUI
     private void Start()
     {
         Init();
+        
     }
-
+  
     private void Init()
     {
-        _characterList = GetComponentInParent<CharacterList>();
-        _curIndex = _characterList._characters.IndexOf(this);
+        _characterInfoManager = GetComponentInParent<CharacterInfoManager>();
+        _curIndex = _characterInfoManager._characters.IndexOf(this);
     }
-    
+ 
+
 }
