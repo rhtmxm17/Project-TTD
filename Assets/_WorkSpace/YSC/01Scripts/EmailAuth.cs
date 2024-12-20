@@ -47,7 +47,7 @@ public class EmailAuth : UI_Manager
         _email = _emailAuthInputField.text;
         if (user != null)
         {
-            user.UpdateEmailAsync(_email).ContinueWithOnMainThread(task => {
+            user.SendEmailVerificationBeforeUpdatingEmailAsync(_email).ContinueWithOnMainThread(task => {
                 if (task.IsCanceled)
                 {
                     Debug.LogError("UpdateEmailAsync was canceled.");

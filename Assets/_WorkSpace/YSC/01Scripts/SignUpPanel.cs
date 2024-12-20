@@ -13,7 +13,7 @@ public class SignUpPanel : UI_Manager
     [SerializeField] TMP_InputField _signUpPWInputField;
 
 
-    AuthError error = AuthError.EmailAlreadyInUse;
+   //  AuthError error = AuthError.EmailAlreadyInUse;
     private void Start()
     {
         // Init();
