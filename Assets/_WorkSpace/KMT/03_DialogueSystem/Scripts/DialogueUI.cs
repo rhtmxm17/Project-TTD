@@ -2,9 +2,12 @@ using Firebase.Database;
 using Firebase.Extensions;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using static System.Net.Mime.MediaTypeNames;
 
 public class DialogueUI : BaseUI
 {
@@ -12,9 +15,9 @@ public class DialogueUI : BaseUI
     string curUid;
 
     [SerializeField]
-    ChattingBlock myBlock;
-    [SerializeField]
-    ChattingBlock otherBlock;
+    ChattingBlock[] chatingList;
+
+    int maxChattingCnt;
 
     TMP_InputField input;
     Button sendBtn;
@@ -29,11 +32,18 @@ public class DialogueUI : BaseUI
         sendBtn = GetUI<Button>("SendButton");
         boardTransform = GetUI<Transform>("Content");
 
-        curUsersDialogueRef = GameManager.Database.RootReference.Child($"Users/{curUid}/dialogues");
+        curUsersDialogueRef = GameManager.Database.RootReference.Child($"Users/{UserData.myUid}/dialogues");
+
+        maxChattingCnt = chatingList.Length - 1;
 
         sendBtn.onClick.AddListener(SendMessage);
         Refresh();
     }
+
+    [SerializeField]
+    string uid;
+    [SerializeField]
+    string nick;
 
     void SendMessage()
     {
@@ -46,19 +56,13 @@ public class DialogueUI : BaseUI
 
             Dictionary<string, object> data = new Dictionary<string, object>
             {
-                { key + "/uid", UserData.myUid },
-                { key + "/nickname", UserData.myNickname },
+                { key + "/uid", uid },
+                { key + "/nickname", nick },
                 { key + "/content", text },
                 { key + "/timestamp",ServerValue.Timestamp }
             };
 
             curUsersDialogueRef.UpdateChildrenAsync(data);
-
-            var ad = boardTransform.GetComponentsInChildren<ChattingBlock>(true);
-
-            foreach (ChattingBlock block in ad) { 
-                Destroy(block.gameObject);
-            }
 
             Refresh();
 
@@ -67,7 +71,6 @@ public class DialogueUI : BaseUI
     }
 
     [ContextMenu("refresh")]
-    //TODO : 갱신{로직 개선 필요}
     void Refresh()
     {
 
@@ -82,24 +85,43 @@ public class DialogueUI : BaseUI
 
             DataSnapshot snapshot = task.Result;
 
+            long curChildIdx = snapshot.ChildrenCount - 1;
+
+            foreach (ChattingBlock blocks in chatingList)
+            { 
+                blocks.gameObject.SetActive(false);
+            }
+
             foreach (DataSnapshot content in task.Result.Children)
             {
-                ChattingBlock block = null;
-
-                Debug.Log(content.Child("uid").ToString());
-                Debug.Log(UserData.myUid);
-
-                if (content.Child("uid").Value.ToString().Equals(UserData.myUid))//본인의 내역인 경우
+                if (curChildIdx < maxChattingCnt && curChildIdx >= 0)//채팅블록 재설정
                 {
-                    block = Instantiate(myBlock, boardTransform);
-                    block.SetBlock(content.Child("content").Value.ToString());
+                    if (content.Child("uid").Value.ToString().Equals(curUid))//본인의 내역인 경우
+                    {
+                        chatingList[curChildIdx].SetMyChatBlock(content.Child("content").Value.ToString());
+                    }
+                    else //다른사람의 내역인 경우
+                    {
+                        chatingList[curChildIdx].SetOtherBlock(content.Child("nickname").Value.ToString(),
+                                       content.Child("content").Value.ToString());
+                    }
+
+                    chatingList[curChildIdx].gameObject.SetActive(true);
                 }
-                else //다른사람의 내역인 경우
-                { 
-                    block = Instantiate(otherBlock, boardTransform);
-                    block.SetBlock(content.Child("nickname").Value.ToString(),
-                                   content.Child("content").Value.ToString());
+                else //데이터베이스 제거 리스트에 추가
+                {
+/*                    Dictionary<string, object> data = new Dictionary<string, object>
+                {
+                    { key + "/uid", UserData.myUid },
+                        { key + "/nickname", UserData.myNickname },
+                    { key + "/content", text },
+                    { key + "/timestamp",ServerValue.Timestamp }
+                };*/
                 }
+
+                curChildIdx--;
+
+
             }
 
             StartCoroutine(AlineCO());
@@ -111,10 +133,11 @@ public class DialogueUI : BaseUI
     IEnumerator AlineCO()
     {
         yield return new WaitForSeconds(0.2f);
-        var sdf = Instantiate(myBlock, boardTransform);
-        sdf.SetBlock(" ");
+        chatingList[maxChattingCnt].gameObject.SetActive(true);
+        chatingList[maxChattingCnt].SetMyChatBlock(" ");
         yield return null;
-        sdf.gameObject.SetActive(false);
+        chatingList[maxChattingCnt].gameObject.SetActive(false);
+
     }
 
 

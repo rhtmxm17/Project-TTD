@@ -8,31 +8,47 @@ public class ChattingBlock : MonoBehaviour
 {
 
     [SerializeField]
+    VerticalLayoutGroup layoutGroup;
+
+    [SerializeField]
     TextMeshProUGUI nameText;
     [SerializeField]
     TextMeshProUGUI contentText;
 
+    [SerializeField]
+    GameObject nameBoard;
+    [SerializeField]
+    Image boardImg;
+
+    [SerializeField]
+    Color myBlockColor;
+    [SerializeField]
+    Color otherBlockColor;
+
     /// <summary>
-    /// 이름은 설정하지 않고 내용만 작성
+    /// 본인이 작성한 채팅 블록을 작성.
     /// </summary>
     /// <param name="content">작성될 내용</param>
-    public void SetBlock(in string content)
+    public void SetMyChatBlock(in string content)
     {
+        nameBoard.SetActive(false);
         contentText.text = content;
+        boardImg.color = myBlockColor;
+        layoutGroup.childAlignment = TextAnchor.UpperRight;
     }
 
     /// <summary>
-    /// 이름과 내용 모두 작성
+    /// 다른 사람이 작성한 채팅 블록을 작성
     /// </summary>
     /// <param name="name">작성될 이름</param>
     /// <param name="content">작성될 내용</param>
-    public void SetBlock(in string name, in string content)
+    public void SetOtherBlock(in string name, in string content)
     {
-        if (nameText != null)
-        {
-            nameText.text = name;
-        }
+        nameBoard.SetActive(true);
+        nameText.text = name;
         contentText.text = content;
+        boardImg.color = otherBlockColor;
+        layoutGroup.childAlignment = TextAnchor.UpperLeft;
     }
 
 }
