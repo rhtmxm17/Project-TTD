@@ -51,6 +51,7 @@ public class DialogueUI : BaseUI
         if (input != null && input.text != "")
         {
             string text = input.text;
+            input.text = "";
 
             string key = curUsersDialogueRef.Push().Key;
 
@@ -84,8 +85,10 @@ public class DialogueUI : BaseUI
             }
 
             DataSnapshot snapshot = task.Result;
+            Dictionary<string, object> updateDataDic = new Dictionary<string, object>();
 
             long curChildIdx = snapshot.ChildrenCount - 1;
+
 
             foreach (ChattingBlock blocks in chatingList)
             { 
@@ -110,18 +113,17 @@ public class DialogueUI : BaseUI
                 }
                 else //데이터베이스 제거 리스트에 추가
                 {
-/*                    Dictionary<string, object> data = new Dictionary<string, object>
-                {
-                    { key + "/uid", UserData.myUid },
-                        { key + "/nickname", UserData.myNickname },
-                    { key + "/content", text },
-                    { key + "/timestamp",ServerValue.Timestamp }
-                };*/
+                    updateDataDic.Add(content.Key, null);
                 }
 
                 curChildIdx--;
 
 
+            }
+
+            if (updateDataDic.Count > 0)
+            {
+                curUsersDialogueRef.UpdateChildrenAsync(updateDataDic);
             }
 
             StartCoroutine(AlineCO());
@@ -134,8 +136,8 @@ public class DialogueUI : BaseUI
     {
         yield return new WaitForSeconds(0.2f);
         chatingList[maxChattingCnt].gameObject.SetActive(true);
-        chatingList[maxChattingCnt].SetMyChatBlock(" ");
-        yield return null;
+        chatingList[maxChattingCnt].SetMyChatBlock(" /n/n/n");
+        yield return new WaitForSeconds(0.2f);
         chatingList[maxChattingCnt].gameObject.SetActive(false);
 
     }
