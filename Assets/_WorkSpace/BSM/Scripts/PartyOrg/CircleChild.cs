@@ -38,6 +38,8 @@ namespace _WorkSpace.BSM.Scripts.PartyOrg
             {
                 if (transform.childCount != 0)
                 {
+                    Debug.Log($"나 자식 있음:{gameObject.name}");
+                    
                     _compareCharacter = transform.GetChild(0).GetComponent<CharacterState>();
 
                     if (Character != _compareCharacter)
@@ -54,6 +56,7 @@ namespace _WorkSpace.BSM.Scripts.PartyOrg
                 }
                 else
                 {
+                    Debug.Log($"난 자식 없음 :{gameObject.name}");
                     _curUnitType = UnitType.NONE;
                     Character = null;
                 }

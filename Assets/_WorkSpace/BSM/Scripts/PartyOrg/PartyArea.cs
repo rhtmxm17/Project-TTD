@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UniRx;
 using UnityEngine;
+using UnityEngine.Events;
 using CharacterState = BSM_Character_State.CharacterState;
 using BuffSystem = _WorkSpace.BSM.Scripts.PartyOrg.BuffSystem;
 using CircleChild = _WorkSpace.BSM.Scripts.PartyOrg.CircleChild;
@@ -24,6 +25,7 @@ public class PartyArea : BaseUI
     private Dictionary<CharacterState, Transform> _battleScenePos;
 
     [SerializeField] private CircleChild[] _childList;
+    public UnityEvent OnTypeUpdateEvent;
     
     protected override void Awake()
     {
@@ -33,9 +35,10 @@ public class PartyArea : BaseUI
 
     private void OnEnable()
     {
+        _buffSystem.OnTypeUpdateEvent.AddListener(UpdateList);
         if (_checkCo == null) PartyAreaCheck();
     }
-
+    
     private void Start() => PartyAreaCheck();
 
     private void GetBind()
@@ -65,14 +68,18 @@ public class PartyArea : BaseUI
             _buffSystem.FrontCount = _frontCharacters.Length;
             _buffSystem.MiddleCount = _middleCharacters.Length;
             _buffSystem.BackCount = _backCharacters.Length;
+            _buffSystem.TotalCount = (_frontCharacters.Length + _middleCharacters.Length + _backCharacters.Length);
             
             _buffSystem.CurrentBuff(); 
-            _buffSystem.UpdateTypeBuff(_childList); 
-            
+            //_buffSystem.UpdateTypeBuff(_childList);
             
             yield return null;
         }
+    }
+
+    private void UpdateList()
+    {
+        Debug.Log("실행");
+        _buffSystem.UpdateTypeBuff(_childList);
     } 
-    
-    //각 캐릭터의 타입을 가져와서
 }
