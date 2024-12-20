@@ -5,6 +5,7 @@ using UnityEngine;
 public class HYJ_Spawn : MonoBehaviour
 {
     [SerializeField] GameObject player;
+    [SerializeField] GameObject horse;
     [SerializeField] bool point1;
     [SerializeField] bool point2;
     [SerializeField] bool point3;
@@ -19,7 +20,7 @@ public class HYJ_Spawn : MonoBehaviour
         }
         if (point2)
         {
-            Instantiate(player,new Vector3(-2f,0,0),Quaternion.identity);
+            Instantiate(horse, new Vector3(-2f,0,0),Quaternion.identity);
         }
         if (point3)
         {
@@ -27,7 +28,7 @@ public class HYJ_Spawn : MonoBehaviour
         }
         if (point4)
         {
-            Instantiate(player, new Vector3(0, 0, 0), Quaternion.identity);
+            Instantiate(horse, new Vector3(0, 0, 0), Quaternion.identity);
         }
         if (point5)
         {
@@ -35,7 +36,7 @@ public class HYJ_Spawn : MonoBehaviour
         }
         if (point6)
         {
-            Instantiate(player, new Vector3(2, 0, 0), Quaternion.identity);
+            Instantiate(horse, new Vector3(2, 0, 0), Quaternion.identity);
         }
     }
 

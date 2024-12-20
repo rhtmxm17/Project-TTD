@@ -45,6 +45,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbeaf1e525f1fc04f98f6b0bd0b691e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerAnimator: {fileID: 333533990762293225}
+  Idle_List:
+  - {fileID: 7400000, guid: b81ad915777074048bdcc320f687ee1e, type: 2}
+  Attack_List:
+  - {fileID: 7400000, guid: 5fa777919e804474080fad7ccf0cb5b4, type: 2}
 --- !u!1001 &1782844817340361684
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -52,6 +57,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1782844816076428965}
     m_Modifications:
+    - target: {fileID: 2025806811731348541, guid: 6646aaa0302f0412b8483a6da4dd3d1f,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2025806811731348541, guid: 6646aaa0302f0412b8483a6da4dd3d1f,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 18779a70befe1154f81e7073bd806939, type: 2}
     - target: {fileID: 7548139898082791852, guid: 6646aaa0302f0412b8483a6da4dd3d1f,
         type: 3}
       propertyPath: m_Name
@@ -162,8 +177,15 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8070960577869086911, guid: 6646aaa0302f0412b8483a6da4dd3d1f, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 6646aaa0302f0412b8483a6da4dd3d1f, type: 3}
+--- !u!95 &333533990762293225 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 2025806811731348541, guid: 6646aaa0302f0412b8483a6da4dd3d1f,
+    type: 3}
+  m_PrefabInstance: {fileID: 1782844817340361684}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &7090006943864225789 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8852155101928985641, guid: 6646aaa0302f0412b8483a6da4dd3d1f,
