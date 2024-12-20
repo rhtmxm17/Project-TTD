@@ -10,7 +10,7 @@ public class StageCharacterSetter : MonoBehaviour
 {
 
     //스테이지 진입 시, 진형 설정에서 캐릭터 정보들을 받아올 것.
-    [SerializeField] private List<CharacterData> characterDataList;
+    //[SerializeField] private List<CharacterData> characterDataList;
     //TODO : 필요시 나중에 타입 지정
     [SerializeField] Combatable characterPrefab;
 
@@ -34,15 +34,16 @@ public class StageCharacterSetter : MonoBehaviour
         new Vector2(-14.474f, -1.930145f)
     };
 
-    private void Start()
+    public void InitCharacters(List<CharacterData> characterDatas)
     {
-        if (characterDataList.Count <= 0)
+        if (characterDatas.Count <= 0)
             return;
 
-        SpawnCharacterDataSet();
+        SpawnCharacterDataSet(characterDatas);
     }
 
-    private void SpawnCharacterDataSet()
+
+    private void SpawnCharacterDataSet(List<CharacterData> characterDataList)
     {
         CombManager group = GetComponent<CombManager>();
         List<Combatable> characters = new List<Combatable>();

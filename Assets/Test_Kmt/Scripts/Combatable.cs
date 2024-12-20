@@ -105,8 +105,14 @@ public class Combatable : MonoBehaviour
 
     private void OnSkillCompleted()
     {
+        Debug.Log(gameObject.GetInstanceID());
+
         StopCurActionCoroutine();
+        Debug.Log(gameObject.GetInstanceID());
         curActionCoroutine = StartCoroutine(TrackingCo());
+/*        Debug.Log(curActionCoroutine == null);
+        Debug.Log(gameObject == null);*/
+        Debug.Log("호출");
     }
 
     //private IEnumerator SkillRoutine(Skill skillData)
@@ -166,7 +172,7 @@ public class Combatable : MonoBehaviour
         curActionCoroutine = StartCoroutine(TrackingCo());
     }
 
-    public void StartCombat(CombManager againstL)
+    public virtual void StartCombat(CombManager againstL)
     {
         againistObjList = againstL;
 

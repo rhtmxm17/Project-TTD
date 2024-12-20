@@ -7,6 +7,11 @@ using UnityEngine;
 
 public class CharacterCombatable : Combatable
 {
+
+    enum curState { WAITING, OTHERS}
+
+    curState state = curState.WAITING;
+
     Vector3 originPos;
     TweenerCore<Vector3, Vector3, VectorOptions> moveTween = null;
 
@@ -17,6 +22,17 @@ public class CharacterCombatable : Combatable
         originPos = transform.position;
         waveClearEvent.AddListener(BackToOriginPos);
 
+    }
+
+    public override void StartCombat(CombManager againstL)
+    {
+        state = curState.OTHERS;
+        base.StartCombat(againstL);
+    }
+
+    public bool IsWaiting()
+    { 
+        return state == curState.WAITING;
     }
 
     void BackToOriginPos()
@@ -47,27 +63,7 @@ public class CharacterCombatable : Combatable
         }
 
         transform.position = originPos;
+        state = curState.WAITING;
     }
-
-/*    public void BackToOriginPos2()
-    {
-
-        moveTween = transform
-            .DOMove(originPos, 10)
-            .SetSpeedBased(true)
-            .SetEase(Ease.Linear);
-        moveTween.onComplete += () => { moveTween.Kill(); moveTween = null; };
-            
-
-    }//캐릭터에만 따로 필요
-
-    void StopMove()
-    {
-        if (moveTween != null)
-        {
-            moveTween.Kill();
-            moveTween = null;
-        }
-    }*/
 
 }
