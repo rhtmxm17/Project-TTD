@@ -7,10 +7,11 @@ using UnityEngine.UI;
 
 namespace BSM_Character_State
 {
-    public class CharacterState : CommonBind
+    public class CharacterState : BaseUI
     { 
         [field: SerializeField] public int UnitID { get; set; }
-
+        public UnitType CurUnitType;
+        
         private Slider _hpBar;
         public int AttackDamage;
         private int _hp;  
@@ -27,13 +28,12 @@ namespace BSM_Character_State
                     //캐릭터 사망 조건            
                 } 
             }
-        }
-         
-        private void Awake()
+        } 
+        protected override void Awake()
         {
-            Bind(); 
+            base.Awake(); 
             _hp = 50;
-            _hpBar = GetCommonComponent<Slider>("HP_Bar");  
+            _hpBar = GetUI<Slider>("HP_Bar");  
         }
     }
 }
