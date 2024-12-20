@@ -7,11 +7,11 @@ public abstract class Skill : ScriptableObject
 {
     public event UnityAction onSkillCompleted;
 
-    public IEnumerator SkillRoutine(SampleUnitClass self)
+    public IEnumerator SkillRoutine(Combatable self)
     {
         yield return SkillRoutineImplement(self);
         onSkillCompleted?.Invoke();
     }
 
-    protected abstract IEnumerator SkillRoutineImplement(SampleUnitClass self);
+    protected abstract IEnumerator SkillRoutineImplement(Combatable self);
 }
