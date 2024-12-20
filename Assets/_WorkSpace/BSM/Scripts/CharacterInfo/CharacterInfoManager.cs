@@ -21,6 +21,10 @@ public class CharacterInfoManager : BaseUI
     {
         _infoUI = GetUI<CharacterInfoUI>("InfoPopUp");
     }
+    
+    /// <summary>
+    /// 보유 캐릭터 리스트 업데이트
+    /// </summary>
     private void UpdateCharacterList()
     {
         _characters = GetComponentsInChildren<CharacterInfo>().ToList();
