@@ -107,7 +107,7 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
                 // BG_IMG
                 if (false == string.IsNullOrEmpty(cells[(int)Column.BG_IMG]))
                 {
-                    parsed.BackgroundSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataManager.SpritesAssetFolder}/{cells[(int)Column.BG_IMG]}");
+                    parsed.BackgroundSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataManager.SpritesAssetFolder}/{cells[(int)Column.BG_IMG]}.asset");
                 }
 
                 tempDialogues.Add(parsed);
@@ -129,6 +129,8 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
                 }
                 else
                 {
+                    parsed.StandingImageId = tempStandingImages.Count;
+
                     StandingImage loaded = new StandingImage();
                     loaded.ActorId = tempStandingImages.Count;
 
