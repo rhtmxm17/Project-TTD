@@ -21,8 +21,8 @@ public class DialogueController : MonoBehaviour
     [SerializeField] Image[] characterImage;
 
     // 추가적으로 컨트롤이 필요할 수 있는 박스에 대한 선언(당장 안써서 주석처리)
-    // [Header("텍스트 박스")]
-    // [SerializeField] GameObject nameBox;
+    [Header("텍스트 박스")]
+    [SerializeField] GameObject nameBox;
     // [SerializeField] GameObject dialogueBox;
 
     [Header("텍스트")]
@@ -128,6 +128,7 @@ public class DialogueController : MonoBehaviour
         // TODO : 스토리 끝난 이후 할 행동에 대한 구현
         // 기획 의도에 따라 자동으로 다음 스토리로 넘어갈지, 혹은 전투씬에서 스토리를 부를 경우 창을 바로 없앨지 등에 고민
         Debug.Log("스토리 출력 끝");
+        nameBox.SetActive(false);   
         dialogueText.text = "-다음이시간에-";
         // (임시)스토리가 끝나면 창을 자동으로 닫음
         Destroy(storyPrefab,3f);
