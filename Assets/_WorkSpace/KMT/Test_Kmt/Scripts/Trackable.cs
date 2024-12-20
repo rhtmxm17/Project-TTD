@@ -12,7 +12,7 @@ public class Trackable : MonoBehaviour
     [SerializeField]        //TODO : 
     public float rangePow = 9;//3 * 3 => 캐릭터 파라미터? 다른 컴포넌트로 이동
 
-    TweenerCore<Vector3, Vector3, VectorOptions> dtween = null;
+    //TweenerCore<Vector3, Vector3, VectorOptions> dtween = null;
 
     public IEnumerator TrackingCO(Transform dest)
     {
@@ -35,21 +35,5 @@ public class Trackable : MonoBehaviour
         }
 
     }
-
-/*    public IEnumerator TrackingCO(Transform dest)
-    {
-        dtween = null;
-
-        while (dest != null && rangePow < Vector3.SqrMagnitude(dest.position - transform.position))
-        {
-            dtween = transform
-            .DOMove(dest.position, 10)
-            .SetSpeedBased(true)
-            .SetEase(Ease.Linear);
-            yield return new WaitForSeconds(0.02f);
-            dtween.Kill();
-        }
-
-    }*/
 
 }
