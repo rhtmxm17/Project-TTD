@@ -12,14 +12,24 @@ namespace _WorkSpace.BSM.Scripts.PartyOrg
     public class CircleChild : MonoBehaviour
     {
         [HideInInspector] public CharacterState Character;
-        
+        private CharacterState _compareCharacter;
+
         private Coroutine _childCo;
-        
-    
+        private UnitType _curUnitType;
+
+        private Dictionary<UnitType, int> _checkDict = new Dictionary<UnitType, int>()
+        {
+            { UnitType.FIRE, 0 },
+            { UnitType.GRASS, 0 },
+            { UnitType.WATER, 0 },
+            { UnitType.GROUND, 0 },
+            { UnitType.ELECTRIC, 0 }
+        };
+
+
         private void Awake()
         {
             _childCo = StartCoroutine(ChildCoroutine());
-        
         }
 
         private IEnumerator ChildCoroutine()
@@ -28,30 +38,43 @@ namespace _WorkSpace.BSM.Scripts.PartyOrg
             {
                 if (transform.childCount != 0)
                 {
-                    if (Character != transform.GetChild(0).GetComponent<CharacterState>())
+                    _compareCharacter = transform.GetChild(0).GetComponent<CharacterState>();
+
+                    if (Character != _compareCharacter)
                     {
-                        Character = transform.GetChild(0).GetComponent<CharacterState>();
-                        
-                        //TODO: 캐릭터 속성 검사
-                        //여기서 속성들을 검사해서
-                        //1을 증가 시킨다?
-                        
-                        
-                        
+                        Character = _compareCharacter;
+
+                        if (!_curUnitType.Equals(Character.CurUnitType))
+                        {
+                            _curUnitType = Character.CurUnitType;
+
+                            UnitTypeCheck(_curUnitType);
+                        } 
                     }
                 }
                 else
                 {
+                    _curUnitType = UnitType.NONE;
                     Character = null;
                 }
-                
-                yield return null; 
-            }    
-        
+
+                yield return null;
+            }
         }
-    
+
+        private void UnitTypeCheck(UnitType unitType)
+        {
+            _checkDict[UnitType.FIRE] = 0;
+            _checkDict[UnitType.GRASS] = 0;
+            _checkDict[UnitType.WATER] = 0;
+            _checkDict[UnitType.ELECTRIC] = 0;
+            _checkDict[UnitType.GROUND] = 0;
+ 
+            _checkDict[unitType] = 1;
+        }
+        
+        public int ReturnValue => _checkDict[_curUnitType];
+        public UnitType ReturnUnitType => _curUnitType;
+
     }
 }
-
-
-

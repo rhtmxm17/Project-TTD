@@ -48,20 +48,15 @@ namespace _WorkSpace.BSM.Scripts.PartyOrg
     {
         //TODO: 속성 개수 구하기.
         //childList가 가지고 있는 속성들의 개수를 모두 더함?
-        
-
-    }
-
-    private void TypeCheck(UnitType unitType)
-    {
-        switch (unitType)
+        for (int i = 0; i < childList.Length; i++)
         {
-            
-            
-        }
-        
+            if (childList[i].Character != null)
+            {
+                Debug.Log($"{i}Key : {childList[i].ReturnUnitType} / {childList[i].ReturnValue}");
+            } 
+        } 
     }
-
+    
     private void TotalUnitType()
     {
         Debug.Log($"불 속성 개수 :{_unitTypeDict[UnitType.FIRE]}");

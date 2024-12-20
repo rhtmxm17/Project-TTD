@@ -23,7 +23,7 @@ public class PartyArea : BaseUI
  
     private Dictionary<CharacterState, Transform> _battleScenePos;
 
-    private CircleChild[] _childList;
+    [SerializeField] private CircleChild[] _childList;
     
     protected override void Awake()
     {
