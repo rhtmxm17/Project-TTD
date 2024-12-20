@@ -5,12 +5,10 @@ using UnityEngine.Events;
 
 public abstract class Skill : ScriptableObject
 {
-    public event UnityAction onSkillCompleted;
-
-    public IEnumerator SkillRoutine(Combatable self)
+    public IEnumerator SkillRoutine(Combatable self, UnityAction onCompletedCallback)
     {
         yield return SkillRoutineImplement(self);
-        onSkillCompleted?.Invoke();
+        onCompletedCallback?.Invoke();
     }
 
     protected abstract IEnumerator SkillRoutineImplement(Combatable self);
