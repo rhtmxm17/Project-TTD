@@ -16,9 +16,14 @@ public class SignUpPanel : UI_Manager
     AuthError error = AuthError.EmailAlreadyInUse;
     private void Start()
     {
+        // Init();
+        // 여기다 두니까 갑자기 밑에  "GetUI<Button>("SignUpConfirmButton").onClick.AddListener(SignUp);"
+        // NullReferenceException: Object reference not set to an instance of an object 뜸
+    }
+    private void OnEnable()
+    {
         Init();
     }
-
     private void Init()
     {
         _signUpIDInputField = GetUI<TMP_InputField>("SignUpIDInputField");
@@ -54,7 +59,7 @@ public class SignUpPanel : UI_Manager
         {
             if (task.IsCanceled)
             {
-                Debug.LogError("CreateUserWithEmailAndPasswordAsync was canceled.");
+                Debug.LogError("회원가입이 취소되었습니다.");
                // _checkPopup.SetActive(true);
               //  _checkPopupMsg.text = "회원가입이 취소되었습니다.";
                 return;
