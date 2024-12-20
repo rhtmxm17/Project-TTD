@@ -195,6 +195,8 @@ public class Combatable : MonoBehaviour
 
     IEnumerator TrackingCo()
     {
+        yield return null;
+
         Transform ch = foundEnemyLogic.Invoke(transform);
         float trackTime = 0.2f;
         float time = 0;
@@ -240,6 +242,8 @@ public class Combatable : MonoBehaviour
 
     IEnumerator CombatCO(Transform ch)
     {
+        yield return null;
+
         while (ch != null && trackable.rangePow > Vector3.SqrMagnitude(ch.transform.position - transform.position))
         {
             //ch.transform.Rotate(Vector3.forward * 10);
@@ -256,7 +260,7 @@ public class Combatable : MonoBehaviour
         //게임에서는 웨이브 자체를 전달. + 특성에 따라 추적 대상 함수등을 전달할수도..
         IEnumerator CombatCO()
         {
-
+            yield return null;
             Transform ch = foundEnemyLogic.Invoke(transform);
 
             //추적 대상이 있고, 웨이브가 진행중인 경우.
