@@ -13,7 +13,7 @@ public class CharacterCombatable : Combatable
     curState state = curState.WAITING;
 
     Vector3 originPos;
-    TweenerCore<Vector3, Vector3, VectorOptions> moveTween = null;
+    //TweenerCore<Vector3, Vector3, VectorOptions> moveTween = null;
 
     protected override void Awake()
     {
