@@ -45,7 +45,6 @@ public class Combatable : MonoBehaviour
     {
         UnitAnimator = animator;
         this.Group = Group;
-        data.SkillDataSO.onSkillCompleted += OnSkillCompleted;
     }
 
     #region TODO
@@ -100,7 +99,7 @@ public class Combatable : MonoBehaviour
     {
         StopCurActionCoroutine();
 
-        curActionCoroutine = StartCoroutine(skillData.SkillRoutine(this));
+        curActionCoroutine = StartCoroutine(skillData.SkillRoutine(this, OnSkillCompleted));
     }
 
     private void OnSkillCompleted()
