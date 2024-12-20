@@ -423,8 +423,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278519045
+  m_fontColor: {r: 0.01886791, g: 0.01886791, b: 0.01886791, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -804,7 +804,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b724e817c185b434a842d637a1f956f1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 58d6275b56a89da46901c3e8d41cd489, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1114,7 +1114,6 @@ GameObject:
   - component: {fileID: 2060482429411839077}
   - component: {fileID: 4494507456363279678}
   - component: {fileID: 3530026250488211543}
-  - component: {fileID: 3633561607898173347}
   m_Layer: 5
   m_Name: Dialog_UI
   m_TagString: Untagged
@@ -1156,7 +1155,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bc07939cfac6774784e4952838bc3f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: "\uD14C\uC2A4\uD2B8"
   dialogues:
   - name: "\uD14C\uC2A4\uD130"
     contexts:
@@ -1183,45 +1181,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   storyPrefab: {fileID: 8503873658166485392}
-  dialogueData: {fileID: 4494507456363279678}
+  storyData: {fileID: 11400000, guid: 25c88a6308c14314982f251749048831, type: 2}
   characterImage: []
   nameBox: {fileID: 3444084907452935997}
   dialogueBox: {fileID: 8503873658475993165}
   nameText: {fileID: 2149010087021755023}
   dialogueText: {fileID: 8503873658390615049}
-  input: {fileID: 3633561607898173347}
-  isAuto: 0
---- !u!114 &3633561607898173347
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8553145118355775990}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: 44f3af2d2f64cab45b4b6c5a7089e4bf,
-    type: 3}
-  m_NotificationBehavior: 0
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ControlsChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents: []
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
-  m_DefaultActionMap: UI
-  m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
+  input: {fileID: 0}
 --- !u!1 &8988235784978860279
 GameObject:
   m_ObjectHideFlags: 0
