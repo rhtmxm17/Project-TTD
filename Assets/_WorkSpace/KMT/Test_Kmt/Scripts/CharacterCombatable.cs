@@ -44,6 +44,8 @@ public class CharacterCombatable : Combatable
 
     IEnumerator BackToPosCO()
     {
+        yield return null;
+
         float trackTime = 0.2f;
         float time = 0;
 
