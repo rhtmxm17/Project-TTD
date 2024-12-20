@@ -23,7 +23,7 @@ public class Combatable : MonoBehaviour
     protected Trackable trackable;
     protected Coroutine curActionCoroutine = null;
     protected Coroutine moveCoroutine = null;
-    
+
     Func<Transform, Transform> foundEnemyLogic = null;
     Func<Transform, Transform> foundNearEnemyLogic = null;
     Func<Transform, Transform> foundFarEnemyLogic = null;
@@ -70,7 +70,7 @@ public class Combatable : MonoBehaviour
 
     void InitSearchLogic()
     {
-        switch (searchLogicType) 
+        switch (searchLogicType)
         {
             case SearchLogic.NEAR_FIRST:
                 foundEnemyLogic = foundNearEnemyLogic;
@@ -87,7 +87,7 @@ public class Combatable : MonoBehaviour
     protected void StopCurActionCoroutine()//중지시키는거 더 고려
     {
 
-        if(curActionCoroutine != null)
+        if (curActionCoroutine != null)
             StopCoroutine(curActionCoroutine);
 
         if (moveCoroutine != null)
@@ -99,14 +99,20 @@ public class Combatable : MonoBehaviour
     public void OnSkillCommanded(Skill skillData)
     {
         StopCurActionCoroutine();
-        
+
         curActionCoroutine = StartCoroutine(skillData.SkillRoutine(this));
     }
 
     private void OnSkillCompleted()
     {
+        Debug.Log(gameObject.GetInstanceID());
+
         StopCurActionCoroutine();
+        Debug.Log(gameObject.GetInstanceID());
         curActionCoroutine = StartCoroutine(TrackingCo());
+        /*        Debug.Log(curActionCoroutine == null);
+                Debug.Log(gameObject == null);*/
+        Debug.Log("호출");
     }
 
     //private IEnumerator SkillRoutine(Skill skillData)
@@ -166,7 +172,7 @@ public class Combatable : MonoBehaviour
         curActionCoroutine = StartCoroutine(TrackingCo());
     }
 
-    public void StartCombat(CombManager againstL)
+    public virtual void StartCombat(CombManager againstL)
     {
         againistObjList = againstL;
 
@@ -218,7 +224,7 @@ public class Combatable : MonoBehaviour
             {
                 ch = foundEnemyLogic.Invoke(transform);//새로운 대상 탐색
             }
-            else 
+            else
             {
                 StopCurActionCoroutine();
                 curActionCoroutine = StartCoroutine(CombatCO(ch));
@@ -247,40 +253,40 @@ public class Combatable : MonoBehaviour
         yield break;
     }
 
-/*
-    //게임에서는 웨이브 자체를 전달. + 특성에 따라 추적 대상 함수등을 전달할수도..
-    IEnumerator CombatCO()
-    {
-
-        Transform ch = foundEnemyLogic.Invoke(transform);
-
-        //추적 대상이 있고, 웨이브가 진행중인 경우.
-        while (ch != null && againistObjList != null)
+    /*
+        //게임에서는 웨이브 자체를 전달. + 특성에 따라 추적 대상 함수등을 전달할수도..
+        IEnumerator CombatCO()
         {
-            moveCoroutine = StartCoroutine(trackable.TrackingCO(ch));
-            yield return moveCoroutine;//이동 코루틴
 
-            if (ch == null)//이동중에 적이 쓰러진 경우.
+            Transform ch = foundEnemyLogic.Invoke(transform);
+
+            //추적 대상이 있고, 웨이브가 진행중인 경우.
+            while (ch != null && againistObjList != null)
             {
-                ch = foundEnemyLogic.Invoke(transform);//새로운 대상 탐색
-                continue;
+                moveCoroutine = StartCoroutine(trackable.TrackingCO(ch));
+                yield return moveCoroutine;//이동 코루틴
+
+                if (ch == null)//이동중에 적이 쓰러진 경우.
+                {
+                    ch = foundEnemyLogic.Invoke(transform);//새로운 대상 탐색
+                    continue;
+                }
+
+                while (ch != null && trackable.rangePow > Vector3.SqrMagnitude(ch.transform.position - transform.position))
+                {
+                    //ch.transform.Rotate(Vector3.forward * 10);
+                    ch.GetComponent<SpriteRenderer>().color = UnityEngine. Random.ColorHSV();
+                    yield return new WaitForSeconds(1);
+                }
+
+                ch = foundEnemyLogic.Invoke(transform);//적이 사라진 뒤 다음 타깃 탐색
+
             }
 
-            while (ch != null && trackable.rangePow > Vector3.SqrMagnitude(ch.transform.position - transform.position))
-            {
-                //ch.transform.Rotate(Vector3.forward * 10);
-                ch.GetComponent<SpriteRenderer>().color = UnityEngine. Random.ColorHSV();
-                yield return new WaitForSeconds(1);
-            }
-
-            ch = foundEnemyLogic.Invoke(transform);//적이 사라진 뒤 다음 타깃 탐색
+            //전투가 끝난경우.
+            EndCombat();
 
         }
-
-        //전투가 끝난경우.
-        EndCombat();
-
-    }
-*/
+    */
 
 }
