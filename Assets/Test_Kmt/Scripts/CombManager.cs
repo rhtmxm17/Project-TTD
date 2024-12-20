@@ -11,6 +11,7 @@ public class CombManager : MonoBehaviour
     [SerializeField]
     public List<Combatable> CharList;
 
+
     public UnityEvent ListClearedEvent = new UnityEvent();
 
     public CombManager Enemy { get; private set; }
