@@ -18,7 +18,7 @@ public class StageCharacterSetter : MonoBehaviour
     [SerializeField]
     GameObject skillPanel;
     [SerializeField]
-    GameObject skillButtonPrefab;
+    SkillButton skillButtonPrefab;
 
 
     List<Vector2> position = new List<Vector2>()
@@ -62,12 +62,14 @@ public class StageCharacterSetter : MonoBehaviour
             charObj.GetComponent<SpriteRenderer>().sprite = characterDataList[i].FaceIconSprite;
 
             //스킬 버튼 생성.
-            GameObject skillBtn = Instantiate(skillButtonPrefab, skillPanel.transform);
+            SkillButton skillBtn = Instantiate(skillButtonPrefab, skillPanel.transform);
             Skill skillData = characterDataList[i].SkillDataSO;
             skillBtn.transform.GetChild(0).GetComponent<Image>().sprite = characterDataList[i].SkillSprite;
             skillBtn.GetComponent<Button>().onClick.AddListener(() => {
                 charObj.GetComponent<Combatable>().OnSkillCommanded(skillData);
             });
+
+            ((CharacterCombatable)charObj).SetSkillButton(skillBtn);
 
         }
 
