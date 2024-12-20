@@ -49,11 +49,7 @@ namespace _WorkSpace.BSM.Scripts.PartyOrg
             }
         }
 
-        private IEnumerator DelayCoroutine()
-        {
-            yield return new WaitForSeconds(0.5f);
-            OnTypeUpdateEvent?.Invoke();
-        }
+
         
         public UnityEvent OnTypeUpdateEvent = new();
 
@@ -68,7 +64,13 @@ namespace _WorkSpace.BSM.Scripts.PartyOrg
             { UnitType.ELECTRIC, 0 },
             { UnitType.GROUND, 0 },
         };
-
+        
+        private IEnumerator DelayCoroutine()
+        {
+            yield return new WaitForSeconds(0.5f);
+            OnTypeUpdateEvent?.Invoke();
+        }
+        
         public void CurrentBuff()
         {
             if (FrontCount == 0 || MiddleCount == 0 || BackCount == 0)
