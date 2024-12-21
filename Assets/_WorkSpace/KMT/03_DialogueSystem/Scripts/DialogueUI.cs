@@ -11,6 +11,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 public class DialogueUI : BaseUI
 {
+    [Header("현재 방문중인 룸의 uid")]
     [SerializeField]
     string curUid;
 
@@ -25,21 +26,42 @@ public class DialogueUI : BaseUI
 
     DatabaseReference curUsersDialogueRef;
 
-    // Start is called before the first frame update
-    void Start()
+    protected override void Awake()
     {
+        base.Awake();
         input = GetUI<TMP_InputField>("ChatInput");
         sendBtn = GetUI<Button>("SendButton");
         boardTransform = GetUI<Transform>("Content");
 
-        curUsersDialogueRef = GameManager.Database.RootReference.Child($"Users/{UserData.myUid}/dialogues");
+        curUsersDialogueRef = GameManager.Database.RootReference.Child($"Users/{curUid}/dialogues");
 
         maxChattingCnt = chatingList.Length - 1;
 
-        sendBtn.onClick.AddListener(SendMessage);
+        sendBtn.onClick.AddListener(SendMessage);        
+    }
+
+    private void OnEnable()
+    {
+        curUsersDialogueRef.ValueChanged += DialogueUpdated;
+    }
+
+    private void OnDisable()
+    {
+        curUsersDialogueRef.ValueChanged -= DialogueUpdated;
+    }
+
+    private void DialogueUpdated(object sender, ValueChangedEventArgs e)
+    {
         Refresh();
     }
 
+    void Start()
+    {
+
+        Refresh();
+    }
+
+    [Header("현재 접속한 사람의 uid와 닉네임")]
     [SerializeField]
     string uid;
     [SerializeField]
@@ -64,8 +86,6 @@ public class DialogueUI : BaseUI
             };
 
             curUsersDialogueRef.UpdateChildrenAsync(data);
-
-            Refresh();
 
         }
 
@@ -99,7 +119,7 @@ public class DialogueUI : BaseUI
             {
                 if (curChildIdx < maxChattingCnt && curChildIdx >= 0)//채팅블록 재설정
                 {
-                    if (content.Child("uid").Value.ToString().Equals(curUid))//본인의 내역인 경우
+                    if (content.Child("uid").Value.ToString().Equals(uid))//본인의 내역인 경우
                     {
                         chatingList[curChildIdx].SetMyChatBlock(content.Child("content").Value.ToString());
                     }
@@ -139,7 +159,6 @@ public class DialogueUI : BaseUI
         chatingList[maxChattingCnt].SetMyChatBlock(" /n/n/n");
         yield return new WaitForSeconds(0.2f);
         chatingList[maxChattingCnt].gameObject.SetActive(false);
-
     }
 
 
