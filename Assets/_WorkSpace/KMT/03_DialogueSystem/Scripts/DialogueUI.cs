@@ -18,11 +18,23 @@ public class DialogueUI : BaseUI
     [SerializeField]
     ChattingBlock[] chatingList;
 
+    [SerializeField]
+    Sprite[] emogiList;
+    [SerializeField]
+    Button EmojiButtonPrefab;
+
     int maxChattingCnt;
 
     TMP_InputField input;
     Button sendBtn;
     Transform boardTransform;
+
+    OpenableUIBase emojiPanelParent;
+    Button emojiButton;
+    Button emojiPanelBoarder;
+    Transform emojiContentTransform;
+
+    Dictionary<string, Sprite> emogiDict;
 
     DatabaseReference curUsersDialogueRef;
 
@@ -33,7 +45,29 @@ public class DialogueUI : BaseUI
         sendBtn = GetUI<Button>("SendButton");
         boardTransform = GetUI<Transform>("Content");
 
+        emojiPanelParent = GetUI<OpenableUIBase>("EmojiPanelGroup");
+        emojiButton = GetUI<Button>("EmojiButton");
+        emojiPanelBoarder = GetUI<Button>("EmojiPanelBoarder");
+        emojiContentTransform = GetUI<Transform>("EmojiContents");
+
         curUsersDialogueRef = GameManager.Database.RootReference.Child($"Users/{curUid}/dialogues");
+
+        #region 이모티콘 영역
+
+        emojiButton.onClick.AddListener(emojiPanelParent.OpenWindow);
+        emojiPanelBoarder.onClick.AddListener(emojiPanelParent.CloseWindow);
+
+        emogiDict = new Dictionary<string, Sprite>();
+
+        foreach (Sprite sprite in emogiList)
+        {
+            Button btn = Instantiate(EmojiButtonPrefab, emojiContentTransform);
+            btn.image.sprite = sprite;
+            btn.onClick.AddListener(() => { SendMessage(sprite.name); emojiPanelParent.CloseWindow(); });
+            emogiDict.Add(sprite.name, sprite);
+        }
+
+        #endregion
 
         maxChattingCnt = chatingList.Length - 1;
 
@@ -91,6 +125,23 @@ public class DialogueUI : BaseUI
 
     }
 
+    void SendMessage(in string sendStr)
+    {
+
+        string key = curUsersDialogueRef.Push().Key;
+
+        Dictionary<string, object> data = new Dictionary<string, object>
+        {
+            { key + "/uid", uid },
+            { key + "/nickname", nick },
+            { key + "/content", sendStr },
+            { key + "/timestamp",ServerValue.Timestamp }
+        };
+
+        curUsersDialogueRef.UpdateChildrenAsync(data);
+
+    }
+
     [ContextMenu("refresh")]
     void Refresh()
     {
@@ -119,14 +170,36 @@ public class DialogueUI : BaseUI
             {
                 if (curChildIdx < maxChattingCnt && curChildIdx >= 0)//채팅블록 재설정
                 {
+
+                    string stringVal = content.Child("content").Value.ToString();
+
                     if (content.Child("uid").Value.ToString().Equals(uid))//본인의 내역인 경우
                     {
-                        chatingList[curChildIdx].SetMyChatBlock(content.Child("content").Value.ToString());
+
+                        if (emogiDict.ContainsKey(stringVal)) 
+                        {
+                            chatingList[curChildIdx].SetMyEmojiBlock(emogiDict[stringVal]);
+                        }
+                        else 
+                        {
+                            chatingList[curChildIdx].SetMyChatBlock(stringVal);
+                        }
+
                     }
                     else //다른사람의 내역인 경우
                     {
-                        chatingList[curChildIdx].SetOtherBlock(content.Child("nickname").Value.ToString(),
-                                       content.Child("content").Value.ToString());
+
+                        string nameVal = content.Child("nickname").Value.ToString();
+
+                        if (emogiDict.ContainsKey(stringVal))
+                        {
+                            chatingList[curChildIdx].SetOtherEmojiBlock(nameVal, emogiDict[stringVal]);
+                        }
+                        else
+                        {
+                            chatingList[curChildIdx].SetOtherBlock(nameVal, stringVal);
+                        }
+
                     }
 
                     chatingList[curChildIdx].gameObject.SetActive(true);
