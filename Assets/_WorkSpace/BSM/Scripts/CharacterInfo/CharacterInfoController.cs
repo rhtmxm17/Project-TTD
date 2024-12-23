@@ -13,14 +13,15 @@ public class CharacterInfoController : BaseUI
     [HideInInspector] public CharacterInfo CurCharacterInfo;
 
     [HideInInspector] public GameObject _infoPopup;
-    
+
     [HideInInspector] public int CurIndex = 0;
-    
+
+    private CharacterSort _characterSort;
+ 
     private Button _prevButton;
     private Button _nextButton;
+    private Button _filterButton;
 
-    
-    
     protected override void Awake()
     {
         base.Awake();
@@ -30,33 +31,43 @@ public class CharacterInfoController : BaseUI
         /////// 더미 인증 테스트 코드
         StartCoroutine(DataManager.InitDummyUser(1));
     }
- 
+
     private void OnEnable() => UpdateCharacterList();
+
+    private void Start()
+    {
+        //TODO: 테스트용 -> 추후 메인과 붙이면 OnEnable에서 넘겨주는거로
+        _characterSort._sortCharacterInfos = _characterInfos; 
+    }
 
     private void Init()
     {
-        _infoUI = GetUI<CharacterInfoUI>("InfoUI");  
         _infoPopup = GetUI("InfoPopup");
-
+        
+        _characterSort = GetUI<CharacterSort>("SortUI"); 
+        _infoUI = GetUI<CharacterInfoUI>("InfoUI");
+ 
         _prevButton = GetUI<Button>("PreviousButton");
         _nextButton = GetUI<Button>("NextButton");
-
+        _filterButton = GetUI<Button>("FilterButton");
     }
-
+     
     private void SubscribeEvent()
     {
         _prevButton.onClick.AddListener(PreviousCharacter);
         _nextButton.onClick.AddListener(NextCharacter);
+        _filterButton.onClick.AddListener(() => _characterSort.transform.GetChild(0).gameObject.SetActive(true));
     }
-    
+
     /// <summary>
     /// 보유 캐릭터 리스트 업데이트
     /// </summary>
     private void UpdateCharacterList()
-    {
+    { 
         _characterInfos = GetComponentsInChildren<CharacterInfo>().ToList();
+        //_characterSort._sortCharacterInfos = _characterInfos;
     }
-    
+
     /// <summary>
     /// 이전 캐릭터 정보로 변경
     /// </summary>
@@ -64,17 +75,17 @@ public class CharacterInfoController : BaseUI
     {
         if (CurIndex == 0)
         {
-            CurIndex = _characterInfos.Count - 1; 
+            CurIndex = _characterInfos.Count - 1;
         }
         else
         {
-            CurIndex--; 
+            CurIndex--;
         }
-        
+
         CurCharacterInfo = _characterInfos[CurIndex];
-        CurCharacterInfo.UpdateInfo(); 
+        CurCharacterInfo.UpdateInfo();
     }
-    
+
     /// <summary>
     /// 다음 캐릭터 정보로 변경
     /// </summary>
@@ -88,9 +99,9 @@ public class CharacterInfoController : BaseUI
         {
             CurIndex++;
         }
-         
+
         CurCharacterInfo = _characterInfos[CurIndex];
-        CurCharacterInfo.UpdateInfo(); 
+        CurCharacterInfo.UpdateInfo();
     }
-    
+ 
 }
