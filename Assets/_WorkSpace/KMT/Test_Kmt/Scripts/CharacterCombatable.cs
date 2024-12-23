@@ -4,6 +4,7 @@ using DG.Tweening.Plugins.Options;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CharacterCombatable : Combatable
 {
@@ -13,7 +14,9 @@ public class CharacterCombatable : Combatable
     curState state = curState.WAITING;
 
     Vector3 originPos;
-    SkillButton skillButton;
+    //BasicSkillButton basicSkillButton;
+
+    CharacterData characterData;
 
     protected override void Awake()
     {
@@ -24,23 +27,33 @@ public class CharacterCombatable : Combatable
 
     }
 
-    public void SetSkillButton(SkillButton skillButton)
+    public void InitCharacterData(CharacterData characterData, BasicSkillButton basicSkillButton, SecondSkillButton secondSkillButton)
     {
-        this.skillButton = skillButton;
+        this.characterData = characterData;
+
+        basicSkillButton.transform.GetChild(0).GetComponent<Image>().sprite = characterData.SkillDataSO.SkillSprite;
+        basicSkillButton.GetComponent<Button>().onClick.AddListener(() => {
+            if (!basicSkillButton.Interactable) { Debug.Log("사용 불가");  return; }
+            StartCoroutine(basicSkillButton.StartCoolDown(5));
+        });
+
+        secondSkillButton.SetSkillCost(characterData.StatusTable.SecondSkillCost);
+        secondSkillButton.transform.GetChild(0).GetComponent<Image>().sprite = characterData.SecondSkillDataSO.SkillSprite;
+        secondSkillButton.GetComponent<Button>().onClick.AddListener(() => {
+            if (!secondSkillButton.Interactable) { Debug.Log("사용 불가"); return; }
+            if (characterData.StatusTable.SecondSkillCost < StageManager.Instance.PartyCost)
+            {
+                StageManager.Instance.UsePartyCost(characterData.StatusTable.SecondSkillCost);
+                OnSkillCommanded(characterData.SecondSkillDataSO);
+            }
+        });
     }
 
-    public override void OnSkillCommanded(Skill skillData)//필요할지는 모름
+/*    public override void OnSkillCommanded(Skill skillData)//필요할지는 모름
     {
-        if (!skillButton.Interactable)
-        {
-            Debug.Log("쿨다운중");
-            return;
-        }
-
-        StartCoroutine(skillButton.StartCoolDown(5));//TODO : 쿨타임 지정
         
         base.OnSkillCommanded(skillData);
-    }
+    }*/
 
     public override void StartCombat(CombManager againstL)
     {

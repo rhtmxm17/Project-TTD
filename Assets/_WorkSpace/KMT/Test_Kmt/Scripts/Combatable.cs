@@ -107,14 +107,12 @@ public class Combatable : MonoBehaviour
 
     private void OnSkillCompleted()
     {
-        Debug.Log(gameObject.GetInstanceID());
 
         StopCurActionCoroutine();
         Debug.Log(gameObject.GetInstanceID());
         curActionCoroutine = StartCoroutine(TrackingCo());
         /*        Debug.Log(curActionCoroutine == null);
                 Debug.Log(gameObject == null);*/
-        Debug.Log("호출");
     }
 
     //private IEnumerator SkillRoutine(Skill skillData)
