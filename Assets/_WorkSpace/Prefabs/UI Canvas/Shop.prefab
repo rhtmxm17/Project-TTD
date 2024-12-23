@@ -113,7 +113,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -0.000061035156}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &7798314642673166540
@@ -332,7 +332,7 @@ GameObject:
   - component: {fileID: 7798314643145549242}
   - component: {fileID: 7798314643145549243}
   m_Layer: 5
-  m_Name: Back
+  m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -349,8 +349,12 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7798314643397473543}
+  m_Children:
+  - {fileID: 7798314643607389150}
+  - {fileID: 7798314643780852716}
+  - {fileID: 7798314643526057639}
+  - {fileID: 7798314643801759103}
+  m_Father: {fileID: 3104059185750904683}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -408,6 +412,7 @@ GameObject:
   - component: {fileID: 7798314643397473544}
   - component: {fileID: 7798314643397473545}
   - component: {fileID: 7798314643397473546}
+  - component: {fileID: 5864463792133220228}
   m_Layer: 5
   m_Name: Shop
   m_TagString: Untagged
@@ -427,9 +432,6 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7798314643145549244}
-  - {fileID: 7798314643526057639}
-  - {fileID: 7798314643801759103}
   - {fileID: 3104059185750904683}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -501,6 +503,18 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &5864463792133220228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7798314643397473547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d236e9bcc499264ab386421e42cbf5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7798314643505991177
 GameObject:
   m_ObjectHideFlags: 0
@@ -589,7 +603,7 @@ GameObject:
   - component: {fileID: 7798314643526057637}
   - component: {fileID: 7798314643526057638}
   m_Layer: 5
-  m_Name: Image (1)
+  m_Name: CatImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -607,12 +621,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7798314643397473543}
-  m_RootOrder: 1
+  m_Father: {fileID: 7798314643145549244}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 80, y: 61}
+  m_AnchoredPosition: {x: 60.000122, y: 41}
   m_SizeDelta: {x: 540.5881, y: 505.3448}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &7798314643526057637
@@ -742,7 +756,7 @@ GameObject:
   - component: {fileID: 7798314643607389148}
   - component: {fileID: 7798314643607389149}
   m_Layer: 5
-  m_Name: Back (1)
+  m_Name: BackButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -761,14 +775,14 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7798314643889401811}
-  m_Father: {fileID: 3104059185750904683}
+  m_Father: {fileID: 7798314643145549244}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 1145, y: 887}
-  m_SizeDelta: {x: 208.22571, y: 109.187805}
-  m_Pivot: {x: 0.5, y: 0}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.00012207031, y: 0}
+  m_SizeDelta: {x: 208.22571, y: 109.187744}
+  m_Pivot: {x: 1, y: 1}
 --- !u!222 &7798314643607389147
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1016,21 +1030,21 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7798314643780852717}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7798314642790900075}
   - {fileID: 7798314643769761116}
-  m_Father: {fileID: 3104059185750904683}
+  m_Father: {fileID: 7798314643145549244}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 312.2953, y: -96.44412}
+  m_AnchorMin: {x: 1, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0.0000076293945}
   m_SizeDelta: {x: 1816.5867, y: 741.924}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 1, y: 0.5}
 --- !u!222 &7798314643780852713
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1111,7 +1125,7 @@ GameObject:
   - component: {fileID: 7798314643801759101}
   - component: {fileID: 7798314643801759102}
   m_Layer: 5
-  m_Name: Text (TMP) (1)
+  m_Name: ShopTestText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1129,13 +1143,13 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7798314643397473543}
-  m_RootOrder: 2
+  m_Father: {fileID: 7798314643145549244}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -971, y: 98}
-  m_SizeDelta: {x: 504.6152, y: 111.4144}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 252.30762, y: 0}
+  m_SizeDelta: {x: 504.61523, y: 111.4144}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7798314643801759101
 CanvasRenderer:
@@ -1323,7 +1337,7 @@ GameObject:
   - component: {fileID: 7798314643889401809}
   - component: {fileID: 7798314643889401810}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: BackButtonText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1467,7 +1481,7 @@ PrefabInstance:
     - target: {fileID: 5128184611668071494, guid: 5026b0eed6ff8024eba036691b070fc4,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5128184611668071494, guid: 5026b0eed6ff8024eba036691b070fc4,
         type: 3}

@@ -143,9 +143,11 @@ public class UI_Manager : BaseUI
         // 스테이지버튼
         stageButton = GetUI<Button>("StageButton");
         stageButton.onClick.AddListener(() => Open("StagePanel"));
-        // 팝업버튼 // 변수선언안해도 잘되는구만
-        GetUI<Button>("PopUpButton").onClick.AddListener(() => Open("PopUpPanel"));
-        GetUI<TMP_Text>("PopUpButtonText").text = "팝업";
+        // 상점패널
+        GetUI("Shop");
+        // 상점버튼 // 이전팝업버튼 변수선언안해도 잘되는구만
+        GetUI<TMP_Text>("ShopButtonText").text = "상점";
+        GetUI<Button>("ShopButton").onClick.AddListener(() => Open("Shop"));
         // 팝업패널
         GetUI("PopUpPanel").SetActive(false);
         GetUI<TMP_Text>("PopUpText").text = "팝업창 짜잔";
@@ -153,6 +155,10 @@ public class UI_Manager : BaseUI
         GetUI("StagePanel").SetActive(false);
         // 뒤로가기 버튼
         GetUI<Button>("BackButton").onClick.AddListener(() => GoBack("PopUpPanel"));
+
+
+
+
     }
     private void SetStagePanel()
     {

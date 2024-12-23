@@ -23,6 +23,9 @@ public class NicknamePanel : UI_Manager
         GetUI<Button>("NickConfirmButton").onClick.AddListener(ConfrimNickName);
     }
 
+
+
+    // 지금저장위치가 맛탱이가 가서 다른데에서 테스트 해야될듯함 만지지 않기
     private void MakeNickName() // 일단킵해두고있는데 ConfirmNickName에다가 이식해둠.
     {
         DatabaseReference userRef = BackendManager.Database.GetReference($"Users/UserID/{UserID}"); //( $"Users/UserID/{UserID}")
