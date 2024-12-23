@@ -14,8 +14,6 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public Image _characterImage;
 
     [HideInInspector] public Button _levelUpButton;
-    [HideInInspector] public Button _prevButton;
-    [HideInInspector] public Button _nextButton;
 
     private Button _exitButton;
     private GameObject _infoPopup;
@@ -35,9 +33,7 @@ public class CharacterInfoUI : BaseUI
         _nameText = GetUI<TextMeshProUGUI>("NameText");
         _atkText = GetUI<TextMeshProUGUI>("AtkText");
         _hpText = GetUI<TextMeshProUGUI>("HpText");
-
-        _prevButton = GetUI<Button>("PreviousButton");
-        _nextButton = GetUI<Button>("NextButton");
+        
         _exitButton = GetUI<Button>("ExitButton");
         _levelUpButton = GetUI<Button>("LevelUpButton");
 

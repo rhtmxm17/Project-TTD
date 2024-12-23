@@ -797,9 +797,6 @@ MonoBehaviour:
   _hpText: {fileID: 0}
   _characterImage: {fileID: 0}
   _levelUpButton: {fileID: 0}
-  _prevButton: {fileID: 0}
-  _nextButton: {fileID: 0}
-  _characterInfo: {fileID: 0}
 --- !u!1 &589805720
 GameObject:
   m_ObjectHideFlags: 0
@@ -1918,8 +1915,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b8394d18e2a544e88bd341da7e7fb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _CharacterData: {fileID: 11400000, guid: c67b7de9dd51fc64d8c6f62f3d693a8a, type: 2}
-  CurIndex: 0
+  _characterData: {fileID: 11400000, guid: c67b7de9dd51fc64d8c6f62f3d693a8a, type: 2}
   IsSubscribe: 0
   tempLevel: 0
 --- !u!1 &1251019403
@@ -2192,9 +2188,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: facd3b2730b1b0c43ace0e595ec4eba7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _characterInfos: []
   _infoUI: {fileID: 0}
+  _characterInfos: []
+  CurCharacterInfo: {fileID: 0}
   _infoPopup: {fileID: 0}
+  CurIndex: 0
 --- !u!1 &1381679176
 GameObject:
   m_ObjectHideFlags: 0
@@ -2286,8 +2284,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b8394d18e2a544e88bd341da7e7fb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _CharacterData: {fileID: 11400000, guid: d0b8b7bd331b97e4d85f03df096b16d4, type: 2}
-  CurIndex: 0
+  _characterData: {fileID: 11400000, guid: d0b8b7bd331b97e4d85f03df096b16d4, type: 2}
   IsSubscribe: 0
   tempLevel: 0
 --- !u!1 &1460501951
@@ -4183,8 +4180,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b8394d18e2a544e88bd341da7e7fb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _CharacterData: {fileID: 11400000, guid: 00e58727367bafb4ab6cd23fece4c471, type: 2}
-  CurIndex: 0
+  _characterData: {fileID: 11400000, guid: 00e58727367bafb4ab6cd23fece4c471, type: 2}
   IsSubscribe: 0
   tempLevel: 0
 --- !u!1 &8752961997111218564
