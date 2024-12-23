@@ -180,6 +180,19 @@ public class DataManager : SingletonScriptable<DataManager>
     }
 #endif
 
+    /// <summary>
+    /// 테스트용 가인증 코드입니다
+    /// </summary>
+    /// <param name="DummyNumber">가인증 uid값 뒤쪽에 붙일 번호</param>
+    /// <returns></returns>
+    public static IEnumerator InitDummyUser(int DummyNumber)
+    {
+        // Database 초기화 대기
+        yield return new WaitWhile(() => GameManager.Database == null);
+        BackendManager.Instance.UseDummyUserDataRef(DummyNumber); // 테스트코드
+        GameManager.Data.LoadUserData();
+    }
+
     [ContextMenu("유저데이터 테스트")]
     public void LoadUserData()
     {
@@ -188,7 +201,6 @@ public class DataManager : SingletonScriptable<DataManager>
             Debug.LogWarning("플레이모드가 아닐 경우 오작동할 수 있습니다");
         }
 
-        BackendManager.Instance.UseDummyUserDataRef(0); // 테스트코드
 
         BackendManager.CurrentUserDataRef.GetValueAsync().ContinueWithOnMainThread(task =>
         {
@@ -227,6 +239,8 @@ public class DataManager : SingletonScriptable<DataManager>
                     }
                 }
             }
+
+            // 새로 생성한 데이터 초기화
 
             onLoadUserDataCompleted?.Invoke();
         });

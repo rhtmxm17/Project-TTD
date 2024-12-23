@@ -26,14 +26,7 @@ public class CharacterInfoController : BaseUI
         SubscribeEvent();
 
         /////// 더미 인증 테스트 코드
-        StartCoroutine(InitDummyUser());
-    }
-
-    private IEnumerator InitDummyUser()
-    {
-        // Database 초기화 대기
-        yield return new WaitWhile(() => GameManager.Database == null);
-        GameManager.Data.LoadUserData();
+        StartCoroutine(DataManager.InitDummyUser(1));
     }
  
     private void OnEnable() => UpdateCharacterList();
