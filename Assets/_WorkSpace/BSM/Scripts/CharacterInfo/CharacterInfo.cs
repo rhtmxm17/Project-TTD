@@ -11,15 +11,15 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private CharacterData _characterData;
     private CharacterInfoController _characterInfoController;
-    
+
     public bool IsSubscribe;
-    
+
     public int tempLevel;
 
 
     private void Awake()
     {
-        tempLevel = Random.Range(0, 50); 
+        tempLevel = Random.Range(0, 50);
     }
 
     private void Start()
@@ -29,13 +29,13 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 
     private void Init()
     {
-        _characterInfoController = GetComponentInParent<CharacterInfoController>(); 
+        _characterInfoController = GetComponentInParent<CharacterInfoController>();
         SubscribeEvent();
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        SetInfoPopup(); 
+        SetInfoPopup();
     }
 
     private void SubscribeEvent()
@@ -43,7 +43,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         if (IsSubscribe) return;
         IsSubscribe = true;
 
-        _characterInfoController._infoUI._levelUpButton.onClick.AddListener(LevelUp); 
+        _characterInfoController._infoUI._levelUpButton.onClick.AddListener(LevelUp);
+        _characterInfoController._infoUI._enhanceButton.onClick.AddListener(Enhance);
     }
 
     private void SetInfoPopup()
@@ -52,7 +53,6 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController.CurIndex = _characterInfoController._characterInfos.IndexOf(this);
         _characterInfoController._infoPopup.SetActive(true);
         UpdateInfo();
-
     }
 
     public void UpdateInfo()
@@ -64,8 +64,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController._infoUI._atkText.text = "공격력" + Random.Range(2, 100).ToString();
         _characterInfoController._infoUI._hpText.text = "체력" + Random.Range(2, 100).ToString();
     }
-    
-    
+
+
     private void LevelUp()
     {
         //오픈한 캐릭터 정보가 구독된 리스트중 자신과 같지 않으면 return
@@ -82,5 +82,11 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController._infoUI._levelText.text = tempLevel.ToString() + "Lv/200";
     }
 
-
+    private void Enhance()
+    {
+        if(_characterInfoController.CurCharacterInfo != this) return;
+        
+        Debug.Log($"{gameObject.name} 강화 성공");
+        
+    }
 }

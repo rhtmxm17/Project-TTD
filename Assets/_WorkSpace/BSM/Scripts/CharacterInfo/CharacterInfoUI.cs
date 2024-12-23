@@ -14,7 +14,8 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public Image _characterImage;
 
     [HideInInspector] public Button _levelUpButton;
-
+    [HideInInspector] public Button _enhanceButton;
+    
     private Button _exitButton;
     private GameObject _infoPopup;
     
@@ -36,7 +37,8 @@ public class CharacterInfoUI : BaseUI
         
         _exitButton = GetUI<Button>("ExitButton");
         _levelUpButton = GetUI<Button>("LevelUpButton");
-
+        _enhanceButton = GetUI<Button>("EnhanceButton");
+        
         _characterImage = GetUI<Image>("CharacterImage");
 
     }
