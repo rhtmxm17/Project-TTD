@@ -6,7 +6,7 @@ public class InternalCheckUp : UI_Manager
 {
     public string GetUserID()
     {
-        // 기기안에 저장 / 로컬기기
+        // 로컬 기기안에 저장 
         if(string.IsNullOrEmpty(UserID))
         {
             UserID = PlayerPrefs.GetString("Firebase_UID", string.Empty);
@@ -28,7 +28,7 @@ public class InternalCheckUp : UI_Manager
         UserID = string.Empty;
     }
 
-    public void Logout()
+    private void Logout()
     {
         BackendManager.Auth.SignOut();
     }

@@ -1,3 +1,4 @@
+using Firebase.Auth;
 using Firebase.Extensions;
 using System.Collections;
 using System.Collections.Generic;
@@ -42,7 +43,9 @@ public class EmailAuth : UI_Manager
     private void SetEmail()
     {
         // 이메일이 없는 경우에만 할 수 있도록하기
-
+        // 익명로그인한거에서 이메일을 추가하려고 사용하려는데 
+        // 중요한정보 변경이라고 최근접속기록없다고 재인증하라는데 
+        // 필요한 매개변수가 이메일이랑 비밀번호임 이거뭐 이건안될듯.
         Firebase.Auth.FirebaseUser user = BackendManager.Auth.CurrentUser;
         _email = _emailAuthInputField.text;
         if (user != null)
@@ -63,7 +66,7 @@ public class EmailAuth : UI_Manager
                 Email = _email;
             });
             // 인증메일 보내기
-            SendAuthEmail();
+           // SendAuthEmail();
         }
     }
     private void SendAuthEmail()
@@ -89,6 +92,41 @@ public class EmailAuth : UI_Manager
             waitingPopup.SetActive(true);
         }
     }
+    // 익명에서 이메일set할때 재인증을 하라고함
+    // 
+    private void Reauthenticate()
+    {
+        Firebase.Auth.FirebaseUser user = BackendManager.Auth.CurrentUser;
+
+        // Get auth credentials from the user for re-authentication. The example below shows
+        // email and password credentials but there are multiple possible providers,
+        // such as GoogleAuthProvider or FacebookAuthProvider.
+        // 아니 근데 익명로그인은 어쩔
+        Firebase.Auth.Credential credential =
+            Firebase.Auth.EmailAuthProvider.GetCredential("user@example.com", "password1234");
+
+        if (user != null)
+        {
+            user.ReauthenticateAsync(credential).ContinueWith(task => {
+                if (task.IsCanceled)
+                {
+                    Debug.LogError("ReauthenticateAsync was canceled.");
+                    return;
+                }
+                if (task.IsFaulted)
+                {
+                    Debug.LogError("ReauthenticateAsync encountered an error: " + task.Exception);
+                    return;
+                }
+
+                Debug.Log("User reauthenticated successfully.");
+            });
+        }
+    }
+
+    
+
+
 
     private void CancelVerification()
     {

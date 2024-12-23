@@ -16,13 +16,13 @@ public class SignUpPanel : UI_Manager
    //  AuthError error = AuthError.EmailAlreadyInUse;
     private void Start()
     {
-        // Init();
+         Init();
         // 여기다 두니까 갑자기 밑에  "GetUI<Button>("SignUpConfirmButton").onClick.AddListener(SignUp);"
         // NullReferenceException: Object reference not set to an instance of an object 뜸
     }
     private void OnEnable()
     {
-        Init();
+        // Init();
     }
     private void Init()
     {

@@ -57,8 +57,8 @@ public class UI_Manager : BaseUI
 
 
 
-        // 미사용중:
-        SetSignUpPanel();
+        //이메일계정연동:
+        SetLinkEmailPanel();
 
 
 
@@ -121,11 +121,12 @@ public class UI_Manager : BaseUI
         // 프로필팝업
         GetUI<Button>("ProfileButton").onClick.AddListener(() => Open("ProfilePopUp"));
         GetUI<Button>("ProfileBackButton").onClick.AddListener(() => GoBack("ProfilePopUp"));
+        GetUI<Button>("ProfileButton").onClick.AddListener(CheckUserInfo);
     }
-    private void SetSignUpPanel()
+    private void SetLinkEmailPanel()
     {
-
-
+        GetUI<Button>("AddEmailButton").onClick.AddListener(() => Open("LinkEmailPopup"));
+        GetUI<Button>("LinkEmailConfirmButton").onClick.AddListener(AddEmailAccount);
     }
 
     private void SetEmailLoginPanel()
@@ -326,7 +327,9 @@ public class UI_Manager : BaseUI
                         if (entry.Value is Dictionary<string, object> userData && UserData.ContainsKey("UID"))
                         {
                             UserID = userData["UID"].ToString();
+                            Nickname = userData["Nickname"].ToString();
                             Debug.Log($"기존 사용자 UID 확인: {UserID}");
+                            Debug.Log($"기존 사용자 UID 확인: {Nickname}");
                             _isLoggedIn = true;
                             // 자동시작
                             // AutomaticStart(); 다른것들테스트해야되서 일단 비활성화 
@@ -373,6 +376,74 @@ public class UI_Manager : BaseUI
         Debug.Log($"[DB]닉네임: {Nickname}");
         Debug.Log($"[DB]마지막로그인: {DateTime.UtcNow.ToString("O")}");
     }
+
+    /// <summary>
+    /// 이메일 계정 추가 / 이메일(+비번)연동?
+    /// </summary>
+    private void AddEmailAccount()
+    {
+        // 이메일 계정추가 (일단 지금은 있는 계정을 연동 & 로그인시키니까)
+        // 게스트상태에서 작동한다면
+        // 이메일 생성을 먼저하고 이걸 그 뒤에 추가해서 작동하도록
+        // 그렇게하려면 밑에 인풋필드부분 다 삭제하고 이메일 가입하는거에다가 이거 더해놓으면 될듯.
+        FirebaseUser user = BackendManager.Auth.CurrentUser;
+        string email = GetUI<TMP_InputField>("LinkEmailInputField").text;
+        if (email == "")
+        {
+            Debug.Log("이메일을 입력 해 주세요.");
+            // GetUI<TMP_Text>("NotificationText").text = "이메일을 입력 해 주세요.";
+            return;
+
+        }
+        string password = GetUI<TMP_InputField>("LinkEmailPWInputField").text;
+        if (password == "")
+        {
+            Debug.Log("비밀번호를 입력 하세요.");
+            // GetUI<TMP_Text>("NotificationText").text = "비밀번호를 입력 하세요.";
+            return;
+        }
+        Debug.Log($"[연동하기전] 유저ID: {UserID}");
+        Debug.Log($"[연동하기전] 닉네임: {Nickname}");
+        Firebase.Auth.Credential credential = Firebase.Auth.EmailAuthProvider.GetCredential(email, password);
+      //  user.LinkWithCredentialAsync(credential).ContinueWith(task => {
+      //      if (task.IsCanceled)
+      //      {
+      //          Debug.LogError("LinkWithCredentialAsync was canceled.");
+      //          return;
+      //      }
+      //      if (task.IsFaulted)
+      //      {
+      //          Debug.LogError("LinkWithCredentialAsync encountered an error: " + task.Exception);
+      //          return;
+      //      }
+      //
+      //      Firebase.Auth.AuthResult result = task.Result;
+      //      Debug.LogFormat("사용자 인증정보 파이어베이스에연동됨: {0} ({1})",
+      //          result.User.DisplayName, result.User.UserId);
+      //  });
+        // LinkWithCredentialAsync()
+        // 위에 이거는 보니까 '인증정보가 이미 다른사용자 계정에 연결'되있으면 실패한다고함
+        // 위에꺼만  되나 테스트해봐야함
+        BackendManager.Auth.SignInAndRetrieveDataWithCredentialAsync(credential).ContinueWith(task => {
+            if (task.IsCanceled)
+            {
+                Debug.LogError("SignInAndRetrieveDataWithCredentialAsync was canceled.");
+                return;
+            }
+            if (task.IsFaulted)
+            {
+                Debug.LogError("SignInAndRetrieveDataWithCredentialAsync encountered an error: " + task.Exception);
+                return;
+            }
+     
+            Firebase.Auth.AuthResult result = task.Result;
+            Debug.LogFormat($" 연동후 유저정보 :{result.User.DisplayName}, {result.User.UserId}");
+        });
+        
+    }
+
+
+
     public void AutomaticStart()
     {
         if (_isLoggedIn)
@@ -381,9 +452,20 @@ public class UI_Manager : BaseUI
 
     public void CheckUserInfo()
     {
+        FirebaseUser user = BackendManager.Auth.CurrentUser;
+        if (user == null)
+            return;
+        Debug.Log($"UID(UID) : {user.UserId}");
+        Debug.Log($"닉네임(DisplayName) : {user.DisplayName}");
+        Debug.Log($"익명로긴 여부(IsAnonymous) : {user.IsAnonymous}");
+        Debug.Log($"이메일(Email) : {user.Email}");
+        Debug.Log($"이메일 인증여부(IsEmailVerified) : {user.IsEmailVerified}");
 
     }
 
-
+    public void SignOut()
+    {
+        BackendManager.Auth.SignOut();
+    }
 
 }
