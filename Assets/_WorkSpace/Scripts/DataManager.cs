@@ -5,7 +5,6 @@ using System.Linq;
 using Firebase.Extensions;
 using UnityEngine.Events;
 
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -202,10 +201,10 @@ public class DataManager : SingletonScriptable<DataManager>
             // 캐릭터 데이터가 존재한다면
             if (userData.ContainsKey("Characters"))
             {
-                Dictionary<string, object> charactersData = userData["Characters"] as Dictionary<string, object>;
+                Dictionary<string, object> allCharacterData = userData["Characters"] as Dictionary<string, object>;
 
-                // DB의 데이터(레벨)값을 캐싱
-                foreach (KeyValuePair<string, object> dataPair in charactersData)
+                // DB의 데이터를 캐싱
+                foreach (KeyValuePair<string, object> dataPair in allCharacterData)
                 {
                     // DB에서 가져온 키값 문자열 int로 파싱하기 vs 문자열을 키값으로 쓰기
                     if (false == int.TryParse(dataPair.Key, out int id))
@@ -214,7 +213,16 @@ public class DataManager : SingletonScriptable<DataManager>
                         continue;
                     }
 
-                    characterDataIdDic[id].Level.Value = ((int)(long)dataPair.Value);
+                    Dictionary<string, object> characterData = dataPair.Value as Dictionary<string, object>;
+
+                    if (characterData.ContainsKey("Level"))
+                    {
+                        characterDataIdDic[id].Level.SetValueOnLoading((int)(long)characterData["Level"]);
+                    }
+                    if (characterData.ContainsKey("Enhancement"))
+                    {
+                        characterDataIdDic[id].Enhancement.SetValueOnLoading((int)(long)characterData["Enhancement"]);
+                    }
                 }
             }
 
@@ -222,4 +230,114 @@ public class DataManager : SingletonScriptable<DataManager>
         });
 
     }
+
+    #region DB 데이터 갱신
+    public UpdateDbChain StartUpdateStream()
+    {
+        return new UpdateDbChain();
+    }
+
+    /// <summary>
+    /// 실제로 DB의 유저 대이터 갱신을 담당하는 클래스
+    /// </summary>
+    public class UpdateDbChain
+    {
+        private Dictionary<string, object> updates = new Dictionary<string, object>();
+        private event UnityAction propertyCallbackOnSubmit;
+
+        public class PropertyAdapter<T> where T : System.IEquatable<T>
+        {
+            public T Value { get; private set; }
+
+            public event UnityAction<T> onValueChanged;
+
+            public string Key { get; private set; }
+
+            public PropertyAdapter(string key)
+            {
+                this.Key = key;
+            }
+
+            /// <summary>
+            /// 로딩 단계에서 초기값 입력을 위한 메서드
+            /// </summary>
+            /// <param name="value"></param>
+            public void SetValueOnLoading(T value) // DataManager 바깥에선 숨기는 방법이 없을까?
+            {
+                this.Value = value;
+            }
+
+            /// <summary>
+            /// UpdateDbChain.SetDBValue()에서 갱신 대상 등록을 위한 메서드<br/>
+            /// 다른 용도의 사용을 상정하지 않음
+            /// </summary>
+            /// <param name="updateDbChain"></param>
+            /// <param name="value"></param>
+            public void RegisterToChain(UpdateDbChain updateDbChain, T value) // UpdateDbChain 바깥에선 숨기는 방법이 없을까?
+            {
+                updateDbChain.updates[Key] = value;
+                updateDbChain.propertyCallbackOnSubmit += () =>
+                {
+                    Value = value;
+                    onValueChanged?.Invoke(value);
+                };
+            }
+        }
+
+        public UpdateDbChain SetDBValue<T>(PropertyAdapter<T> property, T value) where T : System.IEquatable<T>
+        {
+            // 값이 갱신되지 않았다면 등록하지 않음
+            if (property.Value.Equals(value))
+                return this;
+
+#if DEBUG
+            if (updates.ContainsKey(property.Key))
+            {
+                Debug.LogWarning("한 스트림에 데이터를 두번 갱신하고 있음");
+            }
+#endif //DEBUG
+            property.RegisterToChain(this, value);
+
+            return this;
+        }
+
+        /// <summary>
+        /// (비동기)UpdateDbChain.SetDBValue로 등록된 갱신사항 목록으로 DB에 갱신 요청을 전송한다
+        /// </summary>
+        /// <param name="onCompleteCallback">작업 완료시 결과를 반환받을 callback (성공시 true)</param>
+        public void Submit(UnityAction<bool> onCompleteCallback)
+        {
+            // 갱신사항이 없다면 즉시 완료 처리
+            if (updates.Count == 0)
+            {
+                onCompleteCallback?.Invoke(true);
+                return;
+            }
+
+            BackendManager.CurrentUserDataRef.UpdateChildrenAsync(updates).ContinueWithOnMainThread(task =>
+            {
+                if (task.IsFaulted || task.IsCanceled)
+                {
+                    Debug.LogWarning($"요청 실패함");
+                    onCompleteCallback?.Invoke(false);
+                    return;
+                }
+
+                Debug.Log($"데이터 갱신 요청 성공");
+                propertyCallbackOnSubmit?.Invoke();
+                onCompleteCallback?.Invoke(true);
+            });
+        }
+    }
+    #endregion DB 데이터 갱신
+}
+
+
+/// <summary>
+/// DB에서 관리되는 유저 데이터
+/// </summary>
+/// <typeparam name="T">string, long, double, bool</typeparam>
+public class UserDataProperty<T> : DataManager.UpdateDbChain.PropertyAdapter<T> where T : System.IEquatable<T>
+{
+    public UserDataProperty(string key) : base(key) { }
 }
