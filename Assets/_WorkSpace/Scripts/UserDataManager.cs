@@ -82,6 +82,27 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                 }
             }
 
+            // 캐릭터 데이터 로딩
+            if (userData.HasChild("Items"))
+            {
+                DataSnapshot allItemData = userData.Child("Items");
+
+                // 키 값 조회 == 보유 캐릭터 확인
+                foreach (DataSnapshot singleItemData in allItemData.Children)
+                {
+                    // DB에서 가져온 키값 문자열 int로 파싱하기 vs 문자열을 키값으로 쓰기
+                    if (false == int.TryParse(singleItemData.Key, out int id))
+                    {
+                        Debug.LogWarning($"잘못된 키 값({singleItemData.Key})");
+                        continue;
+                    }
+
+                    ItemData itemData = GameManager.Data.GetItemData(id);
+
+                    itemData.Number.SetValueWithDataSnapshot(userData);
+                }
+            }
+
             onLoadUserDataCompleted?.Invoke();
         });
 

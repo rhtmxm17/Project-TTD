@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-[CreateAssetMenu(menuName = "ScriptableObjects/CharacterData")]
 public class CharacterData : ScriptableObject, ICsvRowParseable
 {
     /// <summary>
@@ -52,13 +51,13 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     /// </summary>
     public UserDataInt Level { get; private set; }
     public UserDataInt Enhancement { get; private set; }
-    #endregion
 
     private void OnEnable()
     {
         Level = new UserDataInt($"Characters/{id}/Level");
         Enhancement = new UserDataInt($"Characters/{id}/Enhancement");
     }
+    #endregion
 
 #if UNITY_EDITOR
     private enum Column
