@@ -95,19 +95,19 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
                 // BGM
                 if (false == string.IsNullOrEmpty(cells[(int)Column.BGM]))
                 {
-                    parsed.Bgm = AssetDatabase.LoadAssetAtPath<AudioClip>($"{DataManager.SoundsAssetFolder}/{cells[(int)Column.BGM]}");
+                    parsed.Bgm = AssetDatabase.LoadAssetAtPath<AudioClip>($"{DataTableManager.SoundsAssetFolder}/{cells[(int)Column.BGM]}");
                 }
 
                 // SFX
                 if (false == string.IsNullOrEmpty(cells[(int)Column.SFX]))
                 {
-                    parsed.Sfx = AssetDatabase.LoadAssetAtPath<AudioClip>($"{DataManager.SoundsAssetFolder}/{cells[(int)Column.SFX]}");
+                    parsed.Sfx = AssetDatabase.LoadAssetAtPath<AudioClip>($"{DataTableManager.SoundsAssetFolder}/{cells[(int)Column.SFX]}");
                 }
 
                 // BG_IMG
                 if (false == string.IsNullOrEmpty(cells[(int)Column.BG_IMG]))
                 {
-                    parsed.BackgroundSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataManager.SpritesAssetFolder}/{cells[(int)Column.BG_IMG]}.asset");
+                    parsed.BackgroundSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.BG_IMG]}.asset");
                 }
 
                 tempDialogues.Add(parsed);
@@ -135,7 +135,7 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
                     loaded.ActorId = tempStandingImages.Count;
 
                     Debug.LogWarning("임시 코드 사용중: 이미지 식별자에서 이미지 파일명 가져오는 기능으로 변경 필요");
-                    loaded.ImageSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataManager.SpritesAssetFolder}/{imageKey}.asset");
+                    loaded.ImageSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{imageKey}.asset");
 
                     tempStandingImages.Add(imageKey, loaded);
                 }

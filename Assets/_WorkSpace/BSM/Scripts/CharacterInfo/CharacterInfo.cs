@@ -13,14 +13,6 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private CharacterInfoController _characterInfoController;
     
     public bool IsSubscribe;
-    
-    public int tempLevel;
-
-
-    private void Awake()
-    {
-        tempLevel = Random.Range(0, 50); 
-    }
 
     private void Start()
     {
@@ -60,7 +52,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         //TODO: 정리 필요
         _characterInfoController._infoUI._nameText.text = _characterData.Name;
         _characterInfoController._infoUI._characterImage.sprite = _characterData.FaceIconSprite;
-        _characterInfoController._infoUI._levelText.text = tempLevel.ToString() + "Lv/200";
+        //_characterInfoController._infoUI._levelText.text = tempLevel.ToString() + "Lv/200";
+        _characterInfoController._infoUI._levelText.text = _characterData.Level.Value.ToString();
         _characterInfoController._infoUI._atkText.text = "공격력" + Random.Range(2, 100).ToString();
         _characterInfoController._infoUI._hpText.text = "체력" + Random.Range(2, 100).ToString();
     }
@@ -71,16 +64,22 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         //오픈한 캐릭터 정보가 구독된 리스트중 자신과 같지 않으면 return
         if (_characterInfoController.CurCharacterInfo != this) return;
 
-        tempLevel++;
-        LevelUpStats();
+        GameManager.UserData.StartUpdateStream()
+            .SetDBValue(_characterData.Level, _characterData.Level.Value + 1)
+            // .SetDBValue(_characterData.Level, _characterData.Level.Value + 1) // 재화 사용
+            .Submit(LevelUpResult);
     }
 
-
-    private void LevelUpStats()
+    private void LevelUpResult(bool result)
     {
-        //TODO: 레벨업에 따른 각종 수치 증가 필요
-        _characterInfoController._infoUI._levelText.text = tempLevel.ToString() + "Lv/200";
+        if (false == result)
+        {
+            Debug.LogWarning("접속 실패");
+            return;
+        }
+
+        UpdateInfo();
+
+        // 레벨업 UI 나올 위치
     }
-
-
 }

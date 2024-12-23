@@ -1,10 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 
 public class StageManager : MonoBehaviour
 {
+    public static StageManager Instance = null;
+
+    public float PartyCost { get; private set; } = 0;
+
     [Header("Characters")]
     [SerializeField]
     CombManager characterManager;
@@ -27,6 +33,23 @@ public class StageManager : MonoBehaviour
     [SerializeField] MonsterWaveSetter monsterWavePrefab;
     [SerializeField]
     List<CombManager> monsterWaveQueue = new List<CombManager>();
+
+    [Header("Party Gauge")]
+    [SerializeField]
+    float MaxPartyCost;
+
+    [Header("Debug")]
+    [Space(20)]
+    [SerializeField]
+    TextMeshProUGUI costText;
+
+    private void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+    }
 
     private void Start()
     {
@@ -51,6 +74,27 @@ public class StageManager : MonoBehaviour
 
     }
 
+    IEnumerator StartPartyCostCO()
+    {
+        while (true)
+        {
+            PartyCost = Math.Clamp(PartyCost + Time.deltaTime, 0, MaxPartyCost);
+            costText.text = PartyCost.ToString();
+            yield return null;
+        }
+    }
+
+    public void UsePartyCost(float cost)
+    {
+        if (PartyCost < cost)
+        {
+            Debug.Log("코스트 부족");
+            return;
+        }
+
+        PartyCost -= cost;
+    }
+
     IEnumerator GoNextWaveCO()
     {
         monsterWaveQueue.RemoveAt(0);
@@ -72,7 +116,6 @@ public class StageManager : MonoBehaviour
             yield break;
         }
 
-        Debug.Log("S눌림");
         monsterWaveQueue[0].gameObject.SetActive(true);
         characterManager.StartCombat(monsterWaveQueue[0]);
         monsterWaveQueue[0].StartCombat(characterManager);
@@ -100,6 +143,9 @@ public class StageManager : MonoBehaviour
                 Debug.Log("클리어!");
                 return;
             }
+
+            //파티 공유 게이지 충전 시작.
+            StartCoroutine(StartPartyCostCO());
 
             Debug.Log("S눌림");
             monsterWaveQueue[0].gameObject.SetActive(true);

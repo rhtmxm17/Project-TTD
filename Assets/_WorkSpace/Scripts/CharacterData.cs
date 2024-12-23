@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-[CreateAssetMenu(menuName = "ScriptableObjects/CharacterData")]
 public class CharacterData : ScriptableObject, ICsvRowParseable
 {
     /// <summary>
@@ -19,6 +18,8 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     public struct Status
     {
         public float Range;
+        public float BasicSkillCooldown;
+        public float SecondSkillCost;
 
     }
 
@@ -44,21 +45,24 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     [SerializeField] Skill skillDataSO;
     public Skill SkillDataSO => skillDataSO;
 
+    [SerializeField] Skill secondSkillDataSO;
+    public Skill SecondSkillDataSO => secondSkillDataSO;
+
     #region 유저 데이터
     /// <summary>
     /// 유저 데이터. DataManager의 LoadUserData()가 호출된 적이 있어야 정상적인 값을 갖는다<br/>
     /// 주의: 에디터의 Enter Play Mode Settings에서 도메인 리로드가 비활성화 되어있을 경우 이전 실행시의 값이 남아있을 수 있음
     /// 주의2: 로그아웃을 구현해야 한다면 마찬가지로 이전 유저의 값이 남아있으므로 인증 정보 변경시 정리하는 메서드 추가할것
     /// </summary>
-    public UserDataProperty<int> Level { get; private set; }
-    public UserDataProperty<int> Enhancement { get; private set; }
-    #endregion
+    public UserDataInt Level { get; private set; }
+    public UserDataInt Enhancement { get; private set; }
 
     private void OnEnable()
     {
-        Level = new UserDataProperty<int>($"Characters/{id}/Level");
-        Enhancement = new UserDataProperty<int>($"Characters/{id}/Enhancement");
+        Level = new UserDataInt($"Characters/{id}/Level");
+        Enhancement = new UserDataInt($"Characters/{id}/Enhancement");
     }
+    #endregion
 
 #if UNITY_EDITOR
     private enum Column
@@ -94,10 +98,10 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         }
 
         // SHAPE
-        modelPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{DataManager.PrefabsAssetFolder}/{cells[(int)Column.SHAPE]}.prefab");
+        modelPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{DataTableManager.PrefabsAssetFolder}/{cells[(int)Column.SHAPE]}.prefab");
 
         // SKILL_SPRITE
-        skillSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataManager.SpritesAssetFolder}/{cells[(int)Column.SKILL_SPRITE]}.asset");
+        skillSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.SKILL_SPRITE]}.asset");
     }
 #endif
 
