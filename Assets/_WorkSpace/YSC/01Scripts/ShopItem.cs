@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.U2D.Animation;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,8 +21,8 @@ public class ShopItem : MonoBehaviour
     }
     private void Buy()
     {
-        GameManager.TableData.GetItemData(1);
-        Debug.Log(GameManager.TableData.GetItemData(1));
+        ItemData item1 = GameManager.TableData.GetItemData(1);
+        Debug.Log(item1.Number.Value);
         GameManager.TableData.GetItemData(2);
         Debug.Log(GameManager.TableData.GetItemData(2));
 
