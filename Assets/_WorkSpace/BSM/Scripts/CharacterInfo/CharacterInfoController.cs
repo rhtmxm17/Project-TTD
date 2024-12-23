@@ -69,10 +69,17 @@ public class CharacterInfoController : BaseUI
 
     private void NextCharacter()
     {
-        CurIndex++;
+        if (CurIndex == _characterInfos.Count - 1)
+        {
+            CurIndex = 0;
+        }
+        else
+        {
+            CurIndex++;
+        }
+         
         CurCharacterInfo = _characterInfos[CurIndex];
-
-        
+ 
         Debug.Log($"{CurIndex} 캐릭터 이동");
     }
     
