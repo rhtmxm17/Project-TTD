@@ -8,30 +8,11 @@ public class SkillButton : MonoBehaviour
 {
 
     [SerializeField]
-    Image cooldownImg;
+    protected Image cooldownImg;
     [SerializeField]
-    Button skillButton;
+    protected Button skillButton;
 
     public bool Interactable => skillButton.interactable;
 
-
-    public IEnumerator StartCoolDown(float coolTime)
-    {
-        skillButton.enabled = false;
-        yield return null;
-
-        float time = 0;
-
-        while (time < coolTime)
-        {
-
-            cooldownImg.fillAmount = 1 - (time / coolTime);
-            time += Time.deltaTime;
-
-            yield return null;
-        }
-
-        skillButton.enabled = true;
-    }
 
 }

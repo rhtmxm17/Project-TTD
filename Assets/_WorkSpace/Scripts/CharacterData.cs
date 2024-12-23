@@ -19,6 +19,8 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     public struct Status
     {
         public float Range;
+        public float BasicSkillCooldown;
+        public float SecondSkillCost;
 
     }
 
@@ -43,6 +45,9 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
 
     [SerializeField] Skill skillDataSO;
     public Skill SkillDataSO => skillDataSO;
+
+    [SerializeField] Skill secondSkillDataSO;
+    public Skill SecondSkillDataSO => secondSkillDataSO;
 
     #region 유저 데이터
     /// <summary>

@@ -11,14 +11,19 @@ public class StageCharacterSetter : MonoBehaviour
     //스테이지 진입 시, 진형 설정에서 캐릭터 정보들을 받아올 것.
     //[SerializeField] private List<CharacterData> characterDataList;
     //TODO : 필요시 나중에 타입 지정
-    [SerializeField] Combatable characterPrefab;
+    [SerializeField] CharacterCombatable characterPrefab;
 
     [Header("skills")]
     [SerializeField]
     GameObject skillPanel;
     [SerializeField]
-    SkillButton skillButtonPrefab;
+    BasicSkillButton basicSkillButtonPrefab;
+    [SerializeField]
+    SecondSkillButton secondSkillButtonPrefab;
 
+    [Header("Second Skills")]
+    [SerializeField]
+    GameObject secondSkillPanel;
 
     List<Vector2> position = new List<Vector2>()
     {
@@ -50,7 +55,7 @@ public class StageCharacterSetter : MonoBehaviour
         for (int i = 0; i < characterDataList.Count; i++)
         {
 
-            Combatable charObj = Instantiate(characterPrefab, position[i], Quaternion.identity, transform);
+            CharacterCombatable charObj = Instantiate(characterPrefab, position[i], Quaternion.identity, transform);
             characters.Add(charObj);
             GameObject model = Instantiate(characterDataList[i].ModelPrefab, charObj.transform);
             model.name = "Model";
@@ -60,15 +65,10 @@ public class StageCharacterSetter : MonoBehaviour
             //테스트용 코드?
             charObj.GetComponent<SpriteRenderer>().sprite = characterDataList[i].FaceIconSprite;
 
-            //스킬 버튼 생성.
-            SkillButton skillBtn = Instantiate(skillButtonPrefab, skillPanel.transform);
-            Skill skillData = characterDataList[i].SkillDataSO;
-            skillBtn.transform.GetChild(0).GetComponent<Image>().sprite = characterDataList[i].SkillSprite;
-            skillBtn.GetComponent<Button>().onClick.AddListener(() => {
-                charObj.GetComponent<Combatable>().OnSkillCommanded(skillData);
-            });
+            charObj.InitCharacterData(characterDataList[i],
+                                        Instantiate(basicSkillButtonPrefab, skillPanel.transform),
+                                        Instantiate(secondSkillButtonPrefab, secondSkillPanel.transform));
 
-            ((CharacterCombatable)charObj).SetSkillButton(skillBtn);
 
         }
 
