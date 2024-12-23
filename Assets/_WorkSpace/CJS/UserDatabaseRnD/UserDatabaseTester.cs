@@ -52,8 +52,8 @@ public class UserDatabaseTester : MonoBehaviour
         Debug.Log(GameManager.UserData.Profile.IconIndex.Value);
         Debug.Log(GameManager.UserData.Profile.Introduction.Value);
 
-        Debug.Log(GameManager.Data.GetCharacterData(2).Level.Value);
-        Debug.Log(GameManager.Data.GetCharacterData(2).Enhancement.Value);
+        Debug.Log(GameManager.TableData.GetCharacterData(2).Level.Value);
+        Debug.Log(GameManager.TableData.GetCharacterData(2).Enhancement.Value);
     }
 
     [ContextMenu("누적된 보상 수령 테스트")]

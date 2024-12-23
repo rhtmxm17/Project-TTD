@@ -75,7 +75,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                         continue;
                     }
 
-                    CharacterData characterData = GameManager.Data.GetCharacterData(id);
+                    CharacterData characterData = GameManager.TableData.GetCharacterData(id);
 
                     characterData.Level.SetValueWithDataSnapshot(userData);
                     characterData.Enhancement.SetValueWithDataSnapshot(userData);
@@ -97,7 +97,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                         continue;
                     }
 
-                    ItemData itemData = GameManager.Data.GetItemData(id);
+                    ItemData itemData = GameManager.TableData.GetItemData(id);
 
                     itemData.Number.SetValueWithDataSnapshot(userData);
                 }

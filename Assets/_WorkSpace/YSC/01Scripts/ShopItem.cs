@@ -22,10 +22,10 @@ public class ShopItem : MonoBehaviour
     }
     private void Buy()
     {
-        GameManager.Data.GetItemData(1);
-        Debug.Log(GameManager.Data.GetItemData(1));
-        GameManager.Data.GetItemData(2);
-        Debug.Log(GameManager.Data.GetItemData(2));
+        GameManager.TableData.GetItemData(1);
+        Debug.Log(GameManager.TableData.GetItemData(1));
+        GameManager.TableData.GetItemData(2);
+        Debug.Log(GameManager.TableData.GetItemData(2));
 
     }
 
