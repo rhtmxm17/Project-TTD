@@ -13,7 +13,8 @@ public class GameManager : SingletonBehaviour<GameManager>
     public static Firebase.Auth.FirebaseAuth Auth => BackendManager.Auth;
     public static Firebase.Database.FirebaseDatabase Database => BackendManager.Database;
     public static PlayerInput Input { get; private set; } = null;
-    public static DataManager Data => DataManager.Instance;
+    public static DataTableManager Data => DataTableManager.Instance;
+    public static UserDataManager UserData => UserDataManager.Instance;
 
     // GameManager 싱글톤 프리팹 생성
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
