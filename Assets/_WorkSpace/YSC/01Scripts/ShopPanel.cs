@@ -12,7 +12,7 @@ public class ShopPanel : BaseUI
     private void Start()
     {
         Init();
-        
+
     }
 
     private void Init()
@@ -36,6 +36,5 @@ public class ShopPanel : BaseUI
         GetUI(name).SetActive(false);
     }
 
-
-
+    
 }
