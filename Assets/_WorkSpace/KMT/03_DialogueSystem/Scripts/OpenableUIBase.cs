@@ -7,12 +7,12 @@ public class OpenableUIBase : MonoBehaviour
 
     public virtual void OpenWindow()
     { 
-        gameObject.gameObject.SetActive(true);
+        gameObject.SetActive(true);
     }
 
     public virtual void CloseWindow()
     {
-        gameObject.gameObject.SetActive(false);
+        gameObject.SetActive(false);
     }
 
 }
