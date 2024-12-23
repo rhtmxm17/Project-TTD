@@ -24,16 +24,18 @@ public class ShopPanel : BaseUI
         GetUI<Button>("ShopTestButton2").onClick.AddListener(() => Open("ItemListScrollView2"));
     }
 
-    public void Open(string name)
+    private void Open(string name)
     {
         Debug.Log($"{name} 패널을 엽니다");
         GetUI(name).SetActive(true);
     }
 
-    public void GoBack(string name)
+    private void GoBack(string name)
     {
         Debug.Log($"{name} 패널을 닫습니다");
         GetUI(name).SetActive(false);
     }
+
+
 
 }
