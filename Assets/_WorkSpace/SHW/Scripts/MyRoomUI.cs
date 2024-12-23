@@ -17,21 +17,21 @@ public class MyRoomUI : BaseUI
         GetUI<Button>("MyRoomBackButton").onClick.AddListener(()=>CloseTap("MyRoom"));
         
         // 전체 방꾸미기 팝업 열기 버튼
-        GetUI<Button>("ChangeRoom").onClick.AddListener(()=>OpenTap("ChangeRoomPanel"));
+        GetUI<Button>("ChangeRoomButton").onClick.AddListener(()=>OpenTap("ChangeRoom"));
         // 전체 방꾸미기 팝업 닫기 버튼
         GetUI<Button>("CloseChangeRoom").onClick.AddListener(()=>CloseTap("ChangeRoomPanel"));
         // 방뒷배경 바꾸기 팝업 띄우기
-        GetUI<Button>("RoomChangeButton").onClick.AddListener(()=>OpenTap("RoomChangePopup"));
+        GetUI<Button>("RoomChangeButton").onClick.AddListener(()=>OpenSetRoomPopup("RoomChangePopup"));
         // 배경 바꾸기 팝업 닫기
-        GetUI<Button>("CloseChangeRoomPopup").onClick.AddListener(()=>CloseTap("RoomChangePopup"));
+        GetUI<Button>("CloseChangeRoomPopup").onClick.AddListener(()=>CloseSetRoomPopup("RoomChangePopup"));
         // 방 이미지 바꾸기1
         GetUI<Button>("room1").onClick.AddListener(()=>ChangeRoom("room1"));
         // 방 이미지 바꾸기2
         GetUI<Button>("room2").onClick.AddListener(()=>ChangeRoom("room2"));
         // 캐릭터 바꾸기 팝업 띄우기
-        GetUI<Button>("CharacterChangeButton").onClick.AddListener(()=>OpenTap("CharacterChangePopup"));
+        GetUI<Button>("CharacterChangeButton").onClick.AddListener(()=>OpenSetRoomPopup("CharacterChangePopup"));
         // 캐릭터 바꾸기 팝업 닫기
-        GetUI<Button>("CloseChangeCharacter").onClick.AddListener(()=>CloseTap("CharacterChangePopup"));
+        GetUI<Button>("CloseChangeCharacter").onClick.AddListener(()=>CloseSetRoomPopup("CharacterChangePopup"));
         // 캐릭터 이미지 바꾸기1
         GetUI<Button>("Character1").onClick.AddListener(()=>ChangeCharacter("Character1"));
         // 캐릭터 이미지 바꾸기2
@@ -49,6 +49,21 @@ public class MyRoomUI : BaseUI
 
     private void CloseTap(string _name)
     {
+        GetUI(_name).SetActive(false);
+    }
+
+    //TODO: 선택한 이미지를 DB에 올리는 작업 추가 해야함
+    private void OpenSetRoomPopup(string _name)
+    {
+        GetUI("SafeArea").SetActive(false);
+        GetUI("ChangeRoomPanel").SetActive(false);
+        GetUI(_name).SetActive(true);
+    }
+
+    private void CloseSetRoomPopup(string _name)
+    {
+        GetUI("SafeArea").SetActive(true);
+        GetUI("ChangeRoomPanel").SetActive(true);
         GetUI(_name).SetActive(false);
     }
 
