@@ -24,6 +24,9 @@ public class CharacterInfoController : BaseUI
         base.Awake();
         Init();
         SubscribeEvent();
+
+        /////// 더미 인증 테스트 코드
+        StartCoroutine(DataManager.InitDummyUser(1));
     }
  
     private void OnEnable() => UpdateCharacterList();

@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using Firebase.Extensions;
 using UnityEngine.Events;
+using Firebase.Database;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -110,7 +111,6 @@ public class DataManager : SingletonScriptable<DataManager>
                         soAsset.ParseCsvRow(cells);
 
                         EditorUtility.SetDirty(soAsset);
-                        AssetDatabase.SaveAssets();
                     }
                     else
                     {
@@ -125,6 +125,8 @@ public class DataManager : SingletonScriptable<DataManager>
                     dataList.Add(soAsset);
                 }
 
+                EditorUtility.SetDirty(this);
+                AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
 
             }
@@ -178,6 +180,19 @@ public class DataManager : SingletonScriptable<DataManager>
     }
 #endif
 
+    /// <summary>
+    /// 테스트용 가인증 코드입니다
+    /// </summary>
+    /// <param name="DummyNumber">가인증 uid값 뒤쪽에 붙일 번호</param>
+    /// <returns></returns>
+    public static IEnumerator InitDummyUser(int DummyNumber)
+    {
+        // Database 초기화 대기
+        yield return new WaitWhile(() => GameManager.Database == null);
+        BackendManager.Instance.UseDummyUserDataRef(DummyNumber); // 테스트코드
+        GameManager.Data.LoadUserData();
+    }
+
     [ContextMenu("유저데이터 테스트")]
     public void LoadUserData()
     {
@@ -186,7 +201,6 @@ public class DataManager : SingletonScriptable<DataManager>
             Debug.LogWarning("플레이모드가 아닐 경우 오작동할 수 있습니다");
         }
 
-        BackendManager.Instance.UseDummyUserDataRef(0); // 테스트코드
 
         BackendManager.CurrentUserDataRef.GetValueAsync().ContinueWithOnMainThread(task =>
         {
@@ -196,35 +210,37 @@ public class DataManager : SingletonScriptable<DataManager>
                 return;
             }
 
-            Dictionary<string, object> userData = task.Result.Value as Dictionary<string, object>;
+            DataSnapshot userData = task.Result;
 
             // 캐릭터 데이터가 존재한다면
-            if (userData.ContainsKey("Characters"))
+            if (userData.HasChild("Characters"))
             {
-                Dictionary<string, object> allCharacterData = userData["Characters"] as Dictionary<string, object>;
+                DataSnapshot allCharacterData = userData.Child("Characters");
 
                 // DB의 데이터를 캐싱
-                foreach (KeyValuePair<string, object> dataPair in allCharacterData)
+                foreach (DataSnapshot singleCharacterData in allCharacterData.Children)
                 {
                     // DB에서 가져온 키값 문자열 int로 파싱하기 vs 문자열을 키값으로 쓰기
-                    if (false == int.TryParse(dataPair.Key, out int id))
+                    if (false == int.TryParse(singleCharacterData.Key, out int id))
                     {
-                        Debug.LogWarning($"잘못된 키 값({dataPair.Key})");
+                        Debug.LogWarning($"잘못된 키 값({singleCharacterData.Key})");
                         continue;
                     }
 
-                    Dictionary<string, object> characterData = dataPair.Value as Dictionary<string, object>;
+                    CharacterData characterData = GetCharacterData(id);
 
-                    if (characterData.ContainsKey("Level"))
+                    if (singleCharacterData.HasChild("Level"))
                     {
-                        characterDataIdDic[id].Level.SetValueOnLoading((int)(long)characterData["Level"]);
+                        characterData.Level.SetValueOnLoading((int)(long)singleCharacterData.Child("Level").Value);
                     }
-                    if (characterData.ContainsKey("Enhancement"))
+                    if (singleCharacterData.HasChild("Enhancement"))
                     {
-                        characterDataIdDic[id].Enhancement.SetValueOnLoading((int)(long)characterData["Enhancement"]);
+                        characterData.Enhancement.SetValueOnLoading((int)(long)singleCharacterData.Child("Enhancement").Value);
                     }
                 }
             }
+
+            // 새로 생성한 데이터 초기화
 
             onLoadUserDataCompleted?.Invoke();
         });
