@@ -34,6 +34,7 @@ public class CharacterCombatable : Combatable
         basicSkillButton.transform.GetChild(0).GetComponent<Image>().sprite = characterData.SkillDataSO.SkillSprite;
         basicSkillButton.GetComponent<Button>().onClick.AddListener(() => {
             if (!basicSkillButton.Interactable) { Debug.Log("사용 불가");  return; }
+            OnSkillCommanded(characterData.SkillDataSO);
             StartCoroutine(basicSkillButton.StartCoolDown(5));
         });
 
