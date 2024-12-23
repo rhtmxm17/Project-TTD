@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UniRx;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -14,17 +13,6 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     /// 24.12.19 김민태
     ///     - skill so 데이터 필드 추가
     /// </summary>
-
-
-    #region 유저 데이터
-    /// <summary>
-    /// 유저 데이터. DataManager의 LoadUserData()가 호출된 적이 있어야 정상적인 값을 갖는다<br/>
-    /// 주의: 에디터의 Enter Play Mode Settings에서 도메인 리로드가 비활성화 되어있을 경우 이전 실행시의 값이 남아있을 수 있음
-    /// 주의2: 로그아웃을 구현해야 한다면 마찬가지로 이전 유저의 값이 남아있으므로 인증 정보 변경시 정리하는 메서드 추가할것
-    /// </summary>
-    [field: System.NonSerialized] public ReactiveProperty<int> Level { get; private set; } = new ReactiveProperty<int>();
-    #endregion
-
 
     // 능력치 표 내지는 계산식으로 변경 필요함
     [System.Serializable]
@@ -55,6 +43,22 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
 
     [SerializeField] Skill skillDataSO;
     public Skill SkillDataSO => skillDataSO;
+
+    #region 유저 데이터
+    /// <summary>
+    /// 유저 데이터. DataManager의 LoadUserData()가 호출된 적이 있어야 정상적인 값을 갖는다<br/>
+    /// 주의: 에디터의 Enter Play Mode Settings에서 도메인 리로드가 비활성화 되어있을 경우 이전 실행시의 값이 남아있을 수 있음
+    /// 주의2: 로그아웃을 구현해야 한다면 마찬가지로 이전 유저의 값이 남아있으므로 인증 정보 변경시 정리하는 메서드 추가할것
+    /// </summary>
+    public UserDataProperty<int> Level { get; private set; }
+    public UserDataProperty<int> Enhancement { get; private set; }
+    #endregion
+
+    private void OnEnable()
+    {
+        Level = new UserDataProperty<int>($"Characters/{id}/Level");
+        Enhancement = new UserDataProperty<int>($"Characters/{id}/Enhancement");
+    }
 
 #if UNITY_EDITOR
     private enum Column
