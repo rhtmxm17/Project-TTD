@@ -9,7 +9,7 @@ using Random = UnityEngine.Random;
 
 public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 {
-    public CharacterData _CharacterData;
+    [SerializeField] private CharacterData _characterData;
     private CharacterInfoController _characterInfoController;
     
     public bool IsSubscribe;
@@ -51,15 +51,21 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController.CurCharacterInfo = this;
         _characterInfoController.CurIndex = _characterInfoController._characterInfos.IndexOf(this);
         _characterInfoController._infoPopup.SetActive(true);
-        
+        UpdateInfo();
+
+    }
+
+    public void UpdateInfo()
+    {
         //TODO: 정리 필요
-        _characterInfoController._infoUI._nameText.text = _CharacterData.Name;
-        _characterInfoController._infoUI._characterImage.sprite = _CharacterData.FaceIconSprite;
+        _characterInfoController._infoUI._nameText.text = _characterData.Name;
+        _characterInfoController._infoUI._characterImage.sprite = _characterData.FaceIconSprite;
         _characterInfoController._infoUI._levelText.text = tempLevel.ToString() + "Lv/200";
         _characterInfoController._infoUI._atkText.text = "공격력" + Random.Range(2, 100).ToString();
         _characterInfoController._infoUI._hpText.text = "체력" + Random.Range(2, 100).ToString();
     }
-
+    
+    
     private void LevelUp()
     {
         //오픈한 캐릭터 정보가 구독된 리스트중 자신과 같지 않으면 return

@@ -9,10 +9,10 @@ using UnityEngine.UI;
 public class CharacterInfoController : BaseUI
 {
     [HideInInspector] public CharacterInfoUI _infoUI;
-    public List<CharacterInfo> _characterInfos;
-    public CharacterInfo CurCharacterInfo;
+    [HideInInspector] public List<CharacterInfo> _characterInfos;
+    [HideInInspector] public CharacterInfo CurCharacterInfo;
 
-    public GameObject _infoPopup;
+    [HideInInspector] public GameObject _infoPopup;
 
     private Button _prevButton;
     private Button _nextButton;
@@ -64,6 +64,8 @@ public class CharacterInfoController : BaseUI
         }
         
         CurCharacterInfo = _characterInfos[CurIndex];
+        CurCharacterInfo.UpdateInfo();
+        
         Debug.Log($"{CurIndex}이전 캐릭터 이동");
     }
 
@@ -79,7 +81,8 @@ public class CharacterInfoController : BaseUI
         }
          
         CurCharacterInfo = _characterInfos[CurIndex];
- 
+        CurCharacterInfo.UpdateInfo();
+        
         Debug.Log($"{CurIndex} 캐릭터 이동");
     }
     

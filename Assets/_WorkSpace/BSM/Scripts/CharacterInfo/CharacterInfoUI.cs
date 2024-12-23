@@ -17,8 +17,6 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public Button _prevButton;
     [HideInInspector] public Button _nextButton;
 
-    public CharacterInfo _characterInfo;
-    
     private Button _exitButton;
     private GameObject _infoPopup;
     
