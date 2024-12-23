@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using BSM_Character_State;
@@ -14,8 +15,8 @@ namespace BSM_Chracter_BaseController
 
         private void Init()
         {
-            _characterState = GetComponent<CharacterState>();
-            SetCharacter();
+            // _characterState = GetComponent<CharacterState>();
+            // SetCharacter();
         }
     
         private void SetCharacter()
@@ -36,7 +37,7 @@ namespace BSM_Chracter_BaseController
             GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(path);
              
         }
-        
+
     }
 }
 
