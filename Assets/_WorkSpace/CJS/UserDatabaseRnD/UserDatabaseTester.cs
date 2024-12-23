@@ -34,10 +34,10 @@ public class UserDatabaseTester : MonoBehaviour
         gold = UnityEngine.Random.Range(0f, 10000f);
         dummyUserDBRef.Child(GoldReferenceKey).SetValueAsync(gold);
 
-        StartCoroutine(DataManager.InitDummyUser(0));
+        StartCoroutine(UserDataManager.InitDummyUser(0));
 
         GameManager.Input.actions["Touch"].started += GetUserDataTest;
-        GameManager.Data.onLoadUserDataCompleted.AddListener(TestLog);
+        GameManager.UserData.onLoadUserDataCompleted.AddListener(TestLog);
     }
 
     private void GetUserDataTest(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -47,6 +47,11 @@ public class UserDatabaseTester : MonoBehaviour
 
     private void TestLog()
     {
+        Debug.Log(GameManager.UserData.Profile.Name.Value);
+        Debug.Log(GameManager.UserData.Profile.Level.Value);
+        Debug.Log(GameManager.UserData.Profile.IconIndex.Value);
+        Debug.Log(GameManager.UserData.Profile.Introduction.Value);
+
         Debug.Log(GameManager.Data.GetCharacterData(2).Level.Value);
         Debug.Log(GameManager.Data.GetCharacterData(2).Enhancement.Value);
     }

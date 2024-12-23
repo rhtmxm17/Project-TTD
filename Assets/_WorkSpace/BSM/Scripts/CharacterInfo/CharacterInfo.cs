@@ -64,7 +64,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         //오픈한 캐릭터 정보가 구독된 리스트중 자신과 같지 않으면 return
         if (_characterInfoController.CurCharacterInfo != this) return;
 
-        GameManager.Data.StartUpdateStream()
+        GameManager.UserData.StartUpdateStream()
             .SetDBValue(_characterData.Level, _characterData.Level.Value + 1)
             // .SetDBValue(_characterData.Level, _characterData.Level.Value + 1) // 재화 사용
             .Submit(LevelUpResult);
