@@ -19,3 +19,9 @@ public enum BuffType
     DEFENSE = 1 << 7,
     SUPPORT = 1 << 5,
 }
+
+[System.Serializable]
+public enum SortType
+{
+    NONE, NAME, LEVEL
+}
