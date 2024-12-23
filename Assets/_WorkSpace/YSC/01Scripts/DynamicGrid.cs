@@ -13,6 +13,9 @@ namespace UnityEngine.UI
         public enum Axis { Horizontal = 0, Vertical = 1 }
         public enum Constraint { Flexible = 0, FixedColumnCount = 1, FixedRowCount = 2 }
 
+        public enum ExpandSetting { x, y, both, none };
+        public ExpandSetting expandSetting;
+
         [SerializeField]
         protected Corner m_StartCorner = Corner.UpperLeft;
         public Corner startCorner { get { return m_StartCorner; } set { SetProperty(ref m_StartCorner, value); } }
@@ -107,12 +110,18 @@ namespace UnityEngine.UI
         }
         private void SetCellsAlongAxis(int axis)
         {
+            /* 
+            // 보통 LayoutController 가로값이 불렸을때만 가로값이 set되는데
+            // 세로값도 똑같이 세로값 콜됐을때만 set
+            // 근데 이 경우에선, 가로 새로 둘다  세로축 콜되면 가로 세로 위치 설정함.
+            // 가로 위치만 변경하니까 (사이즈x)  자식레이아웃 지장 안가니까
+            // 모든 가로 레이아웃이 세로레이아웃보다 먼저 계산되야하는 룰 어기면 안됨 
             // Normally a Layout Controller should only set horizontal values when invoked for the horizontal axis
             // and only vertical values when invoked for the vertical axis.
             // However, in this case we set both the horizontal and vertical position when invoked for the vertical axis.
             // Since we only set the horizontal position and not the size, it shouldn't affect children's layout,
             // and thus shouldn't break the rule that all horizontal layout must be calculated before all vertical layout.
-
+            */
             if (axis == 0)
             {
                 // Only set the sizes when invoked for horizontal axis, not the positions
@@ -198,9 +207,58 @@ namespace UnityEngine.UI
                 if (cornerY == 1)
                     positionY = actualCellCountY - 1- positionY;
 
-                float realSize = ((width - (spacing[0] * (actualCellCountX - 1))) / actualCellCountX);
-                SetChildAlongAxis(rectChildren[i], 0, startOffset.x + (realSize + spacing[0]) * positionX, realSize);
-                SetChildAlongAxis(rectChildren[i], 1, startOffset.y + (cellSize[1] + spacing[1]) * positionY, cellSize[1]);
+                float realSizeY;
+                if (expandSetting == ExpandSetting.both)
+                {
+                    if (rectChildren.Count != 1)
+                    {
+                        realSizeY = ((height - (spacing[0] * (actualCellCountY - 1))) / actualCellCountY);
+                    }
+                    else
+                    {
+                        realSizeY = ((height / constraintCount - (spacing[0] * (actualCellCountY - 1))) / actualCellCountY);
+
+                    }
+
+                    float realsize = ((width - (spacing[0] * (actualCellCountX - 1))) / actualCellCountX);
+                    SetChildAlongAxis(rectChildren[i], 0, startOffset.x + (realsize + spacing[0]) * positionX, realsize);
+                    SetChildAlongAxis(rectChildren[i], 1, startOffset.y + (realSizeY + spacing[1]) * positionY, realSizeY);
+
+
+                }
+                if (expandSetting == ExpandSetting.x)
+                {
+
+
+                    float realSize = ((width - (spacing[0] * (actualCellCountX - 1))) / actualCellCountX);
+                    SetChildAlongAxis(rectChildren[i], 0, startOffset.x + (realSize + spacing[0]) * positionX, realSize);
+
+                    SetChildAlongAxis(rectChildren[i], 1, startOffset.y + (cellSize[1] + spacing[1]) * positionY, cellSize[1]);
+
+                }
+                if (expandSetting == ExpandSetting.y)
+                {
+                    if (rectChildren.Count != 1)
+                    {
+                        realSizeY = ((height - (spacing[1] * (actualCellCountY - 1))) / actualCellCountY);
+                    }
+                    else
+                    {
+                        realSizeY = ((height / constraintCount - (spacing[1] * (actualCellCountY - 1))) / actualCellCountY);
+                    }
+
+
+                    SetChildAlongAxis(rectChildren[i], 1, startOffset.y + (realSizeY + spacing[1]) * positionY, realSizeY);
+
+                    SetChildAlongAxis(rectChildren[i], 0, startOffset.x + (cellSize[0] + spacing[0]) * positionX, cellSize[0]);
+
+
+                }
+                if (expandSetting == ExpandSetting.none)
+                {
+                    SetChildAlongAxis(rectChildren[i], 1, startOffset.y + (cellSize[1] + spacing[1]) * positionY, cellSize[1]);
+                    SetChildAlongAxis(rectChildren[i], 0, startOffset.x + (cellSize[0] + spacing[0]) * positionX, cellSize[0]);
+                }
             }
 
 
