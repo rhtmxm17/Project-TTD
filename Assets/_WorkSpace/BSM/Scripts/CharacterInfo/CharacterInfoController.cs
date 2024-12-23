@@ -13,11 +13,13 @@ public class CharacterInfoController : BaseUI
     [HideInInspector] public CharacterInfo CurCharacterInfo;
 
     [HideInInspector] public GameObject _infoPopup;
-
+    
+    [HideInInspector] public int CurIndex = 0;
+    
     private Button _prevButton;
     private Button _nextButton;
 
-    public int CurIndex = 0;
+    
     
     protected override void Awake()
     {
@@ -51,7 +53,10 @@ public class CharacterInfoController : BaseUI
     {
         _characterInfos = GetComponentsInChildren<CharacterInfo>().ToList();
     }
-
+    
+    /// <summary>
+    /// 이전 캐릭터 정보로 변경
+    /// </summary>
     private void PreviousCharacter()
     {
         if (CurIndex == 0)
@@ -64,11 +69,12 @@ public class CharacterInfoController : BaseUI
         }
         
         CurCharacterInfo = _characterInfos[CurIndex];
-        CurCharacterInfo.UpdateInfo();
-        
-        Debug.Log($"{CurIndex}이전 캐릭터 이동");
+        CurCharacterInfo.UpdateInfo(); 
     }
-
+    
+    /// <summary>
+    /// 다음 캐릭터 정보로 변경
+    /// </summary>
     private void NextCharacter()
     {
         if (CurIndex == _characterInfos.Count - 1)
@@ -81,9 +87,7 @@ public class CharacterInfoController : BaseUI
         }
          
         CurCharacterInfo = _characterInfos[CurIndex];
-        CurCharacterInfo.UpdateInfo();
-        
-        Debug.Log($"{CurIndex} 캐릭터 이동");
+        CurCharacterInfo.UpdateInfo(); 
     }
     
 }
