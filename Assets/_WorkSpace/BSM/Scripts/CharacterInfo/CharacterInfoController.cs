@@ -29,7 +29,7 @@ public class CharacterInfoController : BaseUI
         SubscribeEvent();
 
         /////// 더미 인증 테스트 코드
-        StartCoroutine(UserDataManager.InitDummyUser(1));
+        StartCoroutine(UserDataManager.InitDummyUser(5));
     }
 
     private void OnEnable() => UpdateCharacterList();
