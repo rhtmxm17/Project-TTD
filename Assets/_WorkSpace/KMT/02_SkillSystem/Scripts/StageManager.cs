@@ -52,6 +52,9 @@ public class StageManager : MonoBehaviour
 
     private void Start()
     {
+        //테스트용 로그인 초기화
+        StartCoroutine(UserDataManager.InitDummyUser(0));
+
         characterSetter.InitCharacters(characterDataList);
         InitMonsterWaves(monsterDataList);
     }
