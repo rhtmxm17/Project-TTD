@@ -71,6 +71,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     public const string SoundsAssetFolder = "Assets/Imports/Sounds";
     public const string PrefabsAssetFolder = "Assets/_WorkSpace/Prefabs";
     public const string SpritesAssetFolder = "Assets/_WorkSpace/Sprites";
+    public const string SkillAssetFolder = "Assets/_WorkSpace/Datas/Skills";
 
     [SerializeField] string documentID;
 

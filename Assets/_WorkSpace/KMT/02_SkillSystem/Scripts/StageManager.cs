@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StageManager : MonoBehaviour
 {
@@ -41,6 +42,8 @@ public class StageManager : MonoBehaviour
     [Space(20)]
     [SerializeField]
     TextMeshProUGUI costText;
+    [SerializeField]
+    Slider costSlider;
 
     private void Awake()
     {
@@ -52,6 +55,9 @@ public class StageManager : MonoBehaviour
 
     private void Start()
     {
+        //테스트용 로그인 초기화
+        StartCoroutine(UserDataManager.InitDummyUser(0));
+
         characterSetter.InitCharacters(characterDataList);
         InitMonsterWaves(monsterDataList);
     }
@@ -77,12 +83,19 @@ public class StageManager : MonoBehaviour
     {
         while (true)
         {
-            PartyCost = Math.Clamp(PartyCost + Time.deltaTime, 0, MaxPartyCost);
+            PartyCost = Math.Clamp(PartyCost + Time.deltaTime / 3, 0, MaxPartyCost);
             costText.text = PartyCost.ToString();
+            costSlider.value = PartyCost / MaxPartyCost;
             yield return null;
         }
     }
 
+    public void AddPartyCost(float amount)
+    {
+        PartyCost = Math.Clamp(PartyCost + amount, 0, MaxPartyCost);
+        costSlider.value = PartyCost / MaxPartyCost;
+        costText.text = PartyCost.ToString();
+    }
     public void UsePartyCost(float cost)
     {
         if (PartyCost < cost)
@@ -92,6 +105,8 @@ public class StageManager : MonoBehaviour
         }
 
         PartyCost -= cost;
+        costSlider.value = PartyCost / MaxPartyCost;
+        costText.text = PartyCost.ToString();
     }
 
     IEnumerator GoNextWaveCO()
@@ -104,7 +119,7 @@ public class StageManager : MonoBehaviour
             if (CheckCharactersWait())
                 break;
 
-            Debug.Log("이동중...");
+            Debug.Log("캐릭터 복귀중...");
 
         }
 
@@ -114,6 +129,9 @@ public class StageManager : MonoBehaviour
             Debug.Log("클리어!");
             yield break;
         }
+
+        Debug.Log("다음 웨이브로 이동중...");
+        //yield return new WaitForSeconds(3f);
 
         monsterWaveQueue[0].gameObject.SetActive(true);
         characterManager.StartCombat(monsterWaveQueue[0]);
@@ -145,6 +163,9 @@ public class StageManager : MonoBehaviour
 
             //파티 공유 게이지 충전 시작.
             StartCoroutine(StartPartyCostCO());
+
+            costSlider.value = 0;
+            costText.text = PartyCost.ToString();
 
             Debug.Log("S눌림");
             monsterWaveQueue[0].gameObject.SetActive(true);

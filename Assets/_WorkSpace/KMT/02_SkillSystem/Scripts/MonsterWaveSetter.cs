@@ -40,6 +40,7 @@ public class MonsterWaveSetter : MonoBehaviour
         {
 
             Combatable charObj = Instantiate(monsterPrefab, position[i], Quaternion.identity, transform);
+            charObj.onDeadEvent.AddListener((charobj) => { StageManager.Instance.AddPartyCost(1); });
             characters.Add(charObj);
             GameObject model = Instantiate(characterDataList[i].ModelPrefab, charObj.transform);
             model.name = "Model";

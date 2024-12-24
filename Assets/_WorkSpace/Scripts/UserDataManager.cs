@@ -17,6 +17,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
         public UserDataInt IconIndex { get; private set; } = new UserDataInt($"Profile/IconIndex");
         public UserDataInt Level { get; private set; } = new UserDataInt($"Profile/Level", 1);
         public UserDataString Introduction { get; private set; } = new UserDataString($"Profile/Introduction", "소개문 없음");
+
     }
 
 

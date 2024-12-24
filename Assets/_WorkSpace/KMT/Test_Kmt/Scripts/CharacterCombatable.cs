@@ -33,21 +33,25 @@ public class CharacterCombatable : Combatable
 
         basicSkillButton.transform.GetChild(0).GetComponent<Image>().sprite = characterData.SkillDataSO.SkillSprite;
         basicSkillButton.GetComponent<Button>().onClick.AddListener(() => {
-            if (!basicSkillButton.Interactable) { Debug.Log("사용 불가");  return; }
+            if (!basicSkillButton.Interactable || !IsAlive) { Debug.Log("사용 불가");  return; }
             OnSkillCommanded(characterData.SkillDataSO);
-            StartCoroutine(basicSkillButton.StartCoolDown(5));
+            basicSkillButton.StartCoolDown(5);//쿨타임을 매개변수로 전달하기.
         });
 
         secondSkillButton.SetSkillCost(characterData.StatusTable.SecondSkillCost);
         secondSkillButton.transform.GetChild(0).GetComponent<Image>().sprite = characterData.SecondSkillDataSO.SkillSprite;
         secondSkillButton.GetComponent<Button>().onClick.AddListener(() => {
-            if (!secondSkillButton.Interactable) { Debug.Log("사용 불가"); return; }
+            if (!secondSkillButton.Interactable || !IsAlive) { Debug.Log("사용 불가"); return; }
             if (characterData.StatusTable.SecondSkillCost < StageManager.Instance.PartyCost)
             {
                 StageManager.Instance.UsePartyCost(characterData.StatusTable.SecondSkillCost);
                 OnSkillCommanded(characterData.SecondSkillDataSO);
             }
         });
+
+        onDeadEvent.AddListener(basicSkillButton.OffSkillButton);
+        onDeadEvent.AddListener(secondSkillButton.OffSkillButton);
+
     }
 
 /*    public override void OnSkillCommanded(Skill skillData)//필요할지는 모름

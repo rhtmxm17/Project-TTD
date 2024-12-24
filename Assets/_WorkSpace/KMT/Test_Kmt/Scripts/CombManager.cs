@@ -33,16 +33,16 @@ public class CombManager : MonoBehaviour
         }
     }
 
-    public Transform GetNearestTrackable(Transform fromTransform)
+    public Combatable GetNearestTrackable(Transform fromTransform)
     {
         return GetNearestTrackable(fromTransform.position);
     }
-    public Transform GetNearestTrackable(Vector3 fromPos)
+    public Combatable GetNearestTrackable(Vector3 fromPos)
     {
         if (CharList.Count == 0)
             return null;
 
-        Transform ret = null;
+        Combatable ret = null;
         float minDist = float.MaxValue;
 
         foreach (Combatable trObj in CharList)
@@ -52,7 +52,7 @@ public class CombManager : MonoBehaviour
             if (curDist < minDist)
             {
                 minDist = curDist;
-                ret = trObj.transform;
+                ret = trObj;
             }
         }
 
@@ -60,16 +60,16 @@ public class CombManager : MonoBehaviour
     }
 
 
-    public Transform GetFarestTrackable(Transform fromTransform)
+    public Combatable GetFarestTrackable(Transform fromTransform)
     {
         return GetFarestTrackable(fromTransform.position);
     }
-    public Transform GetFarestTrackable(Vector3 fromPos)
+    public Combatable GetFarestTrackable(Vector3 fromPos)
     {
         if (CharList.Count == 0)
             return null;
 
-        Transform ret = null;
+        Combatable ret = null;
         float maxDist = -1;
 
         foreach (Combatable trObj in CharList)
@@ -79,7 +79,7 @@ public class CombManager : MonoBehaviour
             if (curDist > maxDist)
             {
                 maxDist = curDist;
-                ret = trObj.transform;
+                ret = trObj;
             }
         }
 
