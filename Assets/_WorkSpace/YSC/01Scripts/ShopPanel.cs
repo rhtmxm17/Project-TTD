@@ -25,13 +25,13 @@ public class ShopPanel : BaseUI
         GetUI<Button>("ShopTestButton2").onClick.AddListener(() => Open("ItemListScrollView2"));
 
 
-
+        GetUI<Button>("ItemInfoSpot").onClick.AddListener(() => Open("ShopPopup"));
 
     }
 
     private void SetShopPopup()
     {
-        string description;
+       // string description;
         // 클릭한 아이템의 정보를 받아와야함.
         GetUI<Button>("ShopPopupClose").onClick.AddListener(() => GoBack("ShopPopup")); // 닫기버튼
         GetUI<TMP_Text>("ShopPopupText").text = "description";

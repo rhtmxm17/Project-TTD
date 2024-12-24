@@ -1,25 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
+// using System.Drawing;
 using TMPro;
 using UnityEditor.U2D.Animation;
+using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ShopItem : BaseUI
 {
     [Header("아이템 이름")]
-    [SerializeField] TMP_Text itemName;
+    [SerializeField] TMP_Text itemNameText;     // UI_아이템이름
+    [SerializeField] string itemName;
+    // [SerializeField] TMP_Text itemNumText;      // UI_아이템남은 갯수 밑에 있는데 잘못 중복한듯
     [Header("아이템 가격")]
-    [SerializeField] int itemPrice;      // UI에 표기되는 가격표   
+    [SerializeField] TMP_Text itemPriceText;    // UI에 표기되는 가격표   
+    [SerializeField] int itemPrice;          
     [Header("아이템 갯수")]
-    [SerializeField] int itemCount;      // UI에 표기되는 갯수
+    [SerializeField] TMP_Text itemCountText;    // UI에 표기되는 갯수
+    [SerializeField] int itemCount;             
     [Header("아이템 이미지")]
     [SerializeField] Image itemImage;
     // [SerializeField] Sprite spriteImage;
     [Header("구매버튼")]
     [SerializeField] Button buyButton;
     [Header("얻는 아이템 (Ex. 토큰)")]
-    [SerializeField] int getCount;       // UI에 표기되는 아이템갯수?
+    [SerializeField] int getCount;               // UI에 표기되는 아이템갯수?
     [Header("매진")]
     [SerializeField] bool isSoldOut;
     [Header("설명")]
@@ -41,15 +47,31 @@ public class ShopItem : BaseUI
     }
     private void Init()
     {
+        itemNameText = GetUI<TMP_Text>("ItemInfoText"); 
         buyButton.GetComponentInChildren<Button>().onClick.AddListener(Buy);
         buyButtonText = GetUI<TMP_Text>("BuyButtonText");
+        itemPriceText = GetUI<TMP_Text>("ItemPriceText");
+        itemCountText = GetUI<TMP_Text>("ItemCountText");
+
+        // 테스트용
+        itemNameText.text = "테스트드래곤";
+        itemPriceText.text = "1,000,000 gold";
+        itemCountText.text = "품절임박";
+        // 갯수 바뀌면 업데이트 되도록 해야함
+
+        // SetItem(_item);
     }
 
+
+    // TODO: 
     // ItemData랑 맞는지 확인해야함.
     public void SetItem(ItemData item)
     {
+         
+
         _item = item;
-        itemName.text = item.name;
+        itemName = item.ItemName;
+        itemNameText.text = itemName;
         itemImage.sprite = item.SspriteImage;
         _description = item.Description;
 
@@ -113,6 +135,7 @@ public class ShopItem : BaseUI
         {
             buyButtonText.text = "매!\t진!";
             buyButton.onClick.RemoveListener(Buy);
+            itemImage.color = new Color(.3f, .3f, .3f, 1f); // 어둡게 
             //buyButton.gameObject.SetActive(false);
             // gameObject.SetActive(false);    // 기능 다 되면 비활성화 / 지우기
 
