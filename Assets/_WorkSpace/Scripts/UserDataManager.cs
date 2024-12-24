@@ -30,7 +30,15 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
     {
         // Database 초기화 대기
         yield return new WaitWhile(() => GameManager.Database == null);
-        BackendManager.Instance.UseDummyUserDataRef(DummyNumber); // 테스트코드
+
+        if (BackendManager.CurrentUserDataRef != null)
+        {
+            Debug.Log("이미 등록된 UserData 레퍼런스가 있어서 더미 유저 등록을 생략함");
+        }
+        else
+        {
+            BackendManager.Instance.UseDummyUserDataRef(DummyNumber); // 테스트코드
+        }
         Instance.LoadUserData();
     }
 
