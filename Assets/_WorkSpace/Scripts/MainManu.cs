@@ -11,6 +11,6 @@ public class MainManu : BaseUI
     {
         base.Awake();
 
-
+        StartCoroutine(UserDataManager.InitDummyUser(0));
     }
 }
