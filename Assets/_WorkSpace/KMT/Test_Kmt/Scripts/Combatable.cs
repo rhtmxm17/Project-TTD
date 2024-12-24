@@ -30,6 +30,9 @@ public class Combatable : MonoBehaviour
     Func<Transform, Combatable> foundNearEnemyLogic = null;
     Func<Transform, Combatable> foundFarEnemyLogic = null;
 
+    int rangePow;
+    Skill baseAttack;
+
     public bool IsAlive { get; private set; }
 
     public enum SearchLogic { NEAR_FIRST, FAR_FIRST }
@@ -60,6 +63,10 @@ public class Combatable : MonoBehaviour
                     + table.healthPointGrouth * data.Level.Value;
 
         hp.Value = MaxHp.Value;
+
+        rangePow = (int)(table.Range * table.Range);//사거리
+
+        baseAttack = data.BasicSkillDataSO;
 
     }
 
@@ -236,7 +243,6 @@ public class Combatable : MonoBehaviour
         Combatable target = foundEnemyLogic.Invoke(transform);
         float trackTime = 0.2f;
         float time = 0;
-        int rangePow = 9;//사거리
 
         while (target != null && target.IsAlive && againistObjList != null)
         {
@@ -245,6 +251,8 @@ public class Combatable : MonoBehaviour
 
             while (target != null && rangePow < Vector3.SqrMagnitude(target.transform.position - transform.position))
             {
+                Debug.Log("tracking");
+
                 if (time > trackTime)
                 {
                     time = 0;
@@ -280,11 +288,16 @@ public class Combatable : MonoBehaviour
     {
         yield return null;
 
-        while (target.IsAlive && trackable.rangePow > Vector3.SqrMagnitude(target.transform.position - transform.position))
+        while (target.IsAlive && rangePow > Vector3.SqrMagnitude(target.transform.position - transform.position))
         {
+            Debug.Log("combatting");
             //피격효과 확인을 위한 임시 코드
             target.GetComponent<SpriteRenderer>().color = UnityEngine.Random.ColorHSV();
-            target.Damaged(AttackPoint.Value);
+
+            StartCoroutine(baseAttack.SkillRoutine(this, null));
+            //target.Damaged(AttackPoint.Value);
+
+            //attack(attackvalue); => 근접인지? 투사체공격인지?
             yield return new WaitForSeconds(1);
         }
 

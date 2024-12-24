@@ -29,14 +29,16 @@ public class SingleTargetDamage : Skill
 
     protected override IEnumerator SkillRoutineImplement(Combatable self)
     {
+        Combatable target = targetingLogic.GetTarget(self); // 설정된 규칙에 따라 타겟 산출
+
         // 지정된 애니메이션 시작
         self.UnitAnimator.SetTrigger(animationHash);
 
         yield return waitPreDelay;
         
         // 실제로 공격이 적용되는 구간
-        Combatable target = targetingLogic.GetTarget(self); // 설정된 규칙에 따라 타겟 산출
-        target?.Damaged(self.AttackPoint.Value * atkMultiplier); // 타겟에게 데미지 적용
+        if(target.IsAlive)
+            target?.Damaged(self.AttackPoint.Value * atkMultiplier); // 타겟에게 데미지 적용
         
         // 히트스캔 이펙트 추가
 
