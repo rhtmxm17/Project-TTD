@@ -54,9 +54,9 @@ public class ShopItem : BaseUI
         itemCountText = GetUI<TMP_Text>("ItemCountText");
 
         // 테스트용
-        itemNameText.text = "테스트드래곤";
-        itemPriceText.text = "1,000,000 gold";
-        itemCountText.text = "품절임박";
+        itemNameText.text = itemName;
+        itemPriceText.text = itemPrice.ToString();
+        itemCountText.text = itemCount.ToString();
         // 갯수 바뀌면 업데이트 되도록 해야함
 
         // SetItem(_item);
