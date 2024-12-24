@@ -35,7 +35,7 @@ public class CharacterCombatable : Combatable
         basicSkillButton.GetComponent<Button>().onClick.AddListener(() => {
             if (!basicSkillButton.Interactable || !IsAlive) { Debug.Log("사용 불가");  return; }
             OnSkillCommanded(characterData.SkillDataSO);
-            StartCoroutine(basicSkillButton.StartCoolDown(5));
+            basicSkillButton.StartCoolDown(5);//쿨타임을 매개변수로 전달하기.
         });
 
         secondSkillButton.SetSkillCost(characterData.StatusTable.SecondSkillCost);
@@ -48,6 +48,10 @@ public class CharacterCombatable : Combatable
                 OnSkillCommanded(characterData.SecondSkillDataSO);
             }
         });
+
+        onDeadEvent.AddListener(basicSkillButton.OffSkillButton);
+        onDeadEvent.AddListener(secondSkillButton.OffSkillButton);
+
     }
 
 /*    public override void OnSkillCommanded(Skill skillData)//필요할지는 모름
