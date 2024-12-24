@@ -76,18 +76,7 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void StartListSort()
     {
-        _lastSortType = (SortType)PlayerPrefs.GetInt("SortType"); 
-        switch (_lastSortType)
-        {
-            case SortType.NAME:
-                _characterSort.NameSort();
-                break;
-            
-            case SortType.LEVEL:
-                _characterSort.LevelSort();
-                break;
-            
-        }
+        _characterSort.CharacterListSort();
     }
     
     /// <summary>

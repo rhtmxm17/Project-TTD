@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic; 
 using TMPro; 
 using UnityEngine; 
+using UnityEngine.UI; 
 using UnityEngine.EventSystems;
 using Random = UnityEngine.Random;
 
@@ -13,8 +14,9 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 
     private CharacterInfoController _characterInfoController;
 
-    private TextMeshProUGUI _characterNameText;
-
+    private TextMeshProUGUI _characterListNameText;
+    private Image _characterListImage;
+    
     public int CharacterLevel
     {
         //현재 캐릭터 레벨 반환
@@ -60,10 +62,12 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 
     private void Init()
     {
-        _characterNameText = GetComponentInChildren<TextMeshProUGUI>();
+        _characterListNameText = GetComponentInChildren<TextMeshProUGUI>();
+        _characterListImage = transform.GetChild(0).GetComponent<Image>();
         _characterInfoController = GetComponentInParent<CharacterInfoController>();
-
-        _characterNameText.text = _characterData.Name;
+        
+        SetListNameText(_characterData.Name);
+        SetListImage(_characterData.FaceIconSprite);
         SubscribeEvent();
     }
 
@@ -206,6 +210,16 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// <param name="name"></param>
     public void SetListNameText(string name)
     {
-        _characterNameText.text = name;
+        _characterListNameText.text = name;
     }
+    
+    /// <summary>
+    /// 캐릭터 리스트 이미지 설정
+    /// </summary>
+    /// <param name="sprite"></param>
+    public void SetListImage(Sprite sprite)
+    {
+        _characterListImage.sprite = sprite;
+    }
+    
 }
