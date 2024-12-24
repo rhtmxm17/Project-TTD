@@ -21,6 +21,12 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         public float BasicSkillCooldown;
         public float SecondSkillCost;
 
+        public float attackPointBase;
+        public float attackPointGrowth;
+        public float healthPointBase;
+        public float healthPointGrouth;
+        public float defensePointBase;
+        public float defensePointGrouth;
     }
 
     [SerializeField] int id;
@@ -29,6 +35,9 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     [SerializeField] new string name;
     public string Name => name;
 
+    [SerializeField] Sprite faceIconSprite;
+    public Sprite FaceIconSprite => faceIconSprite;
+
     [SerializeField] GameObject modelPrefab;
     public GameObject ModelPrefab => modelPrefab;
 
@@ -36,11 +45,8 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     public Status StatusTable => statusTable;
 
     [Header("Skill datas")]
-    [SerializeField] Sprite skillSprite;
-    public Sprite SkillSprite => skillSprite;
-
-    [SerializeField] Sprite faceIconSprite;
-    public Sprite FaceIconSprite => faceIconSprite;
+    [SerializeField] Skill basicSkillDataSO;
+    public Skill BasicSkillDataSO => basicSkillDataSO;
 
     [SerializeField] Skill skillDataSO;
     public Skill SkillDataSO => skillDataSO;
@@ -73,9 +79,20 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         /// </summary>
         FILE_NAME,
         NAME,
-        RANGE,
+        FACE_ICON,
         SHAPE,
-        SKILL_SPRITE,
+        BASE_ATTACK,
+        NORMAL_SKILL,
+        NS_COOLDOWN,
+        SPECIAL_SKILL,
+        SS_COST,
+        RANGE,
+        ATK_BASE,
+        ATK_GROWTH,
+        DEF_BASE,
+        DEF_GROWTH,
+        HP_BASE,
+        HP_GROWTH,
     }
 
     public void ParseCsvRow(string[] cells)
@@ -90,6 +107,35 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         // NAME
         name = cells[(int)Column.NAME];
 
+        // FACE_ICON
+        faceIconSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.FACE_ICON]}.asset");
+
+        // SHAPE
+        modelPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{DataTableManager.PrefabsAssetFolder}/{cells[(int)Column.SHAPE]}.prefab");
+
+        // BASE_ATTACK
+        basicSkillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.BASE_ATTACK]}.asset");
+
+        // NORMAL_SKILL
+        skillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.NORMAL_SKILL]}.asset");
+
+        // SPECIAL_SKILL
+        secondSkillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.SPECIAL_SKILL]}.asset");
+
+        // NS_COOLDOWN
+        if (false == float.TryParse(cells[(int)Column.NS_COOLDOWN], out statusTable.BasicSkillCooldown))
+        {
+            Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+            return;
+        }
+
+        // SS_COST
+        if (false == float.TryParse(cells[(int)Column.SS_COST], out statusTable.SecondSkillCost))
+        {
+            Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+            return;
+        }
+
         // RANGE
         if (false == float.TryParse(cells[(int)Column.RANGE], out statusTable.Range))
         {
@@ -97,11 +143,47 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
             return;
         }
 
-        // SHAPE
-        modelPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{DataTableManager.PrefabsAssetFolder}/{cells[(int)Column.SHAPE]}.prefab");
+        // ATK_BASE
+        if (false == float.TryParse(cells[(int)Column.ATK_BASE], out statusTable.attackPointBase))
+        {
+            Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+            return;
+        }
 
-        // SKILL_SPRITE
-        skillSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.SKILL_SPRITE]}.asset");
+        // ATK_GROWTH
+        if (false == float.TryParse(cells[(int)Column.ATK_GROWTH], out statusTable.attackPointGrowth))
+        {
+            Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+            return;
+        }
+
+        // DEF_BASE
+        if (false == float.TryParse(cells[(int)Column.DEF_BASE], out statusTable.defensePointBase))
+        {
+            Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+            return;
+        }
+
+        // DEF_GROWTH
+        if (false == float.TryParse(cells[(int)Column.DEF_GROWTH], out statusTable.defensePointGrouth))
+        {
+            Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+            return;
+        }
+
+        // HP_BASE
+        if (false == float.TryParse(cells[(int)Column.HP_BASE], out statusTable.healthPointBase))
+        {
+            Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+            return;
+        }
+
+        // HP_GROWTH
+        if (false == float.TryParse(cells[(int)Column.HP_GROWTH], out statusTable.healthPointGrouth))
+        {
+            Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+            return;
+        }
     }
 #endif
 

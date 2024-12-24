@@ -1,9 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 // using System.Drawing;
 using TMPro;
-using UnityEditor.U2D.Animation;
-using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -76,6 +75,14 @@ public class ShopItem : BaseUI
         _description = item.Description;
 
     }
+
+    private void Start()
+    {
+        Init();
+
+        // 테스트용 가짜 유저 셋팅
+        UserDataManager.InitDummyUser(3);
+    }
     private void Buy()
     {
         itemGive = GameManager.TableData.GetItemData(1);
@@ -101,6 +108,13 @@ public class ShopItem : BaseUI
         SoldOut();
     }
 
+    private void OnComplete(bool result)
+    {
+        if (false == result)
+        {
+            Debug.Log($"네트워크 오류");
+            return;
+        }
 
     // 갱신 효과 결과반환
     private void OnComplete(bool result)

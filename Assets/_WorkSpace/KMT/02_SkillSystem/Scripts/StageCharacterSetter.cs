@@ -43,6 +43,8 @@ public class StageCharacterSetter : MonoBehaviour
         if (characterDatas.Count <= 0)
             return;
 
+        GetComponent<CombManager>().ListClearedEvent.AddListener(() => { Debug.Log("전☆멸"); });
+
         SpawnCharacterDataSet(characterDatas);
     }
 
