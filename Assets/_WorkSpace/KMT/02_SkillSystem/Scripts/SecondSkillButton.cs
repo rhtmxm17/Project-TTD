@@ -15,6 +15,8 @@ public class SecondSkillButton : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI costText;
 
+    Coroutine skillCostCoroutine = null;
+
     float cost = float.MaxValue;
 
     public bool Interactable => skillButton.interactable;
@@ -24,19 +26,37 @@ public class SecondSkillButton : MonoBehaviour
         skillButton.interactable = false;
     }
 
-    private void Update()
+    private void Start()
     {
-        cooldownImg.fillAmount = 1 - Math.Clamp(StageManager.Instance.PartyCost / cost, 0, 1);
-        if(cooldownImg.fillAmount <= 0.02f)
-            skillButton.interactable = true;
-        else
-            skillButton.interactable = false;
+        skillCostCoroutine = StartCoroutine(SkillCostCO());
     }
+
+    IEnumerator SkillCostCO()
+    {
+        while (true)
+        {
+            cooldownImg.fillAmount = 1 - Math.Clamp(StageManager.Instance.PartyCost / cost, 0, 1);
+            if (cooldownImg.fillAmount <= 0.02f)
+                skillButton.interactable = true;
+            else
+                skillButton.interactable = false;
+
+            yield return null;
+        }
+    }
+
 
     public void SetSkillCost(float cost)
     { 
         this.cost = cost;
         costText.text = cost.ToString();
     }
-    
+
+    public void OffSkillButton(Combatable obj)
+    {
+        StopCoroutine(skillCostCoroutine);
+        skillButton.enabled = false;
+        cooldownImg.fillAmount = 1;
+    }
+
 }

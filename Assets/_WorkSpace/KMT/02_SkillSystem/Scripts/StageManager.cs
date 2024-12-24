@@ -119,7 +119,7 @@ public class StageManager : MonoBehaviour
             if (CheckCharactersWait())
                 break;
 
-            Debug.Log("이동중...");
+            Debug.Log("캐릭터 복귀중...");
 
         }
 
@@ -129,6 +129,9 @@ public class StageManager : MonoBehaviour
             Debug.Log("클리어!");
             yield break;
         }
+
+        Debug.Log("다음 웨이브로 이동중...");
+        //yield return new WaitForSeconds(3f);
 
         monsterWaveQueue[0].gameObject.SetActive(true);
         characterManager.StartCombat(monsterWaveQueue[0]);
