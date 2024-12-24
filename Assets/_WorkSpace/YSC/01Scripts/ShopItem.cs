@@ -76,13 +76,6 @@ public class ShopItem : BaseUI
 
     }
 
-    private void Start()
-    {
-        Init();
-
-        // 테스트용 가짜 유저 셋팅
-        UserDataManager.InitDummyUser(3);
-    }
     private void Buy()
     {
         itemGive = GameManager.TableData.GetItemData(1);
@@ -107,14 +100,6 @@ public class ShopItem : BaseUI
         itemCount--;
         SoldOut();
     }
-
-    private void OnComplete(bool result)
-    {
-        if (false == result)
-        {
-            Debug.Log($"네트워크 오류");
-            return;
-        }
 
     // 갱신 효과 결과반환
     private void OnComplete(bool result)
