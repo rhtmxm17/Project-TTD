@@ -19,7 +19,7 @@ public class MyRoomUI : BaseUI
         // 전체 방꾸미기 팝업 열기 버튼
         GetUI<Button>("ChangeRoomButton").onClick.AddListener(()=>OpenTap("ChangeRoom"));
         // 전체 방꾸미기 팝업 닫기 버튼
-        GetUI<Button>("CloseChangeRoom").onClick.AddListener(()=>CloseTap("ChangeRoomPanel"));
+        GetUI<Button>("CloseChangeRoom").onClick.AddListener(()=>CloseTap("ChangeRoom"));
         // 방뒷배경 바꾸기 팝업 띄우기
         GetUI<Button>("RoomChangeButton").onClick.AddListener(()=>OpenSetRoomPopup("RoomChangePopup"));
         // 배경 바꾸기 팝업 닫기
@@ -55,14 +55,14 @@ public class MyRoomUI : BaseUI
     //TODO: 선택한 이미지를 DB에 올리는 작업 추가 해야함
     private void OpenSetRoomPopup(string _name)
     {
-        GetUI("SafeArea").SetActive(false);
+        GetUI("Safe Area").SetActive(false);
         GetUI("ChangeRoomPanel").SetActive(false);
         GetUI(_name).SetActive(true);
     }
 
     private void CloseSetRoomPopup(string _name)
     {
-        GetUI("SafeArea").SetActive(true);
+        GetUI("Safe Area").SetActive(true);
         GetUI("ChangeRoomPanel").SetActive(true);
         GetUI(_name).SetActive(false);
     }
