@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StageManager : MonoBehaviour
 {
@@ -41,6 +42,8 @@ public class StageManager : MonoBehaviour
     [Space(20)]
     [SerializeField]
     TextMeshProUGUI costText;
+    [SerializeField]
+    Slider costSlider;
 
     private void Awake()
     {
@@ -80,12 +83,19 @@ public class StageManager : MonoBehaviour
     {
         while (true)
         {
-            PartyCost = Math.Clamp(PartyCost + Time.deltaTime, 0, MaxPartyCost);
+            PartyCost = Math.Clamp(PartyCost + Time.deltaTime / 3, 0, MaxPartyCost);
             costText.text = PartyCost.ToString();
+            costSlider.value = PartyCost / MaxPartyCost;
             yield return null;
         }
     }
 
+    public void AddPartyCost(float amount)
+    {
+        PartyCost = Math.Clamp(PartyCost + amount, 0, MaxPartyCost);
+        costSlider.value = PartyCost / MaxPartyCost;
+        costText.text = PartyCost.ToString();
+    }
     public void UsePartyCost(float cost)
     {
         if (PartyCost < cost)
@@ -95,6 +105,8 @@ public class StageManager : MonoBehaviour
         }
 
         PartyCost -= cost;
+        costSlider.value = PartyCost / MaxPartyCost;
+        costText.text = PartyCost.ToString();
     }
 
     IEnumerator GoNextWaveCO()
@@ -148,6 +160,9 @@ public class StageManager : MonoBehaviour
 
             //파티 공유 게이지 충전 시작.
             StartCoroutine(StartPartyCostCO());
+
+            costSlider.value = 0;
+            costText.text = PartyCost.ToString();
 
             Debug.Log("S눌림");
             monsterWaveQueue[0].gameObject.SetActive(true);

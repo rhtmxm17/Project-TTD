@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,9 @@ public class SecondSkillButton : MonoBehaviour
     Image cooldownImg;
     [SerializeField]
     Button skillButton;
+
+    [SerializeField]
+    TextMeshProUGUI costText;
 
     float cost = float.MaxValue;
 
@@ -32,6 +36,7 @@ public class SecondSkillButton : MonoBehaviour
     public void SetSkillCost(float cost)
     { 
         this.cost = cost;
+        costText.text = cost.ToString();
     }
     
 }
