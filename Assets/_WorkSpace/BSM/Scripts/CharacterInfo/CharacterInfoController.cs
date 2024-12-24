@@ -17,10 +17,28 @@ public class CharacterInfoController : BaseUI
     [HideInInspector] public int CurIndex = 0;
 
     private CharacterSort _characterSort;
- 
+
     private Button _prevButton;
     private Button _nextButton;
     private Button _filterButton;
+
+    private SortType _lastSortType;
+    private RectTransform _contentForm;
+    private Vector2 _characterCellSize;
+    private Vector2 _characterSpacing;
+
+    private int _characterCount;
+
+    private int CharacterCount
+    {
+        get => _characterInfos.Count;
+        set
+        {
+            _characterCount = value;
+            ResizeContentForm();
+        }
+    }
+
 
     protected override void Awake()
     {
@@ -29,7 +47,7 @@ public class CharacterInfoController : BaseUI
         SubscribeEvent();
 
         /////// 더미 인증 테스트 코드
-        StartCoroutine(UserDataManager.InitDummyUser(1));
+        StartCoroutine(UserDataManager.InitDummyUser(7));
     }
 
     private void OnEnable() => UpdateCharacterList();
@@ -37,21 +55,26 @@ public class CharacterInfoController : BaseUI
     private void Start()
     {
         //TODO: 테스트용 -> 추후 메인과 붙이면 OnEnable에서 넘겨주는거로
-        _characterSort._sortCharacterInfos = _characterInfos; 
+        _characterSort._sortCharacterInfos = _characterInfos;
+        StartListSort();
     }
 
     private void Init()
     {
         _infoPopup = GetUI("InfoPopup");
-        
-        _characterSort = GetUI<CharacterSort>("SortUI"); 
+
+        _characterSort = GetUI<CharacterSort>("SortUI");
         _infoUI = GetUI<CharacterInfoUI>("InfoUI");
- 
+
+        _contentForm = GetUI<RectTransform>("Content");
         _prevButton = GetUI<Button>("PreviousButton");
         _nextButton = GetUI<Button>("NextButton");
         _filterButton = GetUI<Button>("FilterButton");
+
+        _characterCellSize = _contentForm.GetComponent<GridLayoutGroup>().cellSize;
+        _characterSpacing = _contentForm.GetComponent<GridLayoutGroup>().spacing;
     }
-     
+
     private void SubscribeEvent()
     {
         _prevButton.onClick.AddListener(PreviousCharacter);
@@ -63,9 +86,18 @@ public class CharacterInfoController : BaseUI
     /// 보유 캐릭터 리스트 업데이트
     /// </summary>
     private void UpdateCharacterList()
-    { 
+    {
         _characterInfos = GetComponentsInChildren<CharacterInfo>().ToList();
+        CharacterCount = _characterInfos.Count;
         //_characterSort._sortCharacterInfos = _characterInfos;
+    }
+
+    /// <summary>
+    /// 마지막 정렬 방식 저장 후 시작했을 때 해당 방식으로 정렬
+    /// </summary>
+    private void StartListSort()
+    {
+        _characterSort.CharacterListSort();
     }
 
     /// <summary>
@@ -103,5 +135,19 @@ public class CharacterInfoController : BaseUI
         CurCharacterInfo = _characterInfos[CurIndex];
         CurCharacterInfo.UpdateInfo();
     }
- 
+
+    /// <summary>
+    /// 캐릭터 리스트 Content Form ReSize 기능
+    /// </summary>
+    private void ResizeContentForm()
+    {
+        //Width 300 + space 80  
+        //(캐릭터 Width + spacing) * List.Count + 1 > Content.SizeDelta.x -> ReSize 진행
+        float totalWidth = (_characterCellSize.x + _characterSpacing.x) * _characterInfos.Count + 1;
+        float contentWidth = _contentForm.sizeDelta.x;
+
+        if (totalWidth < contentWidth) return;
+
+        _contentForm.sizeDelta = new Vector2(totalWidth, _contentForm.sizeDelta.y);
+    }
 }
