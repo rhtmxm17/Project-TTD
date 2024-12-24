@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
@@ -10,18 +11,36 @@ using Random = UnityEngine.Random;
 
 public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 {
-    [HideInInspector] public bool IsSubscribe;
-    
     [SerializeField] private CharacterData _characterData;
+    [HideInInspector] public bool IsSubscribe;
+
     private CharacterInfoController _characterInfoController;
 
-    private TextMeshProUGUI _characterName;
+    private TextMeshProUGUI _characterNameText;
 
-    public int Level
+    public int CharacterLevel
     {
+        //현재 캐릭터 레벨 반환
         get => _characterData.Level.Value;
     }
-     
+    
+    public string CharacterName
+    {
+        //현재 캐릭터 이름 반환
+        get => _characterData.Name; 
+    }
+
+    public CharacterData _CharacterData
+    {
+        //현재 캐릭터 데이터 반환 및 데이터 변경
+        get => _characterData;
+        set
+        {
+            _characterData = value;
+        }
+    }
+
+
     private void Start()
     {
         Init();
@@ -29,16 +48,16 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 
     private void Init()
     {
-        _characterName = GetComponentInChildren<TextMeshProUGUI>();
-        _characterInfoController = GetComponentInParent<CharacterInfoController>(); 
-        
-        _characterName.text = _characterData.Name;
+        _characterNameText = GetComponentInChildren<TextMeshProUGUI>();
+        _characterInfoController = GetComponentInParent<CharacterInfoController>();
+
+        _characterNameText.text = _characterData.Name;
         SubscribeEvent();
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        SetInfoPopup(); 
+        SetInfoPopup();
     }
 
     private void SubscribeEvent()
@@ -46,10 +65,10 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         if (IsSubscribe) return;
         IsSubscribe = true;
 
-        _characterInfoController._infoUI._levelUpButton.onClick.AddListener(LevelUp); 
+        _characterInfoController._infoUI._levelUpButton.onClick.AddListener(LevelUp);
         _characterInfoController._infoUI._enhanceButton.onClick.AddListener(Enhance);
     }
-    
+
     /// <summary>
     /// 현재 캐릭터 정보 할당 기능
     /// </summary>
@@ -59,9 +78,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController.CurIndex = _characterInfoController._characterInfos.IndexOf(this);
         _characterInfoController._infoPopup.SetActive(true);
         UpdateInfo();
-
     }
-    
+
     /// <summary>
     /// 캐릭터 정보 업데이트
     /// </summary>
@@ -69,12 +87,12 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     {
         //TODO: 정리 필요 
         _characterInfoController._infoUI._nameText.text = _characterData.Name;
-        _characterInfoController._infoUI._characterImage.sprite = _characterData.FaceIconSprite; 
+        _characterInfoController._infoUI._characterImage.sprite = _characterData.FaceIconSprite;
         _characterInfoController._infoUI._levelText.text = _characterData.Level.Value.ToString();
         _characterInfoController._infoUI._atkText.text = "공격력" + Random.Range(2, 100).ToString();
         _characterInfoController._infoUI._hpText.text = "체력" + Random.Range(2, 100).ToString();
     }
- 
+
     /// <summary>
     /// 캐릭터 레벨업 기능
     /// </summary>
@@ -101,8 +119,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 
         // 레벨업 UI 나올 위치
     }
-    
-    
+
+
     /// <summary>
     /// 캐릭터 강화 기능
     /// </summary>
@@ -112,42 +130,13 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 
         Debug.Log($"{gameObject.name} 강화 성공");
     }
-
-
-    /// <summary>
-    /// 정렬 시 데이터 변경 기능
-    /// </summary>
-    /// <param name="data"></param>
-    public void ChangeData(CharacterData data)
-    {
-        _characterData = data;
-    }
-
-    /// <summary>
-    /// 현재 캐릭터의 데이터를 반환
-    /// </summary>
-    /// <returns></returns>
-    public CharacterData GetCharacterData()
-    {
-        return _characterData;
-    }
-    
-    /// <summary>
-    /// 현재 캐릭터의 이름을 반환 
-    /// </summary>
-    /// <returns></returns>
-    public string GetCharacterName()
-    {
-        return _characterData.Name;
-    }
-    
+  
     /// <summary>
     /// 캐릭터 리스트 이름 설정
     /// </summary>
     /// <param name="name"></param>
     public void SetListNameText(string name)
     {
-        //TODO: 닉네임 반환하고 받아와서 설정하는 부분 프로퍼티 변경 고려중.
-        _characterName.text = name;
-    }
+        _characterNameText.text = name;
+    } 
 }

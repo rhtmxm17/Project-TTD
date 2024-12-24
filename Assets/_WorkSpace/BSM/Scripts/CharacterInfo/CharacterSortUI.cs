@@ -5,11 +5,11 @@ using UnityEngine.UI;
 
 public class CharacterSortUI : BaseUI
 {
-    public Button NameSortButton;
-    public Button LevelSortButton;
-    
+    [HideInInspector] public Button NameSortButton;
+    [HideInInspector] public Button LevelSortButton;
+
     private Button _closeButton;
-    
+
     protected override void Awake()
     {
         base.Awake();
@@ -28,8 +28,4 @@ public class CharacterSortUI : BaseUI
     {
         _closeButton.onClick.AddListener(() => transform.GetChild(0).gameObject.SetActive((false)));
     }
-    
-    
-    
-    
 }
