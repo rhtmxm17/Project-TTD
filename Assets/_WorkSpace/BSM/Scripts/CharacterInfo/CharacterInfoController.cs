@@ -22,7 +22,7 @@ public class CharacterInfoController : BaseUI
     private Button _nextButton;
     private Button _filterButton;
     
-    private SortType _sortType;
+    private SortType _lastSortType;
     
     protected override void Awake()
     {
@@ -76,8 +76,8 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void StartListSort()
     {
-        _sortType = (SortType)PlayerPrefs.GetInt("SortType"); 
-        switch (_sortType)
+        _lastSortType = (SortType)PlayerPrefs.GetInt("SortType"); 
+        switch (_lastSortType)
         {
             case SortType.NAME:
                 _characterSort.NameSort();
