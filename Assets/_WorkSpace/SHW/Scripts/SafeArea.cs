@@ -19,18 +19,18 @@ public class SafeArea : MonoBehaviour
         var Myrect = GetComponent<RectTransform>();
 
         Rect useableRect = Screen.safeArea;
-        float safeAreaRatio = Screen.safeArea.width / Screen.safeArea.height;
+        //float safeAreaRatio = Screen.safeArea.width / Screen.safeArea.height;
 
-        if (safeAreaRatio < 4f / 3f)
-        {
-            // 화면비 4 : 3보다 위아래로 길다면 자르기
-            useableRect.height = Screen.safeArea.width * (4f / 3f);
-        }
-        else if (safeAreaRatio > 21f / 9f)
-        {
-            // 화면비 21 : 9보다 좌우로 길다면 자르기
-            useableRect.width = Screen.safeArea.height * (21f / 9f);
-        }
+        //if (safeAreaRatio < 4f / 3f)
+        //{
+        //    // 화면비 4 : 3보다 위아래로 길다면 자르기
+        //    useableRect.height = Screen.safeArea.width * (4f / 3f);
+        //}
+        //else if (safeAreaRatio > 21f / 9f)
+        //{
+        //    // 화면비 21 : 9보다 좌우로 길다면 자르기
+        //    useableRect.width = Screen.safeArea.height * (21f / 9f);
+        //}
         useableRect.center = Screen.safeArea.center;
 
         minAnchor = useableRect.min;
