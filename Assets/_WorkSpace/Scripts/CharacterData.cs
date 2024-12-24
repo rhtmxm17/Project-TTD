@@ -45,6 +45,9 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     public Status StatusTable => statusTable;
 
     [Header("Skill datas")]
+    [SerializeField] Skill basicSkillDataSO;
+    public Skill BasicSkillDataSO => basicSkillDataSO;
+
     [SerializeField] Skill skillDataSO;
     public Skill SkillDataSO => skillDataSO;
 
@@ -78,6 +81,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         NAME,
         FACE_ICON,
         SHAPE,
+        BASE_ATTACK,
         NORMAL_SKILL,
         NS_COOLDOWN,
         SPECIAL_SKILL,
@@ -108,6 +112,9 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
 
         // SHAPE
         modelPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{DataTableManager.PrefabsAssetFolder}/{cells[(int)Column.SHAPE]}.prefab");
+
+        // BASE_ATTACK
+        basicSkillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.BASE_ATTACK]}.asset");
 
         // NORMAL_SKILL
         skillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.NORMAL_SKILL]}.asset");
