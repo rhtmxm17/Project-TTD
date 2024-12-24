@@ -12,7 +12,8 @@ public class CharacterSort : MonoBehaviour
     private List<object> _sortList;
 
     private CharacterSortUI _characterSortUI;
-
+    private SortType _curSortType;
+    
     private void Awake()
     {
         _characterSortUI = GetComponent<CharacterSortUI>();
@@ -27,7 +28,7 @@ public class CharacterSort : MonoBehaviour
     /// <summary>
     /// 캐릭터 레벨 오름차순 정렬
     /// </summary>
-    private void LevelSort()
+    public void LevelSort()
     {
         if (_sortList != null && _sortList.Count > 0) _sortList.Clear();
 
@@ -52,12 +53,15 @@ public class CharacterSort : MonoBehaviour
                 }
             }
         }
+
+        _curSortType = SortType.LEVEL;
+        PlayerPrefs.SetInt("SortType", (int)_curSortType); 
     }
  
     /// <summary>
     /// 이름 오름차순 정렬 기능
     /// </summary>
-    private void NameSort()
+    public void NameSort()
     {
         if (_sortList != null && _sortList.Count > 0) _sortList.Clear();
 
@@ -82,5 +86,8 @@ public class CharacterSort : MonoBehaviour
                 }
             }
         }
+
+        _curSortType = SortType.NAME; 
+        PlayerPrefs.SetInt("SortType", (int)_curSortType);
     }
 }

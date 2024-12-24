@@ -21,7 +21,9 @@ public class CharacterInfoController : BaseUI
     private Button _prevButton;
     private Button _nextButton;
     private Button _filterButton;
-
+    
+    private SortType _sortType;
+    
     protected override void Awake()
     {
         base.Awake();
@@ -29,7 +31,7 @@ public class CharacterInfoController : BaseUI
         SubscribeEvent();
 
         /////// 더미 인증 테스트 코드
-        StartCoroutine(UserDataManager.InitDummyUser(5));
+        StartCoroutine(UserDataManager.InitDummyUser(7));
     }
 
     private void OnEnable() => UpdateCharacterList();
@@ -37,9 +39,10 @@ public class CharacterInfoController : BaseUI
     private void Start()
     {
         //TODO: 테스트용 -> 추후 메인과 붙이면 OnEnable에서 넘겨주는거로
-        _characterSort._sortCharacterInfos = _characterInfos; 
-    }
-
+        _characterSort._sortCharacterInfos = _characterInfos;
+        StartListSort(); 
+    } 
+    
     private void Init()
     {
         _infoPopup = GetUI("InfoPopup");
@@ -68,6 +71,25 @@ public class CharacterInfoController : BaseUI
         //_characterSort._sortCharacterInfos = _characterInfos;
     }
 
+    /// <summary>
+    /// 마지막 정렬 방식 저장 후 시작했을 때 해당 방식으로 정렬
+    /// </summary>
+    private void StartListSort()
+    {
+        _sortType = (SortType)PlayerPrefs.GetInt("SortType"); 
+        switch (_sortType)
+        {
+            case SortType.NAME:
+                _characterSort.NameSort();
+                break;
+            
+            case SortType.LEVEL:
+                _characterSort.LevelSort();
+                break;
+            
+        }
+    }
+    
     /// <summary>
     /// 이전 캐릭터 정보로 변경
     /// </summary>

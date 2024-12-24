@@ -1,14 +1,9 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using TMPro;
-using Unity.Mathematics;
-using UnityEngine;
-using UnityEngine.Events;
+using System.Collections.Generic; 
+using TMPro; 
+using UnityEngine; 
 using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class CharacterInfo : MonoBehaviour, IPointerClickHandler
@@ -127,6 +122,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         
         TestMyGold -= characterLevelUpCost;
         characterLevelUpCost = 100 * _characterData.Level.Value;
+        _characterInfoController._infoUI._coinText.text = characterLevelUpCost.ToString(); 
     }
     
     /// <summary>
@@ -152,6 +148,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// </summary>
     private void LevelUpCheck()
     {
+        //TODO: 골드 변수 수정 필요
         _characterInfoController._infoUI._levelUpButton.interactable =
             testMyGold >= characterLevelUpCost && testMyGold != 0;
     }
@@ -175,11 +172,11 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
          
         if (chance > enhanceProbability)
         {
-            Debug.Log($"{gameObject.name} 강화 성공{chance} / {enhanceProbability}");
+            Debug.Log($"{gameObject.name} 강화 성공 : 캐릭터 확률 {chance} / 성공 확률 {enhanceProbability}");
         }
         else
         {
-            Debug.Log($"강화 실패{chance} / {enhanceProbability}");
+            Debug.Log($"강화 실패 : 캐릭터 확률 {chance} / 성공 확률 {enhanceProbability}");
         } 
     }
     
@@ -198,6 +195,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// </summary>
     private void EnhanceCheck()
     {
+        //TODO: 활성화/비활성화 조건 수정 필요
         _characterInfoController._infoUI._enhanceButton.interactable = 
             testMyGold >= characterLevelUpCost && testMyGold != 0;
     }
