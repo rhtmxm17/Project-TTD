@@ -18,8 +18,6 @@ public class HYJ_CharacterSelect : MonoBehaviour
     [SerializeField] int unitIndex; // 유닛 번호
     [SerializeField] GameObject UnitChangeUI; // 유닛 변경 확인 팝업
     
-    
-
     public void SelectPos()
     {
         // 위치를 결정하는 버튼을 눌렀을 때
@@ -75,7 +73,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
     {
         int unitPos = SelectM.battleInfo.FirstOrDefault(x => x.Value == SelectM.curUnitIndex).Key; // 딕셔너리 밸류값(유닛 고유번호)를 갖고 있는 키 값을 찾기
         SelectM.battleInfo.Remove(unitPos);
-        SelectM.battleInfo.Add(SelectM.curPos, SelectM.curUnitIndex);  // 임시저장 값을 딕셔너리에 저장하기
+        SelectM.battleInfo[SelectM.curPos] = SelectM.curUnitIndex;
     }
 
     public bool CheckUnit(int unitIndex)
