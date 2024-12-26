@@ -16,15 +16,15 @@ public class HYJ_SelectManager : MonoBehaviour
 
     private void Awake()
     {
-        StartCoroutine(UserDataManager.InitDummyUser(7));
+        //StartCoroutine(UserDataManager.InitDummyUser(7));
     }
 
 
     public void LookLog()
     {
         DatabaseReference baseref = BackendManager.CurrentUserDataRef;
-
-        baseref.Child("testDatas").SetValueAsync(null).ContinueWithOnMainThread(task => {
+        Debug.Log("dd");
+        baseref.Child("Characters").SetValueAsync(null).ContinueWithOnMainThread(task => {
 
             if (task.IsFaulted || task.IsCanceled)
             {
@@ -37,7 +37,7 @@ public class HYJ_SelectManager : MonoBehaviour
             Debug.Log("-------");
             foreach (var (key, value) in battleInfo)
             {
-                updates[$"testDatas/{ key.ToString()}"] = value;
+                updates[$"Characters/{ key.ToString("D3")}"] = value;
                 Debug.Log($"{key} : {value}");
             }
             Debug.Log("-------");
