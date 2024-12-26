@@ -24,6 +24,7 @@ public class Combatable : MonoBehaviour
     protected UnityEvent interruptedEvent = new UnityEvent();
     [HideInInspector]
     public UnityEvent<Combatable> onDeadEvent = new UnityEvent<Combatable>();
+    public UnityEvent<float> onDamagedEvent = new UnityEvent<float>();
 
     protected Trackable trackable;
     protected Coroutine curActionCoroutine = null;
@@ -120,6 +121,7 @@ public class Combatable : MonoBehaviour
 
         //View의 setvalue등을 연결하기.
         hp.Value -= damage;
+        onDamagedEvent?.Invoke(damage);
 
         if (hp.Value < 0)
         {
