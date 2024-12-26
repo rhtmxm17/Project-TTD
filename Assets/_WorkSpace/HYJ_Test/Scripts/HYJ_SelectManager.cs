@@ -24,40 +24,36 @@ public class HYJ_SelectManager : MonoBehaviour
     // 키 값은 위치 / 밸류 값은 유닛 고유번호;
     public Dictionary<int, int> battleInfo = new Dictionary<int, int>();
 
+    private void Start()
+    {
+        GameManager.UserData.PlayData.BatchInfo.onValueChanged += (() =>
+        {
+            Debug.Log("편성 정보가 갱신됨");
+        });
+        GameManager.UserData.onLoadUserDataCompleted.AddListener(() =>
+        {
+            Debug.Log("유저 정보 불러오기 완료 확인");
+        });
+    }
+
     public void LookLog()
     {
         DatabaseReference baseref = BackendManager.CurrentUserDataRef;
         Debug.Log("dd");
-        baseref.Child("Batchs").SetValueAsync(null).ContinueWithOnMainThread(task => {
 
-            if (task.IsFaulted || task.IsCanceled)
+
+        Dictionary<string, long> updates = new Dictionary<string, long>();
+        foreach(var pair in battleInfo)
+        {
+            updates[pair.Key.ToString()] = pair.Value;
+        }
+
+        GameManager.UserData.StartUpdateStream()
+            .SetDBDictionary(GameManager.UserData.PlayData.BatchInfo, updates)
+            .Submit(result =>
             {
-                Debug.Log("편성 초기화 실패");
-                return;
-            }
-
-            Dictionary<string, object> updates = new Dictionary<string, object>();
-
-            Debug.Log("-------");
-            foreach (var (key, value) in battleInfo)
-            {
-                updates[$"Batchs/{ key.ToString("D3")}"] = value;
-                Debug.Log($"{key} : {value}");
-            }
-            Debug.Log("-------");
-
-            baseref.UpdateChildrenAsync(updates).ContinueWithOnMainThread(task => {
-
-                if (task.IsFaulted || task.IsCanceled)
-                {
-                    Debug.Log("추가 실패");
-                    return;
-                }
-
+                Debug.Log($"요청 결과:{result}");
             });
-
-        });
-
     }
 
     public void SetCharcterSprite(int posIdx, int charIdx)
