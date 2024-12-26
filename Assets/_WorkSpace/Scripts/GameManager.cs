@@ -58,7 +58,7 @@ public class GameManager : SingletonBehaviour<GameManager>
         GameObject.FindWithTag("GameController").TryGetComponent(out StageManager stageManager);
 
         // TODO: 스테이지 데이터로 초기화
-        stageManager.Initialize(stageData);
+        // stageManager.Initialize(stageData);
 
         SceneManager.sceneLoaded -= OnStageSceneLoaded;
     }
