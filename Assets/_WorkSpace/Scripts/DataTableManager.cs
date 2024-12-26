@@ -73,6 +73,9 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     public const string SpritesAssetFolder = "Assets/_WorkSpace/Sprites";
     public const string SkillAssetFolder = "Assets/_WorkSpace/Datas/Skills";
 
+    [SerializeField] Sprite dummySprite;
+    public Sprite DummySprite => dummySprite;
+
     [SerializeField] string documentID;
 
     [SerializeField] Object characterDataFolder;
