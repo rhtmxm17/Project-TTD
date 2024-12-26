@@ -4,22 +4,37 @@ using UnityEngine;
 
 public class StageData : ScriptableObject
 {
-    [SerializeField] int id;
+    /// <summary>
+    /// 각 스테이지의 고유 번호
+    /// </summary>
     public int Id => id;
 
-    // 우선 웨이브는 생각하지 않고 만듬
-    [SerializeField] List<MonsterInfo> monsters;
     /// <summary>
     /// 스테이지의 적 구성
     /// </summary>
     public List<MonsterInfo> Monsters => monsters;
 
-
-    [SerializeField] List<RewardInfo> reward;
     /// <summary>
     /// 클리어 보상 목록
     /// </summary>
     public List<RewardInfo> Reward => reward;
+
+    /// <summary>
+    /// (유저 데이터) 클리어 횟수
+    /// </summary>
+    public UserDataInt ClearCount { get; private set; }
+
+    [SerializeField] int id;
+
+    // 우선 웨이브는 생각하지 않고 만듬
+    [SerializeField] List<MonsterInfo> monsters;
+
+    [SerializeField] List<RewardInfo> reward;
+
+    private void OnEnable()
+    {
+        ClearCount = new UserDataInt($"Stages/{id}/ClearCount");
+    }
 
 
     [System.Serializable]

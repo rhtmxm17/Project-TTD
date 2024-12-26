@@ -31,6 +31,9 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     [SerializeField] List<ItemData> itemDataList;
     private Dictionary<int, ItemData> itemDataIdDic; // id 기반 검색용
 
+    [SerializeField] List<StageData> stageDataList;
+    private Dictionary<int, StageData> stageDataIdDic; // id 기반 검색용
+
     [SerializeField] List<StoryDirectingData> storyDirectingDataList;
 
 
@@ -54,6 +57,17 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
         }
 
         return itemDataIdDic[id];
+    }
+
+    public StageData GetStageData(int id)
+    {
+        if (false == stageDataIdDic.ContainsKey(id))
+        {
+            Debug.LogWarning($"존재하지 않는 아이템 ID({id})가 요청됨");
+            return null;
+        }
+
+        return stageDataIdDic[id];
     }
 
     private void OnEnable() => IndexData();
