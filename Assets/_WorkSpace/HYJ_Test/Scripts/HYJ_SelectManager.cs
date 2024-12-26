@@ -5,8 +5,19 @@ using UnityEngine.InputSystem.LowLevel;
 
 public class HYJ_SelectManager : MonoBehaviour
 {
-    //[SerializeField] public List<List<int>> unitInfo; // ListIndex,InfoIndex : InfoIndex 0은 위치, I
     [SerializeField] public int curPos;
+    [SerializeField] public int curUnitIndex;
 
-    public Dictionary<int, int> battleInfo;
+    // 키 값은 위치 / 밸류 값은 유닛 고유번호;
+    public Dictionary<int, int> battleInfo = new Dictionary<int, int>();
+
+    public void LookLog()
+    {
+        Debug.Log("-------");
+        foreach(var (key, value) in battleInfo)
+        {
+            Debug.Log($"{key} : {value}");
+        }
+        Debug.Log("-------");
+    }
 }
