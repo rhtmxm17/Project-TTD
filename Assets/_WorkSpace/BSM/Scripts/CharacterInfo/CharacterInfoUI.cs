@@ -19,17 +19,29 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public Button _levelUpButton;
     [HideInInspector] public Button _enhanceButton;
 
+    private CharacterInfoController _controller;
     
+    private Button _detailTabButton;
+    private Button _enhanceTabButton;
+    private Button _evolutionTabButton;
+    private Button _meanTabButton; 
+     
     private Button _exitButton;
     private GameObject _infoPopup;
-    
+     
     protected override void Awake()
     {
         base.Awake();
+        Init();
         UIBind();
-        ButtonAddListener();
+        ButtonAddListener(); 
     }
 
+    private void Init()
+    {
+        _controller = transform.GetComponentInParent<CharacterInfoController>();
+    }
+    
     private void UIBind()
     {
         _infoPopup = GetUI("InfoPopup");
@@ -46,6 +58,12 @@ public class CharacterInfoUI : BaseUI
         _levelUpButton = GetUI<Button>("LevelUpButton");
         _enhanceButton = GetUI<Button>("EnhanceButton");
         
+        //좌측 Tab 버튼 바인딩
+        _detailTabButton = GetUI<Button>("DetailTabButton");
+        _enhanceTabButton = GetUI<Button>("EnhanceTabButton");
+        _evolutionTabButton = GetUI<Button>("EvolutionTabButton");
+        _meanTabButton = GetUI<Button>("MeanTabButton");
+         
         _characterImage = GetUI<Image>("CharacterImage");
         
     }
@@ -53,5 +71,9 @@ public class CharacterInfoUI : BaseUI
     private void ButtonAddListener()
     {
         _exitButton.onClick.AddListener(() => _infoPopup.SetActive(false));
+        _detailTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.DETAIL);
+        _enhanceTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.ENHANCE);
+        _evolutionTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.EVOLUTION);
+        _meanTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.MEAN);
     }
 }

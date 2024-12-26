@@ -17,7 +17,7 @@ public class CharacterInfoController : BaseUI
     [HideInInspector] public int CurIndex = 0;
 
     private CharacterSort _characterSort;
-
+ 
     private Button _prevButton;
     private Button _nextButton;
     private Button _filterButton;
@@ -28,7 +28,12 @@ public class CharacterInfoController : BaseUI
     private Vector2 _characterSpacing;
 
     private int _characterCount;
-
+    
+    private GameObject _detailTab;
+    private GameObject _enhanceTab;
+    private GameObject _evolutionTab;
+    private GameObject _meanTab; 
+    
     private int CharacterCount
     {
         get => _characterInfos.Count;
@@ -39,6 +44,17 @@ public class CharacterInfoController : BaseUI
         }
     }
 
+    private InfoTabType _curInfoTabType;
+    public InfoTabType CurInfoTabType
+    {
+        get => _curInfoTabType;
+        set
+        {
+            _curInfoTabType = value;
+            TabSwitch();
+        }
+    }
+    
 
     protected override void Awake()
     {
@@ -58,7 +74,7 @@ public class CharacterInfoController : BaseUI
         _characterSort._sortCharacterInfos = _characterInfos;
         StartListSort();
     }
-
+    
     private void Init()
     {
         _infoPopup = GetUI("InfoPopup");
@@ -70,11 +86,16 @@ public class CharacterInfoController : BaseUI
         _prevButton = GetUI<Button>("PreviousButton");
         _nextButton = GetUI<Button>("NextButton");
         _filterButton = GetUI<Button>("FilterButton");
-
+         
+        _detailTab = GetUI("DetailTab");
+        _enhanceTab = GetUI("EnhanceTab");
+        _evolutionTab = GetUI("EvolutionTab");
+        _meanTab = GetUI("MeanTab");
+        
         _characterCellSize = _contentForm.GetComponent<GridLayoutGroup>().cellSize;
         _characterSpacing = _contentForm.GetComponent<GridLayoutGroup>().spacing;
     }
-
+    
     private void SubscribeEvent()
     {
         _prevButton.onClick.AddListener(PreviousCharacter);
@@ -150,4 +171,16 @@ public class CharacterInfoController : BaseUI
 
         _contentForm.sizeDelta = new Vector2(totalWidth, _contentForm.sizeDelta.y);
     }
+    
+    /// <summary>
+    /// 캐릭터 상세 팝업창 > 탭 전환 기능
+    /// </summary>
+    private void TabSwitch()
+    {
+        _detailTab.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
+        _enhanceTab.SetActive(_curInfoTabType.Equals(InfoTabType.ENHANCE));
+        _evolutionTab.SetActive(_curInfoTabType.Equals(InfoTabType.EVOLUTION));
+        _meanTab.SetActive(_curInfoTabType.Equals(InfoTabType.MEAN)); 
+    }
+    
 }

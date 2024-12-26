@@ -115,8 +115,6 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// </summary>
     public void UpdateInfo()
     {
-        Debug.Log($"{gameObject.name} : {_characterData.name}");
-        
         //TODO: 정리 필요 
         _characterInfoController._infoUI._nameText.text = _characterData.Name;
         _characterInfoController._infoUI._characterImage.sprite = _characterData.FaceIconSprite;

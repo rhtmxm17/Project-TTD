@@ -27,7 +27,7 @@ public enum SortType
 }
 
 [System.Serializable]
-public enum InfoTab
+public enum InfoTabType
 {
     DETAIL, ENHANCE, EVOLUTION, MEAN
 }
