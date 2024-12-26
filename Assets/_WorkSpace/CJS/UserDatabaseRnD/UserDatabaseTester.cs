@@ -38,6 +38,23 @@ public class UserDatabaseTester : MonoBehaviour
 
         GameManager.Input.actions["Touch"].started += GetUserDataTest;
         GameManager.UserData.onLoadUserDataCompleted.AddListener(TestLog);
+
+        yield return new WaitForSeconds(3f);
+
+        GameManager.UserData.StartUpdateStream()
+            .SetDBTimestamp(GameManager.UserData.PlayData.EggGainTimestamp)
+            .Submit(result =>
+            {
+                Debug.Log($"시간 갱신 요청 전송 결과:{result}");
+            });
+
+        GameManager.UserData.PlayData.EggGainTimestamp.onValueChanged += EggGainTimestamp_onValueChanged;
+    }
+
+    private void EggGainTimestamp_onValueChanged(long arg0)
+    {
+        Debug.Log($"기록된 시간:{GameManager.UserData.PlayData.EggGainTimestamp.Value}");
+        Debug.Log($"현재 시간:{DateTime.Now}");
     }
 
     private void GetUserDataTest(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -54,6 +71,7 @@ public class UserDatabaseTester : MonoBehaviour
 
         Debug.Log(GameManager.TableData.GetCharacterData(2).Level.Value);
         Debug.Log(GameManager.TableData.GetCharacterData(2).Enhancement.Value);
+
     }
 
     [ContextMenu("누적된 보상 수령 테스트")]

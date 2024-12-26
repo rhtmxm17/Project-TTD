@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using Firebase.Database;
+using System;
 
 public class UserDataManager : SingletonScriptable<UserDataManager>
 {
@@ -11,12 +12,20 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
 
     public UserProfile Profile { get; private set; } = new UserProfile();
 
+    public GamePlayData PlayData { get; private set; } = new GamePlayData();
+
     public class UserProfile
     {
         public UserDataString Name { get; private set; } = new UserDataString($"Profile/Name", "이름 없음");
         public UserDataInt IconIndex { get; private set; } = new UserDataInt($"Profile/IconIndex");
         public UserDataInt Level { get; private set; } = new UserDataInt($"Profile/Level", 1);
         public UserDataString Introduction { get; private set; } = new UserDataString($"Profile/Introduction", "소개문 없음");
+
+    }
+
+    public class GamePlayData
+    {
+        public UserDataDateTime EggGainTimestamp { get; private set; } = new UserDataDateTime("PlayData/EggGainTimestamp");
 
     }
 
@@ -68,6 +77,8 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             this.Profile.Level.SetValueWithDataSnapshot(userData);
             this.Profile.IconIndex.SetValueWithDataSnapshot(userData);
             this.Profile.Introduction.SetValueWithDataSnapshot(userData);
+
+            this.PlayData.EggGainTimestamp.SetValueWithDataSnapshot(userData);
 
             // 캐릭터 데이터 로딩
             if (userData.HasChild("Characters"))
@@ -175,6 +186,37 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                     onValueChanged?.Invoke(value);
                 };
             }
+
+            /// <summary>
+            /// UpdateDbChain.SetDBValue()에서 현재 서버 시간 갱신 등록을 위한 메서드<br/>
+            /// 다른 용도의 사용을 상정하지 않음
+            /// </summary>
+            /// <param name="updateDbChain"></param>
+            public void RegisterTimestampToChain(UpdateDbChain updateDbChain)
+            {
+                updateDbChain.updates[Key] = ServerValue.Timestamp;
+                updateDbChain.propertyCallbackOnSubmit += GetValueRequest;
+            }
+
+            private void GetValueRequest() // DB에 해당 값 요청
+            {
+                BackendManager.CurrentUserDataRef.Child(Key).GetValueAsync().ContinueWithOnMainThread(task =>
+                {
+                    if (task.IsFaulted || task.IsCanceled)
+                    {
+                        GetValueRequest(); // 재요청
+                        Debug.LogWarning($"요청 실패함, 재 요청 전송됨");
+                        return;
+                    }
+
+                    T dbValue = (T)task.Result.Value;
+                    if (false == this.Value.Equals(dbValue))
+                    {
+                        this.Value = dbValue;
+                        onValueChanged?.Invoke(dbValue);
+                    }
+                });
+            }
         }
 
         public UpdateDbChain SetDBValue<T>(PropertyAdapter<T> property, T value) where T : System.IEquatable<T>
@@ -194,12 +236,27 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             return this;
         }
 
+        public UpdateDbChain SetDBTimestamp(UserDataDateTime property)
+        {
+#if DEBUG
+            if (updates.ContainsKey(property.Key))
+            {
+                Debug.LogWarning("한 스트림에 데이터를 두번 갱신하고 있음");
+            }
+#endif //DEBUG
+
+            property.RegisterTimestampToChain(this);
+
+            return this;
+        }
+
         /// <summary>
         /// (비동기)UpdateDbChain.SetDBValue로 등록된 갱신사항 목록으로 DB에 갱신 요청을 전송한다
         /// </summary>
         /// <param name="onCompleteCallback">작업 완료시 결과를 반환받을 callback (성공시 true)</param>
         public void Submit(UnityAction<bool> onCompleteCallback)
         {
+            
             // 갱신사항이 없다면 즉시 완료 처리
             if (updates.Count == 0)
             {
@@ -220,6 +277,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                 propertyCallbackOnSubmit?.Invoke();
                 onCompleteCallback?.Invoke(true);
             });
+
         }
     }
     #endregion DB 데이터 갱신
@@ -242,4 +300,11 @@ public class UserDataFloat : UserDataManager.UpdateDbChain.PropertyAdapter<doubl
 public class UserDataString : UserDataManager.UpdateDbChain.PropertyAdapter<string>
 {
     public UserDataString(string key, string defaultValue = default) : base(key, defaultValue) { }
+}
+
+public class UserDataDateTime : UserDataManager.UpdateDbChain.PropertyAdapter<long>
+{
+    public new DateTime Value => new DateTime(1970, 1, 1, 9/*UTC+9*/, 0, 0, DateTimeKind.Utc).AddMilliseconds(base.Value);
+
+    public UserDataDateTime(string key) : base(key, 0) { }
 }
