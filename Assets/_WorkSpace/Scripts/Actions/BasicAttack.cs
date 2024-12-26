@@ -27,7 +27,7 @@ public class BasicAttack : Skill
 
         // 실제로 공격이 적용되는 구간
         if (target.IsAlive)
-            target?.Damaged(self.AttackPoint.Value); // 타겟에게 데미지 적용
+            target?.Damaged(self.AttackPoint.Value, self.igDefenseRate); // 타겟에게 데미지 적용
 
     }
 

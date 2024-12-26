@@ -1,10 +1,8 @@
-using DG.Tweening;
-using DG.Tweening.Core;
-using DG.Tweening.Plugins.Options;
+
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UniRx;
 
 public class CharacterCombatable : Combatable
 {
@@ -26,6 +24,7 @@ public class CharacterCombatable : Combatable
         waveClearEvent.AddListener(BackToOriginPos);
 
     }
+
 
     public void InitCharacterData(CharacterData characterData, BasicSkillButton basicSkillButton, SecondSkillButton secondSkillButton)
     {

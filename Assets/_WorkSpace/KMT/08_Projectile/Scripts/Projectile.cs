@@ -14,13 +14,13 @@ public class Projectile : MonoBehaviour
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
-    public void StartChase(Combatable target, float damage, Sprite sprite)
+    public void StartChase(Combatable target, float damage, float igDefRate, Sprite sprite)
     {
         spriteRenderer.sprite = sprite;
-        StartCoroutine(ChaseCO(target, damage));
+        StartCoroutine(ChaseCO(target, damage, igDefRate));
     }
 
-    IEnumerator ChaseCO(Combatable target, float damage)
+    IEnumerator ChaseCO(Combatable target, float damage, float igDefRate)
     {
         Vector3 moveDir = (target.transform.position - transform.position).normalized;
 
@@ -46,7 +46,7 @@ public class Projectile : MonoBehaviour
 
         if (target.IsAlive)
         {
-            target.Damaged(damage);
+            target.Damaged(damage, igDefRate);
         }
 
         Destroy(gameObject);

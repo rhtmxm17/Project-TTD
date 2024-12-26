@@ -30,7 +30,7 @@ public class BasicRangeAttack : Skill
         {
             var projectile = Instantiate(projectilePrefab);
             projectile.transform.position = self.transform.position;
-            projectile.StartChase(target, self.AttackPoint.Value, ProjectileSprite);
+            projectile.StartChase(target, self.AttackPoint.Value, self.igDefenseRate, ProjectileSprite);
         }
 
     }
