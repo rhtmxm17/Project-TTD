@@ -2,6 +2,7 @@ using Firebase.Database;
 using Firebase.Extensions;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem.LowLevel;
 using static UserDataManager;
@@ -74,13 +75,12 @@ public class HYJ_SelectManager : MonoBehaviour
         Destroy(buttonsTransformList[destIdx].GetComponentInChildren<HYJ_PlayerController>().gameObject);
         buttonsTransformList[fromIdx].GetComponentInChildren<HYJ_PlayerController>()
             .transform.SetParent(buttonsTransformList[destIdx].transform);
-        
-        
-        var trans =buttonsTransformList[destIdx].GetComponentInChildren<HYJ_PlayerController>().GetComponent<RectTransform>();
-        Debug.Log(trans == null);
-        Debug.Log(trans.localPosition);
-        trans.anchoredPosition = Vector2.zero;
+
+        HYJ_PlayerController[] transL = buttonsTransformList[destIdx].GetComponentsInChildren<HYJ_PlayerController>();
+        RectTransform trans = transL[transL.Length - 1].GetComponent<RectTransform>();
+        trans.anchoredPosition = Vector3.zero;
     }
+
 
     public void TestLog()
     {
