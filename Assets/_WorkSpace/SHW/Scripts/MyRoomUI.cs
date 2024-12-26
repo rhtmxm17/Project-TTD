@@ -27,12 +27,6 @@ public class MyRoomUI : BaseUI
         GetUI<Button>("CharacterChangeButton").onClick.AddListener(()=>OpenSetRoomPopup("CharacterChangePopup"));
         // 캐릭터 바꾸기 팝업 닫기
         GetUI<Button>("CloseChangeCharacter").onClick.AddListener(()=>CloseSetRoomPopup("CharacterChangePopup"));
-        // 캐릭터 이미지 바꾸기1
-        GetUI<Button>("Character1").onClick.AddListener(()=>ChangeCharacter("Character1"));
-        // 캐릭터 이미지 바꾸기2
-        GetUI<Button>("Character2").onClick.AddListener(()=>ChangeCharacter("Character2"));
-        // 캐릭터 이미지 바꾸기3
-        GetUI<Button>("Character3").onClick.AddListener(()=>ChangeCharacter("Character3"));
 
         // 채팅 열기 버튼
         GetUI<Button>("ChatButton").onClick.AddListener(()=>OpenTap("ChatPopup"));
