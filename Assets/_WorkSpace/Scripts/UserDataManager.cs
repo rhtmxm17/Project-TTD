@@ -26,6 +26,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
     public class GamePlayData
     {
         public UserDataDateTime EggGainTimestamp { get; private set; } = new UserDataDateTime("PlayData/EggGainTimestamp");
+
     }
 
 
@@ -255,6 +256,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
         /// <param name="onCompleteCallback">작업 완료시 결과를 반환받을 callback (성공시 true)</param>
         public void Submit(UnityAction<bool> onCompleteCallback)
         {
+            
             // 갱신사항이 없다면 즉시 완료 처리
             if (updates.Count == 0)
             {
@@ -275,6 +277,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                 propertyCallbackOnSubmit?.Invoke();
                 onCompleteCallback?.Invoke(true);
             });
+
         }
     }
     #endregion DB 데이터 갱신
