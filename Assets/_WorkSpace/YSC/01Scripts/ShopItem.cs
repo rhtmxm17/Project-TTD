@@ -35,7 +35,9 @@ public class ShopItem : BaseUI
     [SerializeField] private ItemData itemGet;          // 살때 받는 아이템      Ex. Token
 
     // 아이템
-    private ItemData _item;
+    [SerializeField] private ItemData _item;
+
+    [SerializeField] int itemNumber;
 
     private void Start()
     {
@@ -58,7 +60,7 @@ public class ShopItem : BaseUI
         itemCountText.text = itemCount.ToString();
         // 갯수 바뀌면 업데이트 되도록 해야함
 
-        // SetItem(_item);
+        SetItem(_item);
     }
 
 
@@ -69,11 +71,18 @@ public class ShopItem : BaseUI
          
 
         _item = item;
+        itemNumber = item.Id;
         itemName = item.ItemName;
         itemNameText.text = itemName;
         itemImage.sprite = item.SspriteImage;
         _description = item.Description;
 
+
+    }
+
+    public void UpdateInfo()
+    {
+        itemCountText.text = itemCount.ToString();
     }
 
     private void Buy()
@@ -98,6 +107,7 @@ public class ShopItem : BaseUI
 
 
         itemCount--;
+        UpdateInfo();
         SoldOut();
     }
 
