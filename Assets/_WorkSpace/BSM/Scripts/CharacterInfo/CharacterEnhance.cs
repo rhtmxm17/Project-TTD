@@ -13,7 +13,7 @@ public class CharacterEnhance : MonoBehaviour
     private bool _isSubscribe;
     
     private readonly int _maxEnhanceLevel = 10;
-    private float _minEnhanceProbability = 0.8f;
+    private float _minEnhanceProbability = 0.9f;
     private int _characterEnhanceLevel;
 
     //Info에서 DB를 전달받을 필요가 있을듯
@@ -51,7 +51,7 @@ public class CharacterEnhance : MonoBehaviour
         //기본 강화 확률 + 추가 재료 강화 확률 > Probability 보다 크면 성공
         //아니면 실패
         //현재 강화 레벨에 따라 최소 강화 확률 조정 필요
-        _minEnhanceProbability = _characterEnhanceLevel == 1 ? 1f : (_maxEnhanceLevel - _characterEnhanceLevel) * 0.1f;
+        _minEnhanceProbability = (_maxEnhanceLevel - _characterEnhanceLevel) * 0.1f;
         float enhanceProbability = GetProbability(Random.Range(_minEnhanceProbability, 1f));
         
         //내 캐릭터 강화 공식이 필요

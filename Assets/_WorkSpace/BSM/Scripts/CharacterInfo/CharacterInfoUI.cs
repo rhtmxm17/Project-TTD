@@ -79,7 +79,10 @@ public class CharacterInfoUI : BaseUI
         _evolutionTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.EVOLUTION);
         _meanTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.MEAN);
     }
-
+    
+    /// <summary>
+    /// 상세 팝업 종료 후 탭 타입 변경
+    /// </summary>
     private void InfoPopupClose()
     {
         _infoPopup.SetActive(false);
