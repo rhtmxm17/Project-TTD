@@ -73,10 +73,17 @@ public class CharacterInfoUI : BaseUI
 
     private void ButtonAddListener()
     {
-        _exitButton.onClick.AddListener(() => _infoPopup.SetActive(false));
+        _exitButton.onClick.AddListener(InfoPopupClose);
         _detailTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.DETAIL);
         _enhanceTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.ENHANCE);
         _evolutionTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.EVOLUTION);
         _meanTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.MEAN);
     }
+
+    private void InfoPopupClose()
+    {
+        _infoPopup.SetActive(false);
+        _controller.CurInfoTabType = InfoTabType.DETAIL;
+    }
+    
 }

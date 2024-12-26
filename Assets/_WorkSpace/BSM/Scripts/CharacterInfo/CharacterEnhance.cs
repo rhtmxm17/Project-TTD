@@ -12,7 +12,7 @@ public class CharacterEnhance : MonoBehaviour
 
     private bool _isSubscribe;
     
-    private int _maxEnhanceLevel = 10;
+    private readonly int _maxEnhanceLevel = 10;
     private float _minEnhanceProbability = 0.8f;
     private int _characterEnhanceLevel;
 
@@ -119,7 +119,10 @@ public class CharacterEnhance : MonoBehaviour
     /// <param name="characterData"></param>
     public void GetCharacterData(CharacterData characterData)
     {
-        _characterData = characterData;     
+        _characterInfoController.CurCharacterEnhance = this; 
+        _characterData = characterData;
+        _characterEnhanceLevel = characterData.Enhancement.Value; 
+        EnhanceCheck();
     }
     
 }

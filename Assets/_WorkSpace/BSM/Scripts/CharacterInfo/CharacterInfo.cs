@@ -87,9 +87,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private void GetCharacterDBValue()
     { 
         _characterLevel = _characterData.Level.Value;
-        characterLevelUpCost = 100 * _characterData.Level.Value; 
-        
-        Debug.Log($"{_characterData.name} : Lv.{_characterLevel} / {_characterData.Enhancement.Value}");
+        characterLevelUpCost = 100 * _characterData.Level.Value;  
     }
     
     private void SubscribeEvent()
@@ -117,7 +115,6 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// </summary>
     public void UpdateInfo()
     { 
-        Debug.Log($"인포 :{_characterData.name} {_characterData.Enhancement.Value}");
         _characterEnhance.GetCharacterData(_characterData);
         
         //TODO: 정리 필요 
@@ -128,10 +125,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController._infoUI._atkText.text = "공격력" + Random.Range(2, 100).ToString();
         _characterInfoController._infoUI._hpText.text = "체력" + Random.Range(2, 100).ToString();
         _characterInfoController._infoUI._coinText.text = characterLevelUpCost.ToString(); 
-        Debug.Log("인포 업뎃 완료");
-        
+
         LevelUpCheck();
-        //EnhanceCheck();
     }
 
     /// <summary>

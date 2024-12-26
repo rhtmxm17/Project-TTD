@@ -56,7 +56,6 @@ public class CharacterInfoController : BaseUI
             TabSwitch();
         }
     }
-    
 
     protected override void Awake()
     {
@@ -65,7 +64,7 @@ public class CharacterInfoController : BaseUI
         SubscribeEvent();
 
         /////// 더미 인증 테스트 코드
-        StartCoroutine(UserDataManager.InitDummyUser(17));
+        StartCoroutine(UserDataManager.InitDummyUser(19));
     }
 
     private void OnEnable() => UpdateCharacterList();
@@ -183,8 +182,6 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void TabSwitch()
     {
-        CurCharacterInfo.UpdateInfo();
-         
         _characterUISet.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL) || _curInfoTabType.Equals(InfoTabType.ENHANCE));
         _detailTab.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
         _enhanceTab.SetActive(_curInfoTabType.Equals(InfoTabType.ENHANCE));
