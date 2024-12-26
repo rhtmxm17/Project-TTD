@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class HYJ_CharacterSelect : MonoBehaviour
@@ -74,17 +75,20 @@ public class HYJ_CharacterSelect : MonoBehaviour
             if (CheckPos(SelectM.curPos)) // 현재 위치가 이미 키 값으로 저장이 되어 있다면
             {
                 // 키 값을 가지고 있는 값을 제거
-                SelectM.battleInfo.Remove(SelectM.curPos);
+                //SelectM.battleInfo.Remove(SelectM.curPos);
+                RemoveBatch(SelectM.curPos);
             }
-            SelectM.battleInfo.Add(SelectM.curPos, unitIndex);
+            //SelectM.battleInfo.Add(SelectM.curPos, unitIndex);
+            AddBatch(SelectM.curPos, unitIndex);
         }
     }
 
     public void ChangeUnit()
     {
         int unitPos = SelectM.battleInfo.FirstOrDefault(x => x.Value == SelectM.curUnitIndex).Key; // 딕셔너리 밸류값(유닛 고유번호)를 갖고 있는 키 값을 찾기
-        SelectM.battleInfo.Remove(unitPos);
-        SelectM.battleInfo[SelectM.curPos] = SelectM.curUnitIndex;
+/*        SelectM.battleInfo.Remove(unitPos);
+        SelectM.battleInfo[SelectM.curPos] = SelectM.curUnitIndex;*/
+        ChangeBatch(unitPos, SelectM.curPos, SelectM.curUnitIndex);
     }
 
     public bool CheckUnit(int unitIndex)
@@ -100,7 +104,8 @@ public class HYJ_CharacterSelect : MonoBehaviour
     public void ReleaseUnit()
     {
         // 배치된 유닛을 해제하기
-        SelectM.battleInfo.Remove(SelectM.curPos);     // 현재 유닛 고유번호를 갖고 있는 키 값을 삭제
+        //SelectM.battleInfo.Remove(SelectM.curPos);     // 현재 유닛 고유번호를 갖고 있는 키 값을 삭제
+        RemoveBatch(SelectM.curPos);
     }
 
     public void ChangeColorBTN()
@@ -109,4 +114,28 @@ public class HYJ_CharacterSelect : MonoBehaviour
         Image btnImage = transform.gameObject.GetComponent<Image>();
         btnImage.color = Color.red;
     }
+
+    void AddBatch(int key, int value)
+    {
+        SelectM.battleInfo.Add(key, value);
+        SelectM.SetCharcterSprite(key, value);
+        Debug.Log(key + "색 추가");
+        //캐릭터 생성
+    }
+
+    void RemoveBatch(int key)
+    {
+        SelectM.battleInfo.Remove(key);     // 현재 유닛 고유번호를 갖고 있는 키 값을 삭제
+        SelectM.RemoveCharacterSprite(key);
+        Debug.Log(key + "색 제거");
+        //캐릭터 제거
+    }
+
+    void ChangeBatch(int victimKey, int newKey, int newValue)
+    {
+        SelectM.battleInfo.Remove(victimKey);     // 현재 유닛 고유번호를 갖고 있는 키 값을 삭제
+        SelectM.battleInfo[newKey] = newValue;
+        SelectM.ChangeTo(victimKey, newKey);
+    }
+
 }

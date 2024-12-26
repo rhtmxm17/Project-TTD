@@ -11,20 +11,22 @@ public class HYJ_SelectManager : MonoBehaviour
     [SerializeField] public int curPos;
     [SerializeField] public int curUnitIndex;
 
+    [Header("buttonList")]
+    [SerializeField]
+    List<Transform> buttonsTransformList;
+
+    [Header("spriteTest")]
+    [SerializeField]
+    List<HYJ_PlayerController> spriteList;
+
     // 키 값은 위치 / 밸류 값은 유닛 고유번호;
     public Dictionary<int, int> battleInfo = new Dictionary<int, int>();
-
-    private void Awake()
-    {
-        //StartCoroutine(UserDataManager.InitDummyUser(7));
-    }
-
 
     public void LookLog()
     {
         DatabaseReference baseref = BackendManager.CurrentUserDataRef;
         Debug.Log("dd");
-        baseref.Child("Characters").SetValueAsync(null).ContinueWithOnMainThread(task => {
+        baseref.Child("Batchs").SetValueAsync(null).ContinueWithOnMainThread(task => {
 
             if (task.IsFaulted || task.IsCanceled)
             {
@@ -37,7 +39,7 @@ public class HYJ_SelectManager : MonoBehaviour
             Debug.Log("-------");
             foreach (var (key, value) in battleInfo)
             {
-                updates[$"Characters/{ key.ToString("D3")}"] = value;
+                updates[$"Batchs/{ key.ToString("D3")}"] = value;
                 Debug.Log($"{key} : {value}");
             }
             Debug.Log("-------");
@@ -54,6 +56,30 @@ public class HYJ_SelectManager : MonoBehaviour
 
         });
 
+    }
+
+    public void SetCharcterSprite(int posIdx, int charIdx)
+    {
+        var obj = Instantiate(spriteList[charIdx - 1], buttonsTransformList[posIdx]);
+        obj.transform.localPosition = Vector3.zero;
+    }
+
+    public void RemoveCharacterSprite(int posIdx)
+    {
+        Destroy(buttonsTransformList[posIdx].GetComponentInChildren<HYJ_PlayerController>().gameObject);
+    }
+
+    public void ChangeTo(int fromIdx, int destIdx)
+    {
+        Destroy(buttonsTransformList[destIdx].GetComponentInChildren<HYJ_PlayerController>().gameObject);
+        buttonsTransformList[fromIdx].GetComponentInChildren<HYJ_PlayerController>()
+            .transform.SetParent(buttonsTransformList[destIdx].transform);
+        
+        
+        var trans =buttonsTransformList[destIdx].GetComponentInChildren<HYJ_PlayerController>().GetComponent<RectTransform>();
+        Debug.Log(trans == null);
+        Debug.Log(trans.localPosition);
+        trans.anchoredPosition = Vector2.zero;
     }
 
     public void TestLog()
