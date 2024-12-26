@@ -55,4 +55,14 @@ public class HYJ_SelectManager : MonoBehaviour
         });
 
     }
+
+    public void TestLog()
+    {
+        Debug.Log("-------");
+        foreach (var (key, value) in battleInfo)
+        {
+            Debug.Log($"{key} : {value}");
+        }
+        Debug.Log("-------");
+    }
 }
