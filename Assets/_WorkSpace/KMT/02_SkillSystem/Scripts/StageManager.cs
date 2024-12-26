@@ -55,10 +55,17 @@ public class StageManager : MonoBehaviour
 
     private void Start()
     {
-        //테스트용 로그인 초기화
-        StartCoroutine(UserDataManager.InitDummyUser(0));
+        //키 : 배치정보, 값 : 캐릭터 고유 번호(ID)
+        Dictionary<string, long> batchData = GameManager.UserData.PlayData.BatchInfo.Value;
+        Dictionary<int, CharacterData> batchDictionary = new Dictionary<int, CharacterData>(batchData.Count);
 
-        characterSetter.InitCharacters(characterDataList);
+        foreach (var pair in batchData)
+        {
+            batchDictionary[int.Parse(pair.Key)] =
+                GameManager.TableData.GetCharacterData((int)pair.Value);
+        }
+
+        characterSetter.InitCharacters(batchDictionary);
         InitMonsterWaves(monsterDataList);
     }
 
@@ -151,26 +158,31 @@ public class StageManager : MonoBehaviour
 
     }
 
+    protected virtual void StartGame()
+    {
+        if (monsterWaveQueue.Count <= 0)
+        {
+            Debug.Log("클리어!");
+            return;
+        }
+
+        //파티 공유 게이지 충전 시작.
+        StartCoroutine(StartPartyCostCO());
+
+        costSlider.value = 0;
+        costText.text = PartyCost.ToString();
+
+        Debug.Log("S눌림");
+        monsterWaveQueue[0].gameObject.SetActive(true);
+        characterManager.StartCombat(monsterWaveQueue[0]);
+        monsterWaveQueue[0].StartCombat(characterManager);
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.S))
         {
-            if (monsterWaveQueue.Count <= 0)
-            {
-                Debug.Log("클리어!");
-                return;
-            }
-
-            //파티 공유 게이지 충전 시작.
-            StartCoroutine(StartPartyCostCO());
-
-            costSlider.value = 0;
-            costText.text = PartyCost.ToString();
-
-            Debug.Log("S눌림");
-            monsterWaveQueue[0].gameObject.SetActive(true);
-            characterManager.StartCombat(monsterWaveQueue[0]);
-            monsterWaveQueue[0].StartCombat(characterManager);
+            StartGame();
         }
 
         if (Input.GetKeyDown(KeyCode.F))
