@@ -56,6 +56,8 @@ public class ItemData : ScriptableObject, ICsvRowParseable
 
         // SPRITE
         spriteImage = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.SPRITE]}.asset");
+        if (spriteImage == null)
+            spriteImage = DataTableManager.Instance.DummySprite;
 
         // DESCRIPTION
         description = cells[(int)Column.DESCRIPTION];

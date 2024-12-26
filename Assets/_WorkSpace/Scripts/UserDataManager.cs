@@ -107,7 +107,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             {
                 DataSnapshot allItemData = userData.Child("Items");
 
-                // 키 값 조회 == 보유 캐릭터 확인
+                // 키 값 조회 == 보유 아이템 확인
                 foreach (DataSnapshot singleItemData in allItemData.Children)
                 {
                     // DB에서 가져온 키값 문자열 int로 파싱하기 vs 문자열을 키값으로 쓰기
@@ -120,6 +120,27 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                     ItemData itemData = GameManager.TableData.GetItemData(id);
 
                     itemData.Number.SetValueWithDataSnapshot(userData);
+                }
+            }
+
+            // 스테이지 데이터 로딩
+            if (userData.HasChild("Stages"))
+            {
+                DataSnapshot allStageData = userData.Child("Stages");
+
+                // 키 값 조회 == 스테이지 기록 존재 여부 확인
+                foreach (DataSnapshot singleStageData in allStageData.Children)
+                {
+                    // DB에서 가져온 키값 문자열 int로 파싱하기 vs 문자열을 키값으로 쓰기
+                    if (false == int.TryParse(singleStageData.Key, out int id))
+                    {
+                        Debug.LogWarning($"잘못된 키 값({singleStageData.Key})");
+                        continue;
+                    }
+
+                    StageData stageData = GameManager.TableData.GetStageData(id);
+
+                    stageData.ClearCount.SetValueWithDataSnapshot(userData);
                 }
             }
 
