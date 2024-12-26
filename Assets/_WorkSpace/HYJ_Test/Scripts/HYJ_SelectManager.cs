@@ -69,9 +69,12 @@ public class HYJ_SelectManager : MonoBehaviour
 
     public void ChangeTo(int fromIdx, int destIdx)
     {
-        Destroy(buttonsTransformList[destIdx].GetComponentInChildren<HYJ_PlayerController>().gameObject);
+        if (buttonsTransformList[destIdx].GetComponentInChildren<HYJ_PlayerController>() != null)
+        {
+            RemoveCharacterSprite(destIdx);
+        }
         buttonsTransformList[fromIdx].GetComponentInChildren<HYJ_PlayerController>()
-            .transform.SetParent(buttonsTransformList[destIdx].transform);
+                .transform.SetParent(buttonsTransformList[destIdx].transform);
 
         HYJ_PlayerController[] transL = buttonsTransformList[destIdx].GetComponentsInChildren<HYJ_PlayerController>();
         RectTransform trans = transL[transL.Length - 1].GetComponent<RectTransform>();
@@ -92,7 +95,6 @@ public class HYJ_SelectManager : MonoBehaviour
 
     public void LoadBattleScene()
     {
-
         SceneManager.LoadScene("DamageCalc_kmt");
     }
 }
