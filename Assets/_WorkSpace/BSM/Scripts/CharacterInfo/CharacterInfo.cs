@@ -17,6 +17,12 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private TextMeshProUGUI _characterListNameText;
     private Image _characterListImage;
     
+    private float _minEnhanceProbability = 0.8f;
+    private int _maxEnhanceLevel = 10;
+
+    private int _characterLevel;
+    private int _characterEnhanceLevel;
+    
     public int CharacterLevel
     {
         //현재 캐릭터 레벨 반환
@@ -39,7 +45,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     #region 테스트코드
 
     [SerializeField] private int testMyGold;
-
+     
     public int TestMyGold
     {
         get => testMyGold;
@@ -69,6 +75,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         SetListNameText(_characterData.Name);
         SetListImage(_characterData.FaceIconSprite);
         SubscribeEvent();
+        GetCharacterDBValue();
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -76,6 +83,13 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         SetInfoPopup();
     }
 
+    private void GetCharacterDBValue()
+    {
+        _characterLevel = _characterData.Level.Value;
+        characterLevelUpCost = 100 * _characterData.Level.Value; 
+        _characterEnhanceLevel = _characterData.Enhancement.Value;  
+    }
+    
     private void SubscribeEvent()
     {
         if (IsSubscribe) return;
@@ -84,7 +98,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController._infoUI._levelUpButton.onClick.AddListener(LevelUp);
         _characterInfoController._infoUI._enhanceButton.onClick.AddListener(Enhance);
     }
-
+ 
     /// <summary>
     /// 현재 캐릭터 정보 할당 기능
     /// </summary>
@@ -101,14 +115,19 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// </summary>
     public void UpdateInfo()
     {
+        Debug.Log($"{gameObject.name} : {_characterData.name}");
+        
         //TODO: 정리 필요 
         _characterInfoController._infoUI._nameText.text = _characterData.Name;
         _characterInfoController._infoUI._characterImage.sprite = _characterData.FaceIconSprite;
         _characterInfoController._infoUI._levelText.text = _characterData.Level.Value.ToString();
+        _characterInfoController._infoUI._enhanceText.text = $"+{_characterData.Enhancement.Value.ToString()}";
         _characterInfoController._infoUI._atkText.text = "공격력" + Random.Range(2, 100).ToString();
         _characterInfoController._infoUI._hpText.text = "체력" + Random.Range(2, 100).ToString();
-
+        _characterInfoController._infoUI._coinText.text = characterLevelUpCost.ToString(); 
+        
         LevelUpCheck();
+        EnhanceCheck();
     }
 
     /// <summary>
@@ -122,11 +141,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         GameManager.UserData.StartUpdateStream()
             .SetDBValue(_characterData.Level, _characterData.Level.Value + 1)
             // .SetDBValue(_characterData.Level, _characterData.Level.Value + 1) // 재화 사용
-            .Submit(LevelUpResult);
-        
-        TestMyGold -= characterLevelUpCost;
-        characterLevelUpCost = 100 * _characterData.Level.Value;
-        _characterInfoController._infoUI._coinText.text = characterLevelUpCost.ToString(); 
+            .Submit(LevelUpResult); 
     }
     
     /// <summary>
@@ -140,8 +155,9 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             Debug.LogWarning("접속 실패");
             return;
         }
-
-
+        //테스트 재화 사용
+        TestMyGold -= characterLevelUpCost;
+        characterLevelUpCost = 100 * _characterData.Level.Value; 
         UpdateInfo();
 
         // 레벨업 UI 나올 위치
@@ -162,26 +178,46 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// </summary>
     private void Enhance()
     {
-        if (_characterInfoController.CurCharacterInfo != this) return;
-        
+        if (_characterInfoController.CurCharacterInfo != this) return; 
+         
         //기본 강화 확률 + 추가 재료 강화 확률 > Probability 보다 크면 성공
         //아니면 실패
-
-        float enhanceProbability = GetProbability(Random.Range(0.01f, 1f));
+        //현재 강화 레벨에 따라 최소 강화 확률 조정 필요
+        _minEnhanceProbability = _characterEnhanceLevel == 1 ? 1f : (_maxEnhanceLevel - _characterEnhanceLevel) * 0.1f;
+        
+        Debug.Log($"현재 최소 확률 : {_minEnhanceProbability}");
+         
+        float enhanceProbability = GetProbability(Random.Range(_minEnhanceProbability, 1f));
         
         //내 캐릭터 강화 공식이 필요
-        float chance = _characterData.Level.Value * 0.1f;
-
+        float chance = _characterEnhanceLevel == 1 ? 1f : GetProbability(Random.Range((enhanceProbability - 0.2f), (enhanceProbability + 0.2f)));
         chance = Mathf.Clamp(chance, 0.01f, 1f);
          
-        if (chance > enhanceProbability)
+        if (chance >= enhanceProbability)
         {
-            Debug.Log($"{gameObject.name} 강화 성공 : 캐릭터 확률 {chance} / 성공 확률 {enhanceProbability}");
+            GameManager.UserData.StartUpdateStream()
+                .SetDBValue(_characterData.Enhancement, _characterData.Enhancement.Value + 1)
+                .Submit(EnhanceResult);
+             
+            Debug.Log($"{gameObject.name} :{_characterEnhanceLevel} 강화 성공 : 캐릭터 확률 {chance} / 성공 확률 {enhanceProbability}");
         }
         else
         {
             Debug.Log($"강화 실패 : 캐릭터 확률 {chance} / 성공 확률 {enhanceProbability}");
         } 
+    }
+
+    private void EnhanceResult(bool result)
+    {
+        if (!result)
+        {
+            Debug.Log("네트워크 오류");
+            return;
+        }
+
+        _characterEnhanceLevel = _characterData.Enhancement.Value;
+        
+        UpdateInfo();
     }
     
     /// <summary>
@@ -199,9 +235,10 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// </summary>
     private void EnhanceCheck()
     {
+        Debug.Log(_characterEnhanceLevel);
         //TODO: 활성화/비활성화 조건 수정 필요
-        _characterInfoController._infoUI._enhanceButton.interactable = 
-            testMyGold >= characterLevelUpCost && testMyGold != 0;
+        //테스트 강화 비활성화 조건
+        _characterInfoController._infoUI._enhanceButton.interactable = _characterEnhanceLevel < _maxEnhanceLevel;
     }
     
     /// <summary>

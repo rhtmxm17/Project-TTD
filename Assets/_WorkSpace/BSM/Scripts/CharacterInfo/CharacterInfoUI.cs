@@ -10,13 +10,15 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _nameText;
     [HideInInspector] public TextMeshProUGUI _atkText;
     [HideInInspector] public TextMeshProUGUI _hpText;
+    [HideInInspector] public TextMeshProUGUI _coinText;
+    [HideInInspector] public TextMeshProUGUI _jewelryText;
+    [HideInInspector] public TextMeshProUGUI _enhanceText;
     
     [HideInInspector] public Image _characterImage;
 
     [HideInInspector] public Button _levelUpButton;
     [HideInInspector] public Button _enhanceButton;
-    [HideInInspector] public TextMeshProUGUI _coinText;
-    [HideInInspector] public TextMeshProUGUI _jewelryText;
+
     
     private Button _exitButton;
     private GameObject _infoPopup;
@@ -38,14 +40,14 @@ public class CharacterInfoUI : BaseUI
         _hpText = GetUI<TextMeshProUGUI>("HpText");
         _coinText = GetUI<TextMeshProUGUI>("CoinText");
         _jewelryText = GetUI<TextMeshProUGUI>("JewelryText");
-        
+        _enhanceText = GetUI<TextMeshProUGUI>("EnhanceText");
         
         _exitButton = GetUI<Button>("ExitButton");
         _levelUpButton = GetUI<Button>("LevelUpButton");
         _enhanceButton = GetUI<Button>("EnhanceButton");
         
         _characterImage = GetUI<Image>("CharacterImage");
-
+        
     }
 
     private void ButtonAddListener()

@@ -25,3 +25,9 @@ public enum SortType
 {
     NONE, NAME, LEVEL
 }
+
+[System.Serializable]
+public enum InfoTab
+{
+    DETAIL, ENHANCE, EVOLUTION, MEAN
+}

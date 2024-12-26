@@ -47,14 +47,14 @@ public class CharacterInfoController : BaseUI
         SubscribeEvent();
 
         /////// 더미 인증 테스트 코드
-        StartCoroutine(UserDataManager.InitDummyUser(7));
+        StartCoroutine(UserDataManager.InitDummyUser(9));
     }
 
     private void OnEnable() => UpdateCharacterList();
 
     private void Start()
     {
-        //TODO: 테스트용 -> 추후 메인과 붙이면 OnEnable에서 넘겨주는거로
+        //TODO: 테스트용 -> 추후 메인과 붙이면 UpdateCharacterList()에서 넘겨주는거로
         _characterSort._sortCharacterInfos = _characterInfos;
         StartListSort();
     }
