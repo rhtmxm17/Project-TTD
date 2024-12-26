@@ -35,7 +35,14 @@ public class CharacterSort : MonoBehaviour
         _curSortType = type;
         CharacterListSort();
     }
-     
+
+    public void CharacterListFilter()
+    {
+        //TODO: 캐릭터 리스트 필터 기능 추가
+        //현재 선택한 속성 외 캐릭터 리스트는 Active = false or List에서 Remove하면 될듯?
+    }
+    
+    
     /// <summary>
     /// 캐릭터 리스트 정렬 기능
     /// </summary>
@@ -54,7 +61,7 @@ public class CharacterSort : MonoBehaviour
         }
 
         _sortList.Sort();
-
+        
         for (int i = 0; i < _sortList.Count; i++)
         {
             for (int j = i + 1; j < _sortCharacterInfos.Count; j++)

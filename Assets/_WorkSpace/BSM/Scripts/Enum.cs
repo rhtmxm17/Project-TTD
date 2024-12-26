@@ -23,7 +23,7 @@ public enum BuffType
 [System.Serializable]
 public enum SortType
 {
-    NONE, NAME, LEVEL
+    NONE, NAME, LEVEL, TRIBE, ROLE    
 }
 
 [System.Serializable]

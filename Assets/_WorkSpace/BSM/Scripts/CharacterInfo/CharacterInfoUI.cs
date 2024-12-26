@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class CharacterInfoUI : BaseUI
@@ -28,7 +29,9 @@ public class CharacterInfoUI : BaseUI
      
     private Button _exitButton;
     private GameObject _infoPopup;
-     
+    
+    
+    
     protected override void Awake()
     {
         base.Awake();

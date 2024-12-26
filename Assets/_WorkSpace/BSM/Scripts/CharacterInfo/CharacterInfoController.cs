@@ -11,11 +11,13 @@ public class CharacterInfoController : BaseUI
     [HideInInspector] public CharacterInfoUI _infoUI;
     [HideInInspector] public List<CharacterInfo> _characterInfos;
     [HideInInspector] public CharacterInfo CurCharacterInfo;
-
+    [HideInInspector] public CharacterEnhance CurCharacterEnhance;
+    
     [HideInInspector] public GameObject _infoPopup;
 
     [HideInInspector] public int CurIndex = 0;
 
+    private GameObject _characterUISet;
     private CharacterSort _characterSort;
  
     private Button _prevButton;
@@ -63,7 +65,7 @@ public class CharacterInfoController : BaseUI
         SubscribeEvent();
 
         /////// 더미 인증 테스트 코드
-        StartCoroutine(UserDataManager.InitDummyUser(9));
+        StartCoroutine(UserDataManager.InitDummyUser(17));
     }
 
     private void OnEnable() => UpdateCharacterList();
@@ -78,7 +80,8 @@ public class CharacterInfoController : BaseUI
     private void Init()
     {
         _infoPopup = GetUI("InfoPopup");
-
+        _characterUISet = GetUI("CharacterUISet");
+        
         _characterSort = GetUI<CharacterSort>("SortUI");
         _infoUI = GetUI<CharacterInfoUI>("InfoUI");
 
@@ -126,6 +129,9 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void PreviousCharacter()
     {
+        //TODO: 상세 팝업창 좌,우 버튼 노출 조건 추가 필요할 것으로 예상중
+        //조건 추가가 필요하다면 _characterInfos 카운트 2 미만이면 노출x
+        
         if (CurIndex == 0)
         {
             CurIndex = _characterInfos.Count - 1;
@@ -177,6 +183,9 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void TabSwitch()
     {
+        CurCharacterInfo.UpdateInfo();
+         
+        _characterUISet.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL) || _curInfoTabType.Equals(InfoTabType.ENHANCE));
         _detailTab.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
         _enhanceTab.SetActive(_curInfoTabType.Equals(InfoTabType.ENHANCE));
         _evolutionTab.SetActive(_curInfoTabType.Equals(InfoTabType.EVOLUTION));
