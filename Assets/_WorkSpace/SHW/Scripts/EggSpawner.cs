@@ -12,12 +12,10 @@ public class EggSpawner : MonoBehaviour
     [SerializeField] private TMP_Text timeText;
     
     // 시간 관련
-    //private DateTime lastTime;
-    private UserDataDateTime lastEggTime;
-    DateTime currentTime;
+    private UserDataDateTime lastEggTime; // 마지막으로 보상을 받은 시간
     private TimeSpan time;
     private TimeSpan span;
-    private TimeSpan remainingTime;
+    private TimeSpan remainingTime; // 보상 충전까지 남은 시간
     [SerializeField] private int rewardTime;
     [SerializeField] private int rewardMinute;
     [SerializeField] private int rewardSeconds;
@@ -27,43 +25,17 @@ public class EggSpawner : MonoBehaviour
 
     private void Start()
     {
-        UserDataManager.Instance.onLoadUserDataCompleted.AddListener(OnUserDataLoaded);
+        UserDataManager.Instance.onLoadUserDataCompleted.AddListener(StartEggTimer);
         StartCoroutine(UserDataManager.InitDummyUser(8));
 
-        // 최종 보상 수령 가능 시간
+        // 보상 충전 소요시간
         // 필요하면 나중에 변수화 해서 인스펙터에서 수정하도록 변경
         span = new TimeSpan(rewardTime, rewardMinute, rewardSeconds);
 
     }
 
-
-    private void Update()
+    private void StartEggTimer()
     {
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            Tester();
-        }
-        
-        // 6시간 이하
-        if (time < span)
-        {
-            isEggComplete = false;
-        }
-        else
-        {
-            if (timerCoroutine != null)
-            {
-                StopCoroutine(timerCoroutine);
-                timerCoroutine = null;
-            }
-            timeText.text = "수령가능";
-            isEggComplete = true;
-        }
-    }
-
-    private void OnUserDataLoaded()
-    {
-        // 초기 시간이 없을 경우 -> 현재시간으로 초기화
         lastEggTime = GameManager.UserData.PlayData.EggGainTimestamp;
         timerCoroutine = StartCoroutine(TimerTextCo());
         lastEggTime.onValueChanged += LastEggTime_onValueChanged;
@@ -88,8 +60,6 @@ public class EggSpawner : MonoBehaviour
                     }
 
                     Debug.Log("용 부화기 받기 성공!");
-
-
                 });
         }
         else
@@ -107,21 +77,23 @@ public class EggSpawner : MonoBehaviour
 
     IEnumerator TimerTextCo()
     {
+        WaitForSeconds wait1Sec = new WaitForSeconds(1f);
         while (true)
         {
             // 실시간 남은시간 표시
-            currentTime = DateTime.Now;
-            time = currentTime - lastEggTime.Value;
+            time = DateTime.Now - lastEggTime.Value;
             remainingTime = span - time;
             timeText.text = $"{remainingTime.Hours}:{remainingTime.Minutes}:{remainingTime.Seconds}";
-            yield return new WaitForSeconds(1f);
-        }
-    }
 
-    public void Tester()
-    {
-        StopCoroutine(timerCoroutine);
-        time += TimeSpan.FromHours(1);
-        Debug.Log($"누적시간:{time.Hours}");
+            // 준비 완료 상태라면
+            if (remainingTime <= TimeSpan.Zero)
+            {
+                timeText.text = "수령가능";
+                isEggComplete = true;
+                timerCoroutine = null;
+                yield break;
+            }
+            yield return wait1Sec;
+        }
     }
 }
