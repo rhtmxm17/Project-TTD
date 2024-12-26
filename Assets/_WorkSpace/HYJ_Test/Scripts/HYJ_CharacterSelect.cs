@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,8 +18,15 @@ public class HYJ_CharacterSelect : MonoBehaviour
     [Header("유닛 버튼 설정")]
     [SerializeField] int unitIndex; // 유닛 번호
     [SerializeField] GameObject UnitChangeUI; // 유닛 변경 확인 팝업
-    
-    
+
+
+    public void InitData(HYJ_SelectManager manager, int unitIdx, GameObject unitChangeUI)
+    { 
+        SelectM = manager;
+        GetComponentInChildren<TextMeshProUGUI>().text = $"{unitIdx.ToString()}번 유닛";
+        unitIndex = unitIdx;
+        UnitChangeUI = unitChangeUI;
+    }
 
     public void SelectPos()
     {
