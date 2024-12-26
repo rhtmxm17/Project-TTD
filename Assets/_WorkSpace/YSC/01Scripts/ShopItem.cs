@@ -4,13 +4,15 @@ using System.Collections.Generic;
 // using System.Drawing;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
-public class ShopItem : BaseUI
+public class ShopItem : BaseUI, IPointerClickHandler
 {
     [Header("아이템 이름")]
     [SerializeField] TMP_Text itemNameText;     // UI_아이템이름
-    [SerializeField] string itemName;
+    [SerializeField] public string itemName;
     // [SerializeField] TMP_Text itemNumText;      // UI_아이템남은 갯수 밑에 있는데 잘못 중복한듯
     [Header("아이템 가격")]
     [SerializeField] TMP_Text itemPriceText;    // UI에 표기되는 가격표   
@@ -28,11 +30,13 @@ public class ShopItem : BaseUI
     [Header("매진")]
     [SerializeField] bool isSoldOut;
     [Header("설명")]
-    [SerializeField] string _description;
+    [SerializeField] public string _description;
 
     [SerializeField] private TMP_Text buyButtonText;
     [SerializeField] private ItemData itemGive;         // 살때 주는 재화 데이터 Ex. gold
     [SerializeField] private ItemData itemGet;          // 살때 받는 아이템      Ex. Token
+
+    ShopPanel _shopPanel;
 
     // 아이템
     [SerializeField] private ItemData _item;
@@ -63,7 +67,6 @@ public class ShopItem : BaseUI
         SetItem(_item);
     }
 
-
     // TODO: 
     // ItemData랑 맞는지 확인해야함.
     public void SetItem(ItemData item)
@@ -76,8 +79,46 @@ public class ShopItem : BaseUI
         itemNameText.text = itemName;
         itemImage.sprite = item.SspriteImage;
         _description = item.Description;
+        
+        // itemPrice
+        // itemCount
+
+    }
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        Debug.Log($"{gameObject.name}");
+       // OpenItemInfo();
+       // _shopPanel.OpenPopup();
+       // SetShopPopup();
+
+    }
+
+    private void SetShopPopup()
+    {
+        // string description;
+        // 클릭한 아이템의 정보를 받아와야함.
 
 
+
+        _shopPanel.shopPopupText.text = _description;
+        _shopPanel.shopPopupImage.sprite = itemImage.sprite;
+     //   shopPopupText.text = _description;
+     //   shopPopupImage.sprite = itemImage.sprite;
+
+        GetUI<Button>("ShopPopupClose").onClick.AddListener(() => gameObject.SetActive(false)); // 닫기버튼
+        GetUI<TMP_Text>("ShopPopupText").text = "불러온설명";
+        GetUI<Image>("ShopPopupImage"); // 누른 이미지에 따른 이미지 변경되도록...
+
+        // ShopItem.SetItem(누른아이템); 누른아이템으로 나오게
+
+    }
+
+
+    public void OpenItemInfo()
+    {
+        // _shopPanel.CurItemInfo = this;
+      //  _shopPanel.ShopPopup.SetActive(true);
+      //  SetItem(_item);
     }
 
     public void UpdateInfo()

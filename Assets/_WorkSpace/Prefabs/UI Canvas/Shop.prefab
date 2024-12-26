@@ -138,6 +138,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c80ac4e91158148baf8c86a430b7eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainShopPanel: {fileID: 0}
+  dailyShopPanel: {fileID: 0}
+  shopItem: []
+  shopItems: []
+  itemCounter: 0
+  shopNameText: {fileID: 0}
+  shopPopupText: {fileID: 0}
+  shopPopupImage: {fileID: 0}
+  shopPopupButton: []
   itemNameText: {fileID: 0}
   itemName: "\uBD84\uD64D\uB450\uAC74"
   itemPriceText: {fileID: 0}
@@ -152,6 +161,8 @@ MonoBehaviour:
   buyButtonText: {fileID: 0}
   itemGive: {fileID: 11400000, guid: fa772238c6e4b9b4eafa9932f1b0af58, type: 2}
   itemGet: {fileID: 11400000, guid: 753b1b0fbdde9c44b8761426d9c2f807, type: 2}
+  _item: {fileID: 0}
+  itemNumber: 0
 --- !u!1 &673159024918976380
 GameObject:
   m_ObjectHideFlags: 0
@@ -246,7 +257,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 44.8
+  m_fontSize: 12
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -640,7 +651,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 35.85
+  m_fontSize: 18
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1817,7 +1828,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 3702089480349213960}
   m_Direction: 2
   m_Value: 1
-  m_Size: 1
+  m_Size: 0.5
   m_NumberOfSteps: 1
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2232,6 +2243,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c80ac4e91158148baf8c86a430b7eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainShopPanel: {fileID: 0}
+  dailyShopPanel: {fileID: 0}
+  shopItem: []
+  shopItems: []
+  itemCounter: 0
+  shopNameText: {fileID: 0}
+  shopPopupText: {fileID: 0}
+  shopPopupImage: {fileID: 0}
+  shopPopupButton: []
   itemNameText: {fileID: 0}
   itemName: "\uD1A0\uB07C\uBAA8\uC790"
   itemPriceText: {fileID: 0}
@@ -2246,6 +2266,8 @@ MonoBehaviour:
   buyButtonText: {fileID: 0}
   itemGive: {fileID: 11400000, guid: fa772238c6e4b9b4eafa9932f1b0af58, type: 2}
   itemGet: {fileID: 11400000, guid: 753b1b0fbdde9c44b8761426d9c2f807, type: 2}
+  _item: {fileID: 0}
+  itemNumber: 0
 --- !u!1 &3702089480149651643
 GameObject:
   m_ObjectHideFlags: 0
@@ -2460,6 +2482,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c80ac4e91158148baf8c86a430b7eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainShopPanel: {fileID: 0}
+  dailyShopPanel: {fileID: 0}
+  shopItem: []
+  shopItems: []
+  itemCounter: 0
+  shopNameText: {fileID: 0}
+  shopPopupText: {fileID: 0}
+  shopPopupImage: {fileID: 0}
+  shopPopupButton: []
   itemNameText: {fileID: 0}
   itemName: "\uD551\uD06C\uD3EC\uB2C8"
   itemPriceText: {fileID: 0}
@@ -2474,6 +2505,8 @@ MonoBehaviour:
   buyButtonText: {fileID: 0}
   itemGive: {fileID: 11400000, guid: fa772238c6e4b9b4eafa9932f1b0af58, type: 2}
   itemGet: {fileID: 11400000, guid: 753b1b0fbdde9c44b8761426d9c2f807, type: 2}
+  _item: {fileID: 0}
+  itemNumber: 0
 --- !u!1 &3702089480228923688
 GameObject:
   m_ObjectHideFlags: 0
@@ -4209,7 +4242,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.00019556652}
+  m_AnchoredPosition: {x: 0, y: 64705.473}
   m_SizeDelta: {x: 0, y: 250}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &3702089480471901671
@@ -4363,8 +4396,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainShopPanel: {fileID: 0}
   dailyShopPanel: {fileID: 0}
+  shopItem: []
   shopItems: []
+  itemCounter: 0
   shopNameText: {fileID: 0}
+  shopPopupText: {fileID: 0}
+  shopPopupImage: {fileID: 0}
+  shopPopupButton: []
 --- !u!1 &3702089480509887321
 GameObject:
   m_ObjectHideFlags: 0
@@ -4595,7 +4633,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 44.8
+  m_fontSize: 12
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -4775,6 +4813,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c80ac4e91158148baf8c86a430b7eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainShopPanel: {fileID: 0}
+  dailyShopPanel: {fileID: 0}
+  shopItem: []
+  shopItems: []
+  itemCounter: 0
+  shopNameText: {fileID: 0}
+  shopPopupText: {fileID: 0}
+  shopPopupImage: {fileID: 0}
+  shopPopupButton: []
   itemNameText: {fileID: 0}
   itemName: "\uBD84\uD64D\uB450\uAC74"
   itemPriceText: {fileID: 0}
@@ -4789,6 +4836,8 @@ MonoBehaviour:
   buyButtonText: {fileID: 0}
   itemGive: {fileID: 11400000, guid: fa772238c6e4b9b4eafa9932f1b0af58, type: 2}
   itemGet: {fileID: 11400000, guid: 753b1b0fbdde9c44b8761426d9c2f807, type: 2}
+  _item: {fileID: 0}
+  itemNumber: 0
 --- !u!1 &3702089480568305749
 GameObject:
   m_ObjectHideFlags: 0
@@ -5411,7 +5460,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 53.8
+  m_fontSize: 18
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -6126,7 +6175,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 35.85
+  m_fontSize: 18
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -6442,6 +6491,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c80ac4e91158148baf8c86a430b7eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainShopPanel: {fileID: 0}
+  dailyShopPanel: {fileID: 0}
+  shopItem: []
+  shopItems: []
+  itemCounter: 0
+  shopNameText: {fileID: 0}
+  shopPopupText: {fileID: 0}
+  shopPopupImage: {fileID: 0}
+  shopPopupButton: []
   itemNameText: {fileID: 0}
   itemName: "\uD37C\uB7F0\uC2AC\uB77C\uC784"
   itemPriceText: {fileID: 0}
@@ -6456,6 +6514,8 @@ MonoBehaviour:
   buyButtonText: {fileID: 0}
   itemGive: {fileID: 11400000, guid: fa772238c6e4b9b4eafa9932f1b0af58, type: 2}
   itemGet: {fileID: 11400000, guid: 753b1b0fbdde9c44b8761426d9c2f807, type: 2}
+  _item: {fileID: 0}
+  itemNumber: 0
 --- !u!1 &3702089480960570047
 GameObject:
   m_ObjectHideFlags: 0
@@ -7463,6 +7523,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c80ac4e91158148baf8c86a430b7eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainShopPanel: {fileID: 0}
+  dailyShopPanel: {fileID: 0}
+  shopItem: []
+  shopItems: []
+  itemCounter: 0
+  shopNameText: {fileID: 0}
+  shopPopupText: {fileID: 0}
+  shopPopupImage: {fileID: 0}
+  shopPopupButton: []
   itemNameText: {fileID: 0}
   itemName: "\uD1A0\uB07C\uBAA8\uC790"
   itemPriceText: {fileID: 0}
@@ -7477,6 +7546,8 @@ MonoBehaviour:
   buyButtonText: {fileID: 0}
   itemGive: {fileID: 11400000, guid: fa772238c6e4b9b4eafa9932f1b0af58, type: 2}
   itemGet: {fileID: 11400000, guid: 753b1b0fbdde9c44b8761426d9c2f807, type: 2}
+  _item: {fileID: 0}
+  itemNumber: 0
 --- !u!1 &3702089481028829516
 GameObject:
   m_ObjectHideFlags: 0
@@ -7571,7 +7642,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 44.8
+  m_fontSize: 12
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -7707,7 +7778,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 44.8
+  m_fontSize: 12
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -8010,7 +8081,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 35.85
+  m_fontSize: 18
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -8319,7 +8390,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 44.8
+  m_fontSize: 12
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -8713,6 +8784,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c80ac4e91158148baf8c86a430b7eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainShopPanel: {fileID: 0}
+  dailyShopPanel: {fileID: 0}
+  shopItem: []
+  shopItems: []
+  itemCounter: 0
+  shopNameText: {fileID: 0}
+  shopPopupText: {fileID: 0}
+  shopPopupImage: {fileID: 0}
+  shopPopupButton: []
   itemNameText: {fileID: 0}
   itemName: "\uD551\uD06C\uD3EC\uB2C8"
   itemPriceText: {fileID: 0}
@@ -8727,6 +8807,8 @@ MonoBehaviour:
   buyButtonText: {fileID: 0}
   itemGive: {fileID: 11400000, guid: fa772238c6e4b9b4eafa9932f1b0af58, type: 2}
   itemGet: {fileID: 11400000, guid: 753b1b0fbdde9c44b8761426d9c2f807, type: 2}
+  _item: {fileID: 0}
+  itemNumber: 0
 --- !u!1 &3702089481175040753
 GameObject:
   m_ObjectHideFlags: 0
@@ -9079,7 +9161,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 35.85
+  m_fontSize: 18
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -9260,6 +9342,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c80ac4e91158148baf8c86a430b7eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainShopPanel: {fileID: 0}
+  dailyShopPanel: {fileID: 0}
+  shopItem: []
+  shopItems: []
+  itemCounter: 0
+  shopNameText: {fileID: 0}
+  shopPopupText: {fileID: 0}
+  shopPopupImage: {fileID: 0}
+  shopPopupButton: []
   itemNameText: {fileID: 0}
   itemName: "\uD398\uAC00\uC18C\uC218"
   itemPriceText: {fileID: 0}
@@ -9274,6 +9365,8 @@ MonoBehaviour:
   buyButtonText: {fileID: 0}
   itemGive: {fileID: 11400000, guid: fa772238c6e4b9b4eafa9932f1b0af58, type: 2}
   itemGet: {fileID: 11400000, guid: 753b1b0fbdde9c44b8761426d9c2f807, type: 2}
+  _item: {fileID: 0}
+  itemNumber: 0
 --- !u!1 &3702089481208299843
 GameObject:
   m_ObjectHideFlags: 0
@@ -9504,7 +9597,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 35.85
+  m_fontSize: 18
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -9971,7 +10064,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 44.8
+  m_fontSize: 12
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -10701,6 +10794,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c80ac4e91158148baf8c86a430b7eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainShopPanel: {fileID: 0}
+  dailyShopPanel: {fileID: 0}
+  shopItem: []
+  shopItems: []
+  itemCounter: 0
+  shopNameText: {fileID: 0}
+  shopPopupText: {fileID: 0}
+  shopPopupImage: {fileID: 0}
+  shopPopupButton: []
   itemNameText: {fileID: 0}
   itemName: "\uCD08\uB85D\uC2AC\uB77C\uC784"
   itemPriceText: {fileID: 0}
@@ -10715,6 +10817,8 @@ MonoBehaviour:
   buyButtonText: {fileID: 0}
   itemGive: {fileID: 11400000, guid: fa772238c6e4b9b4eafa9932f1b0af58, type: 2}
   itemGet: {fileID: 11400000, guid: 753b1b0fbdde9c44b8761426d9c2f807, type: 2}
+  _item: {fileID: 0}
+  itemNumber: 0
 --- !u!1 &3702089481568655671
 GameObject:
   m_ObjectHideFlags: 0
@@ -10975,6 +11079,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c80ac4e91158148baf8c86a430b7eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainShopPanel: {fileID: 0}
+  dailyShopPanel: {fileID: 0}
+  shopItem: []
+  shopItems: []
+  itemCounter: 0
+  shopNameText: {fileID: 0}
+  shopPopupText: {fileID: 0}
+  shopPopupImage: {fileID: 0}
+  shopPopupButton: []
   itemNameText: {fileID: 0}
   itemName: "\uD398\uAC00\uC18C\uC218"
   itemPriceText: {fileID: 0}
@@ -10989,6 +11102,8 @@ MonoBehaviour:
   buyButtonText: {fileID: 0}
   itemGive: {fileID: 11400000, guid: fa772238c6e4b9b4eafa9932f1b0af58, type: 2}
   itemGet: {fileID: 11400000, guid: 753b1b0fbdde9c44b8761426d9c2f807, type: 2}
+  _item: {fileID: 0}
+  itemNumber: 0
 --- !u!1 &3702089481604872007
 GameObject:
   m_ObjectHideFlags: 0
@@ -12177,6 +12292,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c80ac4e91158148baf8c86a430b7eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainShopPanel: {fileID: 0}
+  dailyShopPanel: {fileID: 0}
+  shopItem: []
+  shopItems: []
+  itemCounter: 0
+  shopNameText: {fileID: 0}
+  shopPopupText: {fileID: 0}
+  shopPopupImage: {fileID: 0}
+  shopPopupButton: []
   itemNameText: {fileID: 0}
   itemName: 
   itemPriceText: {fileID: 0}
@@ -12191,6 +12315,8 @@ MonoBehaviour:
   buyButtonText: {fileID: 0}
   itemGive: {fileID: 0}
   itemGet: {fileID: 0}
+  _item: {fileID: 0}
+  itemNumber: 0
 --- !u!1 &3702089481897188946
 GameObject:
   m_ObjectHideFlags: 0
@@ -12361,7 +12487,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 35.85
+  m_fontSize: 18
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -14262,6 +14388,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c80ac4e91158148baf8c86a430b7eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainShopPanel: {fileID: 0}
+  dailyShopPanel: {fileID: 0}
+  shopItem: []
+  shopItems: []
+  itemCounter: 0
+  shopNameText: {fileID: 0}
+  shopPopupText: {fileID: 0}
+  shopPopupImage: {fileID: 0}
+  shopPopupButton: []
   itemNameText: {fileID: 0}
   itemName: "\uBE68\uAC04\uC2AC\uB77C\uC784"
   itemPriceText: {fileID: 0}
@@ -14276,6 +14411,8 @@ MonoBehaviour:
   buyButtonText: {fileID: 0}
   itemGive: {fileID: 11400000, guid: fa772238c6e4b9b4eafa9932f1b0af58, type: 2}
   itemGet: {fileID: 11400000, guid: 753b1b0fbdde9c44b8761426d9c2f807, type: 2}
+  _item: {fileID: 0}
+  itemNumber: 0
 --- !u!1 &8251911213295915994
 GameObject:
   m_ObjectHideFlags: 0
@@ -14370,7 +14507,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 44.8
+  m_fontSize: 12
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -14628,7 +14765,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 35.85
+  m_fontSize: 18
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -15125,7 +15262,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 500}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8275900955328056839
@@ -15518,7 +15655,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8275900955638688495}
   m_HandleRect: {fileID: 8275900955638688494}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 0.33333308
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -15849,6 +15986,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c80ac4e91158148baf8c86a430b7eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainShopPanel: {fileID: 0}
+  dailyShopPanel: {fileID: 0}
+  shopItem: []
+  shopItems: []
+  itemCounter: 0
+  shopNameText: {fileID: 0}
+  shopPopupText: {fileID: 0}
+  shopPopupImage: {fileID: 0}
+  shopPopupButton: []
   itemNameText: {fileID: 0}
   itemName: 
   itemPriceText: {fileID: 0}
@@ -15863,6 +16009,8 @@ MonoBehaviour:
   buyButtonText: {fileID: 0}
   itemGive: {fileID: 0}
   itemGet: {fileID: 0}
+  _item: {fileID: 0}
+  itemNumber: 0
 --- !u!1 &8275900956378907245
 GameObject:
   m_ObjectHideFlags: 0
@@ -16120,7 +16268,7 @@ RectTransform:
   m_GameObject: {fileID: 8394873288767356935}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8394873288623174211}
@@ -16855,7 +17003,7 @@ PrefabInstance:
     - target: {fileID: 7337201874779120526, guid: 3d6cdd77066cdbf478d7236ee69edf61,
         type: 3}
       propertyPath: m_fontSize
-      value: 35.85
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 7337201876146202647, guid: 3d6cdd77066cdbf478d7236ee69edf61,
         type: 3}
@@ -16970,7 +17118,7 @@ PrefabInstance:
     - target: {fileID: 7337201876334906966, guid: 3d6cdd77066cdbf478d7236ee69edf61,
         type: 3}
       propertyPath: m_fontSize
-      value: 44.8
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3d6cdd77066cdbf478d7236ee69edf61, type: 3}
