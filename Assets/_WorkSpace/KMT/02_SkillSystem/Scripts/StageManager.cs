@@ -16,8 +16,6 @@ public class StageManager : MonoBehaviour
     CombManager characterManager;
     [SerializeField]
     StageCharacterSetter characterSetter;
-    //스테이지 진입 시, 진형 설정에서 캐릭터 정보들을 받아올 것.
-    [SerializeField] private List<CharacterData> characterDataList;
 
     //데이터 테스트용 임시 구조체
     [System.Serializable]

@@ -27,6 +27,8 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
     {
         public UserDataDateTime EggGainTimestamp { get; private set; } = new UserDataDateTime("PlayData/EggGainTimestamp");
 
+        public UserDataDictionaryLong BatchInfo { get; private set; } = new UserDataDictionaryLong("PlayData/BatchInfo");
+
     }
 
 
@@ -79,6 +81,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             this.Profile.Introduction.SetValueWithDataSnapshot(userData);
 
             this.PlayData.EggGainTimestamp.SetValueWithDataSnapshot(userData);
+            this.PlayData.BatchInfo.SetValueWithDataSnapshot(userData);
 
             // 캐릭터 데이터 로딩
             if (userData.HasChild("Characters"))
@@ -107,7 +110,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             {
                 DataSnapshot allItemData = userData.Child("Items");
 
-                // 키 값 조회 == 보유 캐릭터 확인
+                // 키 값 조회 == 보유 아이템 확인
                 foreach (DataSnapshot singleItemData in allItemData.Children)
                 {
                     // DB에서 가져온 키값 문자열 int로 파싱하기 vs 문자열을 키값으로 쓰기
@@ -120,6 +123,27 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                     ItemData itemData = GameManager.TableData.GetItemData(id);
 
                     itemData.Number.SetValueWithDataSnapshot(userData);
+                }
+            }
+
+            // 스테이지 데이터 로딩
+            if (userData.HasChild("Stages"))
+            {
+                DataSnapshot allStageData = userData.Child("Stages");
+
+                // 키 값 조회 == 스테이지 기록 존재 여부 확인
+                foreach (DataSnapshot singleStageData in allStageData.Children)
+                {
+                    // DB에서 가져온 키값 문자열 int로 파싱하기 vs 문자열을 키값으로 쓰기
+                    if (false == int.TryParse(singleStageData.Key, out int id))
+                    {
+                        Debug.LogWarning($"잘못된 키 값({singleStageData.Key})");
+                        continue;
+                    }
+
+                    StageData stageData = GameManager.TableData.GetStageData(id);
+
+                    stageData.ClearCount.SetValueWithDataSnapshot(userData);
                 }
             }
 
@@ -219,12 +243,75 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             }
         }
 
+        public class DictionaryAdapter<T>
+        {
+            public Dictionary<string, T> Value { get; private set; }
+
+            public event UnityAction onValueChanged;
+
+            public string Key { get; private set; }
+
+            public DictionaryAdapter(string key)
+            {
+                this.Key = key;
+                Value = new Dictionary<string, T>();
+            }
+
+            /// <summary>
+            /// 로딩 단계에서 초기값 입력을 위한 메서드
+            /// </summary>
+            /// <param name="userDataSnapshot">대상 유저의 데이터스냅샷</param>
+            public void SetValueWithDataSnapshot(DataSnapshot userDataSnapshot)
+            {
+                object value = userDataSnapshot.Child(Key).Value;
+                Dictionary<string, object> tempDict = value as Dictionary<string, object>;
+                if (tempDict != null)
+                {
+                    this.Value = new Dictionary<string, T>(tempDict.Count << 1);
+                    foreach (var pair in tempDict)
+                    {
+                        this.Value[pair.Key] = (T)pair.Value;
+                    }
+                }
+                ;
+            }
+
+            /// <summary>
+            /// UpdateDbChain.SetDBValue()에서 갱신 대상 등록을 위한 메서드<br/>
+            /// 다른 용도의 사용을 상정하지 않음
+            /// </summary>
+            /// <param name="updateDbChain"></param>
+            /// <param name="value"></param>
+            public void RegisterToChain(UpdateDbChain updateDbChain, Dictionary<string, T> value) // UpdateDbChain 바깥에선 숨기는 방법이 없을까?
+            {
+                updateDbChain.updates[Key] = value;
+                updateDbChain.propertyCallbackOnSubmit += () =>
+                {
+                    Value = value;
+                    onValueChanged?.Invoke();
+                };
+            }
+        }
+
         public UpdateDbChain SetDBValue<T>(PropertyAdapter<T> property, T value) where T : System.IEquatable<T>
         {
             // 값이 갱신되지 않았다면 등록하지 않음
             if (property.Value.Equals(value))
                 return this;
 
+#if DEBUG
+            if (updates.ContainsKey(property.Key))
+            {
+                Debug.LogWarning("한 스트림에 데이터를 두번 갱신하고 있음");
+            }
+#endif //DEBUG
+            property.RegisterToChain(this, value);
+
+            return this;
+        }
+
+        public UpdateDbChain SetDBDictionary<T>(DictionaryAdapter<T> property, Dictionary<string, T> value)
+        {
 #if DEBUG
             if (updates.ContainsKey(property.Key))
             {
@@ -307,4 +394,9 @@ public class UserDataDateTime : UserDataManager.UpdateDbChain.PropertyAdapter<lo
     public new DateTime Value => new DateTime(1970, 1, 1, 9/*UTC+9*/, 0, 0, DateTimeKind.Utc).AddMilliseconds(base.Value);
 
     public UserDataDateTime(string key) : base(key, 0) { }
+}
+
+public class UserDataDictionaryLong : UserDataManager.UpdateDbChain.DictionaryAdapter<long>
+{
+    public UserDataDictionaryLong(string key) : base(key) { }
 }

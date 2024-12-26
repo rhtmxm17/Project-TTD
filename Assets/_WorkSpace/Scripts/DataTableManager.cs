@@ -31,6 +31,9 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     [SerializeField] List<ItemData> itemDataList;
     private Dictionary<int, ItemData> itemDataIdDic; // id 기반 검색용
 
+    [SerializeField] List<StageData> stageDataList;
+    private Dictionary<int, StageData> stageDataIdDic; // id 기반 검색용
+
     [SerializeField] List<StoryDirectingData> storyDirectingDataList;
 
 
@@ -56,6 +59,17 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
         return itemDataIdDic[id];
     }
 
+    public StageData GetStageData(int id)
+    {
+        if (false == stageDataIdDic.ContainsKey(id))
+        {
+            Debug.LogWarning($"존재하지 않는 아이템 ID({id})가 요청됨");
+            return null;
+        }
+
+        return stageDataIdDic[id];
+    }
+
     private void OnEnable() => IndexData();
 
     /// <summary>
@@ -65,6 +79,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     {
         characterDataIdDic = characterDataList.ToDictionary(item => item.Id);
         itemDataIdDic = itemDataList.ToDictionary(item => item.Id);
+        stageDataIdDic = stageDataList.ToDictionary(item => item.Id);
     }
 
 #if UNITY_EDITOR
@@ -72,15 +87,22 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     public const string PrefabsAssetFolder = "Assets/_WorkSpace/Prefabs";
     public const string SpritesAssetFolder = "Assets/_WorkSpace/Sprites";
     public const string SkillAssetFolder = "Assets/_WorkSpace/Datas/Skills";
+    public const string CharacterAssetFolder = "Assets/_WorkSpace/Datas/Character";
+    public const string ItemAssetFolder = "Assets/_WorkSpace/Datas/Items";
+
+    [SerializeField] Sprite dummySprite;
+    public Sprite DummySprite => dummySprite;
 
     [SerializeField] string documentID;
 
     [SerializeField] Object characterDataFolder;
     [SerializeField] Object itemDataFolder;
+    [SerializeField] Object stageDataFolder;
     [SerializeField] Object storyDirectingDataFolder;
 
     private string characterSheetId = "0";
     private string itemSheetId = "1467425655";
+    private string stageSheetId = "504606070";
 
     [ContextMenu("시트에서 캐릭터 데이터 불러오기")]
     private void GetCharacterDataFromSheet()
@@ -93,6 +115,13 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     private void GetItemDataFromSheet()
     {
         GetRowDataFromSheet<ItemData>(itemSheetId, itemDataFolder, itemDataList);
+        IndexData();
+    }
+
+    [ContextMenu("시트에서 스테이지 데이터 불러오기")]
+    private void GetStageDataFromSheet()
+    {
+        GetStageDataFromSheet(stageSheetId, stageDataFolder, stageDataList);
         IndexData();
     }
 
@@ -139,6 +168,62 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
                         soAsset = ScriptableObject.CreateInstance<T>();
 
                         soAsset.ParseCsvRow(cells);
+
+                        AssetDatabase.CreateAsset(soAsset, soPath);
+                    }
+
+                    // 매니저에서 관리하기 위한 목록에 추가
+                    dataList.Add(soAsset);
+                }
+
+                EditorUtility.SetDirty(this);
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+
+            }
+            else
+            {
+                Debug.LogWarning("<color=red>읽기 실패!</color>");
+            }
+
+        });
+    }
+
+    private void GetStageDataFromSheet(string sheetId, Object dataFolder, List<StageData> dataList)
+    {
+        GoogleSheet.GetSheetData(documentID, sheetId, this, (succeed, result) =>
+        {
+            if (succeed == true)
+            {
+                dataList.Clear();
+                string soFolderPath = AssetDatabase.GetAssetPath(dataFolder);
+
+                string[] lines = result.Split("\r\n");
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    string[] cells = lines[i].Split(',');
+
+                    // 0번열은 ID
+                    // ID가 정수가 아니라면 데이터행이 아닌 것으로 간주(주석 등)
+                    if (false == int.TryParse(cells[0], out int id))
+                        continue;
+
+                    // 1번열은 파일명
+                    string soPath = $"{soFolderPath}/{cells[1]}.asset";
+
+                    StageData soAsset;
+                    if (System.IO.File.Exists(soPath))
+                    {
+                        soAsset = AssetDatabase.LoadAssetAtPath(soPath, typeof(StageData)) as StageData;
+                        soAsset.ParseCsvMultiRow(lines, ref i);
+
+                        EditorUtility.SetDirty(soAsset);
+                    }
+                    else
+                    {
+                        soAsset = ScriptableObject.CreateInstance<StageData>();
+
+                        soAsset.ParseCsvMultiRow(lines, ref i);
 
                         AssetDatabase.CreateAsset(soAsset, soPath);
                     }

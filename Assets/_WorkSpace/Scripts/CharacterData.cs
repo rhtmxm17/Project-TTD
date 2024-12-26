@@ -109,6 +109,8 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
 
         // FACE_ICON
         faceIconSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.FACE_ICON]}.asset");
+        if (faceIconSprite == null)
+            faceIconSprite = DataTableManager.Instance.DummySprite;
 
         // SHAPE
         modelPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{DataTableManager.PrefabsAssetFolder}/{cells[(int)Column.SHAPE]}.prefab");
