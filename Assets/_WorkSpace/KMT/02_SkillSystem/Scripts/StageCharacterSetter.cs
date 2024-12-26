@@ -25,18 +25,18 @@ public class StageCharacterSetter : MonoBehaviour
     [SerializeField]
     GameObject secondSkillPanel;
 
-    List<Vector2> position = new List<Vector2>()
+    [SerializeField]
+    List<Transform> spawnPositions;
+
+    List<Vector2> position = new List<Vector2>();
+
+    private void Awake()
     {
-        new Vector2(-7.223999f,  5.509857f),
-        new Vector2(-7.223999f,  1.889847f),
-        new Vector2(-7.223999f, -1.930145f),
-        new Vector2(-10.754f,  5.509857f),
-        new Vector2(-10.754f,  1.889847f),
-        new Vector2(-10.754f, -1.930145f),
-        new Vector2(-14.474f,  5.509857f),
-        new Vector2(-14.474f,  1.889847f),
-        new Vector2(-14.474f, -1.930145f)
-    };
+        foreach (Transform t in spawnPositions)
+        {
+            position.Add(t.position);
+        }
+    }
 
     public void InitCharacters(List<CharacterData> characterDatas)
     {
@@ -46,6 +46,7 @@ public class StageCharacterSetter : MonoBehaviour
         GetComponent<CombManager>().ListClearedEvent.AddListener(() => { Debug.Log("전☆멸"); });
 
         SpawnCharacterDataSet(characterDatas);
+
     }
 
 
