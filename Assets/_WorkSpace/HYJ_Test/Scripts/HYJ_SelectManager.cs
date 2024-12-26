@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.SceneManagement;
 using static UserDataManager;
 
 public class HYJ_SelectManager : MonoBehaviour
@@ -84,11 +85,18 @@ public class HYJ_SelectManager : MonoBehaviour
 
     public void TestLog()
     {
+        // 간편 테스트용 / 파이어 베이스 연결x
         Debug.Log("-------");
         foreach (var (key, value) in battleInfo)
         {
             Debug.Log($"{key} : {value}");
         }
         Debug.Log("-------");
+    }
+
+    public void LoadBattleScene()
+    {
+
+        //SceneManager.LoadScene("DamageCalc_kmt");
     }
 }
