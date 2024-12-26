@@ -16,8 +16,6 @@ public class StageManager : MonoBehaviour
     CombManager characterManager;
     [SerializeField]
     StageCharacterSetter characterSetter;
-    //스테이지 진입 시, 진형 설정에서 캐릭터 정보들을 받아올 것.
-    [SerializeField] private List<CharacterData> characterDataList;
 
     //데이터 테스트용 임시 구조체
     [System.Serializable]
@@ -55,10 +53,19 @@ public class StageManager : MonoBehaviour
 
     private void Start()
     {
-        //테스트용 로그인 초기화
-        StartCoroutine(UserDataManager.InitDummyUser(0));
+        //인덱스 + 캐릭터 정보 기반으로 편성하기.
 
-        characterSetter.InitCharacters(characterDataList);
+        //키 : 배치정보, 값 : 캐릭터 고유 번호(ID)
+        Dictionary<string, long> batchData = GameManager.UserData.PlayData.BatchInfo.Value;
+        Dictionary<int, CharacterData> batchDictionary = new Dictionary<int, CharacterData>(batchData.Count);
+
+        foreach (var pair in batchData)
+        {
+            batchDictionary[int.Parse(pair.Key)] =
+                GameManager.TableData.GetCharacterData((int)pair.Value);
+        }
+
+        characterSetter.InitCharacters(batchDictionary);
         InitMonsterWaves(monsterDataList);
     }
 
