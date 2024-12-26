@@ -20,10 +20,8 @@ public class MyRoomUI : BaseUI
         GetUI<Button>("RoomChangeButton").onClick.AddListener(()=>OpenSetRoomPopup("RoomChangePopup"));
         // 배경 바꾸기 팝업 닫기
         GetUI<Button>("CloseChangeRoomPopup").onClick.AddListener(()=>CloseSetRoomPopup("RoomChangePopup"));
-        // 방 이미지 바꾸기1
-        GetUI<Button>("room1").onClick.AddListener(()=>ChangeRoom("room1"));
-        // 방 이미지 바꾸기2
-        GetUI<Button>("room2").onClick.AddListener(()=>ChangeRoom("room2"));
+        // 배경 이미지 바꾸기 결정
+        GetUI<Button>("SetImageButton").onClick.AddListener(()=>ChangeRoom("RoomPreview"));
         
         // 캐릭터 바꾸기 팝업 띄우기
         GetUI<Button>("CharacterChangeButton").onClick.AddListener(()=>OpenSetRoomPopup("CharacterChangePopup"));
@@ -37,6 +35,9 @@ public class MyRoomUI : BaseUI
         GetUI<Button>("Character3").onClick.AddListener(()=>ChangeCharacter("Character3"));
 
         // 채팅 열기 버튼
+        GetUI<Button>("ChatButton").onClick.AddListener(()=>OpenTap("ChatPopup"));
+        // 채팅 닫기
+        GetUI<Button>("CloseChat").onClick.AddListener(()=>CloseTap("ChatPopup"));
     }
 
     private void OpenTap(string _name)
