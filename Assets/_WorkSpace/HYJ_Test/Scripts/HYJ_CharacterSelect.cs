@@ -70,7 +70,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
 
     public void ChangeUnit()
     {
-        ReleaseUnit();   // 딕셔너리 밸류값(유닛 고유번호)를 갖고 있는 값을 삭제하기
+        int unitPos = SelectM.battleInfo.FirstOrDefault(x => x.Value == SelectM.curUnitIndex).Key; // 딕셔너리 밸류값(유닛 고유번호)를 갖고 있는 키 값을 찾기
         SelectM.battleInfo.Add(SelectM.curPos, SelectM.curUnitIndex);  // 임시저장 값을 딕셔너리에 저장하기
     }
 
@@ -87,8 +87,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
     public void ReleaseUnit()
     {
         // 배치된 유닛을 해제하기
-        int unitPos = SelectM.battleInfo.FirstOrDefault(x => x.Value == SelectM.curUnitIndex).Key; // 딕셔너리 밸류값(유닛 고유번호)를 갖고 있는 키 값을 찾기
-        SelectM.battleInfo.Remove(unitPos);     // 현재 유닛 고유번호를 갖고 있는 키 값을 삭제
+        SelectM.battleInfo.Remove(SelectM.curPos);     // 현재 유닛 고유번호를 갖고 있는 키 값을 삭제
     }
 
     public void ChangeColorBTN()
