@@ -14,6 +14,7 @@ public class StageSelectPopup : MonoBehaviour
     private void Awake()
     {
         backgroundButton.onClick.AddListener(() => Destroy(this.gameObject));
+        enterButton.onClick.AddListener(() => Debug.Log(stageData.StageName));
     }
 
     public void Initialize(StageData stageData)

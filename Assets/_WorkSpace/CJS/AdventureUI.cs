@@ -34,7 +34,7 @@ public class AdventureUI : BaseUI
 
     private void Popup(StageData data)
     {
-        StageSelectPopup instance = Instantiate(popupPrefab);
+        StageSelectPopup instance = Instantiate(popupPrefab, GameManager.PopupCanvas);
         instance.Initialize(data);
     }
 }
