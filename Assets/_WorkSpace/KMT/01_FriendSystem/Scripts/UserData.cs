@@ -4,10 +4,11 @@ using UnityEngine;
 
 public static class UserData
 {
-    public readonly static string myUid = "eqewrqwer";
-    public readonly static string myNickname = "kmt";
+    public static string myUid = "eqewrqwer";
+    public static string myNickname = "kmt";
 
-    public readonly static string otherUid = "weqdaszexc";
-    public readonly static string otherNickname = "cjs";
+    //TODO : 함부로 쓰지 말기.
+    public static string otherUid = "weqdaszexc";
+    public static string otherNickname = "cjs";
 
 }
