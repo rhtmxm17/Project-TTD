@@ -71,12 +71,10 @@ public class ShopItem : BaseUI
         SetItem(_item);
     }
 
-    // TODO: 
-    // ItemData랑 맞는지 확인해야함.
+    
+    // ItemData 가져오기
     public void SetItem(ItemData item)
     {
-         
-
         _item = item;
         ShopItemNumber = item.Id;
         ShopItemName = item.ItemName;
@@ -89,9 +87,19 @@ public class ShopItem : BaseUI
 
     }
 
+    /// <summary>
+    /// 아이템 관련 업데이트
+    /// 현재는 아이템갯수, 매진하면 변경되는거
+    /// </summary>
     public void UpdateInfo()
     {
         itemCountText.text = itemCount.ToString();
+        if (isSoldOut)
+        {
+            buyButtonText.text = "매!\t진!";
+            buyButton.onClick.RemoveListener(Buy); //구매버튼 비활성화
+            ShopItemImage.color = new Color(.3f, .3f, .3f, 1f); // 어둡게 
+        }
     }
 
     private void Buy()
@@ -116,8 +124,8 @@ public class ShopItem : BaseUI
 
 
         itemCount--;
-        UpdateInfo();
         SoldOut();
+        UpdateInfo();
     }
 
     // 갱신 효과 결과반환
@@ -149,17 +157,5 @@ public class ShopItem : BaseUI
         }
         else
             return;
-        if(isSoldOut)
-        {
-            buyButtonText.text = "매!\t진!";
-            buyButton.onClick.RemoveListener(Buy);
-            ShopItemImage.color = new Color(.3f, .3f, .3f, 1f); // 어둡게 
-            //buyButton.gameObject.SetActive(false);
-            // gameObject.SetActive(false);    // 기능 다 되면 비활성화 / 지우기
-
-        }
-        // TODO : 비활성화 이미지 띄우기
-        // 그냥 이미지 색 검정에다가 알파값 낮춰서 주고 구매버튼 비활성화 하면서 텍스트 매진으로 변경하면될듯
-
     }
 }

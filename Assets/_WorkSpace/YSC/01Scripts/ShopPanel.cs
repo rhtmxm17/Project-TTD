@@ -11,26 +11,25 @@ using static UnityEditor.Progress;
 
 public class ShopPanel : BaseUI
 {
-    [SerializeField] GameObject mainShopPanel;
-    [SerializeField] GameObject dailyShopPanel;
+    // TODO: 확인하려고 [SerializeField] 구별해서 바꾸기
 
-    [SerializeField] ShopItem shopItem;
+    // // 상점 아이템 
     [SerializeField] public List<ShopItem> shopItems; // 나중에 HideInInspector
+    // 아이탬 갯수 새고 리스트에 패스
     [SerializeField] int itemCounter;
+    // 팝업창열리게하는 버튼
+    [SerializeField] Button[] shopPopupButton;
 
-
+    // 정보팝업창
     [SerializeField] public GameObject ShopPopup;
 
     // 상점이름, 추후에 상점종류많아지면 열고 닫을때 교체
     [SerializeField] TMP_Text shopNameText;
 
-
     // 팝업창
     [SerializeField] TMP_Text shopPopupText;
     [SerializeField] Image shopPopupImage;
     [SerializeField] TMP_Text shopPopupNameText;
-    // 팝업창열리게하는 버튼
-    [SerializeField] Button[] shopPopupButton;
 
 
     private void Start()
@@ -41,46 +40,69 @@ public class ShopPanel : BaseUI
 
     private void Init()
     {
-
-        mainShopPanel = GetUI("MainShopCanvas");
-        dailyShopPanel = GetUI("DailyShopCanvas");
-
         // 상점이름
         shopNameText = GetUI<TMP_Text>("ShopNameText");
 
-
+        // 다른 종류 상점들 추가
         GetUI<Button>("ShopTestButton1").onClick.AddListener(() => Open("ItemListScrollView"));
         GetUI<Button>("ShopTestButton2").onClick.AddListener(() => Open("ItemListScrollView2"));
 
+        // 정보팝업
         ShopPopup = GetUI("ShopPopup");
 
+        // 상점템 리스트 갱신
         ListUpItems();
+        // 정보팝업 UI세팅
         SetShopPopup();
-
+        // 정보팝업 얼리는 버튼 추가
         SetPopupButtons();
-
-
     }
-
-    private void SetShopPopup()
+   
+    
+    private void ListUpItems() // 상점아이템리스트 갱신
     {
-        // string description;
-        // 클릭한 아이템의 정보를 받아와야함.
-
+        shopItems = GetComponentsInChildren<ShopItem>().ToList();
+        itemCounter = shopItems.Count;
+    }
+    private void SetShopPopup() // 정보팝업창 UI 변수
+    {
         shopPopupText = GetUI<TMP_Text>("ShopPopupText");
         shopPopupImage = GetUI<Image>("ShopPopupImage");
         shopPopupNameText = GetUI<TMP_Text>("ShopPopupNameText");
-
-        GetUI<Button>("ShopPopupClose").onClick.AddListener(() => GoBack("ShopPopup")); // 닫기버튼
-        GetUI<TMP_Text>("ShopPopupText").text = "불러온설명";
+        // 닫기버튼
+        GetUI<Button>("ShopPopupClose").onClick.AddListener(() => GoBack("ShopPopup")); 
+        // 기본설명
+        GetUI<TMP_Text>("ShopPopupText").text = "기본설명";
 
     }
+    private void SetPopupButtons()  // 정보팝업 얼리는 버튼 추가
+    {
+        for (int i = 0; i < shopItems.Count; i++)
+        {
+            // Debug.Log($"숫자 {i}");
+            shopPopupButton[i] = shopItems[i].GetComponent<Button>();
+            int index = i;
+            shopPopupButton[i].onClick.AddListener(() => OpenPopup(index));
+            // AddListner에 그냥 i로 넣으면 배열읽어오는데 OutOfBoundary에러가 남... 그래서 지역변수하나해서 삽입
+        }
+    }
+
+    
+
+
+    /// <summary>
+    /// 인덱스번호에 할당된 아이템 팝업창을 열고
+    /// 그 할당된 정보를 업뎃하고 보여주기
+    /// </summary>
+    /// <param name="index"></param>
     public void OpenPopup(int index)
     {
         Open("ShopPopup");
         SetShopPopup();
         UpdateItemList(index);
     }
+    // ShopItem 에서 ItemData파싱한 데이터를 불러와서
+    // 정보팝업창 UI를 업데이트
     private void UpdateItemList(int index)
     {
         shopPopupText.text = shopItems[index].Description;
@@ -89,37 +111,17 @@ public class ShopPanel : BaseUI
     }
 
 
-    private void SetPopupButtons()
-    {
-        // 버튼 추가
-        for (int i = 0; i < shopItems.Count; i++)
-        {
-            // Debug.Log($"숫자 {i}");
-            shopPopupButton[i] = shopItems[i].GetComponent<Button>();
-            int index = i;
-            shopPopupButton[i].onClick.AddListener(() => OpenPopup(index));
-        }
-
-    }
-
-    private void ListUpItems()
-    {
-        shopItems = GetComponentsInChildren<ShopItem>().ToList();
-        itemCounter = shopItems.Count;
-    }
-
-
 
     #region 기본여닫이
     public void Open(string name)
     {
-        Debug.Log($"{name} 패널을 엽니다");
+        // Debug.Log($"{name} 패널을 엽니다");
         GetUI(name).SetActive(true);
     }
 
     public void GoBack(string name)
     {
-        Debug.Log($"{name} 패널을 닫습니다");
+        // Debug.Log($"{name} 패널을 닫습니다");
         GetUI(name).SetActive(false);
     }
     #endregion
