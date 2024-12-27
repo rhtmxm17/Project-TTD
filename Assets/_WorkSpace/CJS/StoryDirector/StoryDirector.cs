@@ -141,7 +141,8 @@ public class StoryDirector : BaseUI
     {
         // 화자 출력
         nameText.text = storyData.Dialogues[nameCount].Speaker;
-        
+        nameBox.SetActive(! string.IsNullOrEmpty(nameText.text));
+
         // 대사 출력
         dialogueText.text = "";     // 앞전 스크립트 초기화용
         playingDialougeTween = dialogueText.DOText(storyData.Dialogues[nameCount].Script,1,true,ScrambleMode.None);
@@ -183,15 +184,15 @@ public class StoryDirector : BaseUI
         }
     }
 
-    // 스토리가 끝났을 때 (임시) 자동으로 창을 닫는 함수
+    // 마지막 스크립트 출력 후 터치시 호출됨
     private void StoryEnd()
     {
         // TODO : 스토리 끝난 이후 할 행동에 대한 구현
         // 기획 의도에 따라 자동으로 다음 스토리로 넘어갈지, 혹은 전투씬에서 스토리를 부를 경우 창을 바로 없앨지 등에 고민
         Debug.Log("스토리 출력 끝");
-        nameBox.SetActive(false);   
-        dialogueText.text = "-다음이시간에-";
-        // (임시)스토리가 끝나면 창을 자동으로 닫음
+        clickAction.started -= ClickAction_Started;
+
+        // 3초 후 창을 닫음
         Destroy(this.gameObject, 3f);
     }
 }

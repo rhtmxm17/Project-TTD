@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.Events;
-using Unity.EditorCoroutines.Editor;
+using System.Collections.ObjectModel;
 
 
 #if UNITY_EDITOR
 using UnityEditor;
+using Unity.EditorCoroutines.Editor;
 #endif
 
 public interface ICsvRowParseable
@@ -38,7 +39,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
 
     [SerializeField] List<StoryDirectingData> storyDirectingDataList;
     private Dictionary<int, StoryDirectingData> storyDirectingDataIdDic; // id 기반 검색용
-
+    public ReadOnlyCollection<StoryDirectingData> StoryDirectingDataList => storyDirectingDataList.AsReadOnly();
 
     public CharacterData GetCharacterData(int id)
     {
