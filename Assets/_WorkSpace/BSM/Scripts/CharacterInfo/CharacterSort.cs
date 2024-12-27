@@ -8,16 +8,18 @@ using UnityEngine;
 public class CharacterSort : MonoBehaviour
 {
     [HideInInspector] public List<CharacterInfo> _sortCharacterInfos;
-
+    
+    private CharacterInfoController _characterInfoController;
     private List<object> _sortList;
 
     private CharacterSortUI _characterSortUI;
     private SortType _curSortType;
 
+    private bool _isSorting;
+    
     private void Awake()
     {
-        _characterSortUI = GetComponent<CharacterSortUI>(); 
-        _curSortType = (SortType)PlayerPrefs.GetInt("SortType");
+        Init();
     }
 
     private void Start()
@@ -25,25 +27,34 @@ public class CharacterSort : MonoBehaviour
         _characterSortUI.NameSortButton.onClick.AddListener(() => SortEventFunc(SortType.NAME));
         _characterSortUI.LevelSortButton.onClick.AddListener(() => SortEventFunc(SortType.LEVEL));
     }
- 
+
+    private void Init()
+    {
+        _characterSortUI = GetComponent<CharacterSortUI>(); 
+        _curSortType = (SortType)PlayerPrefs.GetInt("SortType");
+        
+        _characterInfoController = GetComponentInParent<CharacterInfoController>();
+    }
+    
     /// <summary>
     /// 정렬 함수 호출 및 현재 타입 받아오기
     /// </summary>
     /// <param name="type"></param>
     private void SortEventFunc(SortType type)
     {
+        if (_curSortType.Equals(type))
+        {
+            _isSorting = !_isSorting;
+        }
+        else
+        {
+            _isSorting = true;
+        }
+         
         _curSortType = type;
         CharacterListSort();
     }
 
-    public void CharacterListFilter()
-    {
-        //TODO: 캐릭터 리스트 필터 기능 추가
-        //현재 선택한 속성 외 캐릭터 리스트는 Active = false or List에서 Remove하면 될듯? 
-        //필터는 중첩으로...
-    }
-    
-    
     /// <summary>
     /// 캐릭터 리스트 정렬 기능
     /// </summary>
@@ -60,9 +71,16 @@ public class CharacterSort : MonoBehaviour
                 _sortList = _sortCharacterInfos.Select(x => (object)x.CharacterName).ToList();
                 break;
         }
-        //TODO: 오름차순, 내림차순 구분도 필요함..
-        
-        _sortList.Sort();
+
+        if (_isSorting)
+        {
+            _sortList.Sort();
+            _sortList.Reverse(); 
+        }
+        else
+        {
+            _sortList.Sort();
+        }
         
         for (int i = 0; i < _sortList.Count; i++)
         {
@@ -79,13 +97,20 @@ public class CharacterSort : MonoBehaviour
                     _sortCharacterInfos[i].SetListNameText(newData.Name);
                     _sortCharacterInfos[j].SetListNameText(oldData.Name);
 
+                    int newType = (int)newData.StatusTable.type;
+                    int oldType = (int)oldData.StatusTable.type;
+                    
+                    _sortCharacterInfos[i].SetListTypeText(((ElementType)newType).ToString());
+                    _sortCharacterInfos[j].SetListTypeText(((ElementType)oldType).ToString());
+                    
                     _sortCharacterInfos[i].SetListImage(newData.FaceIconSprite);
                     _sortCharacterInfos[j].SetListImage(oldData.FaceIconSprite);
                     break;
                 }
             }
         }
-
+        
+        _characterInfoController.SortButtonText.text = _curSortType.ToString();
         PlayerPrefs.SetInt("SortType", (int)_curSortType);
     }
 
@@ -107,4 +132,5 @@ public class CharacterSort : MonoBehaviour
 
         return null;
     }
+ 
 }

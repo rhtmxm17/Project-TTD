@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -19,11 +20,13 @@ public class CharacterInfoController : BaseUI
 
     private GameObject _characterUISet;
     private CharacterSort _characterSort;
- 
+    private CharacterFilter _characterFilter;
+    
     private Button _prevButton;
     private Button _nextButton;
+    private Button _sortButton;
     private Button _filterButton;
-
+    
     private SortType _lastSortType;
     private RectTransform _contentForm;
     private Vector2 _characterCellSize;
@@ -56,15 +59,18 @@ public class CharacterInfoController : BaseUI
             TabSwitch();
         }
     }
-
+    
+    public TextMeshProUGUI SortButtonText { get; set; }
+    
+    
     protected override void Awake()
     {
         base.Awake();
         Init();
         SubscribeEvent();
-
+        SetContentFormGridLayOut();
         /////// 더미 인증 테스트 코드
-        StartCoroutine(UserDataManager.InitDummyUser(19));
+        StartCoroutine(UserDataManager.InitDummyUser(20));
     }
 
     private void OnEnable() => UpdateCharacterList();
@@ -73,6 +79,7 @@ public class CharacterInfoController : BaseUI
     {
         //TODO: 테스트용 -> 추후 메인과 붙이면 UpdateCharacterList()에서 넘겨주는거로
         _characterSort._sortCharacterInfos = _characterInfos;
+        _characterFilter._filterCharacterInfos = _characterInfos;
         StartListSort();
     }
     
@@ -81,14 +88,20 @@ public class CharacterInfoController : BaseUI
         _infoPopup = GetUI("InfoPopup");
         _characterUISet = GetUI("CharacterUISet");
         
+        //Sort, Filter GetBind
+        _characterFilter = GetUI<CharacterFilter>("FilterUI");
         _characterSort = GetUI<CharacterSort>("SortUI");
         _infoUI = GetUI<CharacterInfoUI>("InfoUI");
 
         _contentForm = GetUI<RectTransform>("Content");
         _prevButton = GetUI<Button>("PreviousButton");
         _nextButton = GetUI<Button>("NextButton");
+        
+        _sortButton = GetUI<Button>("SortButton");
+        SortButtonText = _sortButton.GetComponentInChildren<TextMeshProUGUI>();
         _filterButton = GetUI<Button>("FilterButton");
-         
+        
+        
         _detailTab = GetUI("DetailTab");
         _enhanceTab = GetUI("EnhanceTab");
         _evolutionTab = GetUI("EvolutionTab");
@@ -102,7 +115,8 @@ public class CharacterInfoController : BaseUI
     {
         _prevButton.onClick.AddListener(PreviousCharacter);
         _nextButton.onClick.AddListener(NextCharacter);
-        _filterButton.onClick.AddListener(() => _characterSort.transform.GetChild(0).gameObject.SetActive(true));
+        _sortButton.onClick.AddListener(() => _characterSort.transform.GetChild(0).gameObject.SetActive(true));
+        _filterButton.onClick.AddListener(()=> _characterFilter.transform.GetChild(0).gameObject.SetActive(true));
     }
 
     /// <summary>
@@ -113,6 +127,7 @@ public class CharacterInfoController : BaseUI
         _characterInfos = GetComponentsInChildren<CharacterInfo>().ToList();
         CharacterCount = _characterInfos.Count;
         //_characterSort._sortCharacterInfos = _characterInfos;
+        //_characterFilter._filterCharacterInfos = _characterInfos;
     }
 
     /// <summary>
@@ -162,6 +177,16 @@ public class CharacterInfoController : BaseUI
         CurCharacterInfo.UpdateInfo();
     }
 
+    /// <summary>
+    /// ContentForm GridLayout 설정
+    /// </summary>
+    private void SetContentFormGridLayOut()
+    {
+        GridLayoutGroup contentFormGrid = _contentForm.GetComponent<GridLayoutGroup>();
+        contentFormGrid.cellSize = new Vector2(300, 467);
+        contentFormGrid.spacing = new Vector2(80, 0);
+    }
+    
     /// <summary>
     /// 캐릭터 리스트 Content Form ReSize 기능
     /// </summary>

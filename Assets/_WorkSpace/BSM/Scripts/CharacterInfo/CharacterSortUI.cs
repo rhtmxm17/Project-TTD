@@ -8,8 +8,9 @@ public class CharacterSortUI : BaseUI
     [HideInInspector] public Button NameSortButton;
     [HideInInspector] public Button LevelSortButton;
 
-    private Button _closeButton;
+    private Button _sortCloseButton;
 
+    
     protected override void Awake()
     {
         base.Awake();
@@ -19,13 +20,13 @@ public class CharacterSortUI : BaseUI
 
     private void UIBind()
     {
-        _closeButton = GetUI<Button>("CloseButton");
+        _sortCloseButton = GetUI<Button>("SortCloseButton");
         NameSortButton = GetUI<Button>("NameSort");
         LevelSortButton = GetUI<Button>("LevelSort");
     }
 
     private void SubscribeEvent()
     {
-        _closeButton.onClick.AddListener(() => transform.GetChild(0).gameObject.SetActive((false)));
+        _sortCloseButton.onClick.AddListener(() => transform.GetChild(0).gameObject.SetActive((false)));
     }
 }

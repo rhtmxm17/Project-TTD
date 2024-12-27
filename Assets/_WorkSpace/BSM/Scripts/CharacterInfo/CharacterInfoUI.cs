@@ -11,6 +11,9 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _nameText;
     [HideInInspector] public TextMeshProUGUI _atkText;
     [HideInInspector] public TextMeshProUGUI _hpText;
+    [HideInInspector] public TextMeshProUGUI _defText;
+    [HideInInspector] public TextMeshProUGUI _powerLevelText;
+    
     [HideInInspector] public TextMeshProUGUI _coinText;
     [HideInInspector] public TextMeshProUGUI _jewelryText;
     [HideInInspector] public TextMeshProUGUI _enhanceText;
@@ -29,8 +32,8 @@ public class CharacterInfoUI : BaseUI
      
     private Button _exitButton;
     private GameObject _infoPopup;
-    
-    
+
+    public TextMeshProUGUI _tempElemetTypeText;
     
     protected override void Awake()
     {
@@ -47,12 +50,18 @@ public class CharacterInfoUI : BaseUI
     
     private void UIBind()
     {
+        //TODO: 임시 용 타입 UI 특성 지우기
+        _tempElemetTypeText = GetUI<TextMeshProUGUI>("ElementTypeText");
+        
+        
         _infoPopup = GetUI("InfoPopup");
         
         _levelText = GetUI<TextMeshProUGUI>("LevelText");
         _nameText = GetUI<TextMeshProUGUI>("NameText");
+        _powerLevelText = GetUI<TextMeshProUGUI>("PowerLevelText");
         _atkText = GetUI<TextMeshProUGUI>("AtkText");
         _hpText = GetUI<TextMeshProUGUI>("HpText");
+        _defText = GetUI<TextMeshProUGUI>("DefText");
         _coinText = GetUI<TextMeshProUGUI>("CoinText");
         _jewelryText = GetUI<TextMeshProUGUI>("JewelryText");
         _enhanceText = GetUI<TextMeshProUGUI>("EnhanceText");
