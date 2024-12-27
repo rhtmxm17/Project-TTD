@@ -50,6 +50,7 @@ public class DialogueUI : BaseUI
         emojiPanelBoarder = GetUI<Button>("EmojiPanelBoarder");
         emojiContentTransform = GetUI<Transform>("EmojiContents");
 
+        //TODO : 초기화 타이밍 잡기. [ 현재 방문한 룸의 주인 UID ]
         curUsersDialogueRef = GameManager.Database.RootReference.Child($"Users/{curUid}/dialogues");
 
         #region 이모티콘 영역
@@ -91,14 +92,19 @@ public class DialogueUI : BaseUI
 
     void Start()
     {
-
+        nick = GameManager.UserData.Profile.Name.Value;
         Refresh();
     }
 
     [Header("현재 접속한 사람의 uid와 닉네임")]
-    [SerializeField]
-    string uid;
-    [SerializeField]
+    /*    [SerializeField]
+        string uid;
+        [SerializeField]
+        string nick;*/
+
+    //[SerializeField]
+    //string uid;
+    [SerializeField]//TODO : 나중에 초기화 타이밍 조절
     string nick;
 
     void SendMessage()
@@ -113,7 +119,7 @@ public class DialogueUI : BaseUI
 
             Dictionary<string, object> data = new Dictionary<string, object>
             {
-                { key + "/uid", uid },
+                { key + "/uid", UserData.myUid },
                 { key + "/nickname", nick },
                 { key + "/content", text },
                 { key + "/timestamp",ServerValue.Timestamp }
@@ -132,7 +138,7 @@ public class DialogueUI : BaseUI
 
         Dictionary<string, object> data = new Dictionary<string, object>
         {
-            { key + "/uid", uid },
+            { key + "/uid", UserData.myUid },
             { key + "/nickname", nick },
             { key + "/content", sendStr },
             { key + "/timestamp",ServerValue.Timestamp }
@@ -173,7 +179,7 @@ public class DialogueUI : BaseUI
 
                     string stringVal = content.Child("content").Value.ToString();
 
-                    if (content.Child("uid").Value.ToString().Equals(uid))//본인의 내역인 경우
+                    if (content.Child("uid").Value.ToString().Equals(UserData.myUid))//본인의 내역인 경우
                     {
 
                         if (emogiDict.ContainsKey(stringVal)) 
