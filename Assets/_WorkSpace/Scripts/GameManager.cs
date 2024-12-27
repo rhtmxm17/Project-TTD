@@ -17,10 +17,15 @@ public class GameManager : SingletonBehaviour<GameManager>
     public static DataTableManager TableData => DataTableManager.Instance;
     public static UserDataManager UserData => UserDataManager.Instance;
 
+    public static RectTransform PopupCanvas => Instance.popupCanvas;
+
+    [SerializeField] RectTransform popupCanvas;
+
     // GameManager 싱글톤 프리팹 생성
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     public static void Initialize()
     {
+
         Instantiate(Resources.Load<GameManager>("GameManager"));
     }
 
