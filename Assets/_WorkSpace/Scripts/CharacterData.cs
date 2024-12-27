@@ -27,6 +27,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         public float healthPointGrouth;
         public float defensePointBase;
         public float defensePointGrouth;
+        public float defenseCon;
     }
 
     [SerializeField] int id;
@@ -93,6 +94,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         DEF_GROWTH,
         HP_BASE,
         HP_GROWTH,
+        DEFCON,
     }
 
     public void ParseCsvRow(string[] cells)
@@ -182,6 +184,13 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
 
         // HP_GROWTH
         if (false == float.TryParse(cells[(int)Column.HP_GROWTH], out statusTable.healthPointGrouth))
+        {
+            Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+            return;
+        }
+
+        // DEFCON
+        if (false == float.TryParse(cells[(int)Column.DEFCON], out statusTable.defenseCon))
         {
             Debug.LogError($"잘못된 데이터로 갱신 시도됨");
             return;
