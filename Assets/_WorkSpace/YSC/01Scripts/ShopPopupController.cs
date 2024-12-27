@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.Windows;
 
-public class ShopPopupController : ShopItem
+public class ShopPopupController : BaseUI
 {
     [SerializeField] PlayerInput input;
     [SerializeField] GameObject popup;

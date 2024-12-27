@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 
 public class ShopPanel : BaseUI
@@ -13,7 +14,7 @@ public class ShopPanel : BaseUI
     [SerializeField] GameObject mainShopPanel;
     [SerializeField] GameObject dailyShopPanel;
 
-    [SerializeField] ShopItem[] shopItem;
+    [SerializeField] ShopItem shopItem;
     [SerializeField] public List<ShopItem> shopItems; // 나중에 HideInInspector
     [SerializeField] int itemCounter;
 
@@ -32,15 +33,15 @@ public class ShopPanel : BaseUI
 
     [SerializeField] Button[] shopPopupButton;
 
-  //  [SerializeField] private int _itemCount;
-  //  private int ItemCount
-  //  {
-  //      get => shopItems.Count;
-  //      set
-  //      {
-  //          _itemCount = value;
-  //      }
-  //  }
+    //  [SerializeField] private int _itemCount;
+    //  private int ItemCount
+    //  {
+    //      get => shopItems.Count;
+    //      set
+    //      {
+    //          _itemCount = value;
+    //      }
+    //  }
     private void Start()
     {
         Init();
@@ -49,14 +50,14 @@ public class ShopPanel : BaseUI
 
     private void Init()
     {
-        
+
         mainShopPanel = GetUI("MainShopCanvas");
         dailyShopPanel = GetUI("DailyShopCanvas");
 
         // 상점이름
         shopNameText = GetUI<TMP_Text>("ShopNameText");
 
-        
+
 
         GetUI<Button>("ShopTestButton1").onClick.AddListener(() => Open("ItemListScrollView"));
         GetUI<Button>("ShopTestButton2").onClick.AddListener(() => Open("ItemListScrollView2"));
@@ -64,7 +65,7 @@ public class ShopPanel : BaseUI
 
         ShopPopup = GetUI("ShopPopup");
 
-        UpdateItemList();
+        ListUpItems();
         SetShopPopup();
 
         SetPopupButtons();
@@ -77,25 +78,10 @@ public class ShopPanel : BaseUI
         // string description;
         // 클릭한 아이템의 정보를 받아와야함.
 
-        foreach (ShopItem item in shopItems)
-        {
-           // int index = shopItems.Count;
-           // for(int  i = 0; i < shopItems.Count; i++)
-           // {
-           //     index++;
-           //     Debug.Log($"아이템샵 {item}, {index}");
-           // }
-            Debug.Log($"아이템샵 {item}");
-            item.GetComponent<Button>();
-        }
-        // 아니 왜 이거 안되냐 리스트계쏙
-
-
-        UpdateItemList();
-
         shopPopupText = GetUI<TMP_Text>("ShopPopupText");
         shopPopupImage = GetUI<Image>("ShopPopupImage");
-        
+
+
         GetUI<Button>("ShopPopupClose").onClick.AddListener(() => GoBack("ShopPopup")); // 닫기버튼
         GetUI<TMP_Text>("ShopPopupText").text = "불러온설명";
         GetUI<Image>("ShopPopupImage"); // 누른 이미지에 따른 이미지 변경되도록...
@@ -103,41 +89,39 @@ public class ShopPanel : BaseUI
         // ShopItem.SetItem(누른아이템); 누른아이템으로 나오게
 
     }
-
+    public void OpenPopup(int index)
+    {
+        Open("ShopPopup");
+        SetShopPopup();
+        UpdateItemList(index);
+    }
+    private void UpdateItemList(int index)
+    {
+        shopPopupText.text = shopItems[index]._description;
+    }
 
     // TODO:
     // 아이템별로 버튼 다 있으니까 Item01~끝번호까지 해서 
     // 거기서 팝업창 띄우고  팝업창이 그 아이템에 맞게 정보를 띄우기
     private void SetPopupButtons()
     {
+        // 버튼 추가
         for (int i = 0; i < shopItems.Count; i++)
         {
             Debug.Log($"숫자 {i}");
-          //  shopPopupButton[i] = GetUI<Button>($"Itme{i}");
+            shopPopupButton[i] = shopItems[i].GetComponent<Button>();
+            int index = i;
+            shopPopupButton[i].onClick.AddListener(() => OpenPopup(index));
         }
 
-        GetUI<Button>("Itme0").onClick.AddListener(() => OpenPopup());
-        GetUI<Button>("Itme1").onClick.AddListener(() => Open("ShopPopup"));
-        GetUI<Button>("Itme2").onClick.AddListener(() => Open("ShopPopup"));
-        GetUI<Button>("Itme3").onClick.AddListener(() => Open("ShopPopup"));
-        GetUI<Button>("Itme4").onClick.AddListener(() => Open("ShopPopup"));
-        GetUI<Button>("Itme5").onClick.AddListener(() => Open("ShopPopup"));
-        GetUI<Button>("Itme6").onClick.AddListener(() => Open("ShopPopup"));
-        GetUI<Button>("Itme7").onClick.AddListener(() => Open("ShopPopup"));
     }
 
-    private void UpdateItemList()
+    private void ListUpItems()
     {
         shopItems = GetComponentsInChildren<ShopItem>().ToList();
         itemCounter = shopItems.Count;
-        
     }
-    
-    public void OpenPopup()
-    {
-        Open("ShopPopup");
-        SetShopPopup();
-    }
+
 
 
 
@@ -153,5 +137,5 @@ public class ShopPanel : BaseUI
         GetUI(name).SetActive(false);
     }
 
-    
+
 }
