@@ -10,6 +10,7 @@ public class CharacterFilterUI : BaseUI
     [HideInInspector] public Button _grassFilterButton;
     [HideInInspector] public Button _groundFilterButton;
     [HideInInspector] public Button _electricFilterButton;
+    [HideInInspector] public Button _allFilterButton;
     
     private Button _filterCloseButton;
     
@@ -32,6 +33,7 @@ public class CharacterFilterUI : BaseUI
         _grassFilterButton = GetUI<Button>("GrassFilter");
         _groundFilterButton = GetUI<Button>("GroundFilter");
         _electricFilterButton = GetUI<Button>("ElectricFilter");
+        _allFilterButton = GetUI<Button>("AllFilter");
     }
     
     private void SubscribeEvent()
