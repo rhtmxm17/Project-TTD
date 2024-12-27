@@ -20,11 +20,13 @@ public class CharacterInfoController : BaseUI
 
     private GameObject _characterUISet;
     private CharacterSort _characterSort;
- 
+    private CharacterFilter _characterFilter;
+    
     private Button _prevButton;
     private Button _nextButton;
+    private Button _sortButton;
     private Button _filterButton;
-
+    
     private SortType _lastSortType;
     private RectTransform _contentForm;
     private Vector2 _characterCellSize;
@@ -58,7 +60,7 @@ public class CharacterInfoController : BaseUI
         }
     }
     
-    public TextMeshProUGUI FilterButtonText { get; set; }
+    public TextMeshProUGUI SortButtonText { get; set; }
     
     
     protected override void Awake()
@@ -85,14 +87,19 @@ public class CharacterInfoController : BaseUI
         _infoPopup = GetUI("InfoPopup");
         _characterUISet = GetUI("CharacterUISet");
         
+        //Sort, Filter GetBind
+        _characterFilter = GetUI<CharacterFilter>("FilterUI");
         _characterSort = GetUI<CharacterSort>("SortUI");
         _infoUI = GetUI<CharacterInfoUI>("InfoUI");
 
         _contentForm = GetUI<RectTransform>("Content");
         _prevButton = GetUI<Button>("PreviousButton");
         _nextButton = GetUI<Button>("NextButton");
+        
+        _sortButton = GetUI<Button>("SortButton");
+        SortButtonText = _sortButton.GetComponentInChildren<TextMeshProUGUI>();
         _filterButton = GetUI<Button>("FilterButton");
-        FilterButtonText = _filterButton.GetComponentInChildren<TextMeshProUGUI>(); 
+        
         
         _detailTab = GetUI("DetailTab");
         _enhanceTab = GetUI("EnhanceTab");
@@ -107,7 +114,8 @@ public class CharacterInfoController : BaseUI
     {
         _prevButton.onClick.AddListener(PreviousCharacter);
         _nextButton.onClick.AddListener(NextCharacter);
-        _filterButton.onClick.AddListener(() => _characterSort.transform.GetChild(0).gameObject.SetActive(true));
+        _sortButton.onClick.AddListener(() => _characterSort.transform.GetChild(0).gameObject.SetActive(true));
+        _filterButton.onClick.AddListener(()=> _characterFilter.transform.GetChild(0).gameObject.SetActive(true));
     }
 
     /// <summary>

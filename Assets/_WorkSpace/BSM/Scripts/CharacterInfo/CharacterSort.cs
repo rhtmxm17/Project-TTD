@@ -113,7 +113,7 @@ public class CharacterSort : MonoBehaviour
             }
         }
         
-        _characterInfoController.FilterButtonText.text = _curSortType.ToString();
+        _characterInfoController.SortButtonText.text = _curSortType.ToString();
         PlayerPrefs.SetInt("SortType", (int)_curSortType);
     }
 

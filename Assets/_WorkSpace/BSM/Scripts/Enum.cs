@@ -23,11 +23,18 @@ public enum BuffType
 [System.Serializable]
 public enum SortType
 {
-    NONE, NAME, LEVEL, TRIBE, ROLE    
+    //추후 레벨, 전투력으로 정렬
+    NONE, NAME, LEVEL 
 }
 
 [System.Serializable]
 public enum InfoTabType
 {
     DETAIL, ENHANCE, EVOLUTION, MEAN
+}
+
+[System.Serializable]
+public enum FilterType
+{
+    FIRE, WATER, GRASS, GROUND, ELECTRIC
 }
