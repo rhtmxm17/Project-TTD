@@ -97,7 +97,7 @@ public class ShopPanel : BaseUI
     }
     private void UpdateItemList(int index)
     {
-        shopPopupText.text = shopItems[index]._description;
+        shopPopupText.text = shopItems[index].Description;
     }
 
     // TODO:

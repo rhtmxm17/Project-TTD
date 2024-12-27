@@ -30,7 +30,7 @@ public class ShopItem : BaseUI, IPointerClickHandler
     [Header("매진")]
     [SerializeField] bool isSoldOut;
     [Header("설명")]
-    [SerializeField] public string _description;
+    [SerializeField] public string Description;
 
     [SerializeField] private TMP_Text buyButtonText;
     [SerializeField] private ItemData itemGive;         // 살때 주는 재화 데이터 Ex. gold
@@ -78,7 +78,7 @@ public class ShopItem : BaseUI, IPointerClickHandler
         itemName = item.ItemName;
         itemNameText.text = itemName;
         itemImage.sprite = item.SspriteImage;
-        _description = item.Description;
+        Description = item.Description;
         
         // itemPrice
         // itemCount
@@ -100,7 +100,7 @@ public class ShopItem : BaseUI, IPointerClickHandler
 
 
 
-        _shopPanel.shopPopupText.text = _description;
+        _shopPanel.shopPopupText.text = Description;
         _shopPanel.shopPopupImage.sprite = itemImage.sprite;
      //   shopPopupText.text = _description;
      //   shopPopupImage.sprite = itemImage.sprite;
