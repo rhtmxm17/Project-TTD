@@ -133,7 +133,7 @@ public class StageManager : MonoBehaviour
 
         if (monsterWaveQueue.Count <= 0)
         {
-            Debug.Log("클리어!");
+            OnClear();
             yield break;
         }
 
@@ -143,6 +143,27 @@ public class StageManager : MonoBehaviour
         monsterWaveQueue[0].gameObject.SetActive(true);
         characterManager.StartCombat(monsterWaveQueue[0]);
         monsterWaveQueue[0].StartCombat(characterManager);
+    }
+
+    protected virtual void OnClear()
+    {
+        Debug.Log("클리어!");
+        var stream = GameManager.UserData.StartUpdateStream();
+        foreach (var item in stageData.Reward)
+        {
+            stream.AddDBValue(item.rewardItem.Number, item.number);
+        }
+
+        stream.Submit(result =>
+        {
+            if (false == result)
+            {
+                Debug.Log("요청 전송에 실패했습니다");
+                return;
+            }
+
+            // TODO: 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
+        });
     }
 
     bool CheckCharactersWait()
@@ -162,7 +183,7 @@ public class StageManager : MonoBehaviour
     {
         if (monsterWaveQueue.Count <= 0)
         {
-            Debug.Log("클리어!");
+            Debug.LogWarning("몬스터 정보가 비어있음");
             return;
         }
 
