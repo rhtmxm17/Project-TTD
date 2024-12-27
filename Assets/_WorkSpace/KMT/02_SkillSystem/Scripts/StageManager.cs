@@ -120,6 +120,12 @@ public class StageManager : MonoBehaviour
     {
         monsterWaveQueue.RemoveAt(0);
 
+        if (monsterWaveQueue.Count <= 0)
+        {
+            OnClear();
+            yield break;
+        }
+
         while (true)
         {
             yield return new WaitForSeconds(0.5f);
@@ -130,12 +136,6 @@ public class StageManager : MonoBehaviour
 
         }
 
-
-        if (monsterWaveQueue.Count <= 0)
-        {
-            OnClear();
-            yield break;
-        }
 
         Debug.Log("다음 웨이브로 이동중...");
         //yield return new WaitForSeconds(3f);

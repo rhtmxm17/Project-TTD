@@ -10,7 +10,7 @@ public class ScoreAdder : MonoBehaviour
     private void Awake()
     {
         combatable = GetComponent<Combatable>();
-        combatable.onDamagedEvent.AddListener(((BossStageManager)StageManager.Instance).AddScore);
+        combatable.onDamagedEvent.AddListener(((IDamageAddable)StageManager.Instance).IDamageAdd);
         
     }
 }
