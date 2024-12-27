@@ -4,38 +4,48 @@ using System.Collections.Generic;
 // using System.Drawing;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class ShopItem : BaseUI
 {
     [Header("아이템 이름")]
     [SerializeField] TMP_Text itemNameText;     // UI_아이템이름
-    [SerializeField] string itemName;
-    // [SerializeField] TMP_Text itemNumText;      // UI_아이템남은 갯수 밑에 있는데 잘못 중복한듯
+    [SerializeField] public string ShopItemName;
+
     [Header("아이템 가격")]
     [SerializeField] TMP_Text itemPriceText;    // UI에 표기되는 가격표   
-    [SerializeField] int itemPrice;          
+    [SerializeField] int itemPrice;         
+    
     [Header("아이템 갯수")]
     [SerializeField] TMP_Text itemCountText;    // UI에 표기되는 갯수
-    [SerializeField] int itemCount;             
+    [SerializeField] int itemCount;         
+    
     [Header("아이템 이미지")]
-    [SerializeField] Image itemImage;
-    // [SerializeField] Sprite spriteImage;
+    [SerializeField] public Image ShopItemImage;
+
     [Header("구매버튼")]
     [SerializeField] Button buyButton;
+
     [Header("얻는 아이템 (Ex. 토큰)")]
     [SerializeField] int getCount;               // UI에 표기되는 아이템갯수?
+
     [Header("매진")]
     [SerializeField] bool isSoldOut;
+
     [Header("설명")]
-    [SerializeField] string _description;
+    [SerializeField] public string Description;
 
     [SerializeField] private TMP_Text buyButtonText;
     [SerializeField] private ItemData itemGive;         // 살때 주는 재화 데이터 Ex. gold
     [SerializeField] private ItemData itemGet;          // 살때 받는 아이템      Ex. Token
 
+
     // 아이템
-    private ItemData _item;
+    [SerializeField] private ItemData _item;
+
+    [SerializeField] public int ShopItemNumber;
 
     private void Start()
     {
@@ -53,27 +63,43 @@ public class ShopItem : BaseUI
         itemCountText = GetUI<TMP_Text>("ItemCountText");
 
         // 테스트용
-        itemNameText.text = itemName;
+        itemNameText.text = ShopItemName;
         itemPriceText.text = itemPrice.ToString();
         itemCountText.text = itemCount.ToString();
         // 갯수 바뀌면 업데이트 되도록 해야함
 
-        // SetItem(_item);
+        SetItem(_item);
     }
 
-
-    // TODO: 
-    // ItemData랑 맞는지 확인해야함.
+    
+    // ItemData 가져오기
     public void SetItem(ItemData item)
     {
-         
-
         _item = item;
-        itemName = item.ItemName;
-        itemNameText.text = itemName;
-        itemImage.sprite = item.SspriteImage;
-        _description = item.Description;
+        ShopItemNumber = item.Id;
+        ShopItemName = item.ItemName;
+        itemNameText.text = ShopItemName;
+        ShopItemImage.sprite = item.SspriteImage;
+        Description = item.Description;
+        
+        // itemPrice
+        // itemCount
 
+    }
+
+    /// <summary>
+    /// 아이템 관련 업데이트
+    /// 현재는 아이템갯수, 매진하면 변경되는거
+    /// </summary>
+    public void UpdateInfo()
+    {
+        itemCountText.text = itemCount.ToString();
+        if (isSoldOut)
+        {
+            buyButtonText.text = "매!\t진!";
+            buyButton.onClick.RemoveListener(Buy); //구매버튼 비활성화
+            ShopItemImage.color = new Color(.3f, .3f, .3f, 1f); // 어둡게 
+        }
     }
 
     private void Buy()
@@ -99,6 +125,7 @@ public class ShopItem : BaseUI
 
         itemCount--;
         SoldOut();
+        UpdateInfo();
     }
 
     // 갱신 효과 결과반환
@@ -130,17 +157,5 @@ public class ShopItem : BaseUI
         }
         else
             return;
-        if(isSoldOut)
-        {
-            buyButtonText.text = "매!\t진!";
-            buyButton.onClick.RemoveListener(Buy);
-            itemImage.color = new Color(.3f, .3f, .3f, 1f); // 어둡게 
-            //buyButton.gameObject.SetActive(false);
-            // gameObject.SetActive(false);    // 기능 다 되면 비활성화 / 지우기
-
-        }
-        // TODO : 비활성화 이미지 띄우기
-        // 그냥 이미지 색 검정에다가 알파값 낮춰서 주고 구매버튼 비활성화 하면서 텍스트 매진으로 변경하면될듯
-
     }
 }

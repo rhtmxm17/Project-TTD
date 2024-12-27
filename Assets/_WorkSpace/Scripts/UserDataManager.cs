@@ -8,6 +8,47 @@ using System;
 
 public class UserDataManager : SingletonScriptable<UserDataManager>
 {
+
+    /// <summary>
+    /// 24. 12. 27 김민태 캐릭터 소유 목록 추가
+    /// </summary>
+
+    #region 소유 캐릭터 테스트
+
+    [NonSerialized]
+    List<int> haveCharacterIdxList = new List<int>();
+
+    /// <summary>
+    /// 캐릭터를 가지고있는지 여부 반환
+    /// </summary>
+    /// <param name="characterIdx">체크할 캐릭터 ID</param>
+    /// <returns></returns>
+    public bool HasCharacter(int characterIdx)
+    { 
+        return haveCharacterIdxList.Contains(characterIdx);
+    }
+
+    public void ApplyCharacter(int characterIdx)
+    {
+        //실제 데이터 갱신.
+        haveCharacterIdxList.Add(characterIdx);
+
+        CharacterData chData = GameManager.TableData.GetCharacterData(characterIdx);
+
+
+        StartUpdateStream()
+            .SetDBValue(chData.Level, 1)
+            .SetDBValue(chData.Enhancement, 1)
+            .Submit((result) =>
+            {
+
+                Debug.Log("적용 완료!");
+
+            });
+    }
+
+    #endregion
+
     public UnityEvent onLoadUserDataCompleted;
 
     public UserProfile Profile { get; private set; } = new UserProfile();
@@ -50,6 +91,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
         {
             BackendManager.Instance.UseDummyUserDataRef(DummyNumber); // 테스트코드
         }
+        UserData.myUid = $"Dummy{DummyNumber}";
         Instance.LoadUserData();
     }
 
@@ -60,7 +102,6 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
         {
             Debug.LogWarning("플레이모드가 아닐 경우 오작동할 수 있습니다");
         }
-
 
         BackendManager.CurrentUserDataRef.GetValueAsync().ContinueWithOnMainThread(task =>
         {
@@ -100,12 +141,17 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
 
                     CharacterData characterData = GameManager.TableData.GetCharacterData(id);
 
+                    //kmt - 보유 캐릭터 목록 초기화
+                    haveCharacterIdxList.Add(id);
+
                     characterData.Level.SetValueWithDataSnapshot(userData);
                     characterData.Enhancement.SetValueWithDataSnapshot(userData);
                 }
+
             }
 
-            // 캐릭터 데이터 로딩
+
+            // 아이템 데이터 로딩
             if (userData.HasChild("Items"))
             {
                 DataSnapshot allItemData = userData.Child("Items");
@@ -306,6 +352,32 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             }
 #endif //DEBUG
             property.RegisterToChain(this, value);
+
+            return this;
+        }
+
+        public UpdateDbChain AddDBValue(PropertyAdapter<long> property, int value)
+        {
+#if DEBUG
+            if (updates.ContainsKey(property.Key))
+            {
+                Debug.LogWarning("한 스트림에 데이터를 두번 갱신하고 있음");
+            }
+#endif //DEBUG
+            property.RegisterToChain(this, property.Value + value);
+
+            return this;
+        }
+
+        public UpdateDbChain AddDBValue(PropertyAdapter<double> property, float value)
+        {
+#if DEBUG
+            if (updates.ContainsKey(property.Key))
+            {
+                Debug.LogWarning("한 스트림에 데이터를 두번 갱신하고 있음");
+            }
+#endif //DEBUG
+            property.RegisterToChain(this, property.Value + value);
 
             return this;
         }

@@ -21,7 +21,7 @@ public class StageData : ScriptableObject
     /// <summary>
     /// 스테이지의 적 구성
     /// </summary>
-    public List<MonsterInfo> Monsters => monsters;
+    public List<WaveInfo> Waves => waves;
 
     /// <summary>
     /// 클리어 보상 목록
@@ -37,8 +37,10 @@ public class StageData : ScriptableObject
 
     [SerializeField] string stageName;
 
-    // 우선 웨이브는 생각하지 않고 만듬
-    [SerializeField] List<MonsterInfo> monsters;
+    /// <summary>
+    /// waves[웨이브 번호].monsters[몬스터 번호]
+    /// </summary>
+    [SerializeField] List<WaveInfo> waves;
 
     [SerializeField] List<RewardInfo> reward;
 
@@ -47,6 +49,11 @@ public class StageData : ScriptableObject
         ClearCount = new UserDataInt($"Stages/{id}/ClearCount");
     }
 
+    [System.Serializable]
+    public struct WaveInfo
+    {
+        public List<MonsterInfo> monsters;
+    }
 
     [System.Serializable]
     public struct MonsterInfo
@@ -92,6 +99,8 @@ public class StageData : ScriptableObject
         FILE_NAME,
         STAGE_NAME,
 
+        WAVE,
+
         MONSTER_NAME,
         MONSTER_LEVEL,
         MONSTER_POS_X,
@@ -105,6 +114,7 @@ public class StageData : ScriptableObject
     public void ParseCsvMultiRow(string[] lines, ref int line)
     {
         bool isFirst = true;
+        List<MonsterInfo> currentWave = null;
         while (lines.Length > line)
         {
             string[] cells = lines[line].Split(',');
@@ -119,7 +129,7 @@ public class StageData : ScriptableObject
                     return;
                 }
 
-                monsters = new List<MonsterInfo>();
+                waves = new List<WaveInfo>();
                 reward = new List<RewardInfo>();
 
                 // NAME
@@ -134,6 +144,14 @@ public class StageData : ScriptableObject
                     line--;
                     return;
                 }
+            }
+
+            // 웨이브 구분용 열에 데이터가 존재한다면
+            if (false == string.IsNullOrEmpty(cells[(int)Column.WAVE]))
+            {
+                WaveInfo newWave = new WaveInfo();
+                newWave.monsters = currentWave = new List<MonsterInfo>();
+                waves.Add(newWave);
             }
 
             // 현재 행에 몬스터 정보가 있다면 추가
@@ -159,7 +177,7 @@ public class StageData : ScriptableObject
                     Debug.LogError($"잘못된 데이터로 갱신 시도됨");
                     continue;
                 }
-                monsters.Add(monsterInfo);
+                currentWave.Add(monsterInfo);
             }
 
             // 현재 행에 보상 정보가 있다면 추가

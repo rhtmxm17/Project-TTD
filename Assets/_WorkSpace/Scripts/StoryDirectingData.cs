@@ -15,7 +15,7 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
     public struct Dialogue
     {
         public string Speaker;
-        public string Script;
+        [TextArea] public string Script;
 
         // 해당 다이얼로그 재생과 함께 진행되는 갱신사항들
         // null이라면 해당 내용은 갱신하지 않음을 의미
@@ -90,7 +90,10 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
                 parsed.Speaker = cells[(int)Column.SPEAKER];
 
                 // SCRIPT
-                parsed.Script = cells[(int)Column.SCRIPT];
+                parsed.Script = cells[(int)Column.SCRIPT]
+                    .Trim('\"') // 줄바꿈 등 적용시 자동으로 앞뒤에 씌워짐
+                    .Trim('|') // 큰 따옴표 씌우기용
+                    .Replace("\"\"", "\""); // 큰 따옴표가 2개씩 들어오는거 해결
 
                 // BGM
                 if (false == string.IsNullOrEmpty(cells[(int)Column.BGM]))

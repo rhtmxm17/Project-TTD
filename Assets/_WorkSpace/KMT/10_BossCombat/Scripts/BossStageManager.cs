@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
-public class BossStageManager : StageManager
+public class BossStageManager : StageManager, IDamageAddable
 {
     [Header("Boss Stage Info")]
     [SerializeField]
@@ -33,13 +33,13 @@ public class BossStageManager : StageManager
 
     }
 
-    public void AddScore(float score)
+    public void IDamageAdd(float damage)
     {
         if (isTimeOver)
             return;
 
-        this.score += score;
-        scoreText.text = this.score.ToString();
+        score += damage;
+        scoreText.text = score.ToString();
     }
 
     IEnumerator StartTimerCO()
@@ -55,6 +55,14 @@ public class BossStageManager : StageManager
         isTimeOver = true;
 
         RankApplier.ApplyRank("boss", UserData.myUid, UserData.myNickname, (long)(score + timeLimit));
+    }
+
+    protected override void OnClear()
+    {
+        // TODO: 보스 몬스터 처치 구현 필요시 여기서 결과 처리
+        Debug.LogWarning("아직 정의되지 않은 동작");
+
+        base.OnClear();
     }
 
 }
