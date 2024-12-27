@@ -11,6 +11,8 @@ public class StageManager : MonoBehaviour
 
     public float PartyCost { get; private set; } = 0;
 
+    [SerializeField] StageData stageData;
+
     [Header("Characters")]
     [SerializeField]
     CombManager characterManager;
@@ -27,7 +29,6 @@ public class StageManager : MonoBehaviour
 
     [Header("Monsters")]
     [SerializeField] Transform monsterWaveParent;
-    [SerializeField] List<monsterData> monsterDataList;
     [SerializeField] MonsterWaveSetter monsterWavePrefab;
     [SerializeField]
     List<CombManager> monsterWaveQueue = new List<CombManager>();
@@ -64,16 +65,18 @@ public class StageManager : MonoBehaviour
         }
 
         characterSetter.InitCharacters(batchDictionary);
-        InitMonsterWaves(monsterDataList);
+
+        Initialize(stageData);
     }
 
-    private void InitMonsterWaves(List<monsterData> monsterDataList)
+    public void Initialize(StageData _stageData)
     {
+        stageData = _stageData;
 
-        foreach (monsterData monster in monsterDataList)
+        foreach (StageData.WaveInfo wave in _stageData.Waves)
         {
             MonsterWaveSetter monsterWave = Instantiate(monsterWavePrefab, monsterWaveParent);
-            monsterWave.InitCharacters(monster.monsters);
+            monsterWave.InitCharacters(wave);
             monsterWave.gameObject.SetActive(false);
             monsterWave.GetComponent<CombManager>().ListClearedEvent.AddListener(() =>
             {
@@ -81,7 +84,6 @@ public class StageManager : MonoBehaviour
             });
             monsterWaveQueue.Add(monsterWave.GetComponent<CombManager>());
         }
-
     }
 
     IEnumerator StartPartyCostCO()

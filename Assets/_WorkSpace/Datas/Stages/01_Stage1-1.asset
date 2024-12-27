@@ -14,22 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 1
   stageName: "\uCCAB \uC2A4\uD14C\uC774\uC9C0"
-  monsters:
-  - character: {fileID: 11400000, guid: 8cc0ef846f6247a4fa6d4380e66be996, type: 2}
-    level: 3
-    pose: {x: 5.5, y: 4}
-  - character: {fileID: 11400000, guid: 8cc0ef846f6247a4fa6d4380e66be996, type: 2}
-    level: 3
-    pose: {x: 5.5, y: 6}
-  - character: {fileID: 11400000, guid: 8cc0ef846f6247a4fa6d4380e66be996, type: 2}
-    level: 2
-    pose: {x: 12, y: 3}
-  - character: {fileID: 11400000, guid: 8cc0ef846f6247a4fa6d4380e66be996, type: 2}
-    level: 2
-    pose: {x: 12, y: 5}
-  - character: {fileID: 11400000, guid: d2aae05b8d661604b897aa95ac541d14, type: 2}
-    level: 2
-    pose: {x: 12, y: 7}
+  waves:
+  - monsters:
+    - character: {fileID: 11400000, guid: 8cc0ef846f6247a4fa6d4380e66be996, type: 2}
+      level: 3
+      pose: {x: 5.5, y: 4}
+    - character: {fileID: 11400000, guid: d2aae05b8d661604b897aa95ac541d14, type: 2}
+      level: 3
+      pose: {x: 5.5, y: 6}
+    - character: {fileID: 11400000, guid: a2b6237b93d46a444aabb884f4b54201, type: 2}
+      level: 2
+      pose: {x: 12, y: 3}
+  - monsters:
+    - character: {fileID: 11400000, guid: 8cc0ef846f6247a4fa6d4380e66be996, type: 2}
+      level: 2
+      pose: {x: 12, y: 5}
+    - character: {fileID: 11400000, guid: d2aae05b8d661604b897aa95ac541d14, type: 2}
+      level: 2
+      pose: {x: 12, y: 7}
   reward:
   - rewardItem: {fileID: 11400000, guid: fa772238c6e4b9b4eafa9932f1b0af58, type: 2}
     number: 100
