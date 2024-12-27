@@ -8,16 +8,18 @@ using UnityEngine;
 public class CharacterSort : MonoBehaviour
 {
     [HideInInspector] public List<CharacterInfo> _sortCharacterInfos;
-
+    
+    private CharacterInfoController _characterInfoController;
     private List<object> _sortList;
 
     private CharacterSortUI _characterSortUI;
     private SortType _curSortType;
 
+    private bool _isSorting;
+    
     private void Awake()
     {
-        _characterSortUI = GetComponent<CharacterSortUI>(); 
-        _curSortType = (SortType)PlayerPrefs.GetInt("SortType");
+        Init();
     }
 
     private void Start()
@@ -25,13 +27,30 @@ public class CharacterSort : MonoBehaviour
         _characterSortUI.NameSortButton.onClick.AddListener(() => SortEventFunc(SortType.NAME));
         _characterSortUI.LevelSortButton.onClick.AddListener(() => SortEventFunc(SortType.LEVEL));
     }
- 
+
+    private void Init()
+    {
+        _characterSortUI = GetComponent<CharacterSortUI>(); 
+        _curSortType = (SortType)PlayerPrefs.GetInt("SortType");
+        
+        _characterInfoController = GetComponentInParent<CharacterInfoController>();
+    }
+    
     /// <summary>
     /// 정렬 함수 호출 및 현재 타입 받아오기
     /// </summary>
     /// <param name="type"></param>
     private void SortEventFunc(SortType type)
     {
+        if (_curSortType.Equals(type))
+        {
+            _isSorting = !_isSorting;
+        }
+        else
+        {
+            _isSorting = true;
+        }
+         
         _curSortType = type;
         CharacterListSort();
     }
@@ -61,8 +80,16 @@ public class CharacterSort : MonoBehaviour
                 break;
         }
         //TODO: 오름차순, 내림차순 구분도 필요함..
-        
-        _sortList.Sort();
+
+        if (_isSorting)
+        {
+            _sortList.Sort();
+            _sortList.Reverse(); 
+        }
+        else
+        {
+            _sortList.Sort();
+        }
         
         for (int i = 0; i < _sortList.Count; i++)
         {
@@ -85,7 +112,8 @@ public class CharacterSort : MonoBehaviour
                 }
             }
         }
-
+        
+        _characterInfoController.FilterButtonText.text = _curSortType.ToString();
         PlayerPrefs.SetInt("SortType", (int)_curSortType);
     }
 
@@ -107,4 +135,5 @@ public class CharacterSort : MonoBehaviour
 
         return null;
     }
+ 
 }

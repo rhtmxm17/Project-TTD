@@ -10,8 +10,7 @@ using Random = UnityEngine.Random;
 public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private CharacterData _characterData;
-
-
+     
     private CharacterInfoController _characterInfoController;
 
     private TextMeshProUGUI _characterListNameText;

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -56,7 +57,10 @@ public class CharacterInfoController : BaseUI
             TabSwitch();
         }
     }
-
+    
+    public TextMeshProUGUI FilterButtonText { get; set; }
+    
+    
     protected override void Awake()
     {
         base.Awake();
@@ -88,7 +92,8 @@ public class CharacterInfoController : BaseUI
         _prevButton = GetUI<Button>("PreviousButton");
         _nextButton = GetUI<Button>("NextButton");
         _filterButton = GetUI<Button>("FilterButton");
-         
+        FilterButtonText = _filterButton.GetComponentInChildren<TextMeshProUGUI>(); 
+        
         _detailTab = GetUI("DetailTab");
         _enhanceTab = GetUI("EnhanceTab");
         _evolutionTab = GetUI("EvolutionTab");
