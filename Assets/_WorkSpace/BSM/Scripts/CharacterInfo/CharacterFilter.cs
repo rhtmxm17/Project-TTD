@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class CharacterFilter : MonoBehaviour
 {
@@ -14,7 +15,8 @@ public class CharacterFilter : MonoBehaviour
     private CharacterFilterUI _characterFilterUI;
 
     public List<ElementType> _characterFilterTypes = new List<ElementType>();
-
+    private List<Image> _buttonColors = new List<Image>();
+    
     private void Awake()
     {
         _characterFilterUI = GetComponent<CharacterFilterUI>();
@@ -27,13 +29,14 @@ public class CharacterFilter : MonoBehaviour
 
     private void SubscribeFilterEvent()
     {
-        _characterFilterUI._fireFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.FIRE));
-        _characterFilterUI._waterFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.WATER));
-        _characterFilterUI._grassFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.GRASS));
-        _characterFilterUI._groundFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.GROUND));
-        _characterFilterUI._electricFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.ELECTRIC));
+        _characterFilterUI._fireFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.FIRE, _characterFilterUI._fireFilterButton));
+        _characterFilterUI._waterFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.WATER,_characterFilterUI._waterFilterButton));
+        _characterFilterUI._grassFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.GRASS,_characterFilterUI._grassFilterButton));
+        _characterFilterUI._groundFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.GROUND, _characterFilterUI._groundFilterButton));
+        _characterFilterUI._electricFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.ELECTRIC, _characterFilterUI._electricFilterButton));
         
         //TODO: 역할군에 대한 버튼들 이벤트 등록 필요
+        //
         
         _characterFilterUI._allFilterButton.onClick.AddListener(AllFilterClear);
     }
@@ -42,18 +45,25 @@ public class CharacterFilter : MonoBehaviour
     /// 필터 이벤트 실행할 함수
     /// </summary>
     /// <param name="elementType"></param>
-    private void FilterEventFunc(ElementType elementType)
+    private void FilterEventFunc(ElementType elementType,Button button)
     {
         //0:불 / 1:물 / 2:풀 / 3:땅 / 4:번개 
         if (_characterFilterTypes.Contains(elementType))
         {
             //필터 해제
             CharacterListFilterClear(elementType);
+
+            Image colorblock = button.GetComponent<Image>();
+            colorblock.color = Color.white;
             
         }
         else
         {
             //필터 진행
+            Image colorblock = button.GetComponent<Image>();
+            colorblock.color = Color.red;
+            _buttonColors.Add(colorblock);
+            
             _characterFilterTypes.Add(elementType);
             CharacterListFilter(elementType);
         }
@@ -136,12 +146,17 @@ public class CharacterFilter : MonoBehaviour
     private void AllFilterClear()
     {
         if (_infosIndex.Count == 0) return;
-
+        if (_buttonColors.Count != 0)
+        {
+            _buttonColors.ForEach(x=> x.color = Color.white);
+        }            
+        
         for (int i = 0; i < _infosIndex.Count; i++)
         {
             _filterCharacterInfos[_infosIndex[i]].gameObject.SetActive(true);
         }
-
+        
+        _buttonColors.Clear();
         _characterFilterTypes.Clear();
         _infosIndex.Clear();
     }

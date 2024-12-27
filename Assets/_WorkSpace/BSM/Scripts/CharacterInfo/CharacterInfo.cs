@@ -1,25 +1,31 @@
 using System;
 using System.Collections;
-using System.Collections.Generic; 
-using TMPro; 
-using UnityEngine; 
-using UnityEngine.UI; 
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using Random = UnityEngine.Random;
 
 public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private CharacterData _characterData;
-     
+
     private CharacterInfoController _characterInfoController;
 
     private TextMeshProUGUI _characterTypeText;
     private TextMeshProUGUI _characterListNameText;
     private Image _characterListImage;
-    
+
     private bool _isSubscribe;
     private int _characterLevel;
-    
+
+    private int _hp;
+    private int _atk;
+    private int _def;
+    private int _powerLevel;
+
+
     public int CharacterLevel
     {
         //현재 캐릭터 레벨 반환
@@ -38,13 +44,13 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         get => _characterData;
         set { _characterData = value; }
     }
- 
+
     private CharacterEnhance _characterEnhance;
-    
+
     #region 테스트코드
 
     [SerializeField] private int testMyGold;
-     
+
     public int TestMyGold
     {
         get => testMyGold;
@@ -72,10 +78,10 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterListNameText = GetComponentInChildren<TextMeshProUGUI>();
         _characterListImage = transform.GetChild(0).GetComponent<Image>();
         _characterInfoController = GetComponentInParent<CharacterInfoController>();
-         
+
         //현재 캐릭터가 가지고 있는 타입
         int type = (int)_characterData.StatusTable.type;
-        
+
         SetListNameText(_characterData.Name);
         SetListTypeText(((ElementType)type).ToString());
         SetListImage(_characterData.FaceIconSprite);
@@ -89,11 +95,12 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     }
 
     private void GetCharacterDBValue()
-    { 
+    {
         _characterLevel = _characterData.Level.Value;
-        characterLevelUpCost = 100 * _characterData.Level.Value;  
+        characterLevelUpCost = 100 * _characterData.Level.Value;
+        CharacterStats();
     }
-    
+
     private void SubscribeEvent()
     {
         if (_isSubscribe) return;
@@ -101,7 +108,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 
         _characterInfoController._infoUI._levelUpButton.onClick.AddListener(LevelUp);
     }
- 
+
     /// <summary>
     /// 현재 캐릭터 정보 할당 기능
     /// </summary>
@@ -118,17 +125,23 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// 캐릭터 정보 업데이트
     /// </summary>
     public void UpdateInfo()
-    { 
+    {
         _characterEnhance.GetCharacterData(_characterData);
-        
+
         //TODO: 정리 필요 
         _characterInfoController._infoUI._nameText.text = _characterData.Name;
         _characterInfoController._infoUI._characterImage.sprite = _characterData.FaceIconSprite;
         _characterInfoController._infoUI._levelText.text = _characterData.Level.Value.ToString();
         _characterInfoController._infoUI._enhanceText.text = $"+{_characterData.Enhancement.Value.ToString()}";
-        _characterInfoController._infoUI._atkText.text = "공격력" + Random.Range(2, 100).ToString();
-        _characterInfoController._infoUI._hpText.text = "체력" + Random.Range(2, 100).ToString();
-        _characterInfoController._infoUI._coinText.text = characterLevelUpCost.ToString(); 
+
+        _characterInfoController._infoUI._powerLevelText.text = $"전투력 {_powerLevel}";
+        _characterInfoController._infoUI._atkText.text = $"공격력 {_atk}";
+        _characterInfoController._infoUI._hpText.text = $"체력 {_hp}";
+        _characterInfoController._infoUI._defText.text = $"방어력 {_def}";
+        _characterInfoController._infoUI._coinText.text = characterLevelUpCost.ToString();
+
+        int tempType = (int)_characterData.StatusTable.type;
+        _characterInfoController._infoUI._tempElemetTypeText.text = ((ElementType)tempType).ToString();
 
         LevelUpCheck();
     }
@@ -144,9 +157,9 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         GameManager.UserData.StartUpdateStream()
             .SetDBValue(_characterData.Level, _characterData.Level.Value + 1)
             // .SetDBValue(_characterData.Level, _characterData.Level.Value + 1) // 재화 사용
-            .Submit(LevelUpResult); 
+            .Submit(LevelUpResult);
     }
-    
+
     /// <summary>
     /// 레벨업 결과
     /// </summary>
@@ -158,12 +171,30 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             Debug.LogWarning("접속 실패");
             return;
         }
+
         //테스트 재화 사용
         TestMyGold -= characterLevelUpCost;
-        characterLevelUpCost = 100 * _characterData.Level.Value; 
+        characterLevelUpCost = 100 * _characterData.Level.Value;
+        _characterLevel = _characterData.Level.Value;
+        CharacterStats();
         UpdateInfo();
 
         // 레벨업 UI 나올 위치
+    }
+
+    /// <summary>
+    /// 현재 케릭터 레벨 별 스탯 반영
+    /// </summary>
+    private void CharacterStats()
+    {
+        _hp = _characterLevel *
+              (int)(_characterData.StatusTable.healthPointBase + _characterData.StatusTable.healthPointGrouth);
+        _atk = _characterLevel *
+               (int)(_characterData.StatusTable.attackPointBase + _characterData.StatusTable.attackPointGrowth);
+        _def = _characterLevel *
+               (int)(_characterData.StatusTable.defensePointBase + _characterData.StatusTable.defensePointBase);
+
+        _powerLevel = (_hp + _atk + _def);
     }
 
     /// <summary>
@@ -175,7 +206,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController._infoUI._levelUpButton.interactable =
             testMyGold >= characterLevelUpCost && testMyGold != 0;
     }
-    
+
     /// <summary>
     /// 캐릭터 리스트 이름 설정
     /// </summary>
@@ -184,7 +215,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     {
         _characterListNameText.text = name;
     }
-    
+
     /// <summary>
     /// 캐릭터 리스트 이미지 설정
     /// </summary>
@@ -198,5 +229,4 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     {
         _characterTypeText.text = type;
     }
-    
 }
