@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.Events;
+using Unity.EditorCoroutines.Editor;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -18,7 +20,7 @@ public interface ICsvRowParseable
 public interface ICsvSheetParseable
 {
 #if UNITY_EDITOR
-    public void ParseCsvSheet(string csv);
+    public void ParseCsvSheet(int id, string csv);
 #endif
 }
 
@@ -35,6 +37,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     private Dictionary<int, StageData> stageDataIdDic; // id 기반 검색용
 
     [SerializeField] List<StoryDirectingData> storyDirectingDataList;
+    private Dictionary<int, StoryDirectingData> storyDirectingDataIdDic; // id 기반 검색용
 
 
     public CharacterData GetCharacterData(int id)
@@ -80,6 +83,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
         characterDataIdDic = characterDataList.ToDictionary(item => item.Id);
         itemDataIdDic = itemDataList.ToDictionary(item => item.Id);
         stageDataIdDic = stageDataList.ToDictionary(item => item.Id);
+        storyDirectingDataIdDic = storyDirectingDataList.ToDictionary(item => item.Id);
     }
 
 #if UNITY_EDITOR
@@ -93,13 +97,14 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     [SerializeField] Sprite dummySprite;
     public Sprite DummySprite => dummySprite;
 
-    [SerializeField] string documentID;
 
     [SerializeField] Object characterDataFolder;
     [SerializeField] Object itemDataFolder;
     [SerializeField] Object stageDataFolder;
     [SerializeField] Object storyDirectingDataFolder;
 
+    private string documentID = "1mshKeAWkTmozk0snaJPWp7Jizs3pSeLhlFU-982BqHA";
+    private string storyDocumentID = "1mCbO7Xdg0DLPY-J9YjVriGHRueg1PSFvvlKqPZp8pVY";
     private string characterSheetId = "0";
     private string itemSheetId = "1467425655";
     private string stageSheetId = "504606070";
@@ -128,8 +133,8 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     [ContextMenu("스토리 데이터 불러오기 테스트")]
     private void GetStroyDataTest()
     {
-        storyDirectingDataList.Clear();
-        GetSheetDataFromSheet<StoryDirectingData>("1890934115", storyDirectingDataFolder, storyDirectingDataList);
+        GetSheetDataFromDocument<StoryDirectingData>(storyDocumentID, storyDirectingDataFolder, storyDirectingDataList);
+        IndexData();
     }
 
 
@@ -245,22 +250,70 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
         });
     }
 
-    private void GetSheetDataFromSheet<T>(string sheetId, Object dataFolder, List<T> dataList) where T : ScriptableObject, ICsvSheetParseable
+    private struct SheetIndexer
     {
-        GoogleSheet.GetSheetData(documentID, sheetId, this, (succeed, result) =>
-        {
-            if (succeed == true)
-            {
-                string soFolderPath = AssetDatabase.GetAssetPath(dataFolder);
+        public int id;
+        public string soPath;
+        public string sheetId;
+    }
 
-                // 1A 셀에는 파일명 겸 식별자 넣을것
-                string soPath = $"{soFolderPath}/{result.Substring(0, result.IndexOf(','))}.asset";
+    private void GetSheetDataFromDocument<T>(string documentID, Object dataFolder, List<T> dataList) where T : ScriptableObject, ICsvSheetParseable
+    {
+        GoogleSheet.GetSheetData(documentID, "0", this, (succeed, result) =>
+        {
+            if (false == succeed)
+            {
+                Debug.LogWarning("<color=red>색인 정보를 불러오는데 실패했습니다</color>");
+                return;
+            }
+
+            string soFolderPath = AssetDatabase.GetAssetPath(dataFolder);
+
+            string[] lines = result.Split("\r\n");
+            List<SheetIndexer> sheetIndex = new List<SheetIndexer>();
+            foreach (string line in lines)
+            {
+                string[] cells = line.Split(',');
+
+                // 0번열은 ID
+                // ID가 정수가 아니라면 데이터행이 아닌 것으로 간주(주석 등)
+                if (false == int.TryParse(cells[0], out int id))
+                    continue;
+
+                sheetIndex.Add(new SheetIndexer()
+                {
+                    id = id,
+                    soPath = $"{soFolderPath}/{cells[1]}.asset",
+                    sheetId = cells[2],
+                });
+            }
+
+            Debug.Log("색인 생성 완료");
+            EditorCoroutineUtility.StartCoroutine(ParseDocumentRoutine(documentID, sheetIndex, dataList), this);
+        });
+    }
+
+    private IEnumerator ParseDocumentRoutine<T>(string documentID, List<SheetIndexer> sheetIndex, List<T> dataList) where T : ScriptableObject, ICsvSheetParseable
+    {
+        dataList.Clear();
+        bool complete;
+        for (int i = 0; i < sheetIndex.Count; i++)
+        {
+            complete = false;
+            Debug.Log($"데이터 생성중 ({i}/{sheetIndex.Count})");
+            GoogleSheet.GetSheetData(documentID, sheetIndex[i].sheetId, this, (succeed, result) =>
+            {
+                if (false == succeed)
+                {
+                    Debug.LogWarning($"<color=red>시트 정보를 불러오는데 실패했습니다(색인 ID:{sheetIndex[i].sheetId})</color>");
+                    return;
+                }
 
                 T soAsset;
-                if (System.IO.File.Exists(soPath))
+                if (System.IO.File.Exists(sheetIndex[i].soPath))
                 {
-                    soAsset = AssetDatabase.LoadAssetAtPath(soPath, typeof(T)) as T;
-                    soAsset.ParseCsvSheet(result);
+                    soAsset = AssetDatabase.LoadAssetAtPath(sheetIndex[i].soPath, typeof(T)) as T;
+                    soAsset.ParseCsvSheet(sheetIndex[i].id, result);
 
                     EditorUtility.SetDirty(soAsset);
                 }
@@ -268,9 +321,9 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
                 {
                     soAsset = ScriptableObject.CreateInstance<T>();
 
-                    soAsset.ParseCsvSheet(result);
+                    soAsset.ParseCsvSheet(sheetIndex[i].id, result);
 
-                    AssetDatabase.CreateAsset(soAsset, soPath);
+                    AssetDatabase.CreateAsset(soAsset, sheetIndex[i].soPath);
                 }
 
                 EditorUtility.SetDirty(this);
@@ -278,13 +331,14 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
                 AssetDatabase.Refresh();
 
                 dataList.Add(soAsset);
-            }
-            else
-            {
-                Debug.LogWarning("<color=red>읽기 실패!</color>");
-            }
 
-        });
+                complete = true;
+            });
+
+            yield return new WaitUntil(() => complete);
+        }
+
+        Debug.Log($"<color=#bfffbb>데이터 생성 완료 ({sheetIndex.Count}/{sheetIndex.Count})</color>");
     }
 #endif
 
