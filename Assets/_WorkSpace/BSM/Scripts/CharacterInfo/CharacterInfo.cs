@@ -13,6 +13,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
      
     private CharacterInfoController _characterInfoController;
 
+    private TextMeshProUGUI _characterTypeText;
     private TextMeshProUGUI _characterListNameText;
     private Image _characterListImage;
     
@@ -66,13 +67,17 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 
     private void Init()
     {
-        
+        _characterTypeText = transform.GetChild(2).GetComponent<TextMeshProUGUI>();
         _characterEnhance = GetComponent<CharacterEnhance>();
         _characterListNameText = GetComponentInChildren<TextMeshProUGUI>();
         _characterListImage = transform.GetChild(0).GetComponent<Image>();
         _characterInfoController = GetComponentInParent<CharacterInfoController>();
          
+        //현재 캐릭터가 가지고 있는 타입
+        int type = (int)_characterData.StatusTable.type;
+        
         SetListNameText(_characterData.Name);
+        SetListTypeText(((FilterType)type).ToString());
         SetListImage(_characterData.FaceIconSprite);
         SubscribeEvent();
         GetCharacterDBValue();
@@ -187,6 +192,11 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     public void SetListImage(Sprite sprite)
     {
         _characterListImage.sprite = sprite;
+    }
+
+    public void SetListTypeText(string type)
+    {
+        _characterTypeText.text = type;
     }
     
 }

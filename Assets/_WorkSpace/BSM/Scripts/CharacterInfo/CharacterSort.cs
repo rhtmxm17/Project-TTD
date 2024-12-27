@@ -55,14 +55,6 @@ public class CharacterSort : MonoBehaviour
         CharacterListSort();
     }
 
-    public void CharacterListFilter()
-    {
-        //TODO: 캐릭터 리스트 필터 기능 추가
-        //현재 선택한 속성 외 캐릭터 리스트는 Active = false or List에서 Remove하면 될듯? 
-        //필터는 중첩으로...
-    }
-    
-    
     /// <summary>
     /// 캐릭터 리스트 정렬 기능
     /// </summary>
@@ -79,7 +71,6 @@ public class CharacterSort : MonoBehaviour
                 _sortList = _sortCharacterInfos.Select(x => (object)x.CharacterName).ToList();
                 break;
         }
-        //TODO: 오름차순, 내림차순 구분도 필요함..
 
         if (_isSorting)
         {
@@ -106,6 +97,12 @@ public class CharacterSort : MonoBehaviour
                     _sortCharacterInfos[i].SetListNameText(newData.Name);
                     _sortCharacterInfos[j].SetListNameText(oldData.Name);
 
+                    int newType = (int)newData.StatusTable.type;
+                    int oldType = (int)oldData.StatusTable.type;
+                    
+                    _sortCharacterInfos[i].SetListTypeText(((FilterType)newType).ToString());
+                    _sortCharacterInfos[j].SetListTypeText(((FilterType)oldType).ToString());
+                    
                     _sortCharacterInfos[i].SetListImage(newData.FaceIconSprite);
                     _sortCharacterInfos[j].SetListImage(oldData.FaceIconSprite);
                     break;
