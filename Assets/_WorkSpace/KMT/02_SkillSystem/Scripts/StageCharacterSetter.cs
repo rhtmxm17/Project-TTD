@@ -25,20 +25,20 @@ public class StageCharacterSetter : MonoBehaviour
     [SerializeField]
     GameObject secondSkillPanel;
 
-    List<Vector2> position = new List<Vector2>()
-    {
-        new Vector2(-7.223999f,  5.509857f),
-        new Vector2(-7.223999f,  1.889847f),
-        new Vector2(-7.223999f, -1.930145f),
-        new Vector2(-10.754f,  5.509857f),
-        new Vector2(-10.754f,  1.889847f),
-        new Vector2(-10.754f, -1.930145f),
-        new Vector2(-14.474f,  5.509857f),
-        new Vector2(-14.474f,  1.889847f),
-        new Vector2(-14.474f, -1.930145f)
-    };
+    [SerializeField]
+    List<Transform> spawnPositions;
 
-    public void InitCharacters(List<CharacterData> characterDatas)
+    List<Vector2> position = new List<Vector2>();
+
+    private void Awake()
+    {
+        foreach (Transform t in spawnPositions)
+        {
+            position.Add(t.position);
+        }
+    }
+
+    public void InitCharacters(Dictionary<int, CharacterData> characterDatas)
     {
         if (characterDatas.Count <= 0)
             return;
@@ -46,30 +46,30 @@ public class StageCharacterSetter : MonoBehaviour
         GetComponent<CombManager>().ListClearedEvent.AddListener(() => { Debug.Log("전☆멸"); });
 
         SpawnCharacterDataSet(characterDatas);
+
     }
 
 
-    private void SpawnCharacterDataSet(List<CharacterData> characterDataList)
+    private void SpawnCharacterDataSet(Dictionary<int, CharacterData> characterDataList)
     {
         CombManager group = GetComponent<CombManager>();
         List<Combatable> characters = new List<Combatable>();
 
-        for (int i = 0; i < characterDataList.Count; i++)
+        foreach (var pair in characterDataList)
         {
 
-            CharacterCombatable charObj = Instantiate(characterPrefab, position[i], Quaternion.identity, transform);
+            CharacterCombatable charObj = Instantiate(characterPrefab, position[pair.Key], Quaternion.identity, transform);
             characters.Add(charObj);
-            GameObject model = Instantiate(characterDataList[i].ModelPrefab, charObj.transform);
-            model.name = "Model";
 
-            charObj.Initialize(model.GetComponent<Animator>(), group, characterDataList[i]);
+            charObj.Initialize(group, pair.Value);
 
             //테스트용 코드?
-            charObj.GetComponent<SpriteRenderer>().sprite = characterDataList[i].FaceIconSprite;
+            charObj.GetComponent<SpriteRenderer>().sprite = pair.Value.FaceIconSprite;
 
-            charObj.InitCharacterData(characterDataList[i],
-                                        Instantiate(basicSkillButtonPrefab, skillPanel.transform),
-                                        Instantiate(secondSkillButtonPrefab, secondSkillPanel.transform));
+            charObj.InitCharacterData(
+                            Instantiate(basicSkillButtonPrefab, skillPanel.transform),
+                            Instantiate(secondSkillButtonPrefab, secondSkillPanel.transform));
+
 
 
         }

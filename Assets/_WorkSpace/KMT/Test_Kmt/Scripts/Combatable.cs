@@ -5,6 +5,9 @@ using UnityEngine;
 using UnityEngine.Events;
 using UniRx;
 using Unity.Mathematics;
+using UnityEngine.UI;
+using static Spine.Unity.Editor.SkeletonBaker.BoneWeightContainer;
+using UnityEditor.U2D.Animation;
 
 [RequireComponent(typeof(Trackable))]
 public class Combatable : MonoBehaviour
@@ -15,11 +18,15 @@ public class Combatable : MonoBehaviour
     [SerializeField]
     SearchLogic searchLogicType;
 
+    [SerializeField]
+    Slider hpSlider;
+
     [HideInInspector]
     public UnityEvent waveClearEvent = new UnityEvent();
     protected UnityEvent interruptedEvent = new UnityEvent();
     [HideInInspector]
     public UnityEvent<Combatable> onDeadEvent = new UnityEvent<Combatable>();
+    public UnityEvent<float> onDamagedEvent = new UnityEvent<float>();
 
     protected Trackable trackable;
     protected Coroutine curActionCoroutine = null;
@@ -33,12 +40,21 @@ public class Combatable : MonoBehaviour
     int rangePow;
     Skill baseAttack;
 
+    [Header("TestParams")]
+    [SerializeField]
+    public float igDefenseRate;
+    [SerializeField]
+    public float defConst;
+
     public bool IsAlive { get; private set; }
 
     public enum SearchLogic { NEAR_FIRST, FAR_FIRST }
 
+    public CharacterData characterData { get; private set; }
+
     protected virtual void Awake()
     {
+
         trackable = GetComponent<Trackable>();
         onDeadEvent.AddListener(GetComponentInParent<CombManager>().OnDead);
 
@@ -47,57 +63,102 @@ public class Combatable : MonoBehaviour
         MaxHp = maxHp.ToReadOnlyReactiveProperty();
     }
 
-    public void Initialize(Animator animator, CombManager Group, CharacterData data)
+    /// <summary>
+    /// 전투 씬에서 캐릭터를 초기화
+    /// </summary>
+    /// <param name="Group">캐릭터가 속한 그룹(플레이어측 혹은 적 웨이브)</param>
+    /// <param name="data">캐릭터 데이터</param>
+    public void Initialize(CombManager Group, CharacterData data) => InitializeWithLevel(Group, data, data.Level.Value);
+
+    /// <summary>
+    /// 전투 씬에서 레벨을 지정해서 캐릭터를 초기화
+    /// </summary>
+    /// <param name="Group">캐릭터가 속한 그룹(플레이어측 혹은 적 웨이브)</param>
+    /// <param name="data">캐릭터 데이터</param>
+    /// <param name="level">레벨 지정</param>
+    public void InitializeWithLevel(CombManager Group, CharacterData data, int level)
     {
+        if (characterData != null)
+        {
+            Debug.LogWarning("캐릭터 초기화 함수가 두 번 실행됨");
+        }
+        characterData = data;
+
+        // 외형 생성
+        GameObject model = Instantiate(data.ModelPrefab, this.transform);
+        model.name = "Model";
+        if (false == model.TryGetComponent(out Animator animator))
+        {
+            animator = model.GetComponentInChildren<Animator>();
+        }
         UnitAnimator = animator;
+
+        // 그룹 지정
         this.Group = Group;
 
         IsAlive = true;
 
+        // 레벨이 지정되지 않았을 경우 유저 데이터의 레벨 사용
+        if (level < 0)
+            level = data.Level.Value;
+
         CharacterData.Status table  = data.StatusTable;
 
         attackPoint.Value = table.attackPointBase
-                          + table.attackPointGrowth * data.Level.Value;
+                          + table.attackPointGrowth * level;
 
         maxHp.Value = table.healthPointBase
-                    + table.healthPointGrouth * data.Level.Value;
+                    + table.healthPointGrouth * level;
 
         hp.Value = MaxHp.Value;
+
+        defense.Value = table.defensePointBase
+                      + table.defensePointGrouth * level;
+
+        defConst = table.defenseCon;
 
         rangePow = (int)(table.Range * table.Range);//사거리
 
         baseAttack = data.BasicSkillDataSO;
 
+        hp.Subscribe(x => {
+
+            hpSlider.value = x / MaxHp.Value;
+
+        });
     }
 
-    #region TODO
     public Animator UnitAnimator { get; private set; }
     public CombManager Group { get; private set; }
 
-    private ReactiveProperty<float> attackPoint = new ReactiveProperty<float>();
+    protected ReactiveProperty<float> attackPoint = new ReactiveProperty<float>();
     public ReadOnlyReactiveProperty<float> AttackPoint { get; private set; }
 
-    private ReactiveProperty<float> hp = new ReactiveProperty<float>();
+    protected ReactiveProperty<float> hp = new ReactiveProperty<float>();
     public ReadOnlyReactiveProperty<float> Hp;
 
-    private ReactiveProperty<float> maxHp = new ReactiveProperty<float>();
+    protected ReactiveProperty<float> maxHp = new ReactiveProperty<float>();
     public ReadOnlyReactiveProperty<float> MaxHp;
 
-    private ReactiveProperty<float> defense = new ReactiveProperty<float>();
+    protected ReactiveProperty<float> defense = new ReactiveProperty<float>();
     public ReadOnlyReactiveProperty<float> Defense;
 
-    public void Damaged(float damage)
+    public void Damaged(float damage, float igDefRate)
     {
+
         if (!IsAlive)
         {
             Debug.Log("이미 죽은 대상.");
             return;
         }
 
+        damage = DamageCalculator.Calc(damage, igDefRate, defense.Value, defConst);
+
         Debug.Log($"피격데미지{damage}");
 
         //View의 setvalue등을 연결하기.
         hp.Value -= damage;
+        onDamagedEvent?.Invoke(damage);
 
         if (hp.Value < 0)
         {
@@ -109,7 +170,6 @@ public class Combatable : MonoBehaviour
 
     }
 
-    #endregion
 
     void InitSearchLogic()
     {
@@ -251,8 +311,6 @@ public class Combatable : MonoBehaviour
 
             while (target != null && rangePow < Vector3.SqrMagnitude(target.transform.position - transform.position))
             {
-                Debug.Log("tracking");
-
                 if (time > trackTime)
                 {
                     time = 0;
@@ -290,14 +348,11 @@ public class Combatable : MonoBehaviour
 
         while (target.IsAlive && rangePow > Vector3.SqrMagnitude(target.transform.position - transform.position))
         {
-            Debug.Log("combatting");
             //피격효과 확인을 위한 임시 코드
             target.GetComponent<SpriteRenderer>().color = UnityEngine.Random.ColorHSV();
 
             StartCoroutine(baseAttack.SkillRoutine(this, null));
-            //target.Damaged(AttackPoint.Value);
 
-            //attack(attackvalue); => 근접인지? 투사체공격인지?
             yield return new WaitForSeconds(1);
         }
 

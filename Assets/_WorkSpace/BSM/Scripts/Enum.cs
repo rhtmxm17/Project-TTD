@@ -23,5 +23,11 @@ public enum BuffType
 [System.Serializable]
 public enum SortType
 {
-    NONE, NAME, LEVEL
+    NONE, NAME, LEVEL, TRIBE, ROLE    
+}
+
+[System.Serializable]
+public enum InfoTabType
+{
+    DETAIL, ENHANCE, EVOLUTION, MEAN
 }

@@ -12,8 +12,12 @@ public class HYJ_PlayerController : MonoBehaviour
     public List<AnimationClip> Idle_List = new();
     public List<AnimationClip> Attack_List = new();
 
-    
 
+    [ContextMenu("dd")]
+    public void TestMove()
+    {
+        Debug.Log(GetComponent<RectTransform>().anchoredPosition);
+    }
     private void Update()
     {
         //애니메이터 오버라이드 컨트롤러를 확인하기 위한 공격
