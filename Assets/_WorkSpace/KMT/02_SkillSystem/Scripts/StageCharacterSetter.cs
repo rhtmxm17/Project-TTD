@@ -38,7 +38,7 @@ public class StageCharacterSetter : MonoBehaviour
         }
     }
 
-    public void InitCharacters(List<CharacterData> characterDatas)
+    public void InitCharacters(Dictionary<int, CharacterData> characterDatas)
     {
         if (characterDatas.Count <= 0)
             return;
@@ -50,27 +50,26 @@ public class StageCharacterSetter : MonoBehaviour
     }
 
 
-    private void SpawnCharacterDataSet(List<CharacterData> characterDataList)
+    private void SpawnCharacterDataSet(Dictionary<int, CharacterData> characterDataList)
     {
         CombManager group = GetComponent<CombManager>();
         List<Combatable> characters = new List<Combatable>();
 
-        for (int i = 0; i < characterDataList.Count; i++)
+        foreach (var pair in characterDataList)
         {
 
-            CharacterCombatable charObj = Instantiate(characterPrefab, position[i], Quaternion.identity, transform);
+            CharacterCombatable charObj = Instantiate(characterPrefab, position[pair.Key], Quaternion.identity, transform);
             characters.Add(charObj);
-            GameObject model = Instantiate(characterDataList[i].ModelPrefab, charObj.transform);
-            model.name = "Model";
 
-            charObj.Initialize(model.GetComponent<Animator>(), group, characterDataList[i]);
+            charObj.Initialize(group, pair.Value);
 
             //테스트용 코드?
-            charObj.GetComponent<SpriteRenderer>().sprite = characterDataList[i].FaceIconSprite;
+            charObj.GetComponent<SpriteRenderer>().sprite = pair.Value.FaceIconSprite;
 
-            charObj.InitCharacterData(characterDataList[i],
-                                        Instantiate(basicSkillButtonPrefab, skillPanel.transform),
-                                        Instantiate(secondSkillButtonPrefab, secondSkillPanel.transform));
+            charObj.InitCharacterData(
+                            Instantiate(basicSkillButtonPrefab, skillPanel.transform),
+                            Instantiate(secondSkillButtonPrefab, secondSkillPanel.transform));
+
 
 
         }

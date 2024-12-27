@@ -11,13 +11,13 @@ public class StageManager : MonoBehaviour
 
     public float PartyCost { get; private set; } = 0;
 
+    [SerializeField] StageData stageData;
+
     [Header("Characters")]
     [SerializeField]
     CombManager characterManager;
     [SerializeField]
     StageCharacterSetter characterSetter;
-    //스테이지 진입 시, 진형 설정에서 캐릭터 정보들을 받아올 것.
-    [SerializeField] private List<CharacterData> characterDataList;
 
     //데이터 테스트용 임시 구조체
     [System.Serializable]
@@ -29,7 +29,6 @@ public class StageManager : MonoBehaviour
 
     [Header("Monsters")]
     [SerializeField] Transform monsterWaveParent;
-    [SerializeField] List<monsterData> monsterDataList;
     [SerializeField] MonsterWaveSetter monsterWavePrefab;
     [SerializeField]
     List<CombManager> monsterWaveQueue = new List<CombManager>();
@@ -55,20 +54,29 @@ public class StageManager : MonoBehaviour
 
     private void Start()
     {
-        //테스트용 로그인 초기화
-        StartCoroutine(UserDataManager.InitDummyUser(0));
+        //키 : 배치정보, 값 : 캐릭터 고유 번호(ID)
+        Dictionary<string, long> batchData = GameManager.UserData.PlayData.BatchInfo.Value;
+        Dictionary<int, CharacterData> batchDictionary = new Dictionary<int, CharacterData>(batchData.Count);
 
-        characterSetter.InitCharacters(characterDataList);
-        InitMonsterWaves(monsterDataList);
+        foreach (var pair in batchData)
+        {
+            batchDictionary[int.Parse(pair.Key)] =
+                GameManager.TableData.GetCharacterData((int)pair.Value);
+        }
+
+        characterSetter.InitCharacters(batchDictionary);
+
+        Initialize(stageData);
     }
 
-    private void InitMonsterWaves(List<monsterData> monsterDataList)
+    public void Initialize(StageData _stageData)
     {
+        stageData = _stageData;
 
-        foreach (monsterData monster in monsterDataList)
+        foreach (StageData.WaveInfo wave in _stageData.Waves)
         {
             MonsterWaveSetter monsterWave = Instantiate(monsterWavePrefab, monsterWaveParent);
-            monsterWave.InitCharacters(monster.monsters);
+            monsterWave.InitCharacters(wave);
             monsterWave.gameObject.SetActive(false);
             monsterWave.GetComponent<CombManager>().ListClearedEvent.AddListener(() =>
             {
@@ -76,7 +84,6 @@ public class StageManager : MonoBehaviour
             });
             monsterWaveQueue.Add(monsterWave.GetComponent<CombManager>());
         }
-
     }
 
     IEnumerator StartPartyCostCO()
@@ -126,7 +133,7 @@ public class StageManager : MonoBehaviour
 
         if (monsterWaveQueue.Count <= 0)
         {
-            Debug.Log("클리어!");
+            OnClear();
             yield break;
         }
 
@@ -136,6 +143,27 @@ public class StageManager : MonoBehaviour
         monsterWaveQueue[0].gameObject.SetActive(true);
         characterManager.StartCombat(monsterWaveQueue[0]);
         monsterWaveQueue[0].StartCombat(characterManager);
+    }
+
+    protected virtual void OnClear()
+    {
+        Debug.Log("클리어!");
+        var stream = GameManager.UserData.StartUpdateStream();
+        foreach (var item in stageData.Reward)
+        {
+            stream.AddDBValue(item.rewardItem.Number, item.number);
+        }
+
+        stream.Submit(result =>
+        {
+            if (false == result)
+            {
+                Debug.Log("요청 전송에 실패했습니다");
+                return;
+            }
+
+            // TODO: 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
+        });
     }
 
     bool CheckCharactersWait()
@@ -151,26 +179,31 @@ public class StageManager : MonoBehaviour
 
     }
 
+    protected virtual void StartGame()
+    {
+        if (monsterWaveQueue.Count <= 0)
+        {
+            Debug.LogWarning("몬스터 정보가 비어있음");
+            return;
+        }
+
+        //파티 공유 게이지 충전 시작.
+        StartCoroutine(StartPartyCostCO());
+
+        costSlider.value = 0;
+        costText.text = PartyCost.ToString();
+
+        Debug.Log("S눌림");
+        monsterWaveQueue[0].gameObject.SetActive(true);
+        characterManager.StartCombat(monsterWaveQueue[0]);
+        monsterWaveQueue[0].StartCombat(characterManager);
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.S))
         {
-            if (monsterWaveQueue.Count <= 0)
-            {
-                Debug.Log("클리어!");
-                return;
-            }
-
-            //파티 공유 게이지 충전 시작.
-            StartCoroutine(StartPartyCostCO());
-
-            costSlider.value = 0;
-            costText.text = PartyCost.ToString();
-
-            Debug.Log("S눌림");
-            monsterWaveQueue[0].gameObject.SetActive(true);
-            characterManager.StartCombat(monsterWaveQueue[0]);
-            monsterWaveQueue[0].StartCombat(characterManager);
+            StartGame();
         }
 
         if (Input.GetKeyDown(KeyCode.F))

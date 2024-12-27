@@ -6,6 +6,8 @@ using UnityEngine.Events;
 using UniRx;
 using Unity.Mathematics;
 using UnityEngine.UI;
+using static Spine.Unity.Editor.SkeletonBaker.BoneWeightContainer;
+using UnityEditor.U2D.Animation;
 
 [RequireComponent(typeof(Trackable))]
 public class Combatable : MonoBehaviour
@@ -24,6 +26,7 @@ public class Combatable : MonoBehaviour
     protected UnityEvent interruptedEvent = new UnityEvent();
     [HideInInspector]
     public UnityEvent<Combatable> onDeadEvent = new UnityEvent<Combatable>();
+    public UnityEvent<float> onDamagedEvent = new UnityEvent<float>();
 
     protected Trackable trackable;
     protected Coroutine curActionCoroutine = null;
@@ -47,6 +50,8 @@ public class Combatable : MonoBehaviour
 
     public enum SearchLogic { NEAR_FIRST, FAR_FIRST }
 
+    public CharacterData characterData { get; private set; }
+
     protected virtual void Awake()
     {
 
@@ -58,25 +63,59 @@ public class Combatable : MonoBehaviour
         MaxHp = maxHp.ToReadOnlyReactiveProperty();
     }
 
-    public void Initialize(Animator animator, CombManager Group, CharacterData data)
+    /// <summary>
+    /// 전투 씬에서 캐릭터를 초기화
+    /// </summary>
+    /// <param name="Group">캐릭터가 속한 그룹(플레이어측 혹은 적 웨이브)</param>
+    /// <param name="data">캐릭터 데이터</param>
+    public void Initialize(CombManager Group, CharacterData data) => InitializeWithLevel(Group, data, data.Level.Value);
+
+    /// <summary>
+    /// 전투 씬에서 레벨을 지정해서 캐릭터를 초기화
+    /// </summary>
+    /// <param name="Group">캐릭터가 속한 그룹(플레이어측 혹은 적 웨이브)</param>
+    /// <param name="data">캐릭터 데이터</param>
+    /// <param name="level">레벨 지정</param>
+    public void InitializeWithLevel(CombManager Group, CharacterData data, int level)
     {
+        if (characterData != null)
+        {
+            Debug.LogWarning("캐릭터 초기화 함수가 두 번 실행됨");
+        }
+        characterData = data;
+
+        // 외형 생성
+        GameObject model = Instantiate(data.ModelPrefab, this.transform);
+        model.name = "Model";
+        if (false == model.TryGetComponent(out Animator animator))
+        {
+            animator = model.GetComponentInChildren<Animator>();
+        }
         UnitAnimator = animator;
+
+        // 그룹 지정
         this.Group = Group;
 
         IsAlive = true;
 
+        // 레벨이 지정되지 않았을 경우 유저 데이터의 레벨 사용
+        if (level < 0)
+            level = data.Level.Value;
+
         CharacterData.Status table  = data.StatusTable;
 
         attackPoint.Value = table.attackPointBase
-                          + table.attackPointGrowth * data.Level.Value;
+                          + table.attackPointGrowth * level;
 
         maxHp.Value = table.healthPointBase
-                    + table.healthPointGrouth * data.Level.Value;
+                    + table.healthPointGrouth * level;
 
         hp.Value = MaxHp.Value;
 
         defense.Value = table.defensePointBase
-                      + table.defensePointGrouth * data.Level.Value;
+                      + table.defensePointGrouth * level;
+
+        defConst = table.defenseCon;
 
         rangePow = (int)(table.Range * table.Range);//사거리
 
@@ -89,7 +128,6 @@ public class Combatable : MonoBehaviour
         });
     }
 
-    #region TODO
     public Animator UnitAnimator { get; private set; }
     public CombManager Group { get; private set; }
 
@@ -120,6 +158,7 @@ public class Combatable : MonoBehaviour
 
         //View의 setvalue등을 연결하기.
         hp.Value -= damage;
+        onDamagedEvent?.Invoke(damage);
 
         if (hp.Value < 0)
         {
@@ -131,7 +170,6 @@ public class Combatable : MonoBehaviour
 
     }
 
-    #endregion
 
     void InitSearchLogic()
     {

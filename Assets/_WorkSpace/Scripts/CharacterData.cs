@@ -1,10 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
+
+/// <summary>
+/// 캐릭터의 속성입니다
+/// </summary>
+public enum CharacterType
+{
+    _0,
+    _1,
+    _2,
+    _3,
+    _4,
+}
 
 public class CharacterData : ScriptableObject, ICsvRowParseable
 {
@@ -27,6 +41,8 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         public float healthPointGrouth;
         public float defensePointBase;
         public float defensePointGrouth;
+        public float defenseCon;
+        public CharacterType type;
     }
 
     [SerializeField] int id;
@@ -93,6 +109,8 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         DEF_GROWTH,
         HP_BASE,
         HP_GROWTH,
+        DEFCON,
+        CHAR_TYPE,
     }
 
     public void ParseCsvRow(string[] cells)
@@ -109,6 +127,8 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
 
         // FACE_ICON
         faceIconSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.FACE_ICON]}.asset");
+        if (faceIconSprite == null)
+            faceIconSprite = DataTableManager.Instance.DummySprite;
 
         // SHAPE
         modelPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{DataTableManager.PrefabsAssetFolder}/{cells[(int)Column.SHAPE]}.prefab");
@@ -184,6 +204,22 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
             Debug.LogError($"잘못된 데이터로 갱신 시도됨");
             return;
         }
+
+        // DEFCON
+        if (false == float.TryParse(cells[(int)Column.DEFCON], out statusTable.defenseCon))
+        {
+            Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+            return;
+        }
+
+        // CHAR_TYPE
+        if (false == int.TryParse(cells[(int)Column.CHAR_TYPE], out int type))
+        {
+            Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+            return;
+        }
+        statusTable.type = (CharacterType)type;
+
     }
 #endif
 

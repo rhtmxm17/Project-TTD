@@ -14,8 +14,6 @@ public class CharacterCombatable : Combatable
     Vector3 originPos;
     //BasicSkillButton basicSkillButton;
 
-    CharacterData characterData;
-
     protected override void Awake()
     {
         base.Awake();
@@ -25,16 +23,18 @@ public class CharacterCombatable : Combatable
 
     }
 
-
-    public void InitCharacterData(CharacterData characterData, BasicSkillButton basicSkillButton, SecondSkillButton secondSkillButton)
+    public void InitCharacterData(BasicSkillButton basicSkillButton, SecondSkillButton secondSkillButton)
     {
-        this.characterData = characterData;
+        if (characterData == null)
+        {
+            Debug.LogError($"캐릭터 데이터 등록이 선행되어야 함");
+        }
 
         basicSkillButton.transform.GetChild(0).GetComponent<Image>().sprite = characterData.SkillDataSO.SkillSprite;
         basicSkillButton.GetComponent<Button>().onClick.AddListener(() => {
             if (!basicSkillButton.Interactable || !IsAlive) { Debug.Log("사용 불가");  return; }
             OnSkillCommanded(characterData.SkillDataSO);
-            basicSkillButton.StartCoolDown(5);//쿨타임을 매개변수로 전달하기.
+            basicSkillButton.StartCoolDown(characterData.StatusTable.BasicSkillCooldown);//쿨타임을 매개변수로 전달하기.
         });
 
         secondSkillButton.SetSkillCost(characterData.StatusTable.SecondSkillCost);

@@ -11,13 +11,15 @@ public class CharacterInfoController : BaseUI
     [HideInInspector] public CharacterInfoUI _infoUI;
     [HideInInspector] public List<CharacterInfo> _characterInfos;
     [HideInInspector] public CharacterInfo CurCharacterInfo;
-
+    [HideInInspector] public CharacterEnhance CurCharacterEnhance;
+    
     [HideInInspector] public GameObject _infoPopup;
 
     [HideInInspector] public int CurIndex = 0;
 
+    private GameObject _characterUISet;
     private CharacterSort _characterSort;
-
+ 
     private Button _prevButton;
     private Button _nextButton;
     private Button _filterButton;
@@ -28,7 +30,12 @@ public class CharacterInfoController : BaseUI
     private Vector2 _characterSpacing;
 
     private int _characterCount;
-
+    
+    private GameObject _detailTab;
+    private GameObject _enhanceTab;
+    private GameObject _evolutionTab;
+    private GameObject _meanTab; 
+    
     private int CharacterCount
     {
         get => _characterInfos.Count;
@@ -39,6 +46,16 @@ public class CharacterInfoController : BaseUI
         }
     }
 
+    private InfoTabType _curInfoTabType;
+    public InfoTabType CurInfoTabType
+    {
+        get => _curInfoTabType;
+        set
+        {
+            _curInfoTabType = value;
+            TabSwitch();
+        }
+    }
 
     protected override void Awake()
     {
@@ -47,22 +64,23 @@ public class CharacterInfoController : BaseUI
         SubscribeEvent();
 
         /////// 더미 인증 테스트 코드
-        StartCoroutine(UserDataManager.InitDummyUser(7));
+        StartCoroutine(UserDataManager.InitDummyUser(19));
     }
 
     private void OnEnable() => UpdateCharacterList();
 
     private void Start()
     {
-        //TODO: 테스트용 -> 추후 메인과 붙이면 OnEnable에서 넘겨주는거로
+        //TODO: 테스트용 -> 추후 메인과 붙이면 UpdateCharacterList()에서 넘겨주는거로
         _characterSort._sortCharacterInfos = _characterInfos;
         StartListSort();
     }
-
+    
     private void Init()
     {
         _infoPopup = GetUI("InfoPopup");
-
+        _characterUISet = GetUI("CharacterUISet");
+        
         _characterSort = GetUI<CharacterSort>("SortUI");
         _infoUI = GetUI<CharacterInfoUI>("InfoUI");
 
@@ -70,11 +88,16 @@ public class CharacterInfoController : BaseUI
         _prevButton = GetUI<Button>("PreviousButton");
         _nextButton = GetUI<Button>("NextButton");
         _filterButton = GetUI<Button>("FilterButton");
-
+         
+        _detailTab = GetUI("DetailTab");
+        _enhanceTab = GetUI("EnhanceTab");
+        _evolutionTab = GetUI("EvolutionTab");
+        _meanTab = GetUI("MeanTab");
+        
         _characterCellSize = _contentForm.GetComponent<GridLayoutGroup>().cellSize;
         _characterSpacing = _contentForm.GetComponent<GridLayoutGroup>().spacing;
     }
-
+    
     private void SubscribeEvent()
     {
         _prevButton.onClick.AddListener(PreviousCharacter);
@@ -105,6 +128,9 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void PreviousCharacter()
     {
+        //TODO: 상세 팝업창 좌,우 버튼 노출 조건 추가 필요할 것으로 예상중
+        //조건 추가가 필요하다면 _characterInfos 카운트 2 미만이면 노출x
+        
         if (CurIndex == 0)
         {
             CurIndex = _characterInfos.Count - 1;
@@ -150,4 +176,17 @@ public class CharacterInfoController : BaseUI
 
         _contentForm.sizeDelta = new Vector2(totalWidth, _contentForm.sizeDelta.y);
     }
+    
+    /// <summary>
+    /// 캐릭터 상세 팝업창 > 탭 전환 기능
+    /// </summary>
+    private void TabSwitch()
+    {
+        _characterUISet.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL) || _curInfoTabType.Equals(InfoTabType.ENHANCE));
+        _detailTab.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
+        _enhanceTab.SetActive(_curInfoTabType.Equals(InfoTabType.ENHANCE));
+        _evolutionTab.SetActive(_curInfoTabType.Equals(InfoTabType.EVOLUTION));
+        _meanTab.SetActive(_curInfoTabType.Equals(InfoTabType.MEAN)); 
+    }
+    
 }
