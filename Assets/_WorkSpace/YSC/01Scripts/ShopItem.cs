@@ -8,27 +8,32 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using static UnityEditor.Progress;
 
-public class ShopItem : BaseUI, IPointerClickHandler
+public class ShopItem : BaseUI
 {
     [Header("아이템 이름")]
     [SerializeField] TMP_Text itemNameText;     // UI_아이템이름
-    [SerializeField] public string itemName;
-    // [SerializeField] TMP_Text itemNumText;      // UI_아이템남은 갯수 밑에 있는데 잘못 중복한듯
+    [SerializeField] public string ShopItemName;
+
     [Header("아이템 가격")]
     [SerializeField] TMP_Text itemPriceText;    // UI에 표기되는 가격표   
-    [SerializeField] int itemPrice;          
+    [SerializeField] int itemPrice;         
+    
     [Header("아이템 갯수")]
     [SerializeField] TMP_Text itemCountText;    // UI에 표기되는 갯수
-    [SerializeField] int itemCount;             
+    [SerializeField] int itemCount;         
+    
     [Header("아이템 이미지")]
-    [SerializeField] Image itemImage;
-    // [SerializeField] Sprite spriteImage;
+    [SerializeField] public Image ShopItemImage;
+
     [Header("구매버튼")]
     [SerializeField] Button buyButton;
+
     [Header("얻는 아이템 (Ex. 토큰)")]
     [SerializeField] int getCount;               // UI에 표기되는 아이템갯수?
+
     [Header("매진")]
     [SerializeField] bool isSoldOut;
+
     [Header("설명")]
     [SerializeField] public string Description;
 
@@ -36,12 +41,11 @@ public class ShopItem : BaseUI, IPointerClickHandler
     [SerializeField] private ItemData itemGive;         // 살때 주는 재화 데이터 Ex. gold
     [SerializeField] private ItemData itemGet;          // 살때 받는 아이템      Ex. Token
 
-    ShopPanel _shopPanel;
 
     // 아이템
     [SerializeField] private ItemData _item;
 
-    [SerializeField] int itemNumber;
+    [SerializeField] public int ShopItemNumber;
 
     private void Start()
     {
@@ -59,7 +63,7 @@ public class ShopItem : BaseUI, IPointerClickHandler
         itemCountText = GetUI<TMP_Text>("ItemCountText");
 
         // 테스트용
-        itemNameText.text = itemName;
+        itemNameText.text = ShopItemName;
         itemPriceText.text = itemPrice.ToString();
         itemCountText.text = itemCount.ToString();
         // 갯수 바뀌면 업데이트 되도록 해야함
@@ -74,51 +78,15 @@ public class ShopItem : BaseUI, IPointerClickHandler
          
 
         _item = item;
-        itemNumber = item.Id;
-        itemName = item.ItemName;
-        itemNameText.text = itemName;
-        itemImage.sprite = item.SspriteImage;
+        ShopItemNumber = item.Id;
+        ShopItemName = item.ItemName;
+        itemNameText.text = ShopItemName;
+        ShopItemImage.sprite = item.SspriteImage;
         Description = item.Description;
         
         // itemPrice
         // itemCount
 
-    }
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        Debug.Log($"{gameObject.name}");
-       // OpenItemInfo();
-       // _shopPanel.OpenPopup();
-       // SetShopPopup();
-
-    }
-
-    private void SetShopPopup()
-    {
-        // string description;
-        // 클릭한 아이템의 정보를 받아와야함.
-
-
-
-        _shopPanel.shopPopupText.text = Description;
-        _shopPanel.shopPopupImage.sprite = itemImage.sprite;
-     //   shopPopupText.text = _description;
-     //   shopPopupImage.sprite = itemImage.sprite;
-
-        GetUI<Button>("ShopPopupClose").onClick.AddListener(() => gameObject.SetActive(false)); // 닫기버튼
-        GetUI<TMP_Text>("ShopPopupText").text = "불러온설명";
-        GetUI<Image>("ShopPopupImage"); // 누른 이미지에 따른 이미지 변경되도록...
-
-        // ShopItem.SetItem(누른아이템); 누른아이템으로 나오게
-
-    }
-
-
-    public void OpenItemInfo()
-    {
-        // _shopPanel.CurItemInfo = this;
-      //  _shopPanel.ShopPopup.SetActive(true);
-      //  SetItem(_item);
     }
 
     public void UpdateInfo()
@@ -185,7 +153,7 @@ public class ShopItem : BaseUI, IPointerClickHandler
         {
             buyButtonText.text = "매!\t진!";
             buyButton.onClick.RemoveListener(Buy);
-            itemImage.color = new Color(.3f, .3f, .3f, 1f); // 어둡게 
+            ShopItemImage.color = new Color(.3f, .3f, .3f, 1f); // 어둡게 
             //buyButton.gameObject.SetActive(false);
             // gameObject.SetActive(false);    // 기능 다 되면 비활성화 / 지우기
 

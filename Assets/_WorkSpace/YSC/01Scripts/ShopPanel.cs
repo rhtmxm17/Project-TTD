@@ -18,7 +18,6 @@ public class ShopPanel : BaseUI
     [SerializeField] public List<ShopItem> shopItems; // 나중에 HideInInspector
     [SerializeField] int itemCounter;
 
-    [SerializeField] public ShopItem CurItemInfo;
 
     [SerializeField] public GameObject ShopPopup;
 
@@ -27,25 +26,17 @@ public class ShopPanel : BaseUI
 
 
     // 팝업창
-    [SerializeField] public TMP_Text shopPopupText;
-    [SerializeField] public Image shopPopupImage;
-
-
+    [SerializeField] TMP_Text shopPopupText;
+    [SerializeField] Image shopPopupImage;
+    [SerializeField] TMP_Text shopPopupNameText;
+    // 팝업창열리게하는 버튼
     [SerializeField] Button[] shopPopupButton;
 
-    //  [SerializeField] private int _itemCount;
-    //  private int ItemCount
-    //  {
-    //      get => shopItems.Count;
-    //      set
-    //      {
-    //          _itemCount = value;
-    //      }
-    //  }
+
     private void Start()
     {
         Init();
-        // popupSpot = GetComponentInChildren<Button>();
+
     }
 
     private void Init()
@@ -58,10 +49,8 @@ public class ShopPanel : BaseUI
         shopNameText = GetUI<TMP_Text>("ShopNameText");
 
 
-
         GetUI<Button>("ShopTestButton1").onClick.AddListener(() => Open("ItemListScrollView"));
         GetUI<Button>("ShopTestButton2").onClick.AddListener(() => Open("ItemListScrollView2"));
-
 
         ShopPopup = GetUI("ShopPopup");
 
@@ -80,13 +69,10 @@ public class ShopPanel : BaseUI
 
         shopPopupText = GetUI<TMP_Text>("ShopPopupText");
         shopPopupImage = GetUI<Image>("ShopPopupImage");
-
+        shopPopupNameText = GetUI<TMP_Text>("ShopPopupNameText");
 
         GetUI<Button>("ShopPopupClose").onClick.AddListener(() => GoBack("ShopPopup")); // 닫기버튼
         GetUI<TMP_Text>("ShopPopupText").text = "불러온설명";
-        GetUI<Image>("ShopPopupImage"); // 누른 이미지에 따른 이미지 변경되도록...
-
-        // ShopItem.SetItem(누른아이템); 누른아이템으로 나오게
 
     }
     public void OpenPopup(int index)
@@ -98,17 +84,17 @@ public class ShopPanel : BaseUI
     private void UpdateItemList(int index)
     {
         shopPopupText.text = shopItems[index].Description;
+        shopPopupImage.sprite = shopItems[index].ShopItemImage.sprite;
+        shopPopupNameText.text = shopItems[index].ShopItemName;
     }
 
-    // TODO:
-    // 아이템별로 버튼 다 있으니까 Item01~끝번호까지 해서 
-    // 거기서 팝업창 띄우고  팝업창이 그 아이템에 맞게 정보를 띄우기
+
     private void SetPopupButtons()
     {
         // 버튼 추가
         for (int i = 0; i < shopItems.Count; i++)
         {
-            Debug.Log($"숫자 {i}");
+            // Debug.Log($"숫자 {i}");
             shopPopupButton[i] = shopItems[i].GetComponent<Button>();
             int index = i;
             shopPopupButton[i].onClick.AddListener(() => OpenPopup(index));
@@ -124,7 +110,7 @@ public class ShopPanel : BaseUI
 
 
 
-
+    #region 기본여닫이
     public void Open(string name)
     {
         Debug.Log($"{name} 패널을 엽니다");
@@ -136,6 +122,6 @@ public class ShopPanel : BaseUI
         Debug.Log($"{name} 패널을 닫습니다");
         GetUI(name).SetActive(false);
     }
-
+    #endregion
 
 }
