@@ -48,9 +48,9 @@ public class ShopPanel : BaseUI
         // 상점이름
         shopNameText = GetUI<TMP_Text>("ShopNameText");
 
-        // 다른 종류 상점들 추가
-        GetUI<Button>("ShopTestButton1").onClick.AddListener(() => Open("ItemListScrollView"));
-        GetUI<Button>("ShopTestButton2").onClick.AddListener(() => Open("ItemListScrollView2"));
+        // 다른 종류 상점들 추가 => CanvasSwitch 스크립트에서 관리
+        // GetUI<Button>("ShopTestButton1").onClick.AddListener(() => Open("ItemListScrollView"));
+        // GetUI<Button>("ShopTestButton2").onClick.AddListener(() => Open("ItemListScrollView2"));
 
         // 정보팝업
         ShopPopup = GetUI("ShopPopup");
