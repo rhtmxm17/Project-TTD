@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
-public class BossStageManager : StageManager
+public class BossStageManager : StageManager, IDamageAddable
 {
     [Header("Boss Stage Info")]
     [SerializeField]
@@ -33,13 +33,13 @@ public class BossStageManager : StageManager
 
     }
 
-    public void AddScore(float score)
+    public void IDamageAdd(float damage)
     {
         if (isTimeOver)
             return;
 
-        this.score += score;
-        scoreText.text = this.score.ToString();
+        score += damage;
+        scoreText.text = score.ToString();
     }
 
     IEnumerator StartTimerCO()
@@ -64,4 +64,5 @@ public class BossStageManager : StageManager
 
         base.OnClear();
     }
+
 }
