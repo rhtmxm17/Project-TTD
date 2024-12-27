@@ -26,6 +26,9 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
     [SerializeField] int id;
     public int Id => id;
 
+    [SerializeField] string title;
+    public string Title => title;
+
     [System.Serializable]
     public struct Dialogue
     {
@@ -81,9 +84,10 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
         BG_IMG,     // 다이얼로그
     }
 
-    public void ParseCsvSheet(int sheetId, string csv)
+    public void ParseCsvSheet(int sheetId, string title, string csv)
     {
         this.id = sheetId;
+        this.title = title;
 
         // 1. 장면 ID 찾기
         // 2. 그 행의 장면데이터 입력

@@ -21,7 +21,7 @@ public interface ICsvRowParseable
 public interface ICsvSheetParseable
 {
 #if UNITY_EDITOR
-    public void ParseCsvSheet(int id, string csv);
+    public void ParseCsvSheet(int id, string title, string csv);
 #endif
 }
 
@@ -254,6 +254,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     private struct SheetIndexer
     {
         public int id;
+        public string title;
         public string soPath;
         public string sheetId;
     }
@@ -285,7 +286,8 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
                 {
                     id = id,
                     soPath = $"{soFolderPath}/{cells[1]}.asset",
-                    sheetId = cells[2],
+                    title = cells[2],
+                    sheetId = cells[3],
                 });
             }
 
@@ -314,7 +316,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
                 if (System.IO.File.Exists(sheetIndex[i].soPath))
                 {
                     soAsset = AssetDatabase.LoadAssetAtPath(sheetIndex[i].soPath, typeof(T)) as T;
-                    soAsset.ParseCsvSheet(sheetIndex[i].id, result);
+                    soAsset.ParseCsvSheet(sheetIndex[i].id, sheetIndex[i].title, result);
 
                     EditorUtility.SetDirty(soAsset);
                 }
@@ -322,7 +324,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
                 {
                     soAsset = ScriptableObject.CreateInstance<T>();
 
-                    soAsset.ParseCsvSheet(sheetIndex[i].id, result);
+                    soAsset.ParseCsvSheet(sheetIndex[i].id, sheetIndex[i].title, result);
 
                     AssetDatabase.CreateAsset(soAsset, sheetIndex[i].soPath);
                 }

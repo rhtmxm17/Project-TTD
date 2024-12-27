@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 
@@ -26,12 +24,12 @@ public class StoryDirector : BaseUI
     [SerializeField] TMP_Text nameText;
     [SerializeField] TMP_Text dialogueText;
 
+    [Header("버튼")]
+    [SerializeField] Button backGroundButton;
+
     [Header("연출")]
     [SerializeField] RectTransform standingImageParent;
     [SerializeField] RawImage backGroundImage;
-
-    // 화면 터치 인풋
-    private InputAction clickAction;
 
     /// <summary>
     /// 현재 출력 진행중인 다이얼로그의 tweening<br/>
@@ -49,32 +47,10 @@ public class StoryDirector : BaseUI
     // [SerializeField]  bool isAuto = false;
     // private int autoCounter = 0;
 
-
-    private void Start()
-    {
-        if (storyData != null)
-        {
-            SetDirectionData(storyData);
-        }
-
-        // 시작할때 첫 대사
-        StoryPrint(dialogueCounter);
-    }
-
     protected override void Awake()
     {
         base.Awake();
-        clickAction = GameManager.Input.actions["Touch"];
-    }
-
-    private void OnEnable()
-    {
-        clickAction.started += ClickAction_Started;
-    }
-
-    private void OnDisable()
-    {
-        clickAction.started -= ClickAction_Started;
+        backGroundButton.onClick.AddListener(ClickAction_Started);
     }
 
     private void OnDestroy() => ClearActors();
@@ -82,6 +58,7 @@ public class StoryDirector : BaseUI
     public void SetDirectionData(StoryDirectingData storyData)
     {
         this.storyData = storyData;
+        dialogueCounter = 0;
         maxDialogueCounter = storyData.Dialogues.Length;
 
         ClearActors();
@@ -94,6 +71,8 @@ public class StoryDirector : BaseUI
             actors[actor.ActorId].gameObject.SetActive(false);
 
         }
+
+        StoryPrint(dialogueCounter);
     }
 
     private void ClearActors()
@@ -109,12 +88,8 @@ public class StoryDirector : BaseUI
         }
     }
 
-    private void ClickAction_Started(InputAction.CallbackContext obj)
+    private void ClickAction_Started()
     {
-        // 다른 버튼이 선택되었을 경우 무시
-        if (EventSystem.current.currentSelectedGameObject == true)
-            return;
-
         if (playingDialougeTween == null)
         {
             PlayNextDialogue();
@@ -190,7 +165,6 @@ public class StoryDirector : BaseUI
         // TODO : 스토리 끝난 이후 할 행동에 대한 구현
         // 기획 의도에 따라 자동으로 다음 스토리로 넘어갈지, 혹은 전투씬에서 스토리를 부를 경우 창을 바로 없앨지 등에 고민
         Debug.Log("스토리 출력 끝");
-        clickAction.started -= ClickAction_Started;
 
         // 3초 후 창을 닫음
         Destroy(this.gameObject, 3f);

@@ -29,7 +29,7 @@ public class StoryUI : BaseUI
                 dircetorInstance.SetDirectionData(storys[instance.Id]);
             });
 
-            instance.Text.text = storys[i].name;
+            instance.Text.text = storys[i].Title;
         }
     }
 }
