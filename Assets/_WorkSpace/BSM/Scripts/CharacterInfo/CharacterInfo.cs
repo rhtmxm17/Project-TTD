@@ -21,10 +21,36 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private int _characterLevel;
 
     private int _hp;
+
+    public int Hp
+    {
+        get => _hp;
+        set { _hp = value; }
+    }
+
     private int _atk;
+
+    public int Atk
+    {
+        get => _atk;
+        set { _atk = value; }
+    }
+
     private int _def;
+
+    public int Def
+    {
+        get => _def;
+        set { _def = value; }
+    }
+
     private int _powerLevel;
 
+    public int PowerLevel
+    {
+        get => _powerLevel;
+        set { _powerLevel = value; }
+    }
 
     public int CharacterLevel
     {
@@ -176,6 +202,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         TestMyGold -= characterLevelUpCost;
         characterLevelUpCost = 100 * _characterData.Level.Value;
         _characterLevel = _characterData.Level.Value;
+
         CharacterStats();
         UpdateInfo();
 
@@ -187,13 +214,19 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// </summary>
     private void CharacterStats()
     {
+        Debug.Log($"캐릭터 레벨 :{_characterLevel}");
         _hp = _characterLevel *
               (int)(_characterData.StatusTable.healthPointBase + _characterData.StatusTable.healthPointGrouth);
         _atk = _characterLevel *
                (int)(_characterData.StatusTable.attackPointBase + _characterData.StatusTable.attackPointGrowth);
         _def = _characterLevel *
                (int)(_characterData.StatusTable.defensePointBase + _characterData.StatusTable.defensePointBase);
-
+        
+        Debug.Log($"{_characterData.name} : {_hp}");
+        Debug.Log($"{_characterData.name} : {_atk}");
+        Debug.Log($"{_characterData.name} : {_def}");
+  
+        
         _powerLevel = (_hp + _atk + _def);
     }
 
