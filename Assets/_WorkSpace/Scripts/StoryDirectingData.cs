@@ -3,12 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-
 #if UNITY_EDITOR
 using UnityEditor;
+
+[CustomEditor(typeof(StoryDirectingData))]
+public class StoryDirectingDataEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        if (GUILayout.Button("테이블 매니저 바로가기"))
+        {
+            UnityEditor.Selection.activeObject = DataTableManager.Instance;
+        }
+
+        base.OnInspectorGUI();
+    }
+}
 #endif
 
-[CreateAssetMenu(menuName = "ScriptableObjects/StoryDirectingData")]
 public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
 {
     [System.Serializable]
