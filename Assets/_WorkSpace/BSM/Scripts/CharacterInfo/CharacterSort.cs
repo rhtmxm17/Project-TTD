@@ -100,8 +100,8 @@ public class CharacterSort : MonoBehaviour
                     int newType = (int)newData.StatusTable.type;
                     int oldType = (int)oldData.StatusTable.type;
                     
-                    _sortCharacterInfos[i].SetListTypeText(((FilterType)newType).ToString());
-                    _sortCharacterInfos[j].SetListTypeText(((FilterType)oldType).ToString());
+                    _sortCharacterInfos[i].SetListTypeText(((ElementType)newType).ToString());
+                    _sortCharacterInfos[j].SetListTypeText(((ElementType)oldType).ToString());
                     
                     _sortCharacterInfos[i].SetListImage(newData.FaceIconSprite);
                     _sortCharacterInfos[j].SetListImage(oldData.FaceIconSprite);

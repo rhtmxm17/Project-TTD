@@ -13,7 +13,7 @@ public class CharacterFilter : MonoBehaviour
 
     private CharacterFilterUI _characterFilterUI;
 
-    public List<FilterType> _characterFilterTypes = new List<FilterType>();
+    public List<ElementType> _characterFilterTypes = new List<ElementType>();
 
     private void Awake()
     {
@@ -27,41 +27,43 @@ public class CharacterFilter : MonoBehaviour
 
     private void SubscribeFilterEvent()
     {
-        _characterFilterUI._fireFilterButton.onClick.AddListener(() => FilterEventFunc(FilterType.FIRE));
-        _characterFilterUI._waterFilterButton.onClick.AddListener(() => FilterEventFunc(FilterType.WATER));
-        _characterFilterUI._grassFilterButton.onClick.AddListener(() => FilterEventFunc(FilterType.GRASS));
-        _characterFilterUI._groundFilterButton.onClick.AddListener(() => FilterEventFunc(FilterType.GROUND));
-        _characterFilterUI._electricFilterButton.onClick.AddListener(() => FilterEventFunc(FilterType.ELECTRIC));
-
+        _characterFilterUI._fireFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.FIRE));
+        _characterFilterUI._waterFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.WATER));
+        _characterFilterUI._grassFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.GRASS));
+        _characterFilterUI._groundFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.GROUND));
+        _characterFilterUI._electricFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.ELECTRIC));
+        
+        //TODO: 역할군에 대한 버튼들 이벤트 등록 필요
+        
         _characterFilterUI._allFilterButton.onClick.AddListener(AllFilterClear);
     }
 
     /// <summary>
     /// 필터 이벤트 실행할 함수
     /// </summary>
-    /// <param name="filterType"></param>
-    private void FilterEventFunc(FilterType filterType)
+    /// <param name="elementType"></param>
+    private void FilterEventFunc(ElementType elementType)
     {
         //0:불 / 1:물 / 2:풀 / 3:땅 / 4:번개 
-        if (_characterFilterTypes.Contains(filterType))
+        if (_characterFilterTypes.Contains(elementType))
         {
             //필터 해제
-            CharacterListFilterClear(filterType);
+            CharacterListFilterClear(elementType);
             
         }
         else
         {
             //필터 진행
-            _characterFilterTypes.Add(filterType);
-            CharacterListFilter(filterType);
+            _characterFilterTypes.Add(elementType);
+            CharacterListFilter(elementType);
         }
     }
 
     /// <summary>
     /// 캐릭터 필터 설정
     /// </summary>
-    /// <param name="filterType"></param>
-    private void CharacterListFilter(FilterType filterType)
+    /// <param name="elementType"></param>
+    private void CharacterListFilter(ElementType elementType)
     {
         int temp = 0;
         
@@ -73,7 +75,7 @@ public class CharacterFilter : MonoBehaviour
             {
                 temp = (int)_filterCharacterInfos[_infosIndex[i]]._CharacterData.StatusTable.type;
                 
-                if (temp == (int)filterType)
+                if (temp == (int)elementType)
                 {
                     _filterCharacterInfos[_infosIndex[i]].gameObject.SetActive(true);
                     _infosIndex.RemoveAt(i);
@@ -85,7 +87,7 @@ public class CharacterFilter : MonoBehaviour
         else
         { 
             //현재 타입 외 모든 타입들 필터링 진행
-            _infosIndex = _filterCharacterInfos.Where(x => (int)x._CharacterData.StatusTable.type != (int)filterType)
+            _infosIndex = _filterCharacterInfos.Where(x => (int)x._CharacterData.StatusTable.type != (int)elementType)
                 .Select(x => _filterCharacterInfos.IndexOf(x)).ToList();
 
             for (int i = 0; i < _infosIndex.Count; i++)
@@ -98,16 +100,16 @@ public class CharacterFilter : MonoBehaviour
     /// <summary>
     /// 캐릭터 필터 해제
     /// </summary>
-    /// <param name="filterType"></param>
-    private void CharacterListFilterClear(FilterType filterType)
+    /// <param name="elementType"></param>
+    private void CharacterListFilterClear(ElementType elementType)
     {
-        _characterFilterTypes.Remove(filterType);
+        _characterFilterTypes.Remove(elementType);
         
         //필터 제거했을 때 마지막이 아닌 상태
         if (_characterFilterTypes.Count > 0)
         {
             //필터가 1개 남아있는 상태이므로 그 타입을 제외한 해제한 타입은 필터링 진행
-            int[] tempArr = _filterCharacterInfos.Where(x => (int)x._CharacterData.StatusTable.type == (int)filterType)
+            int[] tempArr = _filterCharacterInfos.Where(x => (int)x._CharacterData.StatusTable.type == (int)elementType)
                 .Select(x => _filterCharacterInfos.IndexOf(x)).ToArray();
 
             for (int i = 0; i < tempArr.Length; i++)

@@ -77,7 +77,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         int type = (int)_characterData.StatusTable.type;
         
         SetListNameText(_characterData.Name);
-        SetListTypeText(((FilterType)type).ToString());
+        SetListTypeText(((ElementType)type).ToString());
         SetListImage(_characterData.FaceIconSprite);
         SubscribeEvent();
         GetCharacterDBValue();

@@ -34,7 +34,13 @@ public enum InfoTabType
 }
 
 [System.Serializable]
-public enum FilterType
+public enum ElementType
 {
     FIRE, WATER, GRASS, GROUND, ELECTRIC
+}
+
+[System.Serializable]
+public enum RoleType
+{
+    
 }
