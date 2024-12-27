@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,50 +10,27 @@ public class MonsterWaveSetter : MonoBehaviour
     //TODO : 필요시 나중에 타입 지정
     [SerializeField] Combatable monsterPrefab;
 
-
-    List<Vector2> position = new List<Vector2>()
+    public void InitCharacters(StageData.WaveInfo waveData)
     {
-        new Vector2(7.223999f,  5.509857f),
-        new Vector2(7.223999f,  1.889847f),
-        new Vector2(7.223999f, -1.930145f),
-        new Vector2(10.754f,  5.509857f),
-        new Vector2(10.754f,  1.889847f),
-        new Vector2(10.754f, -1.930145f),
-        new Vector2(14.474f,  5.509857f),
-        new Vector2(14.474f,  1.889847f),
-        new Vector2(14.474f, -1.930145f)
-    };
-
-    public void InitCharacters(List<CharacterData> characterDatas)
-    {
-        if (characterDatas.Count <= 0)
+        if (waveData.monsters.Count <= 0)
             return;
 
-        SpawnCharacterDataSet(characterDatas);
-    }
-
-    private void SpawnCharacterDataSet(List<CharacterData> characterDataList)
-    {
         CombManager group = GetComponent<CombManager>();
         List<Combatable> characters = new List<Combatable>();
 
-        for (int i = 0; i < characterDataList.Count; i++)
+        foreach (StageData.MonsterInfo monsterData in waveData.monsters)
         {
 
-            Combatable charObj = Instantiate(monsterPrefab, position[i], Quaternion.identity, transform);
+            Combatable charObj = Instantiate(monsterPrefab, monsterData.pose, Quaternion.identity, transform);
             charObj.onDeadEvent.AddListener((charobj) => { StageManager.Instance.AddPartyCost(1); });
-            characters.Add(charObj);
-            GameObject model = Instantiate(characterDataList[i].ModelPrefab, charObj.transform);
-            model.name = "Model";
-
-            charObj.Initialize(model.GetComponent<Animator>(), group, characterDataList[i]);
+            charObj.InitializeWithLevel(group, monsterData.character, monsterData.level); // 스테이지 정보에 입력된 레벨로 생성
 
             //테스트용 코드?
-            charObj.GetComponent<SpriteRenderer>().sprite = characterDataList[i].FaceIconSprite;
+            charObj.GetComponent<SpriteRenderer>().sprite = monsterData.character.FaceIconSprite;
 
+            characters.Add(charObj);
         }
 
         GetComponent<CombManager>().CharList = characters;
-
     }
 }

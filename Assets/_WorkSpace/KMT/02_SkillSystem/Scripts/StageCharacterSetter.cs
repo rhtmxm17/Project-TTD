@@ -61,15 +61,12 @@ public class StageCharacterSetter : MonoBehaviour
             CharacterCombatable charObj = Instantiate(characterPrefab, position[pair.Key], Quaternion.identity, transform);
             characters.Add(charObj);
 
-            GameObject model = Instantiate(pair.Value.ModelPrefab, charObj.transform);
-            model.name = "Model";
-
-            charObj.Initialize(model.GetComponent<Animator>(), group, pair.Value);
+            charObj.Initialize(group, pair.Value);
 
             //테스트용 코드?
             charObj.GetComponent<SpriteRenderer>().sprite = pair.Value.FaceIconSprite;
 
-            charObj.InitCharacterData(pair.Value,
+            charObj.InitCharacterData(
                             Instantiate(basicSkillButtonPrefab, skillPanel.transform),
                             Instantiate(secondSkillButtonPrefab, secondSkillPanel.transform));
 

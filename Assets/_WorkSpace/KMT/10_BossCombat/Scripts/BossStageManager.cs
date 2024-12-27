@@ -57,4 +57,11 @@ public class BossStageManager : StageManager
         RankApplier.ApplyRank("boss", UserData.myUid, UserData.myNickname, (long)(score + timeLimit));
     }
 
+    protected override void OnClear()
+    {
+        // TODO: 보스 몬스터 처치 구현 필요시 여기서 결과 처리
+        Debug.LogWarning("아직 정의되지 않은 동작");
+
+        base.OnClear();
+    }
 }

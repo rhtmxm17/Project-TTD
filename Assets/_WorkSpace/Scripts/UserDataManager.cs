@@ -355,6 +355,32 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             return this;
         }
 
+        public UpdateDbChain AddDBValue(PropertyAdapter<long> property, int value)
+        {
+#if DEBUG
+            if (updates.ContainsKey(property.Key))
+            {
+                Debug.LogWarning("한 스트림에 데이터를 두번 갱신하고 있음");
+            }
+#endif //DEBUG
+            property.RegisterToChain(this, property.Value + value);
+
+            return this;
+        }
+
+        public UpdateDbChain AddDBValue(PropertyAdapter<double> property, float value)
+        {
+#if DEBUG
+            if (updates.ContainsKey(property.Key))
+            {
+                Debug.LogWarning("한 스트림에 데이터를 두번 갱신하고 있음");
+            }
+#endif //DEBUG
+            property.RegisterToChain(this, property.Value + value);
+
+            return this;
+        }
+
         public UpdateDbChain SetDBDictionary<T>(DictionaryAdapter<T> property, Dictionary<string, T> value)
         {
 #if DEBUG
