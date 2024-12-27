@@ -15,8 +15,7 @@ public class ShopPanel : BaseUI
 
     // // 상점 아이템 
     [SerializeField] public List<ShopItem> shopItems; // 나중에 HideInInspector
-    // 아이탬 갯수 새고 리스트에 패스
-    [SerializeField] int itemCounter;
+    
     // 팝업창열리게하는 버튼
     [SerializeField] Button[] shopPopupButton;
 
@@ -31,7 +30,13 @@ public class ShopPanel : BaseUI
     [SerializeField] Image shopPopupImage;
     [SerializeField] TMP_Text shopPopupNameText;
 
-
+    private int _itemCount;
+    // 아이탬 갯수 새고 리스트에 패스
+    [SerializeField] int itemCounter
+    {
+        get => shopItems.Count;
+        set => _itemCount = value;
+    }
     private void Start()
     {
         Init();
@@ -63,6 +68,8 @@ public class ShopPanel : BaseUI
     {
         shopItems = GetComponentsInChildren<ShopItem>().ToList();
         itemCounter = shopItems.Count;
+        // 버튼 개수 양만큼 추가
+        shopPopupButton = new Button[itemCounter];
     }
     private void SetShopPopup() // 정보팝업창 UI 변수
     {
@@ -79,7 +86,7 @@ public class ShopPanel : BaseUI
     {
         for (int i = 0; i < shopItems.Count; i++)
         {
-            // Debug.Log($"숫자 {i}");
+            Debug.Log($"숫자 {i}");
             shopPopupButton[i] = shopItems[i].GetComponent<Button>();
             int index = i;
             shopPopupButton[i].onClick.AddListener(() => OpenPopup(index));
