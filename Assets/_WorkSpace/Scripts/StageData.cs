@@ -4,6 +4,20 @@ using UnityEngine;
 
 #if UNITY_EDITOR
 using UnityEditor;
+
+[CustomEditor(typeof(StageData))]
+public class StageDataDataEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        if (GUILayout.Button("테이블 매니저 바로가기"))
+        {
+            UnityEditor.Selection.activeObject = DataTableManager.Instance;
+        }
+
+        base.OnInspectorGUI();
+    }
+}
 #endif
 
 public class StageData : ScriptableObject

@@ -3,14 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-
 #if UNITY_EDITOR
 using UnityEditor;
+
+[CustomEditor(typeof(StoryDirectingData))]
+public class StoryDirectingDataEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        if (GUILayout.Button("테이블 매니저 바로가기"))
+        {
+            UnityEditor.Selection.activeObject = DataTableManager.Instance;
+        }
+
+        base.OnInspectorGUI();
+    }
+}
 #endif
 
-[CreateAssetMenu(menuName = "ScriptableObjects/StoryDirectingData")]
 public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
 {
+    [SerializeField] int id;
+    public int Id => id;
+
+    [SerializeField] string title;
+    public string Title => title;
+
     [System.Serializable]
     public struct Dialogue
     {
@@ -54,19 +72,23 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
         ID,         // 다이얼로그
         SPEAKER,    // 다이얼로그
         SCRIPT,     // 다이얼로그
-        STANDING_IMAGE_ID,  // 트랜지션
-        LEAVE,              // 트랜지션
-        FLIP,               // 트랜지션
-        COLOR_MULT,         // 트랜지션
-        POS_X,              // 트랜지션
-        POS_Y,              // 트랜지션
+        STANDING_IMAGE_ID,  // 스탠딩 이미지
+        LEAVE,              // 스탠딩 이미지
+        FLIP,               // 스탠딩 이미지
+        COLOR_MULT,         // 스탠딩 이미지
+        POS_X,              // 스탠딩 이미지
+        POS_Y,              // 스탠딩 이미지
+        TRANSITION,         // 스탠딩 이미지
         BGM,        // 다이얼로그
         SFX,        // 다이얼로그
         BG_IMG,     // 다이얼로그
     }
 
-    public void ParseCsvSheet(string csv)
+    public void ParseCsvSheet(int sheetId, string title, string csv)
     {
+        this.id = sheetId;
+        this.title = title;
+
         // 1. 장면 ID 찾기
         // 2. 그 행의 장면데이터 입력
         // 3. 다음 행부터 ID열이 비어있다면 스탠딩이미지 데이터로 취급해 추가
@@ -81,7 +103,7 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
             string[] cells = line.Split(',');
 
             // 0번열은 다이얼로그 ID
-            if (int.TryParse(cells[0], out int id))
+            if (int.TryParse(cells[0], out int _))
             {
                 Dialogue parsed = new Dialogue();
                 parsed.Transitions = new List<TransitionInfo>();
