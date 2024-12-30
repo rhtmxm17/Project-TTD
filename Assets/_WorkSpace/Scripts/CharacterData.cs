@@ -70,13 +70,13 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     [SerializeField] Sprite normalSkillIcon;
     public Sprite NormalSkillIcon => normalSkillIcon;
 
-    [SerializeField] new string normalSkillToolTip;
+    [SerializeField] string normalSkillToolTip;
     public string NormalSkillToolTip => normalSkillToolTip;
     
     [SerializeField] Sprite specialSkillIcon;
     public Sprite SpecialSkillIcon => specialSkillIcon;
 
-    [SerializeField] new string specialSkillToolTip;
+    [SerializeField] string specialSkillToolTip;
     public string SpecialSkillToolTip => specialSkillToolTip;
     
     [SerializeField] GameObject modelPrefab;
@@ -103,11 +103,13 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     /// </summary>
     public UserDataInt Level { get; private set; }
     public UserDataInt Enhancement { get; private set; }
+    public UserDataFloat EnhanceMileage { get; private set; }
 
     private void OnEnable()
     {
         Level = new UserDataInt($"Characters/{id}/Level");
         Enhancement = new UserDataInt($"Characters/{id}/Enhancement");
+        EnhanceMileage = new UserDataFloat($"Characters/{id}/EnhanceMileage");
     }
     #endregion
 
@@ -126,11 +128,11 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         NORMAL_SKILL,
         NS_COOLDOWN,
         NS_ICON,
-        NS_ToolTip,
+        NS_TOOLTIP,
         SPECIAL_SKILL,
         SS_COST,
         SS_ICON,
-        SS_ToolTip,
+        SS_TOOLTIP,
         RANGE,
         ATK_BASE,
         ATK_GROWTH,
@@ -161,16 +163,6 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         if (faceIconSprite == null)
             faceIconSprite = DataTableManager.Instance.DummySprite;
 
-        //normal_Skill_Icon
-        normalSkillIcon = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.NS_ICON]}.asset");
-        if (normalSkillIcon == null)
-            normalSkillIcon = DataTableManager.Instance.DummySprite;
-        
-        //Special_Skill_Icon
-        specialSkillIcon = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.SS_ICON]}.asset");
-        if (specialSkillIcon == null)
-            specialSkillIcon = DataTableManager.Instance.DummySprite;
-         
         // SHAPE
         modelPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{DataTableManager.PrefabsAssetFolder}/{cells[(int)Column.SHAPE]}.prefab");
 
@@ -180,11 +172,6 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         // NORMAL_SKILL
         skillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.NORMAL_SKILL]}.asset");
 
-        // SPECIAL_SKILL
-        secondSkillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.SPECIAL_SKILL]}.asset");
-
-        
-        
         // NS_COOLDOWN
         if (false == float.TryParse(cells[(int)Column.NS_COOLDOWN], out statusTable.BasicSkillCooldown))
         {
@@ -192,12 +179,31 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
             return;
         }
 
+        // NS_ICON
+        normalSkillIcon = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.NS_ICON]}.asset");
+        if (normalSkillIcon == null)
+            normalSkillIcon = DataTableManager.Instance.DummySprite;
+
+        // NS_TOOLTIP
+        normalSkillToolTip = cells[(int)Column.NS_TOOLTIP];
+
+        // SPECIAL_SKILL
+        secondSkillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.SPECIAL_SKILL]}.asset");
+
         // SS_COST
         if (false == float.TryParse(cells[(int)Column.SS_COST], out statusTable.SecondSkillCost))
         {
             Debug.LogError($"잘못된 데이터로 갱신 시도됨");
             return;
         }
+
+        //Special_Skill_Icon
+        specialSkillIcon = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.SS_ICON]}.asset");
+        if (specialSkillIcon == null)
+            specialSkillIcon = DataTableManager.Instance.DummySprite;
+
+        // SS_TOOLTIP
+        specialSkillToolTip = cells[(int)Column.SS_TOOLTIP];
 
         // RANGE
         if (false == float.TryParse(cells[(int)Column.RANGE], out statusTable.Range))
@@ -261,23 +267,22 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
             Debug.LogError($"잘못된 데이터로 갱신 시도됨");
             return;
         }
-        
+        statusTable.type = (CharacterType)type;
+
         // CHAR_ROLE_TYPE
         if (false == int.TryParse(cells[(int)Column.ROLE_TYPE], out int roleType))
         {
             Debug.LogError($"잘못된 데이터로 갱신 시도됨");
             return;
         }
-        
+        statusTable.roleType = (CharacterRoleType)roleType;
+
         // CHAR_DRAGON_TYPE
         if (false == int.TryParse(cells[(int)Column.DRAGONVEIN_TYPE], out int dragonType))
         {
             Debug.LogError($"잘못된 데이터로 갱신 시도됨");
             return;
         }
-        
-        statusTable.type = (CharacterType)type;
-        statusTable.roleType = (CharacterRoleType)roleType;
         statusTable.dragonVeinType = (CharacterDragonVeinType)dragonType;
     }
 #endif
