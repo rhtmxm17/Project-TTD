@@ -24,6 +24,9 @@ public class DialogueUI : BaseUI
     Button EmojiButtonPrefab;
 
     int maxChattingCnt;
+    
+    //현재 접속자의 닉네임
+    string nick;
 
     TMP_InputField input;
     Button sendBtn;
@@ -51,8 +54,8 @@ public class DialogueUI : BaseUI
         emojiContentTransform = GetUI<Transform>("EmojiContents");
 
         //TODO : 초기화 타이밍 잡기. [ 현재 방문한 룸의 주인 UID ]
-        curUsersDialogueRef = GameManager.Database.RootReference.Child($"Users/{curUid}/dialogues");
-
+/*        curUsersDialogueRef = GameManager.Database.RootReference.Child($"Users/{curUid}/dialogues");
+*/
         #region 이모티콘 영역
 
         emojiButton.onClick.AddListener(emojiPanelParent.OpenWindow);
@@ -72,11 +75,15 @@ public class DialogueUI : BaseUI
 
         maxChattingCnt = chatingList.Length - 1;
 
-        sendBtn.onClick.AddListener(SendMessage);        
+        sendBtn.onClick.AddListener(SendMessage);
+
+        nick = GameManager.UserData.Profile.Name.Value;
+
     }
 
     private void OnEnable()
     {
+        curUsersDialogueRef = GameManager.Database.RootReference.Child($"Users/{curUid}/dialogues");
         curUsersDialogueRef.ValueChanged += DialogueUpdated;
     }
 
@@ -92,20 +99,9 @@ public class DialogueUI : BaseUI
 
     void Start()
     {
-        nick = GameManager.UserData.Profile.Name.Value;
         Refresh();
     }
 
-    [Header("현재 접속한 사람의 uid와 닉네임")]
-    /*    [SerializeField]
-        string uid;
-        [SerializeField]
-        string nick;*/
-
-    //[SerializeField]
-    //string uid;
-    [SerializeField]//TODO : 나중에 초기화 타이밍 조절
-    string nick;
 
     void SendMessage()
     {
@@ -162,6 +158,7 @@ public class DialogueUI : BaseUI
             }
 
             DataSnapshot snapshot = task.Result;
+            Debug.Log(task.Result.ChildrenCount);
             Dictionary<string, object> updateDataDic = new Dictionary<string, object>();
 
             long curChildIdx = snapshot.ChildrenCount - 1;
@@ -174,6 +171,9 @@ public class DialogueUI : BaseUI
 
             foreach (DataSnapshot content in task.Result.Children)
             {
+                Debug.Log("enter");
+                Debug.Log(content.Child("content").Value.ToString());
+
                 if (curChildIdx < maxChattingCnt && curChildIdx >= 0)//채팅블록 재설정
                 {
 

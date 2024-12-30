@@ -13,6 +13,11 @@ public class RequestedList : MonoBehaviour
 
     DatabaseReference userRef;
 
+    private void Awake()
+    {
+        GetComponent<OpenableWindow>().onOpenAction += RefreshList;
+    }
+
     [ContextMenu("refresh")]
     public void RefreshList()
     {
