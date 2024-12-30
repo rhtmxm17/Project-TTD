@@ -23,7 +23,7 @@ public class ItemGainCell : MonoBehaviour
     [Header("아이템 이미지")]
     [SerializeField] public Image itemImage;
 
-    private void SetItem(ItemData item)
+    public void SetItem(ItemData item)
     {
         itemID = item.Id;
         itemName = item.ItemName;

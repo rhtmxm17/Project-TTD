@@ -33,16 +33,24 @@ public class ItemGainPopup : MonoBehaviour
     [SerializeField] public ShopPopupController infoPopup;
     [SerializeField] Button infoPopupButton;
     [SerializeField] ItemData _item;
+    [SerializeField] RectTransform _ItemContent;
+
+
+    [SerializeField] List<ItemData> _items;
+    [SerializeField] private List<ItemGainCell> _itemGainList;
 
     private void Awake()
     {
         itemGainPopup = GetComponent<ItemGainPopup>();
        //  backGroundButton.onClick.AddListener(onPopupClosed);
        // _item = GetComponent<ItemData>();
-        infoPopupButton = itemGainCellPrefab.GetComponent<Button>();
-        infoPopupButton.onClick.AddListener(() => Popup(_item));
+       // infoPopupButton = itemGainCellPrefab.GetComponent<Button>();
+       // infoPopupButton.onClick.AddListener(() => Popup(_item));
     }
-
+    private void Start()
+    {
+        ListUpItems();
+    }
     /// <summary>
     /// 획득한 아이템 목록을 등록하는 초기화 함수
     /// </summary>
@@ -51,7 +59,7 @@ public class ItemGainPopup : MonoBehaviour
     {
          foreach (ItemGainInfo info in gain)
          {
-             ItemGainCell instance = Instantiate(itemGainCellPrefab, layoutGroup.transform.GetChild(0));
+             ItemGainCell instance = Instantiate(itemGainCellPrefab, layoutGroup.transform);
 
             // 정보 출력칸 초기화
             // 별도의 클래스 선언 대신 itemGainCell을 BaseUI 타입으로 넣어서 바인딩 해도 무방
@@ -59,10 +67,21 @@ public class ItemGainPopup : MonoBehaviour
             instance.NumberText = info.number.ToString();
          }
     }
+    private void ListUpItems()
+    {
+        _itemGainList = new List<ItemGainCell>(_items.Count);
 
+        foreach (ItemData gains in _items)
+        {
+            ItemGainCell cell = Instantiate(itemGainCellPrefab, layoutGroup.transform);
+            // cell.SetItem(_item);
+            cell.GetComponent<Button>().onClick.AddListener(() => Popup(_item));
+        }
+
+    }
     private void Popup(ItemData data)
     {
-         ShopPopupController popup = Instantiate(infoPopup, GameManager.PopupCanvas);
+         ShopPopupController popup = Instantiate(infoPopup, _ItemContent);
          popup.Initialize(data);
     }
     private void StageClearReward(StageData data)
