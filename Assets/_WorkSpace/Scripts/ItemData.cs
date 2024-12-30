@@ -24,9 +24,9 @@ public class ItemDataEditor : Editor
 
         Rect rect = GUILayoutUtility.GetAspectRect(2f);
         rect.width *= 0.5f;
-        if (itemData.SspriteImage != null)
+        if (itemData.SpriteImage != null)
         {
-            Texture2D texture = AssetPreview.GetAssetPreview(itemData.SspriteImage);
+            Texture2D texture = AssetPreview.GetAssetPreview(itemData.SpriteImage);
             GUI.DrawTexture(rect, texture);
         }
 
@@ -34,6 +34,13 @@ public class ItemDataEditor : Editor
     }
 }
 #endif
+
+[System.Serializable]
+public struct ItemGain
+{
+    public ItemData item;
+    public int gain;
+}
 
 public class ItemData : ScriptableObject, ICsvRowParseable
 {
@@ -44,7 +51,7 @@ public class ItemData : ScriptableObject, ICsvRowParseable
     public string ItemName => itemName;
 
     [SerializeField] Sprite spriteImage;
-    public Sprite SspriteImage => spriteImage;
+    public Sprite SpriteImage => spriteImage;
 
     [SerializeField] string description;
     public string Description => description;
