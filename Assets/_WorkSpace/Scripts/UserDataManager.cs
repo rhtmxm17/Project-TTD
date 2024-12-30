@@ -199,6 +199,27 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                 }
             }
 
+            // 상점 데이터 로딩
+            if (userData.HasChild("ShopItems"))
+            {
+                DataSnapshot allShopItemData = userData.Child("ShopItems");
+
+                // 키 값 조회 == 구매 기록 존재 여부 확인
+                foreach (DataSnapshot singleStageData in allShopItemData.Children)
+                {
+                    // DB에서 가져온 키값 문자열 int로 파싱하기 vs 문자열을 키값으로 쓰기
+                    if (false == int.TryParse(singleStageData.Key, out int id))
+                    {
+                        Debug.LogWarning($"잘못된 키 값({singleStageData.Key})");
+                        continue;
+                    }
+
+                    ShopItemData shopItemData = GameManager.TableData.GetShopItemData(id);
+
+                    shopItemData.Bought.SetValueWithDataSnapshot(userData);
+                }
+            }
+
             onLoadUserDataCompleted?.Invoke();
             onLoadUserDataCompleted.RemoveAllListeners();
         });
