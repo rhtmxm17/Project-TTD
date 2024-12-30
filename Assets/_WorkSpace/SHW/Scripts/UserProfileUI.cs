@@ -62,7 +62,7 @@ public class UserProfileUI : BaseUI
             SetIntroduction();
         });
         // 이름 변경 창 열기
-        GetUI<Button>("ChangeNameButton").onClick.AddListener(() => OpenPopup("ChangeNamePopup"));
+        GetUI<Button>("NameBox").onClick.AddListener(() => OpenPopup("ChangeNamePopup"));
         // 이름변경 창 닫기 & 이름 변경
         GetUI<Button>("NameConfirm").onClick.AddListener(() =>
         {
