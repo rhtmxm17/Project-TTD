@@ -52,7 +52,7 @@ public class GameManager : SingletonBehaviour<GameManager>
     {
         this.stageData = StageData;
         SceneManager.sceneLoaded += OnStageSceneLoaded;
-        SceneManager.LoadSceneAsync("SecondSkillSystem_kmt");
+        SceneManager.LoadSceneAsync("StageDefault");
     }
 
     /// <summary>
@@ -62,9 +62,8 @@ public class GameManager : SingletonBehaviour<GameManager>
     {
         GameObject.FindWithTag("GameController").TryGetComponent(out StageManager stageManager);
 
-        // TODO: 스테이지 데이터로 초기화
-        // stageManager.Initialize(stageData);
-
+        stageManager.Initialize(stageData);
+        stageManager.StartGameOnSceneLoaded();
         SceneManager.sceneLoaded -= OnStageSceneLoaded;
     }
 

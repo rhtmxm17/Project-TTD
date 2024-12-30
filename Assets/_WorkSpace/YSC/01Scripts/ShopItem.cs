@@ -51,8 +51,11 @@ public class ShopItem : BaseUI
     {
         Init();
 
-        // 테스트용 가짜 유저 세팅
-        UserDataManager.InitDummyUser(3);
+        GameManager.UserData.TryInitDummyUserAsync(3, () =>
+        {
+            Debug.Log("완료");
+
+        });
     }
     private void Init()
     {

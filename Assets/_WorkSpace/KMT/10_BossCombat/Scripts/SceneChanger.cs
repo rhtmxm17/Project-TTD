@@ -8,10 +8,13 @@ public class SceneChanger : MonoBehaviour
     [SerializeField]
     string destScene;
 
-    IEnumerator Start()
+    void Start()
     {
-        yield return UserDataManager.InitDummyUser(7);
-        Debug.Log("완료");
+        GameManager.UserData.TryInitDummyUserAsync(7, () =>
+        {
+            Debug.Log("완료");
+            SceneManager.LoadScene(destScene);
+        });
     }
 
     [ContextMenu("ChangeScene")]

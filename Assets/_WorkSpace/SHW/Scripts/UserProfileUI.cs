@@ -23,14 +23,20 @@ public class UserProfileUI : BaseUI
    public UnityEvent OnChangeProfile;
     
     private void Start()
-    { 
-        // 테스트용 더미 데이터 등록
-        StartCoroutine(UserDataManager.InitDummyUser(28));
-        
+    {
+        // 테스트용 더미 UID
+        GameManager.UserData.TryInitDummyUserAsync(28, () =>
+        {
+            Debug.Log("완료");
+
+            // 여기서 기존의 데이터를 불러오도록
+            LoadData();
+            // 불러온 데이터 UI 적용
+            SetUI();
+        });
+
         // UI 바인딩
         Init();
-        // 여기서 기존의 데이터를 불러오도록
-        StartCoroutine(WaitLoadingCoroutine());
     }
 
     /*private void OnEnable()
@@ -133,15 +139,6 @@ public class UserProfileUI : BaseUI
                 if (false == result)
                     Debug.Log($"요청 전송에 실패함");
             });
-    }
-
-    // 로드 대기용 코루틴
-    // 뭔가 더 좋은 방법으로 로드를 대기할 방법
-    IEnumerator WaitLoadingCoroutine()
-    {
-        yield return new WaitForSeconds(0.5f);
-        LoadData();
-        SetUI();
     }
 
     // 창열기

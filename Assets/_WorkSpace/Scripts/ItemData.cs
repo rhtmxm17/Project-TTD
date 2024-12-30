@@ -1,7 +1,39 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
+
+#if UNITY_EDITOR
+using UnityEditor;
+
+[CustomEditor(typeof(ItemData))]
+public class ItemDataEditor : Editor
+{
+    ItemData itemData;
+
+    private void OnEnable()
+    {
+        itemData = target as ItemData;
+    }
+
+    public override void OnInspectorGUI()
+    {
+        if (GUILayout.Button("테이블 매니저 바로가기"))
+        {
+            UnityEditor.Selection.activeObject = DataTableManager.Instance;
+        }
+
+        Rect rect = GUILayoutUtility.GetAspectRect(2f);
+        rect.width *= 0.5f;
+        if (itemData.SspriteImage != null)
+        {
+            Texture2D texture = AssetPreview.GetAssetPreview(itemData.SspriteImage);
+            GUI.DrawTexture(rect, texture);
+        }
+
+        base.OnInspectorGUI();
+    }
+}
+#endif
 
 public class ItemData : ScriptableObject, ICsvRowParseable
 {

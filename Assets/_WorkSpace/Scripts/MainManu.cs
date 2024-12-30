@@ -11,6 +11,9 @@ public class MainManu : BaseUI
     {
         base.Awake();
 
-        StartCoroutine(UserDataManager.InitDummyUser(0));
+        GameManager.UserData.TryInitDummyUserAsync(0, () =>
+        {
+            Debug.Log("완료");
+        });
     }
 }
