@@ -91,7 +91,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
         {
             BackendManager.Instance.UseDummyUserDataRef(DummyNumber); // 테스트코드
         }
-        UserData.myUid = $"Dummy{DummyNumber}";
+
         Instance.LoadUserData();
     }
 
