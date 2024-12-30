@@ -13,7 +13,10 @@ public class BeforeSceneScript : MonoBehaviour
     private void Awake()
     {
         GetComponent<Button>().onClick.AddListener(changeScene);
-        StartCoroutine(UserDataManager.InitDummyUser(uid));
+        GameManager.UserData.TryInitDummyUserAsync(uid, () =>
+        {
+            changeScene();
+        });
     }
 
     private void changeScene()

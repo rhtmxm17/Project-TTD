@@ -43,6 +43,8 @@ public class Combatable : MonoBehaviour
     [Header("TestParams")]
     [SerializeField]
     public float igDefenseRate;
+
+    //무적 디버그를 위한 public
     [SerializeField]
     public float defConst;
 
@@ -61,6 +63,7 @@ public class Combatable : MonoBehaviour
         AttackPoint = attackPoint.ToReadOnlyReactiveProperty();
         Hp = hp.ToReadOnlyReactiveProperty();
         MaxHp = maxHp.ToReadOnlyReactiveProperty();
+        Defense = defense.ToReadOnlyReactiveProperty();
     }
 
     /// <summary>
@@ -116,7 +119,7 @@ public class Combatable : MonoBehaviour
                       + table.defensePointGrouth * level;
 
         defConst = table.defenseCon;
-
+        
         rangePow = (int)(table.Range * table.Range);//사거리
 
         baseAttack = data.BasicSkillDataSO;

@@ -18,7 +18,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private Image _characterListImage;
 
     private bool _isSubscribe;
-    private int _characterLevel;
+    private int _characterLevel = 1;
 
     private int _hp;
 
@@ -104,7 +104,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterListNameText = GetComponentInChildren<TextMeshProUGUI>();
         _characterListImage = transform.GetChild(0).GetComponent<Image>();
         _characterInfoController = GetComponentInParent<CharacterInfoController>();
-
+        
         //현재 캐릭터가 가지고 있는 타입
         int type = (int)_characterData.StatusTable.type;
 
@@ -122,9 +122,9 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 
     private void GetCharacterDBValue()
     {
-        _characterLevel = _characterData.Level.Value;
-        characterLevelUpCost = 100 * _characterData.Level.Value;
-        CharacterStats();
+        //TODO: 레벨을 갖고올 때 딜레이가 필요한가?
+        //캐릭터 0레벨 부터 시작하는데 문의하기
+       CharacterStats();
     }
 
     private void SubscribeEvent()
@@ -153,23 +153,30 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     public void UpdateInfo()
     {
         _characterEnhance.GetCharacterData(_characterData);
-
-        //TODO: 정리 필요 
+        LevelUpCheck();
+        CharacterStats();
+        
         _characterInfoController._infoUI._nameText.text = _characterData.Name;
         _characterInfoController._infoUI._characterImage.sprite = _characterData.FaceIconSprite;
         _characterInfoController._infoUI._levelText.text = _characterData.Level.Value.ToString();
         _characterInfoController._infoUI._enhanceText.text = $"+{_characterData.Enhancement.Value.ToString()}";
-
         _characterInfoController._infoUI._powerLevelText.text = $"전투력 {_powerLevel}";
         _characterInfoController._infoUI._atkText.text = $"공격력 {_atk}";
         _characterInfoController._infoUI._hpText.text = $"체력 {_hp}";
         _characterInfoController._infoUI._defText.text = $"방어력 {_def}";
         _characterInfoController._infoUI._coinText.text = characterLevelUpCost.ToString();
 
+        _characterInfoController._infoUI._skillAIconImage.sprite = _characterData.NormalSkillIcon;
+        _characterInfoController._infoUI._skillBIconImage.sprite = _characterData.SpecialSkillIcon;
+
+        _characterInfoController._infoUI._skillADescText.text = _characterData.NormalSkillToolTip;
+        _characterInfoController._infoUI._skillBDescText.text = _characterData.SpecialSkillToolTip;
+        
+        //TODO: 임시 텍스트 -> 속성 이미지로 변경 필요
         int tempType = (int)_characterData.StatusTable.type;
         _characterInfoController._infoUI._tempElemetTypeText.text = ((ElementType)tempType).ToString();
 
-        LevelUpCheck();
+
     }
 
     /// <summary>
@@ -183,14 +190,14 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         GameManager.UserData.StartUpdateStream()
             .SetDBValue(_characterData.Level, _characterData.Level.Value + 1)
             // .SetDBValue(_characterData.Level, _characterData.Level.Value + 1) // 재화 사용
-            .Submit(LevelUpResult);
+            .Submit(LevelUpSuccess);
     }
 
     /// <summary>
     /// 레벨업 결과
     /// </summary>
     /// <param name="result"></param>
-    private void LevelUpResult(bool result)
+    private void LevelUpSuccess(bool result)
     {
         if (false == result)
         {
@@ -214,18 +221,17 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// </summary>
     private void CharacterStats()
     {
-        Debug.Log($"캐릭터 레벨 :{_characterLevel}");
+        //TODO: 시작했을 때 레벨을 못가져옴
+        
+        _characterLevel = _characterData.Level.Value;
+        characterLevelUpCost = 100 * _characterLevel;
+        
         _hp = _characterLevel *
               (int)(_characterData.StatusTable.healthPointBase + _characterData.StatusTable.healthPointGrouth);
         _atk = _characterLevel *
                (int)(_characterData.StatusTable.attackPointBase + _characterData.StatusTable.attackPointGrowth);
         _def = _characterLevel *
                (int)(_characterData.StatusTable.defensePointBase + _characterData.StatusTable.defensePointBase);
-        
-        Debug.Log($"{_characterData.name} : {_hp}");
-        Debug.Log($"{_characterData.name} : {_atk}");
-        Debug.Log($"{_characterData.name} : {_def}");
-  
         
         _powerLevel = (_hp + _atk + _def);
     }
@@ -262,4 +268,5 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     {
         _characterTypeText.text = type;
     }
+
 }

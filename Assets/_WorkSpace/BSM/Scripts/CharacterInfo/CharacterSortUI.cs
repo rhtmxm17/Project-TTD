@@ -7,7 +7,8 @@ public class CharacterSortUI : BaseUI
 {
     [HideInInspector] public Button NameSortButton;
     [HideInInspector] public Button LevelSortButton;
-
+    [HideInInspector] public Button PowerLevelSortButton;
+    
     private Button _sortCloseButton;
 
     
@@ -23,6 +24,7 @@ public class CharacterSortUI : BaseUI
         _sortCloseButton = GetUI<Button>("SortCloseButton");
         NameSortButton = GetUI<Button>("NameSort");
         LevelSortButton = GetUI<Button>("LevelSort");
+        PowerLevelSortButton = GetUI<Button>("PowerLevelSort");
     }
 
     private void SubscribeEvent()
