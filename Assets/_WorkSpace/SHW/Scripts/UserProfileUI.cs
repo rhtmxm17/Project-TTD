@@ -54,21 +54,30 @@ public class UserProfileUI : BaseUI
         // 프로필 닫기
         GetUI<Button>("Back").onClick.AddListener(() => ClosePopup("UserProfile"));
         // 소개 변경 창 열기
-        GetUI<Button>("ChangeIntroduction").onClick.AddListener(() => OpenPopup("ChangeIntroPopup"));
+        // GetUI<Button>("ChangeIntroduction").onClick.AddListener(() => OpenPopup("ChangeIntroPopup"));
         // 소개 변경 창 닫기 & 변경확인
-        GetUI<Button>("Confirm").onClick.AddListener(() =>
+        /*GetUI<Button>("Confirm").onClick.AddListener(() =>
         {
             ClosePopup("ChangeIntroPopup");
             SetIntroduction();
-        });
+        });*/
+        // 이름 변경& 아이콘 변경 창 여닫기
+        GetUI<Button>("NameBox").onClick.AddListener(() => OpenPopup("CustomProfile"));
+        GetUI<Button>("CustomProfileBack").onClick.AddListener(() => ClosePopup("CustomProfile"));
         // 이름 변경 창 열기
-        GetUI<Button>("NameBox").onClick.AddListener(() => OpenPopup("ChangeNamePopup"));
+        GetUI<Button>("ChangeNameButton").onClick.AddListener(() => OpenPopup("ChangeNamePopup"));
         // 이름변경 창 닫기 & 이름 변경
         GetUI<Button>("NameConfirm").onClick.AddListener(() =>
         {
             ClosePopup("ChangeNamePopup");
             SetName();
         });
+        // 대표캐릭터 변경팝업
+        GetUI<Button>("ProfileCharacter").onClick.AddListener(() => OpenPopup("CharacterChangePopup"));
+        GetUI<Button>("CloseChangeCharacter").onClick.AddListener(() => ClosePopup("CharacterChangePopup"));
+        
+        // DB랑 연관없이 인스펙터만으로 설정하는 부분 추가적인 작성이 필요햠
+        // 대표 캐릭터 변경
     }
 
     /// <summary>
@@ -151,5 +160,11 @@ public class UserProfileUI : BaseUI
     private void ClosePopup(string _name)
     {
         GetUI(_name).SetActive(false);
+    }
+    
+    // (임시) 대표 캐릭터 변경
+    private void SetMainCharacter()
+    {
+        
     }
 }
