@@ -92,12 +92,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 
     [SerializeField] private int characterLevelUpCost;
 
-    private void Start()
-    {
-        Init();
-    }
-
-    private void Init()
+    private void Awake()
     {
         _characterTypeText = transform.GetChild(2).GetComponent<TextMeshProUGUI>();
         _characterEnhance = GetComponent<CharacterEnhance>();
@@ -107,24 +102,20 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         
         //현재 캐릭터가 가지고 있는 타입
         int type = (int)_characterData.StatusTable.type;
-
+        
         SetListNameText(_characterData.Name);
         SetListTypeText(((ElementType)type).ToString());
         SetListImage(_characterData.FaceIconSprite);
-        SubscribeEvent();
-        GetCharacterDBValue();
     }
 
+    private void Start()
+    {
+        SubscribeEvent();
+    }
+    
     public void OnPointerClick(PointerEventData eventData)
     {
         SetInfoPopup();
-    }
-
-    private void GetCharacterDBValue()
-    {
-        //TODO: 레벨을 갖고올 때 딜레이가 필요한가?
-        //캐릭터 0레벨 부터 시작하는데 문의하기
-       CharacterStats();
     }
 
     private void SubscribeEvent()
@@ -207,9 +198,6 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 
         //테스트 재화 사용
         TestMyGold -= characterLevelUpCost;
-        characterLevelUpCost = 100 * _characterData.Level.Value;
-        _characterLevel = _characterData.Level.Value;
-
         CharacterStats();
         UpdateInfo();
 
@@ -221,11 +209,9 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// </summary>
     private void CharacterStats()
     {
-        //TODO: 시작했을 때 레벨을 못가져옴
-        
         _characterLevel = _characterData.Level.Value;
         characterLevelUpCost = 100 * _characterLevel;
-        
+
         _hp = _characterLevel *
               (int)(_characterData.StatusTable.healthPointBase + _characterData.StatusTable.healthPointGrouth);
         _atk = _characterLevel *
@@ -236,6 +222,11 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _powerLevel = (_hp + _atk + _def);
     }
 
+    public void SetCharacterData()
+    {
+        CharacterStats();
+    }
+    
     /// <summary>
     /// 레벨업 가능 여부 체크
     /// </summary>

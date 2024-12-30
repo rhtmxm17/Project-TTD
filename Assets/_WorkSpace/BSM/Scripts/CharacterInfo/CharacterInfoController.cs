@@ -70,22 +70,16 @@ public class CharacterInfoController : BaseUI
         SubscribeEvent();
         SetContentFormGridLayOut();
         /////// 더미 인증 테스트 코드
-        GameManager.UserData.TryInitDummyUserAsync(25, () =>
+        GameManager.UserData.TryInitDummyUserAsync(35, () =>
         {
-            // TODO: 유저데이터 불러오기 완료시 처리
+            // TODO: 유저데이터 불러오기 완료시 처리 
+            //TODO: Main과 붙으면 Enable에서
+            UpdateCharacterList();
         });
     }
+     
+    //private void OnEnable() => UpdateCharacterList();
 
-    private void OnEnable() => UpdateCharacterList();
-
-    private void Start()
-    {
-        //TODO: 테스트용 -> 추후 메인과 붙이면 UpdateCharacterList()에서 넘겨주는거로
-        _characterSort._sortCharacterInfos = _characterInfos;
-        _characterFilter._filterCharacterInfos = _characterInfos;
-        StartListSort();
-    }
-    
     private void Init()
     {
         _infoPopup = GetUI("InfoPopup");
@@ -128,9 +122,17 @@ public class CharacterInfoController : BaseUI
     private void UpdateCharacterList()
     {
         _characterInfos = GetComponentsInChildren<CharacterInfo>().ToList();
+        
+        //TODO: 임시로 레벨 정보 업데이트, 추후에 로딩과 붙으면 해줄 필요 없음
+        for (int i = 0; i < _characterInfos.Count; i++)
+        {
+            _characterInfos[i].SetCharacterData();
+        }
+        
         CharacterCount = _characterInfos.Count;
-        //_characterSort._sortCharacterInfos = _characterInfos;
-        //_characterFilter._filterCharacterInfos = _characterInfos;
+        _characterSort._sortCharacterInfos = _characterInfos;
+        _characterFilter._filterCharacterInfos = _characterInfos;
+        StartListSort();
     }
 
     /// <summary>
@@ -138,6 +140,8 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void StartListSort()
     {
+        //1 : 내림차순 , 0 : 오름차순
+        _characterSort.IsSorting = PlayerPrefs.GetInt("IsSorting") == 1;
         _characterSort.CharacterListSort();
     }
 
