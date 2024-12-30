@@ -12,6 +12,7 @@ public class StageManager : MonoBehaviour
     public float PartyCost { get; private set; } = 0;
 
     [SerializeField] StageData stageData;
+    private StageData stageDataOnLoad;
 
     [Header("Characters")]
     [SerializeField]
@@ -54,6 +55,31 @@ public class StageManager : MonoBehaviour
 
     private void Start()
     {
+
+        if (stageDataOnLoad == null)
+            Initialize(stageData);
+    }
+
+    public void Initialize(StageData _stageData)
+    {
+        if (null == _stageData)
+            return;
+
+        if (null != stageDataOnLoad)
+        {
+            Debug.Log("스테이지 초기화가 두 번 진행됨");
+        }
+
+        stageDataOnLoad = _stageData;
+
+        monsterWaveQueue.Clear();
+        for (int i = monsterWaveParent.childCount - 1; i >= 0; i--)
+        {
+            Destroy(monsterWaveParent.GetChild(i).gameObject);
+        }
+
+        // ============= 플레이어 캐릭터 초기화 =============
+
         //키 : 배치정보, 값 : 캐릭터 고유 번호(ID)
         Dictionary<string, long> batchData = GameManager.UserData.PlayData.BatchInfo.Value;
         Dictionary<int, CharacterData> batchDictionary = new Dictionary<int, CharacterData>(batchData.Count);
@@ -66,12 +92,7 @@ public class StageManager : MonoBehaviour
 
         characterSetter.InitCharacters(batchDictionary);
 
-        Initialize(stageData);
-    }
-
-    public void Initialize(StageData _stageData)
-    {
-        stageData = _stageData;
+        // ============= 몬스터 캐릭터 초기화 =============
 
         foreach (StageData.WaveInfo wave in _stageData.Waves)
         {
@@ -85,6 +106,8 @@ public class StageManager : MonoBehaviour
             monsterWaveQueue.Add(monsterWave.GetComponent<CombManager>());
         }
     }
+
+    public void StartGameOnSceneLoaded() => StartGame();
 
     IEnumerator StartPartyCostCO()
     {
@@ -149,7 +172,7 @@ public class StageManager : MonoBehaviour
     {
         Debug.Log("클리어!");
         var stream = GameManager.UserData.StartUpdateStream();
-        foreach (var item in stageData.Reward)
+        foreach (var item in stageDataOnLoad.Reward)
         {
             stream.AddDBValue(item.rewardItem.Number, item.number);
         }
@@ -163,6 +186,7 @@ public class StageManager : MonoBehaviour
             }
 
             // TODO: 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
+            GameManager.Instance.LoadMainScene();
         });
     }
 
@@ -193,7 +217,6 @@ public class StageManager : MonoBehaviour
         costSlider.value = 0;
         costText.text = PartyCost.ToString();
 
-        Debug.Log("S눌림");
         monsterWaveQueue[0].gameObject.SetActive(true);
         characterManager.StartCombat(monsterWaveQueue[0]);
         monsterWaveQueue[0].StartCombat(characterManager);

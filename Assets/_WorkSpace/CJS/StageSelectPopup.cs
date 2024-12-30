@@ -14,7 +14,13 @@ public class StageSelectPopup : MonoBehaviour
     private void Awake()
     {
         backgroundButton.onClick.AddListener(() => Destroy(this.gameObject));
-        enterButton.onClick.AddListener(() => Debug.Log(stageData.StageName));
+        enterButton.onClick.AddListener(() => 
+        {
+            Destroy(this.gameObject);
+            
+            // TODO: 씬 전환 대신 편성창 열기
+            GameManager.Instance.LoadStageScene(stageData);
+        });
     }
 
     public void Initialize(StageData stageData)

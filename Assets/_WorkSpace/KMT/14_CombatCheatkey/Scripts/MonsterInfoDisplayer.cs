@@ -32,6 +32,12 @@ public class MonsterInfoDisplayer : MonoBehaviour
         Combatable[] monsters = null;
         foreach (var manager in managers)
         {
+            if (null == manager)
+            {
+                managers = monsterWaveParent.GetComponentsInChildren<CombManager>(true);
+                return;
+            }
+
             monsters = manager.GetComponentsInChildren<Combatable>(true);
             if (monsters.Length > 0)
                 break;
