@@ -44,10 +44,10 @@ public class RecievedBlock : MonoBehaviour
         //TODO : 디버그용이므로 나중에 myuid로 바꾸는 작업 필요!!!{my,other 스왑 작업}
         Dictionary<string, object> updates = new Dictionary<string, object>
         {
-            { $"{UserData.otherUid}/friends/recievedRequestList/{uid}", null },
-            { $"{UserData.otherUid}/friends/friendList/{uid}", "" },
-            { $"{uid}/friends/sentRequestList/{UserData.otherUid}", null},
-            { $"{uid}/friends/friendList/{UserData.otherUid}", "" }
+            { $"{UserData.myUid}/friends/recievedRequestList/{uid}", null },
+            { $"{UserData.myUid}/friends/friendList/{uid}", "" },
+            { $"{uid}/friends/sentRequestList/{UserData.myUid}", null},
+            { $"{uid}/friends/friendList/{UserData.myUid}", "" }
         };
 
         dataRef.UpdateChildrenAsync(updates).ContinueWithOnMainThread(task => {
@@ -69,8 +69,8 @@ public class RecievedBlock : MonoBehaviour
 
         Dictionary<string, object> updates = new Dictionary<string, object>
         {
-            { $"{UserData.otherUid}/friends/recievedRequestList/{uid}", null },
-            { $"{uid}/friends/sentRequestList/{UserData.otherUid}", null}
+            { $"{UserData.myUid}/friends/recievedRequestList/{uid}", null },
+            { $"{uid}/friends/sentRequestList/{UserData.myUid}", null}
         };
 
         dataRef.UpdateChildrenAsync(updates).ContinueWithOnMainThread(task => {

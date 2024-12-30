@@ -53,11 +53,11 @@ public class FriendList : MonoBehaviour
                     continue;
                 }
 
-                Debug.Log(task.Result.Child($"{friendsUid.Key}/Profile/nickname").Value);
+                Debug.Log(task.Result.Child($"{friendsUid.Key}/Profile/Name").Value);
 
                 Instantiate(friendBlockPrefab, contentTransform)
                     .InitData(friendsUid.Key, 
-                              task.Result.Child($"{friendsUid.Key}/Profile/nickname").Value.ToString(),
+                              task.Result.Child($"{friendsUid.Key}/Profile/Name").Value.ToString(),
                               this);
 
             }

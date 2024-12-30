@@ -61,7 +61,7 @@ public class RequestedList : MonoBehaviour
                 }
 
                 Instantiate(requestedBlockPrefab, contentTransform.transform)
-                .InitData(req.Key, task.Result.Child($"{req.Key}/Profile/nickname").Value.ToString(), this);
+                .InitData(req.Key, task.Result.Child($"{req.Key}/Profile/Name").Value.ToString(), this);
 
                 Debug.Log(req.Key);
 
