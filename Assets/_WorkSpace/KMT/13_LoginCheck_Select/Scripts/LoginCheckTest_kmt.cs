@@ -29,14 +29,20 @@ public class LoginCheckTest_kmt : MonoBehaviour
     IEnumerator StartLogin(int dummyIdx)
     {
         Debug.Log("로그인 완료...");
-
-        yield return new WaitWhile(() => GameManager.UserData.Profile.Name.Value.Equals("이름 없음"));
+        yield return new WaitForSeconds(1f);
+        //yield return new WaitWhile(() => GameManager.UserData.Profile.Name.Value.Equals("이름 없음"));
 
 
         UserData.myUid = $"Dummy{dummyIdx}";
         UserData.myNickname = GameManager.UserData.Profile.Name.Value;
 
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("FriendTest");
+/*        UserDataManager.Instance.GetOtherUserProfileAsync("Dummy101", (profile) => {
+
+            Debug.Log(profile.Name.Value);
+            Debug.Log(profile.Level.Value);
+
+        });*/
     }
 
 }

@@ -62,6 +62,9 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
         public UserDataInt Level { get; private set; } = new UserDataInt($"Profile/Level", 1);
         public UserDataString Introduction { get; private set; } = new UserDataString($"Profile/Introduction", "소개문 없음");
 
+
+        public UserDataInt MyroomBgIdx { get; private set; } = new UserDataInt($"Profile/roomBG", 0);
+        public UserDataInt MyroomCharaIdx { get; private set; } = new UserDataInt($"Profile/roomChara", 0);
     }
 
     public class GamePlayData
@@ -126,6 +129,9 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             this.Profile.Level.SetValueWithDataSnapshot(userData);
             this.Profile.IconIndex.SetValueWithDataSnapshot(userData);
             this.Profile.Introduction.SetValueWithDataSnapshot(userData);
+
+            this.Profile.MyroomBgIdx.SetValueWithDataSnapshot(userData);
+            this.Profile.MyroomCharaIdx.SetValueWithDataSnapshot(userData);
 
             this.PlayData.EggGainTimestamp.SetValueWithDataSnapshot(userData);
             this.PlayData.BatchInfo.SetValueWithDataSnapshot(userData);
@@ -203,6 +209,62 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             onLoadUserDataCompleted.RemoveAllListeners();
         });
 
+    }
+
+    /// <summary>
+    /// UID를 전달받아 해당 유저의 Profile을 가져옴[비동기].
+    /// </summary>
+    /// <param name="othersUID">가져올 유저의 UID</param>
+    /// <param name="callback">Profile을 반환받을 콜백함수</param>
+    public void GetOtherUserProfileAsync(string othersUID, Action<UserProfile> callback)
+    {
+        if (Application.isPlaying == false)
+        {
+            Debug.LogWarning("플레이모드가 아닐 경우 오작동할 수 있습니다");
+        }
+
+        BackendManager.Database.RootReference.Child("Users").GetValueAsync().ContinueWithOnMainThread(t1 => {
+
+            if (t1.IsFaulted || t1.IsCanceled)
+            {
+                Debug.Log("데이터베이스 접근 실패");
+                return;
+            }
+
+            DataSnapshot dataSnapshot = t1.Result;
+
+            if (!dataSnapshot.HasChild(othersUID))
+            {
+                Debug.Log("해당 UID의 유저가 존재하지 않음");
+                return;
+            }
+
+            BackendManager.Database.RootReference.Child($"Users/{othersUID}")
+            .GetValueAsync().ContinueWithOnMainThread(t2 =>
+            {
+
+                if (t2.IsFaulted || t2.IsCanceled)
+                {
+                    Debug.Log("데이터베이스 접근 실패");
+                    return;
+                }
+
+                DataSnapshot profileSnapshot = t2.Result;
+                UserProfile otherProfile = new UserProfile();
+
+                otherProfile.Name.SetValueWithDataSnapshot(profileSnapshot);
+                otherProfile.IconIndex.SetValueWithDataSnapshot(profileSnapshot);
+                otherProfile.Level.SetValueWithDataSnapshot(profileSnapshot);
+                otherProfile.Introduction.SetValueWithDataSnapshot(profileSnapshot);
+
+                otherProfile.MyroomBgIdx.SetValueWithDataSnapshot(profileSnapshot);
+                otherProfile.MyroomCharaIdx.SetValueWithDataSnapshot(profileSnapshot);
+
+                callback?.Invoke(otherProfile);
+
+            });
+
+        });
     }
 
     #region DB 데이터 갱신
