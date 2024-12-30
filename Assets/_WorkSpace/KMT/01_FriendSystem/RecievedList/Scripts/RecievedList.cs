@@ -35,17 +35,17 @@ public class RecievedList : MonoBehaviour
                 Destroy(block.gameObject);
             }
 
-            if (!task.Result.HasChild($"{UserData.otherUid}/friends/recievedRequestList"))
+            if (!task.Result.HasChild($"{UserData.myUid}/friends/recievedRequestList"))
             {
                 Debug.Log("받은친구 요청 없음");
                 return;
             }
 
-            DataSnapshot requestedList = task.Result.Child($"{UserData.otherUid}/friends/recievedRequestList");
+            DataSnapshot requestedList = task.Result.Child($"{UserData.myUid}/friends/recievedRequestList");
             Debug.Log(requestedList.ChildrenCount + " : 친구 요청 갯수");
 
             
-            DataSnapshot myFriends = task.Result.Child($"{UserData.otherUid}/friends/friendList");
+            DataSnapshot myFriends = task.Result.Child($"{UserData.myUid}/friends/friendList");
             Debug.Log("현재친구목록");
             foreach (DataSnapshot item in myFriends.Children)//디버그용 반복 코드
             {
@@ -60,7 +60,7 @@ public class RecievedList : MonoBehaviour
             {
 
                 Instantiate(reqFriendBlockPrefab, contentParent)
-                .InitData(rec.Key, task.Result.Child($"{rec.Key}/Profile/nickname").Value.ToString(), this);
+                .InitData(rec.Key, task.Result.Child($"{rec.Key}/Profile/Name").Value.ToString(), this);
 
                 Debug.Log(rec.Key + "블록 생성");
 
@@ -68,34 +68,6 @@ public class RecievedList : MonoBehaviour
 
 
         });
-
-/*        userRef.Child(UserData.otherUid).Child("friends").Child("받은 친구 요청").GetValueAsync().ContinueWithOnMainThread(task => {
-*//*
-            if (task.IsFaulted || task.IsCanceled)
-            {
-                Debug.LogError("읽어올 수 없음, 받은친구요청 목록");
-                return;
-            }
-*//*
-           // Debug.Log(task.Result.ChildrenCount + " : 친구 요청 갯수");
-
-*//*            RecievedBlock[] blocks = contentParent.GetComponentsInChildren<RecievedBlock>();
-
-            foreach (RecievedBlock block in blocks)
-            {
-                Destroy(block.gameObject);
-            }*//*
-
-            foreach (DataSnapshot item in task.Result.Children) {
-
-                Instantiate(reqFriendBlockPrefab, transform)
-                .InitData(item.Key, item.Value.ToString());
-
-                Debug.Log(item.Key + " ?/'? " + item.Value);
-
-            }
-        
-        });*/
 
 
     }
