@@ -341,6 +341,8 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
             yield return new WaitUntil(() => complete);
         }
 
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
         Debug.Log($"<color=#bfffbb>데이터 생성 완료 ({sheetIndex.Count}/{sheetIndex.Count})</color>");
     }
 #endif
