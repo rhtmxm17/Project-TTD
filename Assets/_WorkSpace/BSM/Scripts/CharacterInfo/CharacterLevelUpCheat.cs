@@ -1,17 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro; 
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
-public class CharacterCheat : MonoBehaviour
+public class CharacterLevelUpCheat : MonoBehaviour
 {
+    
     private CharacterInfoController _characterController;
 
     private Button _cheatConfirmButton;
     private TMP_InputField _inputfield;
-    private int _enhanceLevel;
+    private int _characterLevel;
     
     private void Start()
     {
@@ -20,18 +21,19 @@ public class CharacterCheat : MonoBehaviour
         _inputfield = transform.GetChild(1).GetComponent<TMP_InputField>();
         _cheatConfirmButton = transform.GetChild(2).GetComponent<Button>(); 
         _inputfield.onValueChanged.AddListener(x=> InputfieldTextChanged(x));
-        _cheatConfirmButton.onClick.AddListener(() => _characterController.CurCharacterEnhance.CheatEnhance(_enhanceLevel));
+        _cheatConfirmButton.onClick.AddListener(() => _characterController.CurCharacterInfo.LevelUpCheat(_characterLevel));
     }
 
     private void InputfieldTextChanged(string text)
     {
         if (string.IsNullOrEmpty(text))
         {
-            _enhanceLevel = 0;
+            _characterLevel = 0;
             return;
         }
         
-        _enhanceLevel = Math.Clamp(Convert.ToInt32(text), 0, 10); 
+        _characterLevel = Convert.ToInt32(text); 
     }
+    
     
 }
