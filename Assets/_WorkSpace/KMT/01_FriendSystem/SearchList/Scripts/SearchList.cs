@@ -16,6 +16,22 @@ public class SearchList : MonoBehaviour
 
     DatabaseReference userNode;
 
+    private void Awake()
+    {
+        GetComponent<OpenableWindow>().onOpenAction += RemoveList;
+    }
+
+    void RemoveList()
+    {
+        SearchBlock[] blocks = contentTransform.GetComponentsInChildren<SearchBlock>();
+
+        foreach (SearchBlock b in blocks)
+        {
+            Destroy(b.gameObject);
+        }
+
+        inputField.text = string.Empty;
+    }
 
     [ContextMenu("find")]
     public void Find()
