@@ -11,11 +11,15 @@ public class CharacterSort : MonoBehaviour
     
     private CharacterInfoController _characterInfoController;
     private List<object> _sortList;
-
+   
     private CharacterSortUI _characterSortUI;
     private SortType _curSortType;
 
     private bool _isSorting;
+    
+    public List<int> PowerTest;
+    public List<int> LevelTest;
+    public List<string> NameTest;
     
     private void Awake()
     {
@@ -24,8 +28,7 @@ public class CharacterSort : MonoBehaviour
 
     private void Start()
     {
-        _characterSortUI.NameSortButton.onClick.AddListener(() => SortEventFunc(SortType.NAME));
-        _characterSortUI.LevelSortButton.onClick.AddListener(() => SortEventFunc(SortType.LEVEL));
+        SubscribeEvent();
     }
 
     private void Init()
@@ -34,6 +37,13 @@ public class CharacterSort : MonoBehaviour
         _curSortType = (SortType)PlayerPrefs.GetInt("SortType");
         
         _characterInfoController = GetComponentInParent<CharacterInfoController>();
+    }
+
+    private void SubscribeEvent()
+    {
+        _characterSortUI.NameSortButton.onClick.AddListener(() => SortEventFunc(SortType.NAME));
+        _characterSortUI.LevelSortButton.onClick.AddListener(() => SortEventFunc(SortType.LEVEL));
+        _characterSortUI.PowerLevelSortButton.onClick.AddListener(()=> SortEventFunc(SortType.POWERLEVEL));
     }
     
     /// <summary>
@@ -65,10 +75,13 @@ public class CharacterSort : MonoBehaviour
         switch (_curSortType)
         {
             case SortType.LEVEL:
-                _sortList = _sortCharacterInfos.Select(x => (object)x.CharacterLevel).ToList();
+                _sortList = _sortCharacterInfos.Select(x => (object)x.CharacterLevel).ToList(); 
                 break;
             case SortType.NAME:
-                _sortList = _sortCharacterInfos.Select(x => (object)x.CharacterName).ToList();
+                _sortList = _sortCharacterInfos.Select(x => (object)x.CharacterName).ToList(); 
+                break;
+            case SortType.POWERLEVEL:
+                _sortList = _sortCharacterInfos.Select(x => (object)x.PowerLevel).ToList(); 
                 break;
         }
 
@@ -129,7 +142,11 @@ public class CharacterSort : MonoBehaviour
         {
             return characterInfo.CharacterLevel;
         }
-
+        else if (_curSortType.Equals(SortType.POWERLEVEL))
+        {
+            return characterInfo.PowerLevel;
+        }    
+        
         return null;
     }
  
