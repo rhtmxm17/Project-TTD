@@ -439,7 +439,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                     return;
                 }
 
-                Debug.Log($"데이터 갱신 요청 성공");
+                Debug.Log($"데이터 갱신 성공");
                 propertyCallbackOnSubmit?.Invoke();
                 onCompleteCallback?.Invoke(true);
             });

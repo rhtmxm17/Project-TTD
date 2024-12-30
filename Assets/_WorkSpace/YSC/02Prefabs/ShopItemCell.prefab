@@ -230,7 +230,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
+  m_fontSize: 35.85
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -544,7 +544,7 @@ GameObject:
   - component: {fileID: 7337201876146202645}
   - component: {fileID: 7337201876146202646}
   m_Layer: 5
-  m_Name: Itme01
+  m_Name: ShopItemCell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -572,7 +572,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7337201876146202643
 CanvasRenderer:
@@ -668,20 +668,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c80ac4e91158148baf8c86a430b7eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemNameText: {fileID: 0}
-  itemName: "\uC2AC\uB77C\uC784"
-  itemPriceText: {fileID: 0}
-  itemPrice: 100
-  itemCountText: {fileID: 0}
-  itemCount: 4
-  itemImage: {fileID: 7337201876146202644}
+  itemNameText: {fileID: 7337201876334906966}
+  itemPriceText: {fileID: 7337201875421727506}
+  itemCountText: {fileID: 7337201874390934326}
+  ShopItemImage: {fileID: 7337201876146202644}
   buyButton: {fileID: 7337201876001058693}
-  getCount: 0
-  isSoldOut: 0
-  _description: 
-  buyButtonText: {fileID: 0}
-  itemGive: {fileID: 11400000, guid: fa772238c6e4b9b4eafa9932f1b0af58, type: 2}
-  itemGet: {fileID: 11400000, guid: 753b1b0fbdde9c44b8761426d9c2f807, type: 2}
+  buyButtonText: {fileID: 7337201874779120526}
 --- !u!1 &7337201876334906968
 GameObject:
   m_ObjectHideFlags: 0
@@ -776,7 +768,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 12
+  m_fontSize: 30.05
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
