@@ -166,11 +166,11 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController._infoUI._defText.text = $"방어력 {_def}";
         _characterInfoController._infoUI._coinText.text = characterLevelUpCost.ToString();
 
-        _characterInfoController._infoUI._skillAIconImage.sprite = _characterData.FaceIconSprite;
-        _characterInfoController._infoUI._skillBIconImage.sprite = _characterData.FaceIconSprite;
+        _characterInfoController._infoUI._skillAIconImage.sprite = _characterData.NormalSkillIcon;
+        _characterInfoController._infoUI._skillBIconImage.sprite = _characterData.SpecialSkillIcon;
 
-        _characterInfoController._infoUI._skillADescText.text = "A 스킬이에요... 설명이 필요해요";
-        _characterInfoController._infoUI._skillBDescText.text = "B 스킬이에요... 설명이 필요해요";
+        _characterInfoController._infoUI._skillADescText.text = _characterData.NormalSkillToolTip;
+        _characterInfoController._infoUI._skillBDescText.text = _characterData.SpecialSkillToolTip;
         
         //TODO: 임시 텍스트 -> 속성 이미지로 변경 필요
         int tempType = (int)_characterData.StatusTable.type;
