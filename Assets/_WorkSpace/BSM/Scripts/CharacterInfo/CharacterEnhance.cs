@@ -63,17 +63,18 @@ public class CharacterEnhance : MonoBehaviour
         {
             GameManager.UserData.StartUpdateStream()
                 .SetDBValue(_characterData.Enhancement, _characterData.Enhancement.Value + 1)
-                .Submit(EnhanceResult);
+                .Submit(EnhanceSuccess);
 
             Debug.Log($"강화 :{_characterData.name} :{_characterEnhanceLevel} 강화 성공");
         }
         else
         {
             Debug.Log($"강화 실패");
+            EnhanceFail();
         }
     }
 
-    private void EnhanceResult(bool result)
+    private void EnhanceSuccess(bool result)
     {
         if (!result)
         {
@@ -84,6 +85,11 @@ public class CharacterEnhance : MonoBehaviour
         _characterEnhanceLevel = _characterData.Enhancement.Value;
         CharacterStats();
         UpdateInfo();
+    }
+
+    private void EnhanceFail()
+    {
+        
     }
     
     /// <summary>
@@ -148,4 +154,16 @@ public class CharacterEnhance : MonoBehaviour
         _characterEnhanceLevel = characterData.Enhancement.Value;
         EnhanceCheck();
     }
+
+    public void CheatEnhance(int enhanceLevel)
+    {
+        if (_characterInfoController.CurCharacterEnhance != this) return;
+
+        GameManager.UserData.StartUpdateStream()
+            .SetDBValue(_characterData.Enhancement, enhanceLevel)
+            .Submit(EnhanceSuccess);
+
+    }
+    
+    
 }

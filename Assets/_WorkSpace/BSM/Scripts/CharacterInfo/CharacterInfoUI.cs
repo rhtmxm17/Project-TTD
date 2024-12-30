@@ -12,12 +12,15 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _atkText;
     [HideInInspector] public TextMeshProUGUI _hpText;
     [HideInInspector] public TextMeshProUGUI _defText;
-    [HideInInspector] public TextMeshProUGUI _powerLevelText;
-    
+    [HideInInspector] public TextMeshProUGUI _powerLevelText; 
     [HideInInspector] public TextMeshProUGUI _coinText;
     [HideInInspector] public TextMeshProUGUI _jewelryText;
     [HideInInspector] public TextMeshProUGUI _enhanceText;
-    
+    [HideInInspector] public TextMeshProUGUI _skillADescText;
+    [HideInInspector] public TextMeshProUGUI _skillBDescText;
+     
+    [HideInInspector] public Image _skillAIconImage;
+    [HideInInspector] public Image _skillBIconImage;
     [HideInInspector] public Image _characterImage;
 
     [HideInInspector] public Button _levelUpButton;
@@ -65,6 +68,8 @@ public class CharacterInfoUI : BaseUI
         _coinText = GetUI<TextMeshProUGUI>("CoinText");
         _jewelryText = GetUI<TextMeshProUGUI>("JewelryText");
         _enhanceText = GetUI<TextMeshProUGUI>("EnhanceText");
+        _skillADescText = GetUI<TextMeshProUGUI>("SkillDescAText");
+        _skillBDescText = GetUI<TextMeshProUGUI>("SkillDescBText");
         
         _exitButton = GetUI<Button>("ExitButton");
         _levelUpButton = GetUI<Button>("LevelUpButton");
@@ -75,7 +80,9 @@ public class CharacterInfoUI : BaseUI
         _enhanceTabButton = GetUI<Button>("EnhanceTabButton");
         _evolutionTabButton = GetUI<Button>("EvolutionTabButton");
         _meanTabButton = GetUI<Button>("MeanTabButton");
-         
+
+        _skillAIconImage = GetUI<Image>("SkillIconA");
+        _skillBIconImage = GetUI<Image>("SkillIconB");
         _characterImage = GetUI<Image>("CharacterImage");
         
     }
