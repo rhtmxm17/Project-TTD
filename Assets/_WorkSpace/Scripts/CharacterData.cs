@@ -4,9 +4,44 @@ using UnityEngine;
 using System;
 using UnityEngine.Serialization;
 
-
 #if UNITY_EDITOR
 using UnityEditor;
+
+[CustomEditor(typeof(CharacterData))]
+public class CharacterDataEditor : Editor
+{
+    CharacterData characterData;
+
+    private void OnEnable()
+    {
+        characterData = target as CharacterData;
+    }
+
+    public override void OnInspectorGUI()
+    {
+        if (GUILayout.Button("테이블 매니저 바로가기"))
+        {
+            UnityEditor.Selection.activeObject = DataTableManager.Instance;
+        }
+
+        Rect rect = GUILayoutUtility.GetAspectRect(2f);
+        rect.width *= 0.5f;
+        if (characterData.FaceIconSprite != null)
+        {
+            Texture2D texture = AssetPreview.GetAssetPreview(characterData.FaceIconSprite);
+            GUI.DrawTexture(rect, texture);
+        }
+
+        rect.x += rect.width;
+        if (characterData.ModelPrefab != null)
+        {
+            Texture2D texture = AssetPreview.GetAssetPreview(characterData.ModelPrefab);
+            GUI.DrawTexture(rect, texture);
+        }
+
+        base.OnInspectorGUI();
+    }
+}
 #endif
 
 /// <summary>

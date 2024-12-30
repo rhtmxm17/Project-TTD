@@ -70,7 +70,10 @@ public class CharacterInfoController : BaseUI
         SubscribeEvent();
         SetContentFormGridLayOut();
         /////// 더미 인증 테스트 코드
-        StartCoroutine(UserDataManager.InitDummyUser(25));
+        GameManager.UserData.TryInitDummyUserAsync(25, () =>
+        {
+            // TODO: 유저데이터 불러오기 완료시 처리
+        });
     }
 
     private void OnEnable() => UpdateCharacterList();
