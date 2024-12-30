@@ -39,8 +39,6 @@ public class HYJ_SelectManager : MonoBehaviour
     public void LookLog()
     {
         DatabaseReference baseref = BackendManager.CurrentUserDataRef;
-        Debug.Log("dd");
-
 
         Dictionary<string, long> updates = new Dictionary<string, long>();
         foreach(var pair in battleInfo)
