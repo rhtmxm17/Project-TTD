@@ -26,6 +26,9 @@ public class LoginCheckTest_kmt : MonoBehaviour
         });
     }
 
+    [SerializeField]
+    string destScene;
+
     IEnumerator StartLogin(int dummyIdx)
     {
         Debug.Log("로그인 완료...");
@@ -36,13 +39,8 @@ public class LoginCheckTest_kmt : MonoBehaviour
         UserData.myUid = $"Dummy{dummyIdx}";
         UserData.myNickname = GameManager.UserData.Profile.Name.Value;
 
-        SceneManager.LoadScene("FriendTest");
-/*        UserDataManager.Instance.GetOtherUserProfileAsync("Dummy101", (profile) => {
+        SceneManager.LoadScene(destScene);
 
-            Debug.Log(profile.Name.Value);
-            Debug.Log(profile.Level.Value);
-
-        });*/
     }
 
 }

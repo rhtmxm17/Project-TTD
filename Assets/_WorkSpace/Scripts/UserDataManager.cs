@@ -64,7 +64,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
 
 
         public UserDataInt MyroomBgIdx { get; private set; } = new UserDataInt($"Profile/roomBG", 0);
-        public UserDataInt MyroomCharaIdx { get; private set; } = new UserDataInt($"Profile/roomChara", 0);
+        public UserDataInt MyroomCharaIdx { get; private set; } = new UserDataInt($"Profile/roomChara", 1);
     }
 
     public class GamePlayData
