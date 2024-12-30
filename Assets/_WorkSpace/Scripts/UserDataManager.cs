@@ -73,12 +73,18 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
     }
 
 
+    public void TryInitDummyUserAsync(int DummyNumber, UnityAction onCompletedCallback)
+    {
+        GameManager.Instance.StartCoroutine(InitDummyUser(DummyNumber));
+        onLoadUserDataCompleted.AddListener(onCompletedCallback);
+    }
+
     /// <summary>
     /// 테스트용 가인증 코드입니다
     /// </summary>
     /// <param name="DummyNumber">가인증 uid값 뒤쪽에 붙일 번호</param>
     /// <returns></returns>
-    public static IEnumerator InitDummyUser(int DummyNumber)
+    private IEnumerator InitDummyUser(int DummyNumber)
     {
         // Database 초기화 대기
         yield return new WaitWhile(() => GameManager.Database == null);
@@ -194,6 +200,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             }
 
             onLoadUserDataCompleted?.Invoke();
+            onLoadUserDataCompleted.RemoveAllListeners();
         });
 
     }
