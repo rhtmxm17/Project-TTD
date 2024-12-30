@@ -11,6 +11,7 @@ public class SignUpPanel : UI_Manager
 {
     [SerializeField] TMP_InputField _signUpIDInputField;    
     [SerializeField] TMP_InputField _signUpPWInputField;
+    [SerializeField] TMP_InputField _pWConfirmInputField;
 
 
    //  AuthError error = AuthError.EmailAlreadyInUse;
@@ -29,6 +30,8 @@ public class SignUpPanel : UI_Manager
         _signUpIDInputField = GetUI<TMP_InputField>("SignUpIDInputField");
         _signUpPWInputField = GetUI<TMP_InputField>("SignUpPWInputField");
         GetUI<Button>("SignUpConfirmButton").onClick.AddListener(SignUp);
+        _pWConfirmInputField = GetUI<TMP_InputField>("PwConfirmInputField");
+        
     }
 
     public void SignUp()
@@ -37,9 +40,9 @@ public class SignUpPanel : UI_Manager
 
         string _email = _signUpIDInputField.text;
         string _password = _signUpPWInputField.text;
-       // string _confirmPW = _PWConfirmInputField.text;
+        string _confirmPW = _pWConfirmInputField.text;
 
-        if (_email == "" || _password == "")
+        if (_email == "" || _password == "" || _confirmPW == "")
         {
             // TODO : 시간이된다면 팝업창으로 띄우기..?
             Debug.LogWarning("입력하지 않은 곳이 있습니다. \n다시한번 확인해주세요");
@@ -48,13 +51,13 @@ public class SignUpPanel : UI_Manager
            // _checkPopupMsg.text = "입력하지 않은 곳이 있습니다. \n다시한번 확인해주세요";
             return;
         }
-      //  if (_password != _confirmPW)
-      //  {
-      //      Debug.LogWarning("패스워드가 일치하지 않습니다.");
-      //      _checkPopup.SetActive(true);
-      //      _checkPopupMsg.text = "패스워드가 일치하지 않습니다.";
-      //      return;
-      //  }
+        if (_password != _confirmPW)
+        {
+            Debug.LogWarning("패스워드가 일치하지 않습니다.");
+            // _checkPopup.SetActive(true);
+            // _checkPopupMsg.text = "패스워드가 일치하지 않습니다.";
+            return;
+        }
         BackendManager.Auth.CreateUserWithEmailAndPasswordAsync(_email, _password).ContinueWithOnMainThread(task =>
         {
             if (task.IsCanceled)
