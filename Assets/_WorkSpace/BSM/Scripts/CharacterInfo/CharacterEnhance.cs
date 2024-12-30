@@ -97,6 +97,7 @@ public class CharacterEnhance : MonoBehaviour
     /// </summary>
     private void CharacterStats()
     {
+        //TODO: 캐릭터 강화 수치 수정 필요
         _characterInfoController.CurCharacterInfo.Hp = _characterData.Level.Value *
                                                        (int)(_characterData.StatusTable.healthPointBase +
                                                              _characterData.StatusTable.healthPointGrouth);
@@ -119,6 +120,7 @@ public class CharacterEnhance : MonoBehaviour
     /// </summary>
     private void UpdateInfo()
     {
+        //TODO: 강화 탭 스탯 UI 변경 필요 
         _characterInfoController._infoUI._enhanceText.text = $"+{_characterData.Enhancement.Value.ToString()}";
         EnhanceCheck();
     }

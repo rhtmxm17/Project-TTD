@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.Serialization;
 
 
 #if UNITY_EDITOR
@@ -54,6 +55,18 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     [SerializeField] Sprite faceIconSprite;
     public Sprite FaceIconSprite => faceIconSprite;
 
+    [SerializeField] Sprite normalSkillIcon;
+    public Sprite NormalSkillIcon => normalSkillIcon;
+
+    [SerializeField] new string normalSkillToolTip;
+    public string NormalSkillToolTip => normalSkillToolTip;
+    
+    [SerializeField] Sprite specialSkillIcon;
+    public Sprite SpecialSkillIcon => specialSkillIcon;
+
+    [SerializeField] new string specialSkillToolTip;
+    public string SpecialSkillToolTip => specialSkillToolTip;
+    
     [SerializeField] GameObject modelPrefab;
     public GameObject ModelPrefab => modelPrefab;
 
@@ -100,8 +113,12 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         BASE_ATTACK,
         NORMAL_SKILL,
         NS_COOLDOWN,
+        NS_ICON,
+        NS_ToolTip,
         SPECIAL_SKILL,
         SS_COST,
+        SS_ICON,
+        SS_ToolTip,
         RANGE,
         ATK_BASE,
         ATK_GROWTH,
@@ -111,6 +128,8 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         HP_GROWTH,
         DEFCON,
         CHAR_TYPE,
+        ROLE_TYPE,
+        DRAGONVEIN
     }
 
     public void ParseCsvRow(string[] cells)
@@ -130,6 +149,16 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         if (faceIconSprite == null)
             faceIconSprite = DataTableManager.Instance.DummySprite;
 
+        //normal_Skill_Icon
+        normalSkillIcon = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.NS_ICON]}.asset");
+        if (normalSkillIcon == null)
+            normalSkillIcon = DataTableManager.Instance.DummySprite;
+        
+        //Special_Skill_Icon
+        specialSkillIcon = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.SS_ICON]}.asset");
+        if (specialSkillIcon == null)
+            specialSkillIcon = DataTableManager.Instance.DummySprite;
+         
         // SHAPE
         modelPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{DataTableManager.PrefabsAssetFolder}/{cells[(int)Column.SHAPE]}.prefab");
 
@@ -142,6 +171,8 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         // SPECIAL_SKILL
         secondSkillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.SPECIAL_SKILL]}.asset");
 
+        
+        
         // NS_COOLDOWN
         if (false == float.TryParse(cells[(int)Column.NS_COOLDOWN], out statusTable.BasicSkillCooldown))
         {

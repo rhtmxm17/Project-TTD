@@ -27,11 +27,11 @@ public class CharacterCheat : MonoBehaviour
     {
         if (string.IsNullOrEmpty(text))
         {
-            _enhanceLevel = 1;
+            _enhanceLevel = 0;
             return;
         }
         
-        _enhanceLevel = Math.Clamp(Convert.ToInt32(text), 1, 10); 
+        _enhanceLevel = Math.Clamp(Convert.ToInt32(text), 0, 10); 
     }
     
 }

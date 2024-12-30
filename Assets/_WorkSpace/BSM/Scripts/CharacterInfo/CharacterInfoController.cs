@@ -70,7 +70,7 @@ public class CharacterInfoController : BaseUI
         SubscribeEvent();
         SetContentFormGridLayOut();
         /////// 더미 인증 테스트 코드
-        StartCoroutine(UserDataManager.InitDummyUser(20));
+        StartCoroutine(UserDataManager.InitDummyUser(25));
     }
 
     private void OnEnable() => UpdateCharacterList();
