@@ -157,7 +157,7 @@ public class Combatable : MonoBehaviour
 
         damage = DamageCalculator.Calc(damage, igDefRate, defense.Value, defConst);
 
-        Debug.Log($"피격데미지{damage}");
+        //Debug.Log($"피격데미지{damage}");
 
         //View의 setvalue등을 연결하기.
         hp.Value -= damage;

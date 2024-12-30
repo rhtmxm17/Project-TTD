@@ -54,6 +54,9 @@ public class BossStageManager : StageManager, IDamageAddable
         Debug.Log("타임 오버!");
         isTimeOver = true;
 
+        Debug.Log(UserData.myUid);
+        Debug.Log(UserData.myNickname);
+
         RankApplier.ApplyRank("boss", UserData.myUid, GameManager.UserData.Profile.Name.Value, (long)(score + timeLimit));
     }
 
