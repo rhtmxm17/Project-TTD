@@ -17,11 +17,11 @@ public class KMT_BaseUI : BaseUI
 
     DatabaseReference userUidRef;
 
-    private IEnumerator Start()
+    private void Start()
     {
-        yield return new WaitUntil(() => { return GameManager.Database != null; });
-        yield return new WaitUntil(() => { return GameManager.Database.RootReference != null; });
-        yield return StartCoroutine(UserDataManager.InitDummyUser(7));
+        //yield return new WaitUntil(() => { return GameManager.Database != null; });
+        //yield return new WaitUntil(() => { return GameManager.Database.RootReference != null; });
+        //yield return StartCoroutine(UserDataManager.InitDummyUser(7));
 
         userUidRef = BackendManager.CurrentUserDataRef;
         Debug.Log(userUidRef == null);

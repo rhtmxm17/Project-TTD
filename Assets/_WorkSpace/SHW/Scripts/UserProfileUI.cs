@@ -20,17 +20,21 @@ public class UserProfileUI : BaseUI
     
     private void Start()
        
-    { 
+    {
         // 테스트용 더미 데이터
         // FIXME: 고장중..데이터 안올라감...주말에 고쳐오겠음...
-        UserDataManager.InitDummyUser(28);
-        
+        GameManager.UserData.TryInitDummyUserAsync(28, () =>
+        {
+            Debug.Log("완료");
+
+            // 여기서 기존의 데이터를 불러오도록
+            LoadData();
+            // 불러온 데이터 UI 적용
+            SetUI();
+        });
+
         // UI 바인딩
         Init();
-        // 여기서 기존의 데이터를 불러오도록
-        LoadData();
-        // 불러온 데이터 UI 적용
-        SetUI();
     }
 
     /// <summary>
