@@ -21,6 +21,16 @@ public enum CharacterType
     _4,
 }
 
+public enum CharacterRoleType
+{
+    _0, _1, _2
+}
+
+public enum CharacterDragonVeinType
+{
+    _0, _1
+}
+
 public class CharacterData : ScriptableObject, ICsvRowParseable
 {
     /// <summary>
@@ -44,6 +54,8 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         public float defensePointGrouth;
         public float defenseCon;
         public CharacterType type;
+        public CharacterRoleType roleType;
+        public CharacterDragonVeinType dragonVeinType;
     }
 
     [SerializeField] int id;
@@ -129,7 +141,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         DEFCON,
         CHAR_TYPE,
         ROLE_TYPE,
-        DRAGONVEIN
+        DRAGONVEIN_TYPE
     }
 
     public void ParseCsvRow(string[] cells)
@@ -249,8 +261,24 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
             Debug.LogError($"잘못된 데이터로 갱신 시도됨");
             return;
         }
+        
+        // CHAR_ROLE_TYPE
+        if (false == int.TryParse(cells[(int)Column.ROLE_TYPE], out int roleType))
+        {
+            Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+            return;
+        }
+        
+        // CHAR_DRAGON_TYPE
+        if (false == int.TryParse(cells[(int)Column.DRAGONVEIN_TYPE], out int dragonType))
+        {
+            Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+            return;
+        }
+        
         statusTable.type = (CharacterType)type;
-
+        statusTable.roleType = (CharacterRoleType)roleType;
+        statusTable.dragonVeinType = (CharacterDragonVeinType)dragonType;
     }
 #endif
 
