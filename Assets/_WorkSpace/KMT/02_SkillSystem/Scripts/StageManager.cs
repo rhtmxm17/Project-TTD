@@ -191,7 +191,7 @@ public class StageManager : MonoBehaviour
 
             // 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
             ItemGainPopup popupInstance = Instantiate(itemGainPopupPrefab, GameManager.PopupCanvas);
-            popupInstance.Initialize(stageDataOnLoad.Reward);
+            popupInstance.AddItemGainCell(stageDataOnLoad.Reward);
             popupInstance.Title.text = "스테이지 클리어!";
             popupInstance.onPopupClosed += GameManager.Instance.LoadMainScene;
         });

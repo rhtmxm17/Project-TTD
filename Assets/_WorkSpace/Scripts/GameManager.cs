@@ -16,6 +16,7 @@ public class GameManager : SingletonBehaviour<GameManager>
     public static PlayerInput Input { get; private set; } = null;
     public static DataTableManager TableData => DataTableManager.Instance;
     public static UserDataManager UserData => UserDataManager.Instance;
+    public static OverlayUIManager OverlayUIManager => OverlayUIManager.Instance;
 
     public static RectTransform PopupCanvas => Instance.popupCanvas;
 
@@ -42,23 +43,27 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     public void StartShortLoadingUI()
     {
-        if (loadingCounter == 0)
-            shortLoadingPanel.gameObject.SetActive(true);
+        shortLoadingPanel.gameObject.SetActive(true);
 
-        loadingCounter++;
+        //if (loadingCounter == 0)
+        //    shortLoadingPanel.gameObject.SetActive(true);
+
+        //loadingCounter++;
     }
 
     public void StopShortLoadingUI()
     {
-        loadingCounter--;
+        shortLoadingPanel.gameObject.SetActive(false);
 
-        if (loadingCounter == 0)
-            shortLoadingPanel.gameObject.SetActive(false);
+//        loadingCounter--;
 
-#if DEBUG
-        if (loadingCounter < 0)
-            Debug.LogError("시작되지 않은 로딩이 완료됨");
-#endif
+//        if (loadingCounter == 0)
+//            shortLoadingPanel.gameObject.SetActive(false);
+
+//#if DEBUG
+//        if (loadingCounter < 0)
+//            Debug.LogError("시작되지 않은 로딩이 완료됨");
+//#endif
     }
     #endregion
 
