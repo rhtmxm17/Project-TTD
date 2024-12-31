@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RankingBoard : BaseUI
+public class RankingBoard : OpenableWindow
 {
     [SerializeField]
     RankBlock rankBlockPrefab;
@@ -15,10 +15,8 @@ public class RankingBoard : BaseUI
 
     List<RankBlock> rankBlocks = new List<RankBlock>();
 
-    protected override void Awake()
+    void Awake()
     {
-        base.Awake();
-
         for (int i = 0; i < displayRankblockCnt; i++)
         {
             rankBlocks.Add(Instantiate(rankBlockPrefab, contentTransform).SetCounter(i + 1));
@@ -33,12 +31,6 @@ public class RankingBoard : BaseUI
     private void OnDisable()
     {
         GameManager.Database.RootReference.Child("boss").ValueChanged -= Refresh;
-    }
-
-    [ContextMenu("add")]
-    void Add()
-    {
-        RankApplier.ApplyRank("boss", "d", "jkl", 12);
     }
 
     /// <summary>
