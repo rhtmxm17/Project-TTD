@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.U2D.Aseprite;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static GameManager;
 
 public class AdventureUI : BaseUI
 {
@@ -14,6 +15,10 @@ public class AdventureUI : BaseUI
 
     [Header("child")]
     [SerializeField] LayoutGroup stageButtonGroup;
+
+    [Header("combat Scene Type")]
+    [SerializeField]
+    StageType stageType;
 
     protected override void Awake()
     {
@@ -38,7 +43,9 @@ public class AdventureUI : BaseUI
         SimpleInfoPopup instance = Instantiate(popupPrefab, GameManager.PopupCanvas);
         instance.Title.text = data.StageName;
 
-        // TODO: 씬 전환 대신 편성창 열기
-        instance.SubmitButton.onClick.AddListener(() => GameManager.Instance.LoadStageScene(data));
+        instance.SubmitButton.onClick.AddListener(() => {
+            GameManager.Instance.SetLoadStageType(data, stageType);
+            SceneManager.LoadSceneAsync("HYJ_BattleFormation");
+        });
     }
 }

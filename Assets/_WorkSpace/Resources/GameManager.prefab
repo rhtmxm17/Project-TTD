@@ -482,8 +482,9 @@ GameObject:
   - component: {fileID: 5656044526178670800}
   - component: {fileID: 6141995581087500908}
   - component: {fileID: 5335420075011855171}
+  - component: {fileID: 2315007845015820122}
   m_Layer: 0
-  m_Name: PopUpCanvas
+  m_Name: Overlay UI Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -528,7 +529,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 1
   m_SortingLayerID: 0
   m_SortingOrder: 100
   m_TargetDisplay: 0
@@ -572,6 +573,20 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &2315007845015820122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6761279991332342731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9dd625f0475c992488b2d83d497f3774, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemGainPopupPrefab: {fileID: 1595087986672033415, guid: bef5095f8f6dc3c4981d9a8cefa40826,
+    type: 3}
 --- !u!1 &7422888708328105519
 GameObject:
   m_ObjectHideFlags: 0

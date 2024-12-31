@@ -40,7 +40,7 @@ public class StageData : ScriptableObject
     /// <summary>
     /// 클리어 보상 목록
     /// </summary>
-    public List<RewardInfo> Reward => reward;
+    public List<ItemGain> Reward => reward;
 
     /// <summary>
     /// (유저 데이터) 클리어 횟수
@@ -56,7 +56,7 @@ public class StageData : ScriptableObject
     /// </summary>
     [SerializeField] List<WaveInfo> waves;
 
-    [SerializeField] List<RewardInfo> reward;
+    [SerializeField] List<ItemGain> reward;
 
     private void OnEnable()
     {
@@ -86,21 +86,6 @@ public class StageData : ScriptableObject
         /// 위치
         /// </summary>
         public Vector2 pose;
-    }
-
-
-    [System.Serializable]
-    public struct RewardInfo
-    {
-        /// <summary>
-        /// 보상 아이템 종류
-        /// </summary>
-        public ItemData rewardItem;
-
-        /// <summary>
-        /// 보상 개수
-        /// </summary>
-        public int number;
     }
 
 #if UNITY_EDITOR
@@ -144,7 +129,7 @@ public class StageData : ScriptableObject
                 }
 
                 waves = new List<WaveInfo>();
-                reward = new List<RewardInfo>();
+                reward = new List<ItemGain>();
 
                 // NAME
                 stageName = cells[(int)Column.STAGE_NAME];
@@ -198,9 +183,9 @@ public class StageData : ScriptableObject
             ItemData rewardItemData = AssetDatabase.LoadAssetAtPath<ItemData>($"{DataTableManager.ItemAssetFolder}/{cells[(int)Column.REWARD_NAME]}.asset");
             if (rewardItemData != null)
             {
-                RewardInfo rewardInfo = new RewardInfo() { rewardItem = rewardItemData };
+                ItemGain rewardInfo = new ItemGain() { item = rewardItemData };
 
-                if (false == int.TryParse(cells[(int)Column.REWARD_NUMBER], out rewardInfo.number))
+                if (false == int.TryParse(cells[(int)Column.REWARD_NUMBER], out rewardInfo.gain))
                 {
                     Debug.LogError($"잘못된 데이터로 갱신 시도됨");
                     continue;

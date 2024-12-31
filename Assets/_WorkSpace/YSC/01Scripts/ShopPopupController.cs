@@ -50,7 +50,7 @@ public class ShopPopupController : BaseUI
     public void Initialize(ItemGainCell itemData)
     {
         this.itemGainCell = itemData;
-        shopPopupText.text = itemData.itemDescription;
+        //shopPopupText.text = itemData.itemDescription;
     }
 }
 

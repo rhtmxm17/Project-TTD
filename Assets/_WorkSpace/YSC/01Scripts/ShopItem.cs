@@ -125,6 +125,9 @@ public class ShopItem : BaseUI
         Debug.Log($"구매 하였습니다.");
 
         UpdateInfo(); // 갱신된 상품 정보(구매 횟수) 반영
+        
+        ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(shopItemData.Products);
+        popupInstance.Title.text = "구매 성공!";
     }
 
 }
