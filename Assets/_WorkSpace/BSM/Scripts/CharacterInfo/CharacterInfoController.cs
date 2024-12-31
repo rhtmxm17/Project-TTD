@@ -11,7 +11,7 @@ using UnityEngine.UI;
 public class CharacterInfoController : BaseUI
 {
     [HideInInspector] public CharacterInfoUI _infoUI;
-    [HideInInspector] public List<CharacterInfo> _characterInfos;
+    public List<CharacterInfo> _characterInfos;
     [HideInInspector] public CharacterInfo CurCharacterInfo;
     [HideInInspector] public CharacterEnhance CurCharacterEnhance;
 
@@ -71,17 +71,14 @@ public class CharacterInfoController : BaseUI
     }
 
     public UserDataInt UserGoldData;
-    
-    
     public TextMeshProUGUI SortButtonText { get; set; }
-
 
     protected override void Awake()
     {
-        base.Awake();
+        base.Awake(); 
         Init();
-        SubscribeEvent();
-        SetContentFormGridLayOut();
+        ButtonOnClickEvent();
+        SetContentFormGridLayOut(); 
         SetDatabase(); 
     }
 
@@ -104,16 +101,14 @@ public class CharacterInfoController : BaseUI
                 }
             );
         
-        /////// 더미 인증 테스트 코드
-        GameManager.UserData.TryInitDummyUserAsync(35, () =>
+        /////// 더미 인증 테스트 코드 
+        GameManager.UserData.TryInitDummyUserAsync(38, () =>
         {
             // TODO: 유저데이터 불러오기 완료시 처리 
-            //TODO: Main과 붙으면 Enable에서
-            UpdateCharacterList();
         });
     }
 
-    //private void OnEnable() => UpdateCharacterList();
+    private void OnEnable() => UpdateCharacterList();
 
     private void Init()
     {
@@ -123,6 +118,8 @@ public class CharacterInfoController : BaseUI
         //Sort, Filter GetBind
         _characterFilter = GetUI<CharacterFilter>("FilterUI");
         _characterSort = GetUI<CharacterSort>("SortUI");
+        _characterSort.CurSortType = (SortType)PlayerPrefs.GetInt("SortType", 1);
+        
         _infoUI = GetUI<CharacterInfoUI>("InfoUI");
 
         _contentForm = GetUI<RectTransform>("Content");
@@ -143,7 +140,7 @@ public class CharacterInfoController : BaseUI
         _characterSpacing = _contentForm.GetComponent<GridLayoutGroup>().spacing;
     }
 
-    private void SubscribeEvent()
+    private void ButtonOnClickEvent()
     {
         _prevButton.onClick.AddListener(PreviousCharacter);
         _nextButton.onClick.AddListener(NextCharacter);
@@ -166,6 +163,7 @@ public class CharacterInfoController : BaseUI
 
         CharacterCount = _characterInfos.Count;
         _characterSort._sortCharacterInfos = _characterInfos;
+        _characterSort.CharacterInfoController = this;
         _characterFilter._filterCharacterInfos = _characterInfos;
         StartListSort();
     }
@@ -249,8 +247,7 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void TabSwitch()
     {
-        _characterUISet.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL) ||
-                                  _curInfoTabType.Equals(InfoTabType.ENHANCE));
+        _characterUISet.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL) || _curInfoTabType.Equals(InfoTabType.ENHANCE));
         _detailTab.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
         _enhanceTab.SetActive(_curInfoTabType.Equals(InfoTabType.ENHANCE));
         _evolutionTab.SetActive(_curInfoTabType.Equals(InfoTabType.EVOLUTION));

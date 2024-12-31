@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class CharacterInfoUI : BaseUI
 {
+    //DetailTab
     [HideInInspector] public TextMeshProUGUI _levelText;
     [HideInInspector] public TextMeshProUGUI _nameText;
     [HideInInspector] public TextMeshProUGUI _atkText;
@@ -18,14 +19,30 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _enhanceText;
     [HideInInspector] public TextMeshProUGUI _skillADescText;
     [HideInInspector] public TextMeshProUGUI _skillBDescText;
-     
     [HideInInspector] public Image _skillAIconImage;
     [HideInInspector] public Image _skillBIconImage;
     [HideInInspector] public Image _characterImage;
 
-    [HideInInspector] public Button _levelUpButton;
+    [HideInInspector] public Button _levelUpButton; 
+    
+    //EnhanceTab
+    [HideInInspector] public TextMeshProUGUI _curEnhanceLevelText;
+    [HideInInspector] public TextMeshProUGUI _beforeUpGradeText;
+    [HideInInspector] public TextMeshProUGUI _beforeHpText;
+    [HideInInspector] public TextMeshProUGUI _beforeDefText;
+    [HideInInspector] public TextMeshProUGUI _beforeAtkText;
+    [HideInInspector] public TextMeshProUGUI _afterUpGradeText;
+    [HideInInspector] public TextMeshProUGUI _afterHpText;
+    [HideInInspector] public TextMeshProUGUI _afterAtkText;
+    [HideInInspector] public TextMeshProUGUI _afterDefText;
+    [HideInInspector] public Slider _mileageSlider;
+    
     [HideInInspector] public Button _enhanceButton;
-
+    
+    //EvolutionTab
+    
+    //MeanTab
+     
     private CharacterInfoController _controller;
     
     private Button _detailTabButton;
@@ -55,38 +72,69 @@ public class CharacterInfoUI : BaseUI
     {
         //TODO: 임시 용 타입 UI 특성 지우기
         _tempElemetTypeText = GetUI<TextMeshProUGUI>("ElementTypeText");
-        
-        
-        _infoPopup = GetUI("InfoPopup");
-        
+        DetailTabUI();
+        EnhanceTabUI();
+        CommonUI();
+    }
+
+    /// <summary>
+    /// 공통적으로 쓰이는 UI
+    /// </summary>
+    private void CommonUI()
+    {
+        _infoPopup = GetUI("InfoPopup");  
+        _enhanceText = GetUI<TextMeshProUGUI>("EnhanceText"); 
+        _exitButton = GetUI<Button>("ExitButton");
+ 
+        //좌측 Tab 버튼 바인딩
+        _detailTabButton = GetUI<Button>("DetailTabButton");
+        _enhanceTabButton = GetUI<Button>("EnhanceTabButton");
+        _evolutionTabButton = GetUI<Button>("EvolutionTabButton");
+        _meanTabButton = GetUI<Button>("MeanTabButton");
+    }
+    
+    /// <summary>
+    /// EnhanceTab UI
+    /// </summary>
+    private void EnhanceTabUI()
+    {
+        _curEnhanceLevelText = GetUI<TextMeshProUGUI>("CurEnhanceLevelText");
+        _beforeUpGradeText = GetUI<TextMeshProUGUI>("BeforeUpGradeText");
+        _beforeHpText = GetUI<TextMeshProUGUI>("BeforeHpText");
+        _beforeAtkText = GetUI<TextMeshProUGUI>("BeforeAtkText");
+        _beforeDefText = GetUI<TextMeshProUGUI>("BeforeDefText");
+        _afterUpGradeText = GetUI<TextMeshProUGUI>("AfterUpGradeText");
+        _afterHpText = GetUI<TextMeshProUGUI>("AfterHpText");
+        _afterAtkText = GetUI<TextMeshProUGUI>("AfterAtkText");
+        _afterDefText = GetUI<TextMeshProUGUI>("AfterDefText");
+
+        _mileageSlider = GetUI<Slider>("MileageSlider");
+        _enhanceButton = GetUI<Button>("EnhanceButton"); 
+    }
+    
+    /// <summary>
+    /// DetailTab UI
+    /// </summary>
+    private void DetailTabUI()
+    {
+        _coinText = GetUI<TextMeshProUGUI>("CoinText");
+        _jewelryText = GetUI<TextMeshProUGUI>("JewelryText");
         _levelText = GetUI<TextMeshProUGUI>("LevelText");
         _nameText = GetUI<TextMeshProUGUI>("NameText");
         _powerLevelText = GetUI<TextMeshProUGUI>("PowerLevelText");
         _atkText = GetUI<TextMeshProUGUI>("AtkText");
         _hpText = GetUI<TextMeshProUGUI>("HpText");
         _defText = GetUI<TextMeshProUGUI>("DefText");
-        _coinText = GetUI<TextMeshProUGUI>("CoinText");
-        _jewelryText = GetUI<TextMeshProUGUI>("JewelryText");
-        _enhanceText = GetUI<TextMeshProUGUI>("EnhanceText");
         _skillADescText = GetUI<TextMeshProUGUI>("SkillDescAText");
         _skillBDescText = GetUI<TextMeshProUGUI>("SkillDescBText");
         
-        _exitButton = GetUI<Button>("ExitButton");
-        _levelUpButton = GetUI<Button>("LevelUpButton");
-        _enhanceButton = GetUI<Button>("EnhanceButton");
-        
-        //좌측 Tab 버튼 바인딩
-        _detailTabButton = GetUI<Button>("DetailTabButton");
-        _enhanceTabButton = GetUI<Button>("EnhanceTabButton");
-        _evolutionTabButton = GetUI<Button>("EvolutionTabButton");
-        _meanTabButton = GetUI<Button>("MeanTabButton");
-
         _skillAIconImage = GetUI<Image>("SkillIconA");
         _skillBIconImage = GetUI<Image>("SkillIconB");
         _characterImage = GetUI<Image>("CharacterImage");
         
+        _levelUpButton = GetUI<Button>("LevelUpButton");
     }
-
+     
     private void ButtonAddListener()
     {
         _exitButton.onClick.AddListener(InfoPopupClose);

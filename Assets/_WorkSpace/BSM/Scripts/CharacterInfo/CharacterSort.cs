@@ -7,13 +7,19 @@ using UnityEngine;
 
 public class CharacterSort : MonoBehaviour
 {
+    [HideInInspector] public CharacterInfoController CharacterInfoController;
     [HideInInspector] public List<CharacterInfo> _sortCharacterInfos;
 
-    private CharacterInfoController _characterInfoController;
     private List<object> _sortList;
 
     private CharacterSortUI _characterSortUI;
     private SortType _curSortType;
+
+    public SortType CurSortType
+    {
+        get => _curSortType;
+        set => _curSortType = value;
+    }
 
     private bool _isSorting;
 
@@ -22,7 +28,9 @@ public class CharacterSort : MonoBehaviour
         get => _isSorting;
         set { _isSorting = value; }
     }
-    
+
+    private bool _isStart;
+
     private void Awake()
     {
         Init();
@@ -36,9 +44,6 @@ public class CharacterSort : MonoBehaviour
     private void Init()
     {
         _characterSortUI = GetComponent<CharacterSortUI>();
-        _curSortType = (SortType)PlayerPrefs.GetInt("SortType");
-
-        _characterInfoController = GetComponentInParent<CharacterInfoController>();
     }
 
     private void SubscribeEvent()
@@ -100,13 +105,18 @@ public class CharacterSort : MonoBehaviour
             _sortList.Sort();
         }
 
+        if (!_isStart)
+        {
+            _isStart = true;
+            StartSort();
+        }
+
         for (int i = 0; i < _sortList.Count; i++)
         {
             for (int j = i + 1; j < _sortCharacterInfos.Count; j++)
             {
                 if (_sortList[i].Equals(GetSortValue(_sortCharacterInfos[j])))
                 {
-
                     CharacterData newData = _sortCharacterInfos[j]._CharacterData;
                     CharacterData oldData = _sortCharacterInfos[i]._CharacterData;
 
@@ -133,8 +143,16 @@ public class CharacterSort : MonoBehaviour
             }
         }
 
-        _characterInfoController.SortButtonText.text = _curSortType.ToString();
+        CharacterInfoController.SortButtonText.text = _curSortType.ToString();
         PlayerPrefs.SetInt("SortType", (int)_curSortType);
+    }
+
+    private void StartSort()
+    {
+        for (int i = 0; i < _sortCharacterInfos.Count; i++)
+        {
+            _sortCharacterInfos[i].StartSetCharacterUI();
+        }
     }
 
     /// <summary>
