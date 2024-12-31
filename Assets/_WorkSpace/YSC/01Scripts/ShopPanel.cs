@@ -18,15 +18,10 @@ public class ShopPanel : BaseUI
     [SerializeField] ShopItem shopCellPrefab;
 
     // 정보팝업창
-    [SerializeField] public GameObject ShopPopup;
+    [SerializeField] SimpleInfoPopup shopPopupPrefab;
 
     // 상점이름, 추후에 상점종류많아지면 열고 닫을때 교체
     [SerializeField] TMP_Text shopNameText;
-
-    // 팝업창
-    [SerializeField] TMP_Text shopPopupText;
-    [SerializeField] Image shopPopupImage;
-    [SerializeField] TMP_Text shopPopupNameText;
 
     private List<ShopItem> shopItemsList;
 
@@ -40,13 +35,8 @@ public class ShopPanel : BaseUI
         // 상점이름
         shopNameText = GetUI<TMP_Text>("ShopNameText");
 
-        // 정보팝업
-        ShopPopup = GetUI("ShopPopup");
-
         // 상점템 리스트 갱신
         ListUpItems();
-        // 정보팝업 UI세팅
-        SetShopPopup();
     }
    
     
@@ -61,18 +51,6 @@ public class ShopPanel : BaseUI
             cellInstance.GetComponent<Button>().onClick.AddListener(() => OpenPopup(cellInstance.shopItemData)); // 정보팝업 열기 버튼 추가
         }
     }
-
-    private void SetShopPopup() // 정보팝업창 UI 변수
-    {
-        shopPopupText = GetUI<TMP_Text>("ShopPopupText");
-        shopPopupImage = GetUI<Image>("ShopPopupImage");
-        shopPopupNameText = GetUI<TMP_Text>("ShopPopupNameText");
-        // 닫기버튼
-        GetUI<Button>("ShopPopupClose").onClick.AddListener(() => GoBack("ShopPopup")); 
-        // 기본설명
-        GetUI<TMP_Text>("ShopPopupText").text = "기본설명";
-
-    }
     
     /// <summary>
     /// 인덱스번호에 할당된 아이템 팝업창을 열고
@@ -81,19 +59,12 @@ public class ShopPanel : BaseUI
     /// <param name="data"></param>
     public void OpenPopup(ShopItemData data)
     {
-        Open("ShopPopup");
-        SetShopPopup();
-        UpdateItemList(data);
+        SimpleInfoPopup popupInstance = Instantiate(shopPopupPrefab, GameManager.PopupCanvas);
+        popupInstance.Title.text = data.ShopItemName;
+        popupInstance.Description.text = data.Description;
+        popupInstance.Image.sprite = data.Sprite;
     }
 
-    // ShopItem 에서 ItemData파싱한 데이터를 불러와서
-    // 정보팝업창 UI를 업데이트
-    private void UpdateItemList(ShopItemData data)
-    {
-        shopPopupText.text = data.Description;
-        shopPopupImage.sprite = data.Sprite;
-        shopPopupNameText.text = data.ShopItemName;
-    }
 
     #region 기본여닫이
     public void Open(string name)

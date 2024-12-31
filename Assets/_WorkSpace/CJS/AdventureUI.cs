@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,7 +9,7 @@ public class AdventureUI : BaseUI
     [SerializeField] List<StageData> stages;
 
     [Header("prefabs")]
-    [SerializeField] StageSelectPopup popupPrefab;
+    [SerializeField] SimpleInfoPopup popupPrefab;
     [SerializeField] StageButton stageButtonPrefab;
 
     [Header("child")]
@@ -34,7 +35,10 @@ public class AdventureUI : BaseUI
 
     private void Popup(StageData data)
     {
-        StageSelectPopup instance = Instantiate(popupPrefab, GameManager.PopupCanvas);
-        instance.Initialize(data);
+        SimpleInfoPopup instance = Instantiate(popupPrefab, GameManager.PopupCanvas);
+        instance.Title.text = data.StageName;
+
+        // TODO: 씬 전환 대신 편성창 열기
+        instance.SubmitButton.onClick.AddListener(() => GameManager.Instance.LoadStageScene(data));
     }
 }

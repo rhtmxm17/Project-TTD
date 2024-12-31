@@ -49,15 +49,7 @@ public class ShopItem : BaseUI
         shopItemData = data;
         itemNameText.text = data.ShopItemName;
 
-        // 따로 스프라이트를 등록하지 않았다면 첫번째 상품의 이미지
-        if (null == data.Sprite)
-        {
-            ShopItemImage.sprite = data.Products[0].item.SpriteImage;
-        }
-        else
-        {
-            ShopItemImage.sprite = data.Sprite;
-        }
+        ShopItemImage.sprite = data.Sprite;
 
         // 가격 표시
         if (null == data.Price.item)

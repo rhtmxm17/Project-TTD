@@ -15,9 +15,18 @@ public class ShopItemData : ScriptableObject
     [SerializeField] string shopItemName;
 
     /// <summary>
-    /// 상점에서 표시되는 이미지
+    /// 상점에서 표시되는 이미지(시트에서 지정하지 않았다면 첫번째 상품의 이미지)
     /// </summary>
-    public Sprite Sprite => sprite;
+    public Sprite Sprite
+    {
+        get
+        {
+            if (sprite == null)
+                return Products[0].item.SpriteImage;
+            else
+                return sprite;
+        } 
+    }
     [SerializeField] Sprite sprite;
 
     /// <summary>
