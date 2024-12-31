@@ -204,6 +204,7 @@ public class CharacterEnhance : MonoBehaviour
     {
         _characterInfoController._infoUI._mileageValueText.text = $"강화 마일리지 {value*100}%";
         _mileage += value;
+        _mileage = Mathf.Clamp(_mileage, 0f, 1f);
     }
 
     /// <summary>
