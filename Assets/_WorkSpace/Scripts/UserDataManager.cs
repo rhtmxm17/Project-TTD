@@ -75,13 +75,18 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
 
     }
 
-
     public void TryInitDummyUserAsync(int DummyNumber, UnityAction onCompletedCallback)
     {
+        GameManager.Auth.SignOut();
+        if (BackendManager.CurrentUserDataRef != null)
+        {
+            onCompletedCallback?.Invoke();
+            return;
+        }
+
         GameManager.Instance.StartCoroutine(InitDummyUser(DummyNumber));
         onLoadUserDataCompleted.AddListener(onCompletedCallback);
     }
-
     /// <summary>
     /// 테스트용 가인증 코드입니다
     /// </summary>
@@ -92,14 +97,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
         // Database 초기화 대기
         yield return new WaitWhile(() => GameManager.Database == null);
 
-        if (BackendManager.CurrentUserDataRef != null)
-        {
-            Debug.Log("이미 등록된 UserData 레퍼런스가 있어서 더미 유저 등록을 생략함");
-        }
-        else
-        {
-            BackendManager.Instance.UseDummyUserDataRef(DummyNumber); // 테스트코드
-        }
+        BackendManager.Instance.UseDummyUserDataRef(DummyNumber); // 테스트코드
 
         Instance.LoadUserData();
     }
