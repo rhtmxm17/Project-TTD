@@ -75,30 +75,33 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
 
     }
 
-    public void TryInitDummyUserAsync(int DummyNumber, UnityAction onCompletedCallback)
-    {
-        GameManager.Auth.SignOut();
-        if (BackendManager.CurrentUserDataRef != null)
-        {
-            onCompletedCallback?.Invoke();
-            return;
-        }
-
-        GameManager.Instance.StartCoroutine(InitDummyUser(DummyNumber));
-        onLoadUserDataCompleted.AddListener(onCompletedCallback);
-    }
     /// <summary>
     /// 테스트용 가인증 코드입니다
     /// </summary>
     /// <param name="DummyNumber">가인증 uid값 뒤쪽에 붙일 번호</param>
     /// <returns></returns>
-    private IEnumerator InitDummyUser(int DummyNumber)
+    public void TryInitDummyUserAsync(int DummyNumber, UnityAction onCompletedCallback)
+    {
+        GameManager.Instance.StartCoroutine(InitDummyUser(DummyNumber, onCompletedCallback));
+    }
+
+    private IEnumerator InitDummyUser(int DummyNumber, UnityAction onCompletedCallback)
     {
         // Database 초기화 대기
         yield return new WaitWhile(() => GameManager.Database == null);
+        // Auth 초기화 대기
+        yield return new WaitWhile(() => GameManager.Auth == null);
+
+        GameManager.Auth.SignOut();
+        if (BackendManager.CurrentUserDataRef != null) // 이미 더미 인증된 이력이 있을 경우 즉시 완료
+        {
+            onCompletedCallback?.Invoke();
+            yield break;
+        }
 
         BackendManager.Instance.UseDummyUserDataRef(DummyNumber); // 테스트코드
 
+        onLoadUserDataCompleted.AddListener(onCompletedCallback);
         Instance.LoadUserData();
     }
 
