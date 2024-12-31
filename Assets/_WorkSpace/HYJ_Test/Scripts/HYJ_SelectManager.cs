@@ -3,6 +3,7 @@ using Firebase.Extensions;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.SceneManagement;
@@ -56,7 +57,8 @@ public class HYJ_SelectManager : MonoBehaviour
 
     public void SetCharcterSprite(int posIdx, int charIdx)
     {
-        var obj = Instantiate(spriteList[charIdx - 1], buttonsTransformList[posIdx]);
+        CharacterData chData = GameManager.TableData.GetCharacterData(charIdx);
+        var obj = Instantiate(spriteList[charIdx-1], buttonsTransformList[posIdx]);
         obj.transform.localPosition = Vector3.zero;
     }
 

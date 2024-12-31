@@ -70,6 +70,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
     public class GamePlayData
     {
         public UserDataDateTime EggGainTimestamp { get; private set; } = new UserDataDateTime("PlayData/EggGainTimestamp");
+        public UserDataDateTime IdleRewardTimestamp { get; private set; } = new UserDataDateTime("PlayData/IdleRewardTimestamp");
 
         public UserDataDictionaryLong BatchInfo { get; private set; } = new UserDataDictionaryLong("PlayData/BatchInfo");
 
@@ -138,6 +139,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             this.Profile.MyroomCharaIdx.SetValueWithDataSnapshot(userData);
 
             this.PlayData.EggGainTimestamp.SetValueWithDataSnapshot(userData);
+            this.PlayData.IdleRewardTimestamp.SetValueWithDataSnapshot(userData);
             this.PlayData.BatchInfo.SetValueWithDataSnapshot(userData);
 
             // 캐릭터 데이터 로딩
