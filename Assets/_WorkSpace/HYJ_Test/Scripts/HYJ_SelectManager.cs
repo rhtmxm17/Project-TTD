@@ -95,6 +95,6 @@ public class HYJ_SelectManager : MonoBehaviour
 
     public void LoadBattleScene()
     {
-        SceneManager.LoadScene("DamageCalc_kmt");
+        GameManager.Instance.LoadStageScene();
     }
 }
