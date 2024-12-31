@@ -6,8 +6,11 @@ using UnityEngine.UI;
 
 public class MyRoomUI : BaseUI
 {
-    [SerializeField] Sprite[] sprites;
-    private int index;
+    [SerializeField] Sprite[] roomSprites;
+    [SerializeField] Sprite[] charaSprites;      // 임시
+    private int roomIndex;
+    private int charaIndex;
+    
     
     private void Start()
     {
@@ -15,7 +18,7 @@ public class MyRoomUI : BaseUI
         GameManager.UserData.TryInitDummyUserAsync(28, () =>
         {
             Debug.Log("완료");
-            LoadRoomImage();
+            LoadImage();
         });
         SetMyRoomUI();
     }
@@ -45,10 +48,14 @@ public class MyRoomUI : BaseUI
         );
     }
 
-    private void LoadRoomImage()
+    private void LoadImage()
     {
-        index = GameManager.UserData.Profile.MyroomBgIdx.Value;
-        GetUI<Image>("BackImage").sprite = sprites[index];
+        roomIndex = GameManager.UserData.Profile.MyroomBgIdx.Value;
+        GetUI<Image>("BackImage").sprite = roomSprites[roomIndex];
+        // 임시적으로 이미 가지고 있는 캐릭터의 id를 받아서 적용 하는 방식
+        // 하이어라키 컨텐츠의 임의 캐릭터 이미지로 변경
+        charaIndex = GameManager.UserData.Profile.MyroomCharaIdx.Value;
+        GetUI<Image>("MyRoomCharacter").sprite = charaSprites[charaIndex];
     }
 
     private void OpenTap(string _name)
