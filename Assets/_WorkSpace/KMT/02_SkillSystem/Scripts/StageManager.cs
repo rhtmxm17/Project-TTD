@@ -48,6 +48,12 @@ public class StageManager : MonoBehaviour
     TextMeshProUGUI costText;
     [SerializeField]
     Slider costSlider;
+    [SerializeField]
+    TextMeshProUGUI wavesText;
+
+    int curWave;
+    int maxWave;
+    string MAX_WAVE;
 
     private void Awake()
     {
@@ -109,6 +115,13 @@ public class StageManager : MonoBehaviour
             });
             monsterWaveQueue.Add(monsterWave.GetComponent<CombManager>());
         }
+
+        maxWave = monsterWaveQueue.Count;
+        MAX_WAVE = maxWave.ToString();
+        curWave = 0;
+
+        AddWaveText();
+
     }
 
     public void StartGameOnSceneLoaded() => StartGame();
@@ -143,6 +156,15 @@ public class StageManager : MonoBehaviour
         costText.text = PartyCost.ToString();
     }
 
+    void AddWaveText()
+    {
+        if (curWave >= maxWave)
+            return;
+
+        curWave++;
+        wavesText.text = $"WAVE\n{curWave.ToString()} / {MAX_WAVE}";
+    }
+
     IEnumerator GoNextWaveCO()
     {
         monsterWaveQueue.RemoveAt(0);
@@ -163,7 +185,7 @@ public class StageManager : MonoBehaviour
 
         }
 
-
+        AddWaveText();
         Debug.Log("다음 웨이브로 이동중...");
         //yield return new WaitForSeconds(3f);
 
