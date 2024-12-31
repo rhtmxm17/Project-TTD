@@ -9,13 +9,11 @@ using UnityEngine.UI;
 public class CharacterFilter : MonoBehaviour
 {
     [HideInInspector] public List<CharacterInfo> _filterCharacterInfos;
-
-    public List<int> _infosIndex = new List<int>();
-
+    [HideInInspector] public List<int> _infosIndex = new List<int>();
+    [HideInInspector] public List<ElementType> _characterFilterTypes = new List<ElementType>();
+    [HideInInspector] public List<Image> _buttonColors = new List<Image>();
+    
     private CharacterFilterUI _characterFilterUI;
-
-    public List<ElementType> _characterFilterTypes = new List<ElementType>();
-    private List<Image> _buttonColors = new List<Image>();
     
     private void Awake()
     {
@@ -56,13 +54,21 @@ public class CharacterFilter : MonoBehaviour
             Image colorblock = button.GetComponent<Image>();
             colorblock.color = Color.white;
             
+            if (_buttonColors.Contains(colorblock))
+            {
+                _buttonColors.Remove(colorblock);
+            }
         }
         else
         {
             //필터 진행
             Image colorblock = button.GetComponent<Image>();
-            colorblock.color = Color.red;
-            _buttonColors.Add(colorblock);
+            colorblock.color = Color.red; 
+            if (!_buttonColors.Contains(colorblock))
+            {
+                _buttonColors.Add(colorblock);
+            }
+            
             
             _characterFilterTypes.Add(elementType);
             CharacterListFilter(elementType);
@@ -145,11 +151,9 @@ public class CharacterFilter : MonoBehaviour
     /// </summary>
     private void AllFilterClear()
     {
-        if (_infosIndex.Count == 0) return;
-        if (_buttonColors.Count != 0)
-        {
-            _buttonColors.ForEach(x=> x.color = Color.white);
-        }            
+        if (_buttonColors.Count == 0) return;
+        
+        _buttonColors.ForEach(x=> x.color = Color.white);
         
         for (int i = 0; i < _infosIndex.Count; i++)
         {
