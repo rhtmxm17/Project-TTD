@@ -29,6 +29,7 @@ public class FriendBaseUI : BaseUI
         GetComponent<OpenableWindow>().onOpenAction += () => SelectTab(Tabs.FRIENDS);
         GetComponent<OpenableWindow>().onCloseAction += () => CloseAllTab();
 
+        GetComponent<OpenableWindow>().CloseWindow();
     }
 
     public void SelectTab(Tabs tapType)

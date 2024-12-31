@@ -1,7 +1,5 @@
 using Firebase.Database;
 using Firebase.Extensions;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FriendList : MonoBehaviour
@@ -10,6 +8,9 @@ public class FriendList : MonoBehaviour
     FriendBlock friendBlockPrefab;
     [SerializeField]
     Transform contentTransform;
+
+    [SerializeField]
+    MyroomInitializer initializer;
 
     DatabaseReference userRef;
 
@@ -62,7 +63,8 @@ public class FriendList : MonoBehaviour
                 Instantiate(friendBlockPrefab, contentTransform)
                     .InitData(friendsUid.Key, 
                               task.Result.Child($"{friendsUid.Key}/Profile/Name").Value.ToString(),
-                              this);
+                              this, 
+                              initializer.InitRoom);
 
             }
 
