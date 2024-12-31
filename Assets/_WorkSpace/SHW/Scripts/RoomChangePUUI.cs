@@ -9,15 +9,19 @@ using UnityEngine.UI;
 public class RoomChangePUUI : BaseUI
 {
     // TODO: 나중에 스크립터 오브젝트로 만들어서 테마의 이름과 내용을 가져오도록 수정 필요
-    [SerializeField] Sprite[] sprites;
+    [SerializeField] public Sprite[] sprites;
     [SerializeField] string[] names;
     [SerializeField] string[] descriptions;
+    
+    // 바꿀 배경 이미지
+    [SerializeField] Image backImage;
     
     int spriteIndex = 0;
 
     private void Start()
     {
         Init();
+        LoadRoomImage();
     }
 
     private void Init()
@@ -31,6 +35,29 @@ public class RoomChangePUUI : BaseUI
         GetUI<Image>("RoomPreview").sprite = sprites[spriteIndex];
         GetUI<TMP_Text>("RoomNameText").text = names[spriteIndex];
         GetUI<TMP_Text>("ExplainText").text = descriptions[spriteIndex];
+        
+        // 배경 이미지 바꾸기 결정
+        GetUI<Button>("SetImageButton").onClick.AddListener(()=>ChangeRoom("RoomPreview"));
+    }
+    
+    private void LoadRoomImage()
+    {
+        spriteIndex = GameManager.UserData.Profile.MyroomBgIdx.Value;
+        GetUI<Image>("RoomPreview").sprite = sprites[spriteIndex];
+    }
+    
+    private void ChangeRoom(string _name)
+    {
+        // 선택한 이미지의 스프라이트로 바꾼다
+        backImage.sprite = GetUI<Image>(_name).sprite;
+        // 이미지 넘버 DB에 보냄
+        GameManager.UserData.StartUpdateStream()
+            .SetDBValue(GameManager.UserData.Profile.MyroomBgIdx, spriteIndex)
+            .Submit(result =>
+            {
+                if (false == result)
+                    Debug.Log($"요청 전송에 실패함");
+            });
     }
     
     // 우버튼 

@@ -6,8 +6,17 @@ using UnityEngine.UI;
 
 public class MyRoomUI : BaseUI
 {
+    [SerializeField] Sprite[] sprites;
+    private int index;
+    
     private void Start()
     {
+        // FIXME : 여기에 기존 룸 체인지 팝업UI의 스프라이트 들을 가져오고 싶은데...
+        GameManager.UserData.TryInitDummyUserAsync(28, () =>
+        {
+            Debug.Log("완료");
+            LoadRoomImage();
+        });
         SetMyRoomUI();
     }
 
@@ -20,8 +29,6 @@ public class MyRoomUI : BaseUI
         GetUI<Button>("RoomChangeButton").onClick.AddListener(()=>OpenSetRoomPopup("RoomChangePopup"));
         // 배경 바꾸기 팝업 닫기
         GetUI<Button>("CloseChangeRoomPopup").onClick.AddListener(()=>CloseSetRoomPopup("RoomChangePopup"));
-        // 배경 이미지 바꾸기 결정
-        GetUI<Button>("SetImageButton").onClick.AddListener(()=>ChangeRoom("RoomPreview"));
         
         // 캐릭터 바꾸기 팝업 띄우기
         GetUI<Button>("CharacterChangeButton").onClick.AddListener(()=>OpenSetRoomPopup("CharacterChangePopup"));
@@ -35,8 +42,13 @@ public class MyRoomUI : BaseUI
 
         GetUI<Button>("VisitButton").onClick.AddListener(
             GetUI<OpenableWindow>("FriendTapCanvas").OpenWindow
-            );
+        );
+    }
 
+    private void LoadRoomImage()
+    {
+        index = GameManager.UserData.Profile.MyroomBgIdx.Value;
+        GetUI<Image>("BackImage").sprite = sprites[index];
     }
 
     private void OpenTap(string _name)
@@ -48,28 +60,17 @@ public class MyRoomUI : BaseUI
     {
         GetUI(_name).SetActive(false);
     }
-
-    //TODO: 선택한 이미지를 DB에 올리는 작업 추가 해야함
+    
     private void OpenSetRoomPopup(string _name)
     {
-        GetUI("Safe Area").SetActive(false);
+        // GetUI("Safe Area").SetActive(false);
         GetUI(_name).SetActive(true);
     }
 
     private void CloseSetRoomPopup(string _name)
     {
-        GetUI("Safe Area").SetActive(true);
+        // GetUI("Safe Area").SetActive(true);
         GetUI(_name).SetActive(false);
-    }
-
-    // TODO: 나중에는 이미지가 소유 여부에 따라서 선택 가능 불가능이 바뀌어야 한다.
-    private void ChangeRoom(string _name)
-    {
-        // 바꿀 UI와 그 스프라이트를
-        GetUI("BackImage");
-        // 선택한 이미지의 스프라이트로 바꾼다
-        GetUI<Image>("BackImage").sprite = GetUI<Image>(_name).sprite;
-        // 선택한 이미지를 DB에 저장? -> 다음 접속에도 불러오도록 설정??
     }
 
     private void ChangeCharacter(string _name)
