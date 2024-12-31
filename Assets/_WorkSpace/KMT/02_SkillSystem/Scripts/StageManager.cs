@@ -38,16 +38,18 @@ public class StageManager : MonoBehaviour
     [SerializeField]
     float MaxPartyCost;
 
-    [Header("Reward UI")]
-    [SerializeField] ItemGainPopup itemGainPopupPrefab;
-    protected ItemGainPopup ItemGainPopupPrefab => itemGainPopupPrefab;
-
     [Header("Debug")]
     [Space(20)]
     [SerializeField]
     TextMeshProUGUI costText;
     [SerializeField]
     Slider costSlider;
+    [SerializeField]
+    TextMeshProUGUI wavesText;
+
+    int curWave;
+    int maxWave;
+    string MAX_WAVE;
 
     private void Awake()
     {
@@ -109,6 +111,13 @@ public class StageManager : MonoBehaviour
             });
             monsterWaveQueue.Add(monsterWave.GetComponent<CombManager>());
         }
+
+        maxWave = monsterWaveQueue.Count;
+        MAX_WAVE = maxWave.ToString();
+        curWave = 0;
+
+        AddWaveText();
+
     }
 
     public void StartGameOnSceneLoaded() => StartGame();
@@ -143,6 +152,15 @@ public class StageManager : MonoBehaviour
         costText.text = PartyCost.ToString();
     }
 
+    void AddWaveText()
+    {
+        if (curWave >= maxWave)
+            return;
+
+        curWave++;
+        wavesText.text = $"WAVE\n{curWave.ToString()} / {MAX_WAVE}";
+    }
+
     IEnumerator GoNextWaveCO()
     {
         monsterWaveQueue.RemoveAt(0);
@@ -163,7 +181,7 @@ public class StageManager : MonoBehaviour
 
         }
 
-
+        AddWaveText();
         Debug.Log("다음 웨이브로 이동중...");
         //yield return new WaitForSeconds(3f);
 
@@ -190,8 +208,7 @@ public class StageManager : MonoBehaviour
             }
 
             // 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
-            ItemGainPopup popupInstance = Instantiate(itemGainPopupPrefab, GameManager.PopupCanvas);
-            popupInstance.Initialize(stageDataOnLoad.Reward);
+            ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(stageDataOnLoad.Reward);
             popupInstance.Title.text = "스테이지 클리어!";
             popupInstance.onPopupClosed += GameManager.Instance.LoadMainScene;
         });

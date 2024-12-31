@@ -7,7 +7,6 @@ using UniRx;
 using Unity.Mathematics;
 using UnityEngine.UI;
 //using static Spine.Unity.Editor.SkeletonBaker.BoneWeightContainer;
-using UnityEditor.U2D.Animation;
 
 [RequireComponent(typeof(Trackable))]
 public class Combatable : MonoBehaviour
@@ -351,11 +350,7 @@ public class Combatable : MonoBehaviour
 
         while (target.IsAlive && rangePow > Vector3.SqrMagnitude(target.transform.position - transform.position))
         {
-            //피격효과 확인을 위한 임시 코드
-            target.GetComponent<SpriteRenderer>().color = UnityEngine.Random.ColorHSV();
-
             StartCoroutine(baseAttack.SkillRoutine(this, null));
-
             yield return new WaitForSeconds(1);
         }
 

@@ -6,6 +6,14 @@ public class OpenableRanking : OpenableUIBase
 {
     [SerializeField]
     OpenableWindow rankUI;
+    [SerializeField]
+    MyRankSetter rankBlock;
+
+    public override void OpenWindow()
+    {
+        base.OpenWindow();
+        rankBlock.SetRankBlock();
+    }
 
     public override void CloseWindow()
     {

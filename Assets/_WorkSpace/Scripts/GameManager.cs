@@ -16,6 +16,7 @@ public class GameManager : SingletonBehaviour<GameManager>
     public static PlayerInput Input { get; private set; } = null;
     public static DataTableManager TableData => DataTableManager.Instance;
     public static UserDataManager UserData => UserDataManager.Instance;
+    public static OverlayUIManager OverlayUIManager => OverlayUIManager.Instance;
 
     public static RectTransform PopupCanvas => Instance.popupCanvas;
 
@@ -42,23 +43,27 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     public void StartShortLoadingUI()
     {
-        if (loadingCounter == 0)
-            shortLoadingPanel.gameObject.SetActive(true);
+        shortLoadingPanel.gameObject.SetActive(true);
 
-        loadingCounter++;
+        //if (loadingCounter == 0)
+        //    shortLoadingPanel.gameObject.SetActive(true);
+
+        //loadingCounter++;
     }
 
     public void StopShortLoadingUI()
     {
-        loadingCounter--;
+        shortLoadingPanel.gameObject.SetActive(false);
 
-        if (loadingCounter == 0)
-            shortLoadingPanel.gameObject.SetActive(false);
+//        loadingCounter--;
 
-#if DEBUG
-        if (loadingCounter < 0)
-            Debug.LogError("시작되지 않은 로딩이 완료됨");
-#endif
+//        if (loadingCounter == 0)
+//            shortLoadingPanel.gameObject.SetActive(false);
+
+//#if DEBUG
+//        if (loadingCounter < 0)
+//            Debug.LogError("시작되지 않은 로딩이 완료됨");
+//#endif
     }
     #endregion
 
@@ -68,6 +73,9 @@ public class GameManager : SingletonBehaviour<GameManager>
     /// 스테이지 로드 시점에서만 사용, 불러올 스테이지 데이터
     /// </summary>
     private StageData stageData;
+    
+    public enum StageType { NORMAL, GOLD, BOSS, NONE}
+    public StageType stageType { get; private set; } = StageType.NONE;
 
     public void LoadMainScene()
     {
@@ -75,12 +83,50 @@ public class GameManager : SingletonBehaviour<GameManager>
         SceneManager.LoadSceneAsync("MainMenu");
     }
 
-    public void LoadStageScene(StageData StageData)
+    /// <summary>
+    /// 전투 스테이지 데이터와 전투씬 타입을 지정
+    /// </summary>
+    /// <param name="StageData">스테이지 데이터</param>
+    /// <param name="stageType">전투씬 타입</param>
+    public void SetLoadStageType(StageData StageData, StageType stageType)
     {
+        this.stageType = stageType;
         Debug.Log($"씬 전환: {SceneManager.GetActiveScene().name} -> StageDefault(스테이지명:{StageData.StageName})");
         this.stageData = StageData;
-        SceneManager.sceneLoaded += OnStageSceneLoaded;
-        SceneManager.LoadSceneAsync("StageDefault");
+    }
+
+    /// <summary>
+    /// 지정한 스테이지 타입과 스테이지 데이터를 기반으로
+    /// 전투씬 로딩 [ SetLoadStageType으로 설정. ]
+    /// </summary>
+    public void LoadStageScene()
+    {
+        SwitchStageType();
+    }
+
+    void SwitchStageType()
+    {
+        switch (stageType)
+        { 
+            case StageType.NORMAL:
+                SceneManager.sceneLoaded += OnStageSceneLoaded;
+                SceneManager.LoadSceneAsync("StageDefault");
+                break;
+            case StageType.GOLD:
+                SceneManager.sceneLoaded += OnStageSceneLoaded;
+                SceneManager.LoadSceneAsync("Stage_Coin");
+                break;
+            case StageType.BOSS:
+                SceneManager.sceneLoaded += OnStageSceneLoaded;
+                SceneManager.LoadSceneAsync("Stage_Boss");
+                break;
+            case StageType.NONE:
+                Debug.Log("지정된 스테이지 타입이 없음");
+                break;
+            default:
+                Debug.Log("예외상황");
+                break;
+        }
     }
 
     /// <summary>
