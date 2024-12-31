@@ -806,6 +806,16 @@ MonoBehaviour:
   _skillBIconImage: {fileID: 0}
   _characterImage: {fileID: 0}
   _levelUpButton: {fileID: 0}
+  _curEnhanceLevelText: {fileID: 0}
+  _beforeUpGradeText: {fileID: 0}
+  _beforeHpText: {fileID: 0}
+  _beforeDefText: {fileID: 0}
+  _beforeAtkText: {fileID: 0}
+  _afterUpGradeText: {fileID: 0}
+  _afterHpText: {fileID: 0}
+  _afterAtkText: {fileID: 0}
+  _afterDefText: {fileID: 0}
+  _mileageSlider: {fileID: 0}
   _enhanceButton: {fileID: 0}
   _tempElemetTypeText: {fileID: 0}
 --- !u!1 &589805720
@@ -1803,7 +1813,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterData: {fileID: 11400000, guid: c67b7de9dd51fc64d8c6f62f3d693a8a, type: 2}
-  testMyGold: 0
   characterLevelUpCost: 0
 --- !u!1 &1251019403
 GameObject:
@@ -2173,7 +2182,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterData: {fileID: 11400000, guid: d1e60ff18312018448249d8b48dcdbb6, type: 2}
-  testMyGold: 0
   characterLevelUpCost: 0
 --- !u!1 &1460501951
 GameObject:
@@ -4041,54 +4049,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 195353373, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 195353373, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 195353373, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 195353373, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 195353373, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 195353373, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 248643664, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 248643664, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 248643664, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 248643664, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 248643664, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 248643664, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 272204240, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -4261,30 +4221,6 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1003520232, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1003520232, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1003520232, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1003520232, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1003520232, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1003520232, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1101863852, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -4391,30 +4327,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1301574383, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1331236168, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1331236168, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1331236168, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1331236168, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1331236168, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1331236168, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
-      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1508346086, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
@@ -4700,7 +4612,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterData: {fileID: 11400000, guid: 6eecc43c74500a444b8783b470494463, type: 2}
-  testMyGold: 0
   characterLevelUpCost: 0
 --- !u!1 &8752961997111218564
 GameObject:

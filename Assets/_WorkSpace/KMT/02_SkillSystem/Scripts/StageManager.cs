@@ -38,6 +38,10 @@ public class StageManager : MonoBehaviour
     [SerializeField]
     float MaxPartyCost;
 
+    [Header("Reward UI")]
+    [SerializeField] ItemGainPopup itemGainPopupPrefab;
+    protected ItemGainPopup ItemGainPopupPrefab => itemGainPopupPrefab;
+
     [Header("Debug")]
     [Space(20)]
     [SerializeField]
@@ -174,7 +178,7 @@ public class StageManager : MonoBehaviour
         var stream = GameManager.UserData.StartUpdateStream();
         foreach (var item in stageDataOnLoad.Reward)
         {
-            stream.AddDBValue(item.rewardItem.Number, item.number);
+            stream.AddDBValue(item.item.Number, item.gain);
         }
 
         stream.Submit(result =>
@@ -185,14 +189,16 @@ public class StageManager : MonoBehaviour
                 return;
             }
 
-            // TODO: 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
-            GameManager.Instance.LoadMainScene();
+            // 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
+            ItemGainPopup popupInstance = Instantiate(itemGainPopupPrefab, GameManager.PopupCanvas);
+            popupInstance.Initialize(stageDataOnLoad.Reward);
+            popupInstance.Title.text = "스테이지 클리어!";
+            popupInstance.onPopupClosed += GameManager.Instance.LoadMainScene;
         });
     }
 
     bool CheckCharactersWait()
     {
-
         foreach (CharacterCombatable chara in characterManager.CharList)
         {
             if (!chara.IsWaiting())
@@ -200,7 +206,6 @@ public class StageManager : MonoBehaviour
         }
 
         return true;
-
     }
 
     protected virtual void StartGame()
