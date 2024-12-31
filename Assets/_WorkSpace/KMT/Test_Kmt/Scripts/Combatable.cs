@@ -7,7 +7,6 @@ using UniRx;
 using Unity.Mathematics;
 using UnityEngine.UI;
 //using static Spine.Unity.Editor.SkeletonBaker.BoneWeightContainer;
-using UnityEditor.U2D.Animation;
 
 [RequireComponent(typeof(Trackable))]
 public class Combatable : MonoBehaviour
