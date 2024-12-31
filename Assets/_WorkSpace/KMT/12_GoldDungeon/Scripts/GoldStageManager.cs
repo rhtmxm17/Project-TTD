@@ -93,8 +93,7 @@ public class GoldStageManager : StageManager, IDamageAddable
                 Debug.Log("와! 골드!");
 
                 // 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
-                ItemGainPopup popupInstance = Instantiate(ItemGainPopupPrefab, GameManager.PopupCanvas);
-                popupInstance.Initialize(new List<ItemGain>() { reward });
+                ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(new List<ItemGain>() { reward });
                 popupInstance.Title.text = "와! 골드!";
                 popupInstance.onPopupClosed += GameManager.Instance.LoadMainScene;
             });

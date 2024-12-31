@@ -40,6 +40,7 @@ public class EggSpawner : MonoBehaviour
 
     private void StartEggTimer()
     {
+        isEggComplete = false;
         lastEggTime = GameManager.UserData.PlayData.EggGainTimestamp;
         timerCoroutine = StartCoroutine(TimerTextCo());
         lastEggTime.onValueChanged += LastEggTime_onValueChanged;
@@ -50,11 +51,12 @@ public class EggSpawner : MonoBehaviour
         if (isEggComplete)
         {
             // TODO: 임시로 100골드 획득시킴
-            UserDataInt gold = GameManager.TableData.GetItemData(1).Number;
+            ItemData gold = GameManager.TableData.GetItemData(1);
+            int gain = 100;
 
             GameManager.UserData.StartUpdateStream()
                 .SetDBTimestamp(lastEggTime)
-                .SetDBValue(gold, gold.Value + 100)
+                .AddDBValue(gold.Number, gain)
                 .Submit(result =>
                 {
                     if (false == result)
@@ -64,6 +66,10 @@ public class EggSpawner : MonoBehaviour
                     }
 
                     Debug.Log("용 부화기 받기 성공!");
+                    GameManager.OverlayUIManager.PopupItemGain(new List<ItemGain>()
+                    {
+                        new ItemGain() { item = gold, gain = gain }
+                    });
                 });
         }
         else
