@@ -11,7 +11,6 @@ public class OpenableUIBase : BaseUI
     protected override void Awake()
     {
         base.Awake();
-        
         if (null == backButton)
         {
             backButton = GetUI<Button>("Back Button");

@@ -13,6 +13,8 @@ public class SceneChanger : MonoBehaviour
         GameManager.UserData.TryInitDummyUserAsync(7, () =>
         {
             Debug.Log("완료");
+            UserData.myUid = $"Dummy7";
+            UserData.myNickname = GameManager.UserData.Profile.Name.Value;
             SceneManager.LoadScene(destScene);
         });
     }

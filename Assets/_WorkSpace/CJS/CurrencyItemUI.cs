@@ -15,11 +15,12 @@ public class CurrencyItemUI : BaseUI
 
     private void Start()
     {
-        rawImage.texture = item.SspriteImage.texture;
+        rawImage.texture = item.SpriteImage.texture;
     }
 
     private void OnEnable()
     {
+        UpdateNumber();
         item.Number.onValueChanged += UpdateNumber;
         
         // 실제 빌드 파일에서는 로딩 완료 후 UI가 생성될 것이기 때문에 필요없어질듯

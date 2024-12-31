@@ -34,6 +34,7 @@ public class CharacterCombatable : Combatable
         basicSkillButton.GetComponent<Button>().onClick.AddListener(() => {
             if (!basicSkillButton.Interactable || !IsAlive) { Debug.Log("사용 불가");  return; }
             OnSkillCommanded(characterData.SkillDataSO);
+            Debug.Log(characterData.StatusTable.BasicSkillCooldown);
             basicSkillButton.StartCoolDown(characterData.StatusTable.BasicSkillCooldown);//쿨타임을 매개변수로 전달하기.
         });
 

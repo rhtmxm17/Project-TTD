@@ -1,6 +1,5 @@
 using Firebase.Database;
 using Firebase.Extensions;
-using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -17,6 +16,22 @@ public class SearchList : MonoBehaviour
 
     DatabaseReference userNode;
 
+    private void Awake()
+    {
+        GetComponent<OpenableWindow>().onOpenAction += RemoveList;
+    }
+
+    void RemoveList()
+    {
+        SearchBlock[] blocks = contentTransform.GetComponentsInChildren<SearchBlock>();
+
+        foreach (SearchBlock b in blocks)
+        {
+            Destroy(b.gameObject);
+        }
+
+        inputField.text = string.Empty;
+    }
 
     [ContextMenu("find")]
     public void Find()
@@ -37,7 +52,7 @@ public class SearchList : MonoBehaviour
             myData = task.Result;
 
             userNode
-                .OrderByChild("Profile/nickname")
+                .OrderByChild("Profile/Name")
 
                 //.EqualTo(findNick)
                 .StartAt(inputField.text).LimitToFirst(5)//대체코드
@@ -52,11 +67,6 @@ public class SearchList : MonoBehaviour
                     }
 
                     Debug.Log(task2.Result.ChildrenCount);
-/*
-                    foreach (DataSnapshot item in task2.Result.Children)
-                    {
-                        Debug.Log(item.Child("Profile/nickname").Value + "?" + item.Key);
-                    }*/
 
 
                     SearchBlock[] blocks = contentTransform.GetComponentsInChildren<SearchBlock>();
@@ -96,9 +106,9 @@ public class SearchList : MonoBehaviour
                         Debug.Log("여기들어옴");
 
                         SearchBlock block = Instantiate(searchBlockPrefab, contentTransform.transform);
-                        block.InitData(item.Key, item.Child("Profile/nickname").Value.ToString(), reqSendable);
+                        block.InitData(item.Key, item.Child("Profile/Name").Value.ToString(), reqSendable);
 
-                        Debug.Log(item.Child("Profile/nickname").Value + "?" + item.Key);
+                        Debug.Log(item.Child("Profile/Name").Value + "?" + item.Key);
                     }
 
                     inputField.text = "";

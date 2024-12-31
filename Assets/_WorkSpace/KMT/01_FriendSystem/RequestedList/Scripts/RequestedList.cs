@@ -13,6 +13,11 @@ public class RequestedList : MonoBehaviour
 
     DatabaseReference userRef;
 
+    private void Awake()
+    {
+        GetComponent<OpenableWindow>().onOpenAction += RefreshList;
+    }
+
     [ContextMenu("refresh")]
     public void RefreshList()
     {
@@ -61,7 +66,7 @@ public class RequestedList : MonoBehaviour
                 }
 
                 Instantiate(requestedBlockPrefab, contentTransform.transform)
-                .InitData(req.Key, task.Result.Child($"{req.Key}/Profile/nickname").Value.ToString(), this);
+                .InitData(req.Key, task.Result.Child($"{req.Key}/Profile/Name").Value.ToString(), this);
 
                 Debug.Log(req.Key);
 

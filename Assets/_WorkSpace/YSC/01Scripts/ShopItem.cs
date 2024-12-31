@@ -1,26 +1,23 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-// using System.Drawing;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 
 public class ShopItem : BaseUI
 {
+    public ShopItemData shopItemData { get; private set; }
+
     [Header("아이템 이름")]
     [SerializeField] TMP_Text itemNameText;     // UI_아이템이름
-    [SerializeField] public string ShopItemName;
 
     [Header("아이템 가격")]
-    [SerializeField] TMP_Text itemPriceText;    // UI에 표기되는 가격표   
-    [SerializeField] int itemPrice;         
+    [SerializeField] TMP_Text itemPriceText;    // UI에 표기되는 가격표
     
     [Header("아이템 갯수")]
     [SerializeField] TMP_Text itemCountText;    // UI에 표기되는 갯수
-    [SerializeField] int itemCount;         
     
     [Header("아이템 이미지")]
     [SerializeField] public Image ShopItemImage;
@@ -28,34 +25,12 @@ public class ShopItem : BaseUI
     [Header("구매버튼")]
     [SerializeField] Button buyButton;
 
-    [Header("얻는 아이템 (Ex. 토큰)")]
-    [SerializeField] int getCount;               // UI에 표기되는 아이템갯수?
-
-    [Header("매진")]
-    [SerializeField] bool isSoldOut;
-
-    [Header("설명")]
-    [SerializeField] public string Description;
-
     [SerializeField] private TMP_Text buyButtonText;
-    [SerializeField] private ItemData itemGive;         // 살때 주는 재화 데이터 Ex. gold
-    [SerializeField] private ItemData itemGet;          // 살때 받는 아이템      Ex. Token
-
-
-    // 아이템
-    [SerializeField] private ItemData _item;
-
-    [SerializeField] public int ShopItemNumber;
 
     private void Start()
     {
         Init();
 
-        GameManager.UserData.TryInitDummyUserAsync(3, () =>
-        {
-            Debug.Log("완료");
-
-        });
     }
     private void Init()
     {
@@ -65,29 +40,28 @@ public class ShopItem : BaseUI
         itemPriceText = GetUI<TMP_Text>("ItemPriceText");
         itemCountText = GetUI<TMP_Text>("ItemCountText");
 
-        // 테스트용
-        itemNameText.text = ShopItemName;
-        itemPriceText.text = itemPrice.ToString();
-        itemCountText.text = itemCount.ToString();
-        // 갯수 바뀌면 업데이트 되도록 해야함
-
-        SetItem(_item);
+        SetItem(shopItemData);
     }
 
-    
     // ItemData 가져오기
-    public void SetItem(ItemData item)
+    public void SetItem(ShopItemData data)
     {
-        _item = item;
-        ShopItemNumber = item.Id;
-        ShopItemName = item.ItemName;
-        itemNameText.text = ShopItemName;
-        ShopItemImage.sprite = item.SspriteImage;
-        Description = item.Description;
-        
-        // itemPrice
-        // itemCount
+        shopItemData = data;
+        itemNameText.text = data.ShopItemName;
 
+        ShopItemImage.sprite = data.Sprite;
+
+        // 가격 표시
+        if (null == data.Price.item)
+        {
+            itemPriceText.text = "무료";
+        }
+        else
+        {
+            itemPriceText.text = $"{data.Price.item.ItemName} {data.Price.gain}개";
+        }
+
+        UpdateInfo();
     }
 
     /// <summary>
@@ -96,8 +70,18 @@ public class ShopItem : BaseUI
     /// </summary>
     public void UpdateInfo()
     {
-        itemCountText.text = itemCount.ToString();
-        if (isSoldOut)
+        if (false == shopItemData.IsLimited)
+        {
+            itemCountText.text = string.Empty;
+            return;
+        }
+
+        int remain = shopItemData.LimitedCount - shopItemData.Bought.Value;
+        if (remain > 0)
+        {
+            itemCountText.text = $"구매 가능 횟수 {remain}/{shopItemData.LimitedCount}";
+        }
+        else
         {
             buyButtonText.text = "매!\t진!";
             buyButton.onClick.RemoveListener(Buy); //구매버튼 비활성화
@@ -107,58 +91,40 @@ public class ShopItem : BaseUI
 
     private void Buy()
     {
-        itemGive = GameManager.TableData.GetItemData(1);
-        itemGet = GameManager.TableData.GetItemData(2);
-        // ItemData gold = GameManager.TableData.GetItemData(1);
-        // ItemData tocken = GameManager.TableData.GetItemData(2);
+        var dbUpdateStream = GameManager.UserData.StartUpdateStream() // DB에 갱신 요청 시작
+            .AddDBValue(shopItemData.Bought, 1);  // 요청에 '구매 횟수 증가' 등록
 
-
-        Debug.Log(itemGive.Number.Value);
-        itemGive.Number.onValueChanged += Gold_onValueChanged;
-        itemGet.Number.onValueChanged += Tocken_onValueChanged;
-
-        GameManager.UserData.StartUpdateStream()                    // DB에 갱신 요청 시작
-            .SetDBValue(itemGive.Number, itemGive.Number.Value - 10)        // 골드 --
-            .SetDBValue(itemGet.Number, itemGet.Number.Value + 2)     // 토큰 ++, 일괄로 갱신할 내용들 등록
-            .Submit(OnComplete);                                    // 위에 갱신할것들 갱신요청 전송
+        ItemData itemGive = shopItemData.Price.item;
+        if (null != itemGive) // 무료가 아니라면
+        {
+            Debug.Log($"소지 개수:{itemGive.Number.Value}/비용:{shopItemData.Price.gain}");
+            dbUpdateStream.AddDBValue(itemGive.Number, -shopItemData.Price.gain); // 요청에 '비용 지불' 등록
+        }
         
-        // TODO:
-        // 구매하는 아이템에 따라 요구하는 재화, 받는 아이템 바꿀 수 있도록.
+        foreach (ItemGain product in shopItemData.Products)
+        {
+            UserDataInt itemGet = product.item.Number;
+            dbUpdateStream.AddDBValue(itemGet, product.gain); // 요청에 '상품 획득' 등록
+        }
 
-
-        itemCount--;
-        SoldOut();
-        UpdateInfo();
+        dbUpdateStream.Submit(OnComplete); // 등록된 갱신 요청 전송
+        
+        // TODO: 네트워크 로딩 띄우기
     }
 
     // 갱신 효과 결과반환
     private void OnComplete(bool result)
     {
+        // TODO: 네트워크 로딩 닫기
+
         if (false == result)
         {
             Debug.Log($"네트워크 오류");
             return;
         }
         Debug.Log($"구매 하였습니다.");
+
+        UpdateInfo(); // 갱신된 상품 정보(구매 횟수) 반영
     }
 
-
-    // UserDataXX 타입의 값이 갱신되면 통지받음
-    private void Gold_onValueChanged(long num)
-    {
-        Debug.Log($"골드가 {num}개로 바뀜.");
-    }
-    private void Tocken_onValueChanged(long num)
-    {
-        Debug.Log($"토큰이 {num}개로 바뀜.");
-    }
-    public void SoldOut()
-    {
-        if (itemCount <= 0)
-        {
-            isSoldOut = true;
-        }
-        else
-            return;
-    }
 }

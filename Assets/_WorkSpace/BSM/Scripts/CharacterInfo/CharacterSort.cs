@@ -8,18 +8,20 @@ using UnityEngine;
 public class CharacterSort : MonoBehaviour
 {
     [HideInInspector] public List<CharacterInfo> _sortCharacterInfos;
-    
+
     private CharacterInfoController _characterInfoController;
     private List<object> _sortList;
-   
+
     private CharacterSortUI _characterSortUI;
     private SortType _curSortType;
 
     private bool _isSorting;
-    
-    public List<int> PowerTest;
-    public List<int> LevelTest;
-    public List<string> NameTest;
+
+    public bool IsSorting
+    {
+        get => _isSorting;
+        set { _isSorting = value; }
+    }
     
     private void Awake()
     {
@@ -33,9 +35,9 @@ public class CharacterSort : MonoBehaviour
 
     private void Init()
     {
-        _characterSortUI = GetComponent<CharacterSortUI>(); 
+        _characterSortUI = GetComponent<CharacterSortUI>();
         _curSortType = (SortType)PlayerPrefs.GetInt("SortType");
-        
+
         _characterInfoController = GetComponentInParent<CharacterInfoController>();
     }
 
@@ -43,9 +45,9 @@ public class CharacterSort : MonoBehaviour
     {
         _characterSortUI.NameSortButton.onClick.AddListener(() => SortEventFunc(SortType.NAME));
         _characterSortUI.LevelSortButton.onClick.AddListener(() => SortEventFunc(SortType.LEVEL));
-        _characterSortUI.PowerLevelSortButton.onClick.AddListener(()=> SortEventFunc(SortType.POWERLEVEL));
+        _characterSortUI.PowerLevelSortButton.onClick.AddListener(() => SortEventFunc(SortType.POWERLEVEL));
     }
-    
+
     /// <summary>
     /// 정렬 함수 호출 및 현재 타입 받아오기
     /// </summary>
@@ -60,8 +62,10 @@ public class CharacterSort : MonoBehaviour
         {
             _isSorting = true;
         }
-         
+
         _curSortType = type;
+
+        PlayerPrefs.SetInt("IsSorting", _isSorting ? 1 : 0);
         CharacterListSort();
     }
 
@@ -75,32 +79,34 @@ public class CharacterSort : MonoBehaviour
         switch (_curSortType)
         {
             case SortType.LEVEL:
-                _sortList = _sortCharacterInfos.Select(x => (object)x.CharacterLevel).ToList(); 
+                _sortList = _sortCharacterInfos.Select(x => (object)x.CharacterLevel).ToList();
                 break;
             case SortType.NAME:
-                _sortList = _sortCharacterInfos.Select(x => (object)x.CharacterName).ToList(); 
+                _sortList = _sortCharacterInfos.Select(x => (object)x.CharacterName).ToList();
                 break;
             case SortType.POWERLEVEL:
-                _sortList = _sortCharacterInfos.Select(x => (object)x.PowerLevel).ToList(); 
+                _sortList = _sortCharacterInfos.Select(x => (object)x.PowerLevel).ToList();
                 break;
         }
 
+        //TRUE : 내림차순, FALSE : 오름차순
         if (_isSorting)
         {
             _sortList.Sort();
-            _sortList.Reverse(); 
+            _sortList.Reverse();
         }
         else
         {
             _sortList.Sort();
         }
-        
+
         for (int i = 0; i < _sortList.Count; i++)
         {
             for (int j = i + 1; j < _sortCharacterInfos.Count; j++)
             {
                 if (_sortList[i].Equals(GetSortValue(_sortCharacterInfos[j])))
                 {
+
                     CharacterData newData = _sortCharacterInfos[j]._CharacterData;
                     CharacterData oldData = _sortCharacterInfos[i]._CharacterData;
 
@@ -112,17 +118,21 @@ public class CharacterSort : MonoBehaviour
 
                     int newType = (int)newData.StatusTable.type;
                     int oldType = (int)oldData.StatusTable.type;
-                    
+
+                    int temp = _sortCharacterInfos[i].PowerLevel;
+                    _sortCharacterInfos[i].PowerLevel = _sortCharacterInfos[j].PowerLevel;
+                    _sortCharacterInfos[j].PowerLevel = temp;
+
                     _sortCharacterInfos[i].SetListTypeText(((ElementType)newType).ToString());
                     _sortCharacterInfos[j].SetListTypeText(((ElementType)oldType).ToString());
-                    
+
                     _sortCharacterInfos[i].SetListImage(newData.FaceIconSprite);
                     _sortCharacterInfos[j].SetListImage(oldData.FaceIconSprite);
                     break;
                 }
             }
         }
-        
+
         _characterInfoController.SortButtonText.text = _curSortType.ToString();
         PlayerPrefs.SetInt("SortType", (int)_curSortType);
     }
@@ -145,9 +155,8 @@ public class CharacterSort : MonoBehaviour
         else if (_curSortType.Equals(SortType.POWERLEVEL))
         {
             return characterInfo.PowerLevel;
-        }    
-        
+        }
+
         return null;
     }
- 
 }

@@ -37,7 +37,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.148, y: 0.035755444}
   m_AnchorMax: {x: 0.85800004, y: 0.088583216}
-  m_AnchoredPosition: {x: -1.6488951, y: -1.5918275}
+  m_AnchoredPosition: {x: -1.6488953, y: -1.5918579}
   m_SizeDelta: {x: 1.6883802, y: 8.21504}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1250929368373454013
@@ -228,7 +228,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26.85
+  m_fontSize: 19
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -283,6 +283,7 @@ GameObject:
   - component: {fileID: 8499126166337146528}
   - component: {fileID: 8499126166337146529}
   - component: {fileID: 493543627}
+  - component: {fileID: 1805052344}
   m_Layer: 5
   m_Name: FriendWindow
   m_TagString: Untagged
@@ -395,6 +396,18 @@ MonoBehaviour:
   friendBlockPrefab: {fileID: 6875045392442278226, guid: dcd01353e49e525498a41a95c5769a62,
     type: 3}
   contentTransform: {fileID: 8499126166586586433}
+--- !u!114 &1805052344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8499126166337146543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9fa3df49fe41c0459d44b5384ec32c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8499126166586586446
 GameObject:
   m_ObjectHideFlags: 0
@@ -404,8 +417,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8499126166586586433}
-  - component: {fileID: 8499126166586586435}
-  - component: {fileID: 8499126166586586432}
   - component: {fileID: 8499126166586586434}
   - component: {fileID: 8499126166586586436}
   m_Layer: 5
@@ -435,39 +446,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
---- !u!114 &8499126166586586435
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8499126166586586446}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eeca9c40f7b823945ab7f94d84779b48, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  findNick: kmt
-  scrollview: {fileID: 8499126166586586433}
-  friendReqBlockPrefab: {fileID: 4448751193088640275, guid: 59679ee6d131ac8449f4c8817cd0594e,
-    type: 3}
-  myUid: eqewrqwer
-  myNickname: kmt
-  destfriendCode: cjs?weqdaszexc
---- !u!114 &8499126166586586432
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8499126166586586446}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96a42938b6b2ecc4caa7b71881da1bfb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  uid: eqewrqwer
-  nickname: qwe
 --- !u!114 &8499126166586586434
 MonoBehaviour:
   m_ObjectHideFlags: 0

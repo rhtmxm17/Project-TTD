@@ -1,7 +1,5 @@
 using Firebase.Database;
 using Firebase.Extensions;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FriendList : MonoBehaviour
@@ -11,8 +9,15 @@ public class FriendList : MonoBehaviour
     [SerializeField]
     Transform contentTransform;
 
+    [SerializeField]
+    MyroomInitializer initializer;
+
     DatabaseReference userRef;
 
+    private void Awake()
+    {
+        GetComponent<OpenableWindow>().onOpenAction += RefreshList;
+    }
 
     [ContextMenu("refresh")]
     public void RefreshList()
@@ -53,12 +58,13 @@ public class FriendList : MonoBehaviour
                     continue;
                 }
 
-                Debug.Log(task.Result.Child($"{friendsUid.Key}/Profile/nickname").Value);
+                Debug.Log(task.Result.Child($"{friendsUid.Key}/Profile/Name").Value);
 
                 Instantiate(friendBlockPrefab, contentTransform)
                     .InitData(friendsUid.Key, 
-                              task.Result.Child($"{friendsUid.Key}/Profile/nickname").Value.ToString(),
-                              this);
+                              task.Result.Child($"{friendsUid.Key}/Profile/Name").Value.ToString(),
+                              this, 
+                              initializer.InitRoom);
 
             }
 

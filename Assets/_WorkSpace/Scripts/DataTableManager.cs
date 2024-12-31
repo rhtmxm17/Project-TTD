@@ -41,6 +41,9 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     private Dictionary<int, StoryDirectingData> storyDirectingDataIdDic; // id 기반 검색용
     public ReadOnlyCollection<StoryDirectingData> StoryDirectingDataList => storyDirectingDataList.AsReadOnly();
 
+    [SerializeField] List<ShopItemData> shopItemDataList;
+    private Dictionary<int, ShopItemData> shopItemDataIdDic;
+
     public CharacterData GetCharacterData(int id)
     {
         if (false == characterDataIdDic.ContainsKey(id))
@@ -67,11 +70,22 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     {
         if (false == stageDataIdDic.ContainsKey(id))
         {
-            Debug.LogWarning($"존재하지 않는 아이템 ID({id})가 요청됨");
+            Debug.LogWarning($"존재하지 않는 스테이지 ID({id})가 요청됨");
             return null;
         }
 
         return stageDataIdDic[id];
+    }
+
+    public ShopItemData GetShopItemData(int id)
+    {
+        if (false == shopItemDataIdDic.ContainsKey(id))
+        {
+            Debug.LogWarning($"존재하지 않는 상점 ID({id})가 요청됨");
+            return null;
+        }
+
+        return shopItemDataIdDic[id];
     }
 
     private void OnEnable() => IndexData();
@@ -85,6 +99,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
         itemDataIdDic = itemDataList.ToDictionary(item => item.Id);
         stageDataIdDic = stageDataList.ToDictionary(item => item.Id);
         storyDirectingDataIdDic = storyDirectingDataList.ToDictionary(item => item.Id);
+        shopItemDataIdDic = shopItemDataList.ToDictionary(item => item.Id);
     }
 
 #if UNITY_EDITOR
@@ -103,12 +118,26 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     [SerializeField] Object itemDataFolder;
     [SerializeField] Object stageDataFolder;
     [SerializeField] Object storyDirectingDataFolder;
+    [SerializeField] Object shopItemDataFolder;
 
     private string documentID = "1mshKeAWkTmozk0snaJPWp7Jizs3pSeLhlFU-982BqHA";
     private string storyDocumentID = "1mCbO7Xdg0DLPY-J9YjVriGHRueg1PSFvvlKqPZp8pVY";
     private string characterSheetId = "0";
     private string itemSheetId = "1467425655";
     private string stageSheetId = "504606070";
+
+    [ContextMenu("상점 아이템 긁어오기(파싱x)")]
+    private void GetShopItem()
+    {
+        string path = $"{AssetDatabase.GetAssetPath(shopItemDataFolder)}";
+        string[] shopItems = AssetDatabase.FindAssets("t:ShopItemData", new string[] { path } );
+        shopItemDataList.Clear();
+        foreach (var shopItem in shopItems)
+        {
+            shopItemDataList.Add(AssetDatabase.LoadAssetAtPath<ShopItemData>(AssetDatabase.GUIDToAssetPath(shopItem)));
+        }
+        IndexData();
+    }
 
     [ContextMenu("시트에서 캐릭터 데이터 불러오기")]
     private void GetCharacterDataFromSheet()

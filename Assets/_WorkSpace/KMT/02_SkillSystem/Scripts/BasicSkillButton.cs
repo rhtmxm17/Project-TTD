@@ -13,6 +13,8 @@ public class BasicSkillButton : MonoBehaviour
     public bool Interactable => skillButton.interactable;
 
     Coroutine skillCooldownCoroutine = null;
+    float waitedCooltime = 0;
+
 
     public void OffSkillButton(Combatable obj)
     {
@@ -28,7 +30,6 @@ public class BasicSkillButton : MonoBehaviour
 
     public void StartCoolDown(float coolTime)
     {
-
         if (skillCooldownCoroutine == null)
         {
             skillCooldownCoroutine = StartCoroutine(StartCoolDownCO(coolTime));
@@ -37,19 +38,31 @@ public class BasicSkillButton : MonoBehaviour
 
     public IEnumerator StartCoolDownCO(float coolTime)
     {
+        waitedCooltime = 0;
         skillButton.enabled = false;
         yield return null;
 
-        float time = 0;
-        while (time < coolTime)
+        while (waitedCooltime < coolTime)
         {
-            cooldownImg.fillAmount = 1 - (time / coolTime);
-            time += Time.deltaTime;
+            cooldownImg.fillAmount = 1 - (waitedCooltime / coolTime);
+            waitedCooltime += Time.deltaTime;
 
             yield return null;
         }
 
+        cooldownImg.fillAmount = 0;
+
         skillButton.enabled = true;
         skillCooldownCoroutine = null;
+    }
+
+    public void DecreseCooltime(float amount)
+    {
+
+        if (skillCooldownCoroutine != null)
+        {
+            waitedCooltime += amount;
+        }
+
     }
 }

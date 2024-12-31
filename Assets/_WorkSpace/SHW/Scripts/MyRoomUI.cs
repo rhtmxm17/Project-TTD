@@ -29,9 +29,14 @@ public class MyRoomUI : BaseUI
         GetUI<Button>("CloseChangeCharacter").onClick.AddListener(()=>CloseSetRoomPopup("CharacterChangePopup"));
 
         // 채팅 열기 버튼
-        GetUI<Button>("ChatButton").onClick.AddListener(()=>OpenTap("ChatPopup"));
+        GetUI<Button>("ChatButton").onClick.AddListener(()=> GetUI<OpenableWindow>("ChatCanvas").OpenWindow());
         // 채팅 닫기
-        GetUI<Button>("CloseChat").onClick.AddListener(()=>CloseTap("ChatPopup"));
+        GetUI<Button>("CloseChat").onClick.AddListener(()=> GetUI<OpenableWindow>("ChatCanvas").CloseWindow());
+
+        GetUI<Button>("VisitButton").onClick.AddListener(
+            GetUI<OpenableWindow>("FriendTapCanvas").OpenWindow
+            );
+
     }
 
     private void OpenTap(string _name)
