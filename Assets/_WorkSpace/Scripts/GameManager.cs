@@ -71,11 +71,13 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     public void LoadMainScene()
     {
+        Debug.Log($"씬 전환: {SceneManager.GetActiveScene().name} -> MainMenu");
         SceneManager.LoadSceneAsync("MainMenu");
     }
 
     public void LoadStageScene(StageData StageData)
     {
+        Debug.Log($"씬 전환: {SceneManager.GetActiveScene().name} -> StageDefault(스테이지명:{StageData.StageName})");
         this.stageData = StageData;
         SceneManager.sceneLoaded += OnStageSceneLoaded;
         SceneManager.LoadSceneAsync("StageDefault");

@@ -130,6 +130,7 @@ public class ShopItem : BaseUI
 
         ItemGainPopup popupInstance = Instantiate(itemGainPopupPrefab, GameManager.PopupCanvas);
         popupInstance.Initialize(shopItemData.Products);
+        popupInstance.Title.text = "구매 성공!";
     }
 
 }
