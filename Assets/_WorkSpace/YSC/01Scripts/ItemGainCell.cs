@@ -14,7 +14,7 @@ public class ItemGainCell : MonoBehaviour
     int itemCount;
     public string NumberText;
 
-    [SerializeField] ItemData itemData;
+    [SerializeField] public ItemData itemData;
 
     [Header("아이템 이름")]
     [SerializeField] TMP_Text itemNameText;
