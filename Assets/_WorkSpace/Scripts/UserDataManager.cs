@@ -158,6 +158,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
 
                     characterData.Level.SetValueWithDataSnapshot(userData);
                     characterData.Enhancement.SetValueWithDataSnapshot(userData);
+                    characterData.EnhanceMileage.SetValueWithDataSnapshot(userData);
                 }
 
             }

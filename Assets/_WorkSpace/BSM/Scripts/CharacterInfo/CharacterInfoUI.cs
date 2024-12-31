@@ -35,6 +35,7 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _afterHpText;
     [HideInInspector] public TextMeshProUGUI _afterAtkText;
     [HideInInspector] public TextMeshProUGUI _afterDefText;
+    [HideInInspector] public TextMeshProUGUI _mileageValueText;
     [HideInInspector] public Slider _mileageSlider;
 
     [HideInInspector] public GameObject _enhanceResultPopup;
@@ -111,6 +112,7 @@ public class CharacterInfoUI : BaseUI
         _afterAtkText = GetUI<TextMeshProUGUI>("AfterAtkText");
         _afterDefText = GetUI<TextMeshProUGUI>("AfterDefText");
         _enhanceResultText = GetUI<TextMeshProUGUI>("EnhanceResultText");
+        _mileageValueText = GetUI<TextMeshProUGUI>("MileageValueText");
         
         _mileageSlider = GetUI<Slider>("MileageSlider");
         _enhanceButton = GetUI<Button>("EnhanceButton"); 

@@ -151,9 +151,9 @@ public class CharacterInfoController : BaseUI
     /// 보유 캐릭터 리스트 업데이트
     /// </summary>
     private void UpdateCharacterList()
-    {
+    { 
         _characterInfos = GetComponentsInChildren<CharacterInfo>().ToList();
-
+        
         //TODO: 임시로 레벨 정보 업데이트, 추후에 로딩과 붙으면 해줄 필요 없음
         for (int i = 0; i < _characterInfos.Count; i++)
         {

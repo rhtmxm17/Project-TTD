@@ -38,7 +38,7 @@ public class CharacterEnhance : MonoBehaviour
 
     private void Start()
     {
-        ButtonOnClickEvent();
+        AddListenerEvent();  
     }
 
     private void OnEnable() => SubscribeEvent();
@@ -47,15 +47,16 @@ public class CharacterEnhance : MonoBehaviour
 
     private void Init()
     {
-        _characterInfoController = GetComponentInParent<CharacterInfoController>();
+        _characterInfoController = GetComponentInParent<CharacterInfoController>();   
     }
-
-    private void ButtonOnClickEvent()
+ 
+    private void AddListenerEvent()
     {
         if (_isSubscribe) return;
         _isSubscribe = true;
 
         _characterInfoController._infoUI._enhanceButton.onClick.AddListener(Enhance);
+        _characterInfoController._infoUI._mileageSlider.onValueChanged.AddListener(value => MileageValueChange(value));
     }
 
     private void SubscribeEvent()
@@ -69,7 +70,8 @@ public class CharacterEnhance : MonoBehaviour
         OnBeforeEnhance -= BeforeEnhance;
         OnAfterEnhance -= AfterEnhance;
     }
-    
+
+ 
     /// <summary>
     /// 강화 이전 정보
     /// </summary>
@@ -114,9 +116,7 @@ public class CharacterEnhance : MonoBehaviour
         _minEnhanceProbability = (_maxEnhanceLevel - _characterEnhanceLevel) * 0.1f;
         enhanceProbability = GetProbability(Random.Range(_minEnhanceProbability, 1f));
 
-        chance = _characterEnhanceLevel == 1
-            ? 1f
-            : GetProbability(Random.Range((enhanceProbability - 0.2f), (enhanceProbability + 0.2f)));
+        chance = _characterEnhanceLevel == 1 ? 1f : GetProbability(Random.Range((enhanceProbability - 0.2f), (enhanceProbability + 0.2f)));
         chance = Mathf.Clamp(chance, 0.01f, 1f);
 
         if (chance >= enhanceProbability)
@@ -135,11 +135,11 @@ public class CharacterEnhance : MonoBehaviour
     {
         if (!result)
         {
-            Debug.Log("네트워크 오류");
+            _characterInfoController._infoUI._enhanceResultPopup.SetActive(true);
+            _characterInfoController._infoUI._enhanceResultText.text = "강화 실패 \n 사유 : 네트워크 오류";
             return;
         }
-
-        //TODO: 성공 팝업 
+        
         _characterInfoController._infoUI._enhanceResultPopup.SetActive(true);
         _characterInfoController._infoUI._enhanceResultText.text = "강화에 성공하셨습니다...";
         
@@ -149,9 +149,30 @@ public class CharacterEnhance : MonoBehaviour
 
     private void EnhanceFail()
     {
-        //TODO:
         _characterInfoController._infoUI._enhanceResultPopup.SetActive(true);
         _characterInfoController._infoUI._enhanceResultText.text = "강화 실패했습니당~ \n 마일리지 추가!";
+        
+        //TODO: 마일리지 누적 값 수정 필요
+        GameManager.UserData.StartUpdateStream() 
+            .SetDBValue(_characterData.EnhanceMileage, _characterData.EnhanceMileage.Value + 0.1)
+            .Submit(result =>
+            {
+                if (!result)
+                {
+                    Debug.Log("마일리지 업뎃 실패");
+                    return;
+                } 
+                _characterInfoController._infoUI._mileageSlider.value = _characterData.EnhanceMileage.Value;
+            });
+    }
+    
+    /// <summary>
+    /// 강화 실패 마일리지 변동 사항
+    /// </summary>
+    /// <param name="value"></param>
+    private void MileageValueChange(float value)
+    {
+        _characterInfoController._infoUI._mileageValueText.text = $"강화 마일리지 {value}%";
     }
 
     /// <summary>
@@ -199,8 +220,7 @@ public class CharacterEnhance : MonoBehaviour
     /// </summary>
     private void EnhanceCheck()
     {
-        //TODO: 활성화/비활성화 조건 수정 필요
-        //테스트 강화 비활성화 조건
+        //TODO: 활성화/비활성화 조건 수정 필요 현재는 테스트로 임시 ~
         _characterInfoController._infoUI._enhanceButton.interactable = _characterEnhanceLevel < _maxEnhanceLevel;
     }
 
@@ -216,7 +236,9 @@ public class CharacterEnhance : MonoBehaviour
 
         _beforeAtk = _characterInfoController.CurCharacterInfo.Atk;
         _beforeHp = _characterInfoController.CurCharacterInfo.Hp;
-        _beforeDef = _characterInfoController.CurCharacterInfo.Def; 
+        _beforeDef = _characterInfoController.CurCharacterInfo.Def;
+        _characterInfoController._infoUI._mileageSlider.value = _characterData.EnhanceMileage.Value;
+        Debug.Log(_characterData.EnhanceMileage.Value);
         EnhanceCheck();
     }
 
