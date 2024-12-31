@@ -8,9 +8,6 @@ using UnityEngine.UI;
 public class StageCharacterSetter : MonoBehaviour
 {
 
-    //스테이지 진입 시, 진형 설정에서 캐릭터 정보들을 받아올 것.
-    //[SerializeField] private List<CharacterData> characterDataList;
-    //TODO : 필요시 나중에 타입 지정
     [SerializeField] CharacterCombatable characterPrefab;
 
     [Header("skills")]
@@ -62,9 +59,6 @@ public class StageCharacterSetter : MonoBehaviour
             characters.Add(charObj);
 
             charObj.Initialize(group, pair.Value);
-
-            //테스트용 코드?
-            charObj.GetComponent<SpriteRenderer>().sprite = pair.Value.FaceIconSprite;
 
             charObj.InitCharacterData(
                             Instantiate(basicSkillButtonPrefab, skillPanel.transform),
