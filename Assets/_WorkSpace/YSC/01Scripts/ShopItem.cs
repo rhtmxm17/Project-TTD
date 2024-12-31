@@ -95,12 +95,18 @@ public class ShopItem : BaseUI
     {
         var dbUpdateStream = GameManager.UserData.StartUpdateStream() // DB에 갱신 요청 시작
             .AddDBValue(shopItemData.Bought, 1);  // 요청에 '구매 횟수 증가' 등록
+        
+        // TODO: 구매확인창 UI && 기능
+        // 구매갯수 > 1 || 무제한 => 구매확인창열기 
+        
 
         ItemData itemGive = shopItemData.Price.item;
         if (null != itemGive) // 무료가 아니라면
         {
             Debug.Log($"소지 개수:{itemGive.Number.Value}/비용:{shopItemData.Price.gain}");
             dbUpdateStream.AddDBValue(itemGive.Number, -shopItemData.Price.gain); // 요청에 '비용 지불' 등록
+            // TODO: 구매 가능/불가 판별 => 불가능 팝업
+            // (소지금 < 가격 => 구매불가(팝업띄우기))
         }
         
         foreach (ItemGain product in shopItemData.Products)
