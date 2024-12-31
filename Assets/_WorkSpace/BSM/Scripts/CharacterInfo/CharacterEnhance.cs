@@ -14,8 +14,8 @@ public class CharacterEnhance : MonoBehaviour
 
     private readonly int _maxEnhanceLevel = 10;
     private float _minEnhanceProbability = 0.9f;
-    private float enhanceProbability;
-    private float chance;
+    private float _enhanceProbability;
+    private float _chance;
 
     private int _characterEnhanceLevel;
     private int beforeEnhanceLevel;
@@ -112,20 +112,20 @@ public class CharacterEnhance : MonoBehaviour
 
         //기본 강화 확률 + 추가 재료 강화 확률 > Probability 보다 크면 성공
         //아니면 실패
-        //TODO: 프로토타입 이후 확률 수정 필요
-
+        //TODO: 프로토타입 이후 확률 수정 필요 
         //현재 임시로 강화 레벨에 따라 최소 강화 확률 조정 중
         
-        //최소 확률 > 10 - 현재 강화 단계
-        _minEnhanceProbability = (_maxEnhanceLevel - _characterEnhanceLevel) * 0.1f;
+        //최소 확률 > 임시 80%
+        _minEnhanceProbability = (_maxEnhanceLevel - 3) * 0.1f;
          
-        //최소 확률 ~ 최대 1f 확률 사이
-        enhanceProbability = GetProbability(Random.Range(_minEnhanceProbability, 1f));
+        //강화 성공 확률 : 0.3 ~ 최대 1f 확률 사이
+        _enhanceProbability = GetProbability(Random.Range(_minEnhanceProbability, 1f));
 
-        chance = _characterEnhanceLevel == 1 ? 1f : GetProbability(Random.Range((enhanceProbability - 0.2f), (enhanceProbability + 0.2f)));
-        chance = Mathf.Clamp(chance, 0.01f, 1f);
+        _chance = GetProbability(Random.Range((_enhanceProbability - 0.3f), (_enhanceProbability + 0.1f)));
+        Debug.Log($"성공 확률 :{_enhanceProbability} >  내 기본 확률 : {_chance} / 마일리지 보정 : {_mileage}");
+        _chance = Mathf.Clamp(_chance + _mileage, 0.01f, 1f);
 
-        if (chance >= enhanceProbability)
+        if (_chance >= _enhanceProbability)
         {
             GameManager.UserData.StartUpdateStream()
                 .SetDBValue(_characterData.Enhancement, _characterData.Enhancement.Value + 1)
@@ -182,6 +182,7 @@ public class CharacterEnhance : MonoBehaviour
                     return;
                 } 
                 _characterInfoController._infoUI._mileageSlider.value = _characterData.EnhanceMileage.Value;
+                _mileage = _characterData.EnhanceMileage.Value;
             });
     }
     
@@ -201,7 +202,8 @@ public class CharacterEnhance : MonoBehaviour
     /// <param name="value"></param>
     private void MileageValueChange(float value)
     {
-        _characterInfoController._infoUI._mileageValueText.text = $"강화 마일리지 {value}%";
+        _characterInfoController._infoUI._mileageValueText.text = $"강화 마일리지 {value*100}%";
+        _mileage += value;
     }
 
     /// <summary>
