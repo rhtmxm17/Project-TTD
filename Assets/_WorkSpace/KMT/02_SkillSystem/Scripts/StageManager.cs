@@ -38,10 +38,6 @@ public class StageManager : MonoBehaviour
     [SerializeField]
     float MaxPartyCost;
 
-    [Header("Reward UI")]
-    [SerializeField] ItemGainPopup itemGainPopupPrefab;
-    protected ItemGainPopup ItemGainPopupPrefab => itemGainPopupPrefab;
-
     [Header("Debug")]
     [Space(20)]
     [SerializeField]
@@ -190,8 +186,7 @@ public class StageManager : MonoBehaviour
             }
 
             // 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
-            ItemGainPopup popupInstance = Instantiate(itemGainPopupPrefab, GameManager.PopupCanvas);
-            popupInstance.AddItemGainCell(stageDataOnLoad.Reward);
+            ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(stageDataOnLoad.Reward);
             popupInstance.Title.text = "스테이지 클리어!";
             popupInstance.onPopupClosed += GameManager.Instance.LoadMainScene;
         });

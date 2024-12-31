@@ -15,6 +15,9 @@ public class BossStageManager : StageManager, IDamageAddable
     [SerializeField]
     float timeLimit;
 
+    [Header("Reward UI")]
+    [SerializeField] ItemGainPopup itemGainPopupPrefab;
+
     float maxTimeLimit;
     float score;
 
@@ -60,7 +63,7 @@ public class BossStageManager : StageManager, IDamageAddable
         RankApplier.ApplyRank("boss", UserData.myUid, GameManager.UserData.Profile.Name.Value, (long)(score + timeLimit), () =>
         {
             // 클리어 팝업 + 확인 클릭시 메인 화면으로
-            ItemGainPopup popupInstance = Instantiate(ItemGainPopupPrefab, GameManager.PopupCanvas);
+            ItemGainPopup popupInstance = Instantiate(itemGainPopupPrefab, GameManager.PopupCanvas);
             popupInstance.Title.text = "보스전 종료!";
             popupInstance.onPopupClosed += GameManager.Instance.LoadMainScene;
 
