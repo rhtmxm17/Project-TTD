@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -17,7 +19,7 @@ public class ItemGainPopup : MonoBehaviour
     // [Header("만들프리펩")]
     // [SerializeField] public List<ItemGainCell> itemGains;
 
-    [Header("prefabs")]
+    [Header("프리펩")]
     [SerializeField] ItemGainCell itemGainCellPrefab; // 획득 아이템 정보 출력칸 프리팹
     [Header("child")]
     [SerializeField] LayoutGroup layoutGroup; // 획득 아이템 목록이 표시될 영역
@@ -26,31 +28,34 @@ public class ItemGainPopup : MonoBehaviour
     [SerializeField] Button backGroundButton; // '빈 곳을 클릭해 닫기'의 빈 곳
 
 
-    [SerializeField] ItemGainPopup itemGainPopup;
+    [SerializeField] ItemGainPopup itemGainPopup;   // 아이템획득팝업 프리펩
+
+
 
 
     // 아이템 정보 팝업창
+    [Header("아이템 정보 팝업")]
     [SerializeField] public ShopPopupController infoPopup;
-    [SerializeField] Button infoPopupButton;
-    [SerializeField] ItemData _item;
-    [SerializeField] RectTransform _ItemContent;
+    [SerializeField] ItemData[] _items;
+    [SerializeField] RectTransform _ItemContent;    // 아이템 프리펩만드는 위치
 
 
-    [SerializeField] List<ItemData> _items;
-    [SerializeField] private List<ItemGainCell> _itemGainList;
+   // [SerializeField] List<ItemData> _items;
+    [SerializeField] private List<ItemGainCell> _itemGainList; // 위에 itemGainCellPrefab 프리펩으로 
+    //[SerializeField] List<ItemGainInfo> _iteminfo;
 
     private void Awake()
     {
         itemGainPopup = GetComponent<ItemGainPopup>();
-       //  backGroundButton.onClick.AddListener(onPopupClosed);
-       // _item = GetComponent<ItemData>();
-       // infoPopupButton = itemGainCellPrefab.GetComponent<Button>();
-       // infoPopupButton.onClick.AddListener(() => Popup(_item));
+        backGroundButton.onClick.AddListener(onPopupClosed);
     }
+
     private void Start()
     {
+        //Initialize(_iteminfo);
         ListUpItems();
     }
+
     /// <summary>
     /// 획득한 아이템 목록을 등록하는 초기화 함수
     /// </summary>
@@ -69,19 +74,27 @@ public class ItemGainPopup : MonoBehaviour
     }
     private void ListUpItems()
     {
-        _itemGainList = new List<ItemGainCell>(_items.Count);
+         //_itemGainList.Add(itemGainCellPrefab.GetComponent<ItemGainCell>());
+         _itemGainList = new List<ItemGainCell>(_items.Length);
 
-        foreach (ItemData gains in _items)
+        for (int i = 0; i < _items.Length; i++)
         {
+            int index = i;
             ItemGainCell cell = Instantiate(itemGainCellPrefab, layoutGroup.transform);
-            // cell.SetItem(_item);
-            cell.GetComponent<Button>().onClick.AddListener(() => Popup(_item));
-        }
+            Debug.Log($"리스트확인인덱스 {index} ");
+            _itemGainList.Add(cell.GetComponent<ItemGainCell>());
 
+            cell.SetItem(_items[index]);
+
+            cell.GetComponent<Button>().onClick.AddListener(() => Popup(itemGainCellPrefab));
+            cell.GameObject();
+        }
     }
-    private void Popup(ItemData data)
+
+
+    private void Popup(ItemGainCell data)
     {
-         ShopPopupController popup = Instantiate(infoPopup, _ItemContent);
+         ShopPopupController popup = Instantiate(infoPopup, GameManager.PopupCanvas);
          popup.Initialize(data);
     }
     private void StageClearReward(StageData data)
@@ -91,3 +104,16 @@ public class ItemGainPopup : MonoBehaviour
     }
 
 }
+
+
+/* ListUpItems에 forloop쓰던
+//   foreach (ItemData gains in _items)
+//   {
+//       int index = _items.IndexOf(gains); // for문을 돌려야될거같음
+//       ItemGainCell cell = Instantiate(itemGainCellPrefab, layoutGroup.transform);
+//       Debug.Log($"리스트확인인덱스 {index} ");
+//       cell.SetItem(_item[index]);
+//
+//       cell.GetComponent<Button>().onClick.AddListener(() => Popup(itemGainCellPrefab));
+//   }
+*/

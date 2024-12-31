@@ -19,6 +19,8 @@ public class ShopPopupController : BaseUI
 
     private ItemData itemData;
 
+    ItemGainCell itemGainCell;
+
     void Start()
     {
         input = GameManager.Input;
@@ -45,10 +47,10 @@ public class ShopPopupController : BaseUI
             popup.SetActive(false);
         }
     }
-    public void Initialize(ItemData itemData)
+    public void Initialize(ItemGainCell itemData)
     {
-        this.itemData = itemData;
-        shopPopupText.text = itemData.Description;
+        this.itemGainCell = itemData;
+        shopPopupText.text = itemData.itemDescription;
     }
 }
 

@@ -7,9 +7,9 @@ using UnityEngine.UI;
 public class ItemGainCell : MonoBehaviour
 {
     [SerializeField] public Sprite spriteImage;
-    int itemID;
-    string itemName;
-    string itemDescription;
+    [SerializeField]  int itemID;
+    [SerializeField] string itemName;
+    [SerializeField] public string itemDescription;
 
     int itemCount;
     public string NumberText;
@@ -23,6 +23,7 @@ public class ItemGainCell : MonoBehaviour
     [Header("아이템 이미지")]
     [SerializeField] public Image itemImage;
 
+
     public void SetItem(ItemData item)
     {
         itemID = item.Id;
@@ -32,11 +33,11 @@ public class ItemGainCell : MonoBehaviour
         itemDescription = item.Description;
     }
 
-    public void OnEnable()
-    {
-        SetItem(itemData);
-        itemNameText.text = itemName;
-        itemCountText.text = NumberText;
-        itemImage.sprite = spriteImage;
-    }
+  //  public void OnEnable()
+  //  {
+  //      SetItem(itemData);
+  //      itemNameText.text = itemName;
+  //      itemCountText.text = NumberText;
+  //      itemImage.sprite = spriteImage;
+  //  }
 }
