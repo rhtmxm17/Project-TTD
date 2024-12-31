@@ -10,20 +10,22 @@ public class FocusableTab : MonoBehaviour
     [SerializeField]
     Color focusedColor;
 
-    Image image;
+    Image image = null;
 
-    private void Awake()
+    void initImage()
     {
         image = GetComponent<Image>();
     }
 
     public void Focus()
     { 
+        if(image == null) initImage();
         image.color = focusedColor;
     }
 
     public void Relese()
-    { 
+    {
+        if (image == null) initImage();
         image.color = defaultColor;
     }
 }

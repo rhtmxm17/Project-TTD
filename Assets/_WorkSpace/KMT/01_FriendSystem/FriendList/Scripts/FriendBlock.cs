@@ -14,6 +14,8 @@ public class FriendBlock : MonoBehaviour
     TextMeshProUGUI text;
 
     [SerializeField]
+    Button visitBtn;
+    [SerializeField]
     Button deleteFriendBtn;
 
     FriendList friendListRoot;
@@ -22,7 +24,7 @@ public class FriendBlock : MonoBehaviour
 
     DatabaseReference userRef;
 
-    public void InitData(in string uid, in string nickname, FriendList listRoot)
+    public void InitData(in string uid, in string nickname, FriendList listRoot, Action<string> visitAction)
     {
         userRef = GameManager.Database.RootReference.Child("Users");
 
@@ -33,6 +35,7 @@ public class FriendBlock : MonoBehaviour
 
         text.text = nickname;
 
+        visitBtn.onClick.AddListener(() => visitAction?.Invoke(this.uid));
         deleteFriendBtn.onClick.AddListener(DeleteFriend);
     }
 

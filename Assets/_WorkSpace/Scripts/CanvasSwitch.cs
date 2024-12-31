@@ -29,7 +29,7 @@ public class CanvasSwitch : MonoBehaviour
             if (null != tab.tabButton)
             {
                 tab.tabButton.onClick.AddListener(() => SelectWindow(tab.tabWindow));
-            }    
+            }
 
             if (null != tab.tabWindow.BackButton)
             {
