@@ -15,7 +15,7 @@ public class GoldStageManager : StageManager, IDamageAddable
     float timeLimit;
 
     [SerializeField]
-    long clearRewardGold;
+    int clearRewardGold;
 
     float maxTimeLimit;
     float gainGold;
@@ -56,12 +56,12 @@ public class GoldStageManager : StageManager, IDamageAddable
         isTimeOver = true;
 
         //초과데미지를 주었더라도 최대 보상보다는 적게 주도록 강제
-        Rewarding(System.Math.Min(clearRewardGold, (long)gainGold));
+        Rewarding(System.Math.Min(clearRewardGold, (int)gainGold));
 
     }
 
 
-    void Rewarding(long rewardGold)
+    void Rewarding(int rewardGold)
     {
         if (isRewarded)
         { 
@@ -72,10 +72,16 @@ public class GoldStageManager : StageManager, IDamageAddable
         isRewarded = true;
 
         Debug.Log("클리어!");
-        var stream = GameManager.UserData.StartUpdateStream();
 
+        ItemGain reward = new ItemGain()
+        {
+            item = GameManager.TableData.GetItemData(1),
+            gain = rewardGold
+        };
+
+        var stream = GameManager.UserData.StartUpdateStream();
         stream.
-            AddDBValue(GameManager.TableData.GetItemData(1).Number, (int)rewardGold)
+            AddDBValue(reward.item.Number, rewardGold)
             .Submit(result =>
             {
                 if (false == result)
@@ -86,7 +92,11 @@ public class GoldStageManager : StageManager, IDamageAddable
 
                 Debug.Log("와! 골드!");
 
-                // TODO: 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
+                // 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
+                ItemGainPopup popupInstance = Instantiate(ItemGainPopupPrefab, GameManager.PopupCanvas);
+                popupInstance.Initialize(new List<ItemGain>() { reward });
+                popupInstance.Title.text = "와! 골드!";
+                popupInstance.onPopupClosed += GameManager.Instance.LoadMainScene;
             });
 
     }

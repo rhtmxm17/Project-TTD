@@ -36,6 +36,8 @@ public class EggSpawner : MonoBehaviour
 
     }
 
+    private void OnEnable() => StartEggTimer();
+
     private void StartEggTimer()
     {
         lastEggTime = GameManager.UserData.PlayData.EggGainTimestamp;
