@@ -3,6 +3,7 @@ using Firebase.Extensions;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public static class RankApplier
 {
@@ -13,16 +14,18 @@ public static class RankApplier
     /// <param name="uid"></param>
     /// <param name="nickname"></param>
     /// <param name="score"></param>
-    public static void ApplyRank(string bossName, string uid, string nickname, long score)
+    public static void ApplyRank(string bossName, string uid, string nickname, long score, UnityAction onComplteCallback)
     {
 
         DatabaseReference bossRef = GameManager.Database.RootReference.Child(bossName);
-        
+
+        GameManager.Instance.StartShortLoadingUI();
         bossRef.GetValueAsync().ContinueWithOnMainThread(task => {
 
             if (task.IsFaulted || task.IsCanceled)
             {
                 Debug.Log("랭킹 데이터 읽어오기 실패");
+                GameManager.Instance.StopShortLoadingUI();
                 return;
             }
 
@@ -40,6 +43,8 @@ public static class RankApplier
                 if (prvScore > score)
                 {
                     Debug.Log("기록 경신 실패");
+                    GameManager.Instance.StopShortLoadingUI();
+                    onComplteCallback?.Invoke();
                     return;
                 }
 
@@ -54,6 +59,9 @@ public static class RankApplier
                     Debug.Log("입력 실패");
                     return;
                 }
+
+                GameManager.Instance.StopShortLoadingUI();
+                onComplteCallback?.Invoke();
             });
 
         });

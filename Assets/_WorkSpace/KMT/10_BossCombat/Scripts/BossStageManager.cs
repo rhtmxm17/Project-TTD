@@ -57,7 +57,14 @@ public class BossStageManager : StageManager, IDamageAddable
         Debug.Log(UserData.myUid);
         Debug.Log(UserData.myNickname);
 
-        RankApplier.ApplyRank("boss", UserData.myUid, GameManager.UserData.Profile.Name.Value, (long)(score + timeLimit));
+        RankApplier.ApplyRank("boss", UserData.myUid, GameManager.UserData.Profile.Name.Value, (long)(score + timeLimit), () =>
+        {
+            // 클리어 팝업 + 확인 클릭시 메인 화면으로
+            ItemGainPopup popupInstance = Instantiate(ItemGainPopupPrefab, GameManager.PopupCanvas);
+            popupInstance.Title.text = "보스전 종료!";
+            popupInstance.onPopupClosed += GameManager.Instance.LoadMainScene;
+
+        });
     }
 
     protected override void OnClear()
