@@ -97,7 +97,6 @@ public class CharacterInfoController : BaseUI
                     }
         
                     _userGold = UserGoldData.Value;
-                    Debug.Log($"보유 골드 :{_userGold}");
                 }
             );
         

@@ -140,7 +140,9 @@ public class CharacterEnhance : MonoBehaviour
         }
 
         //TODO: 성공 팝업 
- 
+        _characterInfoController._infoUI._enhanceResultPopup.SetActive(true);
+        _characterInfoController._infoUI._enhanceResultText.text = "강화에 성공하셨습니다...";
+        
         CharacterStats();
         UpdateInfo();
     }
@@ -148,8 +150,8 @@ public class CharacterEnhance : MonoBehaviour
     private void EnhanceFail()
     {
         //TODO:
-        //실패 팝업
-        //마일리지 적립
+        _characterInfoController._infoUI._enhanceResultPopup.SetActive(true);
+        _characterInfoController._infoUI._enhanceResultText.text = "강화 실패했습니당~ \n 마일리지 추가!";
     }
 
     /// <summary>

@@ -36,7 +36,10 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _afterAtkText;
     [HideInInspector] public TextMeshProUGUI _afterDefText;
     [HideInInspector] public Slider _mileageSlider;
-    
+
+    [HideInInspector] public GameObject _enhanceResultPopup;
+    [HideInInspector] public TextMeshProUGUI _enhanceResultText;
+    [HideInInspector] public Button _enhanceResultConfirm;
     [HideInInspector] public Button _enhanceButton;
     
     //EvolutionTab
@@ -107,9 +110,13 @@ public class CharacterInfoUI : BaseUI
         _afterHpText = GetUI<TextMeshProUGUI>("AfterHpText");
         _afterAtkText = GetUI<TextMeshProUGUI>("AfterAtkText");
         _afterDefText = GetUI<TextMeshProUGUI>("AfterDefText");
-
+        _enhanceResultText = GetUI<TextMeshProUGUI>("EnhanceResultText");
+        
         _mileageSlider = GetUI<Slider>("MileageSlider");
         _enhanceButton = GetUI<Button>("EnhanceButton"); 
+        _enhanceResultConfirm = GetUI<Button>("EnhanceResultConfirm");
+        
+        _enhanceResultPopup = GetUI("EnhanceResultPopup");
     }
     
     /// <summary>
@@ -142,6 +149,8 @@ public class CharacterInfoUI : BaseUI
         _enhanceTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.ENHANCE);
         _evolutionTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.EVOLUTION);
         _meanTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.MEAN);
+        
+        _enhanceResultConfirm.onClick.AddListener(()=> _enhanceResultPopup.SetActive(false));
     }
     
     /// <summary>
