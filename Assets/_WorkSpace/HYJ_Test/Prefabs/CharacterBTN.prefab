@@ -358,7 +358,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4937406428404803050}
   - component: {fileID: 4937406428404803054}
-  - component: {fileID: 4937406428404803055}
   - component: {fileID: 4937406428404803048}
   - component: {fileID: 4937406428404803049}
   - component: {fileID: 1700290075739674293}
@@ -403,44 +402,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4937406428404803051}
   m_CullTransparentMesh: 0
---- !u!114 &4937406428404803055
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4937406428404803051}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a12ddbc47b17cd478cb447d1113a22b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  buttonText: WHITE
-  clickEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  hoverEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  hoverSound: {fileID: 0}
-  clickSound: {fileID: 0}
-  buttonVar: {fileID: 0}
-  normalText: {fileID: 4937406428419558403}
-  soundSource: {fileID: 0}
-  rippleParent: {fileID: 4937406428463434290}
-  useCustomContent: 0
-  enableButtonSounds: 0
-  useHoverSound: 1
-  useClickSound: 1
-  useRipple: 1
-  rippleUpdateMode: 1
-  rippleShape: {fileID: 21300000, guid: d25e2ce15dd1c67438e4b70f404fb197, type: 3}
-  speed: 2.4
-  maxSize: 6
-  startColor: {r: 0, g: 0, b: 0, a: 0.39215687}
-  transitionColor: {r: 0, g: 0, b: 0, a: 0}
-  renderOnTop: 0
-  centered: 0
 --- !u!114 &4937406428404803048
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -484,7 +445,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4937406428404803049}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1700290075739674293}
+        m_TargetAssemblyTypeName: HYJ_CharacterSelect, Assembly-CSharp
+        m_MethodName: SelectUnit
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &4937406428404803049
 MonoBehaviour:
   m_ObjectHideFlags: 0

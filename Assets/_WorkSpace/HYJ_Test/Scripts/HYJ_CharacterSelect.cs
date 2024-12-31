@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -30,15 +31,14 @@ public class HYJ_CharacterSelect : MonoBehaviour
     public void InitData(HYJ_SelectManager manager, int unitIdx, GameObject unitChangeUI)
     { 
         SelectM = manager;
-        CharacterData chData = GameManager.TableData.GetCharacterData(unitIndex);
+        CharacterData chData = GameManager.TableData.GetCharacterData(unitIdx);
         //chType.FaceIconSprite.texture;
         // Text. ~~~ chType.Level.Value.ToString();
         GetComponentInChildren<TextMeshProUGUI>().text = $"{unitIdx.ToString()}번 유닛";
         unitIndex = unitIdx;
         UnitChangeUI = unitChangeUI;
 
-        characterImage = GetComponent<Image>();
-        characterImage.sprite = chData.FaceIconSprite;
+        characterImage.GetComponent<Image>().sprite = chData.FaceIconSprite;
         levelText.text = chData.Level.Value.ToString();
         //raceText.text = chData.
         //classText.text = chData.
@@ -144,14 +144,14 @@ public class HYJ_CharacterSelect : MonoBehaviour
     void AddBatch(int key, int value)
     {
         SelectM.battleInfo.Add(key, value);     // 현재 키 / 밸류 딕셔너리에 추가
-        SelectM.SetCharcterSprite(key, value);
+        //SelectM.SetCharcterSprite(key, value);
         //Debug.Log(key + "색 추가");
     }
 
     void RemoveBatch(int key)
     {
         SelectM.battleInfo.Remove(key);     // 현재 유닛 고유번호를 갖고 있는 키와 밸류 삭제
-        SelectM.RemoveCharacterSprite(key);
+        //SelectM.RemoveCharacterSprite(key);
         //Debug.Log(key + "색 제거");
     }
 
@@ -159,7 +159,19 @@ public class HYJ_CharacterSelect : MonoBehaviour
     {
         SelectM.battleInfo.Remove(victimKey);     // 현재 유닛 고유번호를 갖고 있는 키와 밸류 삭제
         SelectM.battleInfo[newKey] = newValue;
-        SelectM.ChangeTo(victimKey, newKey);
+        //SelectM.ChangeTo(victimKey, newKey);
     }
 
+    public void UpdateFormation()
+    {
+        // TODO : 호출 시, 딕셔너리를 참조하여 어느 위치에 어느 유닛이 배치되어 있는지 표기
+        if(SelectM.battleInfo.Count > 0)
+        {
+
+            foreach(var index in SelectM.battleInfo)
+            {
+                //SelectM.battleInfo
+            }
+        }
+    }
 }

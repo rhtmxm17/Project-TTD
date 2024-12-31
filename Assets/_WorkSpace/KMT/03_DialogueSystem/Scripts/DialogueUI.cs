@@ -2,12 +2,9 @@ using Firebase.Database;
 using Firebase.Extensions;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using static System.Net.Mime.MediaTypeNames;
 
 public class DialogueUI : BaseUI
 {
@@ -24,7 +21,7 @@ public class DialogueUI : BaseUI
     Button EmojiButtonPrefab;
 
     int maxChattingCnt;
-    
+
     //현재 접속자의 닉네임
     string nick;
 
@@ -53,9 +50,6 @@ public class DialogueUI : BaseUI
         emojiPanelBoarder = GetUI<Button>("EmojiPanelBoarder");
         emojiContentTransform = GetUI<Transform>("EmojiContents");
 
-        //TODO : 초기화 타이밍 잡기. [ 현재 방문한 룸의 주인 UID ]
-/*        curUsersDialogueRef = GameManager.Database.RootReference.Child($"Users/{curUid}/dialogues");
-*/
         #region 이모티콘 영역
 
         emojiButton.onClick.AddListener(emojiPanelParent.OpenWindow);
@@ -90,6 +84,11 @@ public class DialogueUI : BaseUI
     private void OnDisable()
     {
         curUsersDialogueRef.ValueChanged -= DialogueUpdated;
+    }
+
+    public void SetCurVisitUID(in string uid)
+    { 
+        curUid = uid;
     }
 
     private void DialogueUpdated(object sender, ValueChangedEventArgs e)
@@ -158,21 +157,19 @@ public class DialogueUI : BaseUI
             }
 
             DataSnapshot snapshot = task.Result;
-            Debug.Log(task.Result.ChildrenCount);
+
             Dictionary<string, object> updateDataDic = new Dictionary<string, object>();
 
             long curChildIdx = snapshot.ChildrenCount - 1;
 
 
             foreach (ChattingBlock blocks in chatingList)
-            { 
+            {
                 blocks.gameObject.SetActive(false);
             }
 
             foreach (DataSnapshot content in task.Result.Children)
             {
-                Debug.Log("enter");
-                Debug.Log(content.Child("content").Value.ToString());
 
                 if (curChildIdx < maxChattingCnt && curChildIdx >= 0)//채팅블록 재설정
                 {
@@ -182,11 +179,11 @@ public class DialogueUI : BaseUI
                     if (content.Child("uid").Value.ToString().Equals(UserData.myUid))//본인의 내역인 경우
                     {
 
-                        if (emogiDict.ContainsKey(stringVal)) 
+                        if (emogiDict.ContainsKey(stringVal))
                         {
                             chatingList[curChildIdx].SetMyEmojiBlock(emogiDict[stringVal]);
                         }
-                        else 
+                        else
                         {
                             chatingList[curChildIdx].SetMyChatBlock(stringVal);
                         }

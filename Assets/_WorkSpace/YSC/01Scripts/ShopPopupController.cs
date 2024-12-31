@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -15,6 +16,11 @@ public class ShopPopupController : BaseUI
     private ShopItem shopItem;
     public TMP_Text shopPopupText;
     public Image shopPopupImage;
+
+    private ItemData itemData;
+
+    ItemGainCell itemGainCell;
+
     void Start()
     {
         input = GameManager.Input;
@@ -40,6 +46,11 @@ public class ShopPopupController : BaseUI
             Debug.Log("화면 클릭 & 팝업 종료");
             popup.SetActive(false);
         }
+    }
+    public void Initialize(ItemGainCell itemData)
+    {
+        this.itemGainCell = itemData;
+        shopPopupText.text = itemData.itemDescription;
     }
 }
 

@@ -49,15 +49,7 @@ public class ShopItem : BaseUI
         shopItemData = data;
         itemNameText.text = data.ShopItemName;
 
-        // 따로 스프라이트를 등록하지 않았다면 첫번째 상품의 이미지
-        if (null == data.Sprite)
-        {
-            ShopItemImage.sprite = data.Products[0].item.SpriteImage;
-        }
-        else
-        {
-            ShopItemImage.sprite = data.Sprite;
-        }
+        ShopItemImage.sprite = data.Sprite;
 
         // 가격 표시
         if (null == data.Price.item)
@@ -99,14 +91,13 @@ public class ShopItem : BaseUI
 
     private void Buy()
     {
-        ItemData itemGive = shopItemData.Price.item;
-        Debug.Log($"소지 개수:{itemGive.Number.Value}/비용:{shopItemData.Price.gain}");
-
         var dbUpdateStream = GameManager.UserData.StartUpdateStream() // DB에 갱신 요청 시작
             .AddDBValue(shopItemData.Bought, 1);  // 요청에 '구매 횟수 증가' 등록
 
+        ItemData itemGive = shopItemData.Price.item;
         if (null != itemGive) // 무료가 아니라면
         {
+            Debug.Log($"소지 개수:{itemGive.Number.Value}/비용:{shopItemData.Price.gain}");
             dbUpdateStream.AddDBValue(itemGive.Number, -shopItemData.Price.gain); // 요청에 '비용 지불' 등록
         }
         

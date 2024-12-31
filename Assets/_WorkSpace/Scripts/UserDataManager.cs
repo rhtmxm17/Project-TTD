@@ -70,16 +70,10 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
     public class GamePlayData
     {
         public UserDataDateTime EggGainTimestamp { get; private set; } = new UserDataDateTime("PlayData/EggGainTimestamp");
+        public UserDataDateTime IdleRewardTimestamp { get; private set; } = new UserDataDateTime("PlayData/IdleRewardTimestamp");
 
         public UserDataDictionaryLong BatchInfo { get; private set; } = new UserDataDictionaryLong("PlayData/BatchInfo");
 
-    }
-
-
-    public void TryInitDummyUserAsync(int DummyNumber, UnityAction onCompletedCallback)
-    {
-        GameManager.Instance.StartCoroutine(InitDummyUser(DummyNumber));
-        onLoadUserDataCompleted.AddListener(onCompletedCallback);
     }
 
     /// <summary>
@@ -87,20 +81,31 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
     /// </summary>
     /// <param name="DummyNumber">가인증 uid값 뒤쪽에 붙일 번호</param>
     /// <returns></returns>
-    private IEnumerator InitDummyUser(int DummyNumber)
+    public void TryInitDummyUserAsync(int DummyNumber, UnityAction onCompletedCallback)
     {
+        GameManager.Instance.StartCoroutine(InitDummyUser(DummyNumber, onCompletedCallback));
+    }
+
+    private IEnumerator InitDummyUser(int DummyNumber, UnityAction onCompletedCallback)
+    {
+        GameManager.Instance.StartShortLoadingUI();
         // Database 초기화 대기
         yield return new WaitWhile(() => GameManager.Database == null);
+        // Auth 초기화 대기
+        yield return new WaitWhile(() => GameManager.Auth == null);
 
-        if (BackendManager.CurrentUserDataRef != null)
+        GameManager.Auth.SignOut();
+        if (BackendManager.CurrentUserDataRef != null) // 이미 더미 인증된 이력이 있을 경우 즉시 완료
         {
-            Debug.Log("이미 등록된 UserData 레퍼런스가 있어서 더미 유저 등록을 생략함");
-        }
-        else
-        {
-            BackendManager.Instance.UseDummyUserDataRef(DummyNumber); // 테스트코드
+            onCompletedCallback?.Invoke();
+            GameManager.Instance.StopShortLoadingUI();
+            yield break;
         }
 
+        BackendManager.Instance.UseDummyUserDataRef(DummyNumber); // 테스트코드
+
+        onLoadUserDataCompleted.AddListener(onCompletedCallback);
+        onLoadUserDataCompleted.AddListener(GameManager.Instance.StopShortLoadingUI);
         Instance.LoadUserData();
     }
 
@@ -134,6 +139,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             this.Profile.MyroomCharaIdx.SetValueWithDataSnapshot(userData);
 
             this.PlayData.EggGainTimestamp.SetValueWithDataSnapshot(userData);
+            this.PlayData.IdleRewardTimestamp.SetValueWithDataSnapshot(userData);
             this.PlayData.BatchInfo.SetValueWithDataSnapshot(userData);
 
             // 캐릭터 데이터 로딩
@@ -513,8 +519,10 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                 return;
             }
 
+            GameManager.Instance.StartShortLoadingUI();
             BackendManager.CurrentUserDataRef.UpdateChildrenAsync(updates).ContinueWithOnMainThread(task =>
             {
+                GameManager.Instance.StopShortLoadingUI();
                 if (task.IsFaulted || task.IsCanceled)
                 {
                     Debug.LogWarning($"요청 실패함");
