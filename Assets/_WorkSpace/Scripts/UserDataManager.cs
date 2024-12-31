@@ -87,6 +87,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
 
     private IEnumerator InitDummyUser(int DummyNumber, UnityAction onCompletedCallback)
     {
+        GameManager.Instance.StartShortLoadingUI();
         // Database 초기화 대기
         yield return new WaitWhile(() => GameManager.Database == null);
         // Auth 초기화 대기
@@ -96,12 +97,14 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
         if (BackendManager.CurrentUserDataRef != null) // 이미 더미 인증된 이력이 있을 경우 즉시 완료
         {
             onCompletedCallback?.Invoke();
+            GameManager.Instance.StopShortLoadingUI();
             yield break;
         }
 
         BackendManager.Instance.UseDummyUserDataRef(DummyNumber); // 테스트코드
 
         onLoadUserDataCompleted.AddListener(onCompletedCallback);
+        onLoadUserDataCompleted.AddListener(GameManager.Instance.StopShortLoadingUI);
         Instance.LoadUserData();
     }
 
@@ -514,8 +517,10 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                 return;
             }
 
+            GameManager.Instance.StartShortLoadingUI();
             BackendManager.CurrentUserDataRef.UpdateChildrenAsync(updates).ContinueWithOnMainThread(task =>
             {
+                GameManager.Instance.StopShortLoadingUI();
                 if (task.IsFaulted || task.IsCanceled)
                 {
                     Debug.LogWarning($"요청 실패함");
