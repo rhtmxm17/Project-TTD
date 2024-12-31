@@ -2,18 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OpenableRanking : OpenableUIBase
+public class OpenableRankPanel : OpenableUIBase
 {
     [SerializeField]
     OpenableWindow rankUI;
-    [SerializeField]
-    MyRankSetter rankBlock;
 
-    public override void OpenWindow()
-    {
-        base.OpenWindow();
-        rankBlock.SetRankBlock();
-    }
 
     public override void CloseWindow()
     {

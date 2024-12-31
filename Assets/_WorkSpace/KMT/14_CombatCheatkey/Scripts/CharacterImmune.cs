@@ -7,12 +7,8 @@ public class CharacterImmune : MonoBehaviour
     [SerializeField]
     GameObject characterCombManager;
 
-    bool isClicked = false;
-
     public void OnClick()
     {
-
-        isClicked = true;
 
         var characters = characterCombManager.GetComponentsInChildren<CharacterCombatable>();
 
