@@ -15,18 +15,15 @@ public class IdleReward : MonoBehaviour
     // 인스펙터 타이머 조절 변수
     [SerializeField] private int rewardHour;
     [SerializeField] private int rewardMinute;
-
     [SerializeField] private int rewardSecond;
 
     // 마지막 보상시간:DB
     private UserDataDateTime lastRewardTime;
-
     // 최대 보상 시간
     private TimeSpan maxTimer;
-
     // 지난시간
     private TimeSpan spanTime;
-
+    
     private Coroutine timerCoroutine;
 
     private void Start()
@@ -43,15 +40,12 @@ public class IdleReward : MonoBehaviour
 
     private void StartIdleReward()
     {
-        // TODO: 유저 데이터에 추가 필요
-        // lastRewardTime = GameManager.UserData.PlayData.IdleRewardTimestamp;
-        // (임시) 위에거 추가하기 전까지 임시적으로 에그타이머랑 같은 시간 사용
-        lastRewardTime = GameManager.UserData.PlayData.EggGainTimestamp;
+        lastRewardTime = GameManager.UserData.PlayData.IdleRewardTimestamp;
         timerCoroutine = StartCoroutine(TimerTextCo());
         lastRewardTime.onValueChanged += lastRewardTime_onValueChanged;
     }
 
-        // 보상의 받는 부분
+    // 보상의 받는 부분
     public void GetReward()
     {
         // 보상을 언제든 받을 수 있기에 받을때 한번 코루틴 초기화?
@@ -86,14 +80,6 @@ public class IdleReward : MonoBehaviour
         timerCoroutine = StartCoroutine(TimerTextCo());
     }
 
-    /// <summary>
-    /// 테스트용 획득 시간 max로 바로 실행시키는 코드
-    /// </summary>
-    public void TestReward()
-    {
-        spanTime = maxTimer;
-    }
-
     IEnumerator TimerTextCo()
     {
         WaitForSeconds wait1Sec = new WaitForSeconds(1f);
@@ -107,8 +93,7 @@ public class IdleReward : MonoBehaviour
             if (spanTime >= maxTimer)
             {
                 spanTime = maxTimer;
-                // 위에 타임 텍스트랑 기능 겹치나.?
-                // timeText.text = maxTimer.ToString();
+                timeText.text = "보상 MAX!";
                 yield break;
             }
             yield return wait1Sec;
