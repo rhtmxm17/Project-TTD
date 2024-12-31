@@ -51,10 +51,10 @@ public class KMT_BaseUI : BaseUI
             foreach (DataSnapshot chInfo in snapshot.Children)
             {
                 HYJ_CharacterSelect button = Instantiate(buttonPrefab, buttonsParent);
-                button.InitData(selectManager, int.Parse(chInfo.Key), unitChangePanel);
-                Debug.Log(chInfo.Key);
+                Debug.Log("TP" + int.TryParse(chInfo.Key,out int Parsd));
+                Debug.Log(Parsd);
+                button.InitData(selectManager, Parsd, unitChangePanel);
             }
-
         });
     }
 }
