@@ -11,7 +11,7 @@ using UnityEngine.UI;
 public class CharacterInfoController : BaseUI
 {
     [HideInInspector] public CharacterInfoUI _infoUI;
-    public List<CharacterInfo> _characterInfos;
+    [HideInInspector] public List<CharacterInfo> _characterInfos;
     [HideInInspector] public CharacterInfo CurCharacterInfo;
     [HideInInspector] public CharacterEnhance CurCharacterEnhance;
 

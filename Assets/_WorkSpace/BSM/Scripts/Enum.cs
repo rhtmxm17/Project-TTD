@@ -40,7 +40,13 @@ public enum ElementType
 }
 
 [System.Serializable]
+public enum DragonVeinType
+{
+    SINGLE, MULTI
+}
+
+[System.Serializable]
 public enum RoleType
 {
-    
+    DEFENDER, ATTACKER, SUPPORTER
 }
