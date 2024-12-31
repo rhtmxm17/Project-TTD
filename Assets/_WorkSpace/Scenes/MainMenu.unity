@@ -5379,6 +5379,7 @@ RectTransform:
   - {fileID: 1041153122}
   - {fileID: 1447240097}
   - {fileID: 1002465485}
+  - {fileID: 8973331939497759497}
   m_Father: {fileID: 298251600}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -10284,7 +10285,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &2566971195561965897
 GameObject:
   m_ObjectHideFlags: 0
@@ -11920,6 +11921,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 0dea109baca21784bbefd42fe847b712, type: 3}
   EmojiButtonPrefab: {fileID: 9133830999546351468, guid: 864daed0bb257d146b176b60dfe9cde5,
     type: 3}
+  nick: 
 --- !u!114 &3103873595255392209
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14565,11 +14567,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemNameText: {fileID: 0}
+  ShopItemName: 
   itemPriceText: {fileID: 0}
+  itemPrice: 0
   itemCountText: {fileID: 0}
+  itemCount: 0
   ShopItemImage: {fileID: 4423509656543491801}
   buyButton: {fileID: 4423509656690864456}
+  getCount: 0
+  isSoldOut: 0
+  Description: 
   buyButtonText: {fileID: 0}
+  itemGive: {fileID: 0}
+  itemGet: {fileID: 0}
+  _item: {fileID: 0}
+  ShopItemNumber: 0
 --- !u!222 &4423509656543491806
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -16771,11 +16783,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemNameText: {fileID: 0}
+  ShopItemName: 
   itemPriceText: {fileID: 0}
+  itemPrice: 0
   itemCountText: {fileID: 0}
+  itemCount: 0
   ShopItemImage: {fileID: 5093660851802272383}
   buyButton: {fileID: 5093660851913995758}
+  getCount: 0
+  isSoldOut: 0
+  Description: 
   buyButtonText: {fileID: 0}
+  itemGive: {fileID: 0}
+  itemGet: {fileID: 0}
+  _item: {fileID: 0}
+  ShopItemNumber: 0
 --- !u!114 &5093660851802272382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23066,11 +23088,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemNameText: {fileID: 0}
+  ShopItemName: 
   itemPriceText: {fileID: 0}
+  itemPrice: 0
   itemCountText: {fileID: 0}
+  itemCount: 0
   ShopItemImage: {fileID: 8973331939203561035}
   buyButton: {fileID: 8973331940000525576}
+  getCount: 0
+  isSoldOut: 0
+  Description: 
   buyButtonText: {fileID: 0}
+  itemGive: {fileID: 0}
+  itemGet: {fileID: 0}
+  _item: {fileID: 0}
+  ShopItemNumber: 0
 --- !u!224 &8973331939203561038
 RectTransform:
   m_ObjectHideFlags: 0
@@ -23468,11 +23500,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemNameText: {fileID: 0}
+  ShopItemName: 
   itemPriceText: {fileID: 0}
+  itemPrice: 0
   itemCountText: {fileID: 0}
+  itemCount: 0
   ShopItemImage: {fileID: 8973331939295951780}
   buyButton: {fileID: 8973331940257318987}
+  getCount: 0
+  isSoldOut: 0
+  Description: 
   buyButtonText: {fileID: 0}
+  itemGive: {fileID: 0}
+  itemGet: {fileID: 0}
+  _item: {fileID: 0}
+  ShopItemNumber: 0
 --- !u!224 &8973331939295951783
 RectTransform:
   m_ObjectHideFlags: 0
@@ -23612,11 +23654,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemNameText: {fileID: 0}
+  ShopItemName: 
   itemPriceText: {fileID: 0}
+  itemPrice: 0
   itemCountText: {fileID: 0}
+  itemCount: 0
   ShopItemImage: {fileID: 8973331939401204049}
   buyButton: {fileID: 8973331939719992149}
+  getCount: 0
+  isSoldOut: 0
+  Description: 
   buyButtonText: {fileID: 0}
+  itemGive: {fileID: 0}
+  itemGet: {fileID: 0}
+  _item: {fileID: 0}
+  ShopItemNumber: 0
 --- !u!224 &8973331939401204052
 RectTransform:
   m_ObjectHideFlags: 0
@@ -24017,8 +24069,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shopItems: []
-  shopLayoutGroup: {fileID: 0}
-  shopCellPrefab: {fileID: 0}
+  shopPopupButton: []
   ShopPopup: {fileID: 0}
   shopNameText: {fileID: 0}
   shopPopupText: {fileID: 0}
@@ -25551,11 +25602,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemNameText: {fileID: 0}
+  ShopItemName: 
   itemPriceText: {fileID: 0}
+  itemPrice: 0
   itemCountText: {fileID: 0}
+  itemCount: 0
   ShopItemImage: {fileID: 8973331940112226419}
   buyButton: {fileID: 8973331939206506029}
+  getCount: 0
+  isSoldOut: 0
+  Description: 
   buyButtonText: {fileID: 0}
+  itemGive: {fileID: 0}
+  itemGet: {fileID: 0}
+  _item: {fileID: 0}
+  ShopItemNumber: 0
 --- !u!224 &8973331940112226422
 RectTransform:
   m_ObjectHideFlags: 0
@@ -25831,11 +25892,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemNameText: {fileID: 0}
+  ShopItemName: 
   itemPriceText: {fileID: 0}
+  itemPrice: 0
   itemCountText: {fileID: 0}
+  itemCount: 0
   ShopItemImage: {fileID: 8973331940248602414}
   buyButton: {fileID: 8973331940688463058}
+  getCount: 0
+  isSoldOut: 0
+  Description: 
   buyButtonText: {fileID: 0}
+  itemGive: {fileID: 0}
+  itemGet: {fileID: 0}
+  _item: {fileID: 0}
+  ShopItemNumber: 0
 --- !u!224 &8973331940248602417
 RectTransform:
   m_ObjectHideFlags: 0
@@ -26311,11 +26382,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemNameText: {fileID: 0}
+  ShopItemName: 
   itemPriceText: {fileID: 0}
+  itemPrice: 0
   itemCountText: {fileID: 0}
+  itemCount: 0
   ShopItemImage: {fileID: 8973331940415913831}
   buyButton: {fileID: 8973331939657963345}
+  getCount: 0
+  isSoldOut: 0
+  Description: 
   buyButtonText: {fileID: 0}
+  itemGive: {fileID: 0}
+  itemGet: {fileID: 0}
+  _item: {fileID: 0}
+  ShopItemNumber: 0
 --- !u!224 &8973331940415913834
 RectTransform:
   m_ObjectHideFlags: 0
@@ -26863,11 +26944,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemNameText: {fileID: 0}
+  ShopItemName: 
   itemPriceText: {fileID: 0}
+  itemPrice: 0
   itemCountText: {fileID: 0}
+  itemCount: 0
   ShopItemImage: {fileID: 8973331940625471962}
   buyButton: {fileID: 8973331939948079381}
+  getCount: 0
+  isSoldOut: 0
+  Description: 
   buyButtonText: {fileID: 0}
+  itemGive: {fileID: 0}
+  itemGet: {fileID: 0}
+  _item: {fileID: 0}
+  ShopItemNumber: 0
 --- !u!224 &8973331940625471965
 RectTransform:
   m_ObjectHideFlags: 0

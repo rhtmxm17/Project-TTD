@@ -29,7 +29,7 @@ public class ItemGainCell : MonoBehaviour
         itemID = item.Id;
         itemName = item.ItemName;
         itemCount = 5; // 생기면 거기에 맞게 변경
-        spriteImage = item.SspriteImage;
+        spriteImage = item.SpriteImage;
         itemDescription = item.Description;
     }
 

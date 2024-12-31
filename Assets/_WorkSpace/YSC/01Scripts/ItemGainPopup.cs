@@ -72,7 +72,7 @@ public class ItemGainPopup : MonoBehaviour
 
             // 정보 출력칸 초기화
             // 별도의 클래스 선언 대신 itemGainCell을 BaseUI 타입으로 넣어서 바인딩 해도 무방
-            instance.spriteImage = info.item.SspriteImage;
+            instance.spriteImage = info.item.SpriteImage;
             instance.NumberText = info.number.ToString();
          }
     }
@@ -89,7 +89,7 @@ public class ItemGainPopup : MonoBehaviour
             _itemGainList.Add(cell.GetComponent<ItemGainCell>());
 
             cell.SetItem(_items[index]);
-            cell.itemImage.sprite = _items[index].SspriteImage;
+            cell.itemImage.sprite = _items[index].SpriteImage;
             cell.GetComponent<Button>().onClick.AddListener(() => Popup(itemGainCellPrefab));
             cell.GameObject();
         }
