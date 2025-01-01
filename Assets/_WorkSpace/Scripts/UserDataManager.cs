@@ -8,7 +8,6 @@ using System;
 
 public class UserDataManager : SingletonScriptable<UserDataManager>
 {
-
     /// <summary>
     /// 24. 12. 27 김민태 캐릭터 소유 목록 추가
     /// </summary>
@@ -406,7 +405,6 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                         this.Value[pair.Key] = (T)pair.Value;
                     }
                 }
-                ;
             }
 
             /// <summary>

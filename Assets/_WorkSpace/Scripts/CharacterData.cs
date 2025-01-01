@@ -145,6 +145,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     [SerializeField] Skill secondSkillDataSO;
     [SerializeField] Sprite specialSkillIcon;
     [SerializeField] string specialSkillToolTip;
+    [SerializeField] int getCharacterItemId;
     [SerializeField] int enhanceItemId;
 
     #region 유저 데이터
@@ -196,6 +197,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         CHAR_TYPE,
         ROLE_TYPE,
         DRAGONVEIN_TYPE,
+        GET_CHARACTER_ITEM,
         ENHANCE_ITEM,
     }
 
@@ -338,6 +340,35 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         }
         statusTable.dragonVeinType = (CharacterDragonVeinType)dragonType;
 
+        // GET_CHARACTER_ITEM
+        if (int.TryParse(cells[(int)Column.GET_CHARACTER_ITEM], out getCharacterItemId))
+        {
+            ItemData itemdata = DataTableManager.Instance.GetItemData(getCharacterItemId);
+            if (itemdata == null)
+            {
+                Debug.LogError($"캐릭터 획득 아이템(ID:{id})을 찾지 못함");
+            }
+            else
+            {
+                /// 아이템 획득 이벤트에 그 개수를 검사해 캐릭터 또는 전용 강화재료를 획득하는 메서드를 추가한다
+
+                // 직렬화된 UnityEvent 제거 (한 아이템 획득이 여러 메서드를 갖는 경우를 고려하지 않음)
+                while (0 < itemdata.onNumberChanged.GetPersistentEventCount())
+                {
+                    UnityEditor.Events.UnityEventTools.RemovePersistentListener(itemdata.onNumberChanged, 0);
+                }
+                // 직렬화되는 UnityEvent 등록
+                UnityEditor.Events.UnityEventTools.AddPersistentListener(itemdata.onNumberChanged, ItemSO_EventTester);
+                EditorUtility.SetDirty(itemdata);
+                //AssetDatabase.SaveAssets();
+                //AssetDatabase.Refresh();
+            }
+        }
+        else
+        {
+            getCharacterItemId = 0; // 해당 정보가 필요 없는 캐릭터라면 기본값으로 0 입력
+        }
+
         // ENHANCE_ITEM
         if (false == int.TryParse(cells[(int)Column.ENHANCE_ITEM], out enhanceItemId))
         {
@@ -346,4 +377,9 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     }
 #endif
 
+    private void ItemSO_EventTester(int value)
+    {
+        Debug.Log($"아이템 개수:{value}");
+        Debug.Log($"구독한 캐릭터 SO파일:{this.name}");
+    }
 }
