@@ -34,6 +34,8 @@ public class PurchasingPanel : BaseUI
     ShopPanel shopPanel;
     
     ShopItem shopItem;
+    
+    public ShopItemData shopItemData {get; private set;}
 
     
     void Start()
@@ -61,4 +63,19 @@ public class PurchasingPanel : BaseUI
         
     }
 
+    public void SetItem(ShopItemData data)
+    {
+        shopItemData = data;
+        itemNameText.text = data.ShopItemName;
+        itemImage.sprite = data.Sprite;
+        int amount = shopItemData.LimitedCount;
+        itemAmountText.text = $"{amount}";     //  (8) 앙이템수량
+        itemOwnText.text = $""; // (10) 보유량
+        // TODO: 유저데이터 가져와서 해당아이템의 보유 갯수 보여줘야함, 어떻게 할지 아직 구상이안됨
+
+        
+    }
+
+    
+    
 }

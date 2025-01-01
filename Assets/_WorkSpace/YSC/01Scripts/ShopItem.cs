@@ -29,6 +29,9 @@ public class ShopItem : BaseUI
 
     [SerializeField] private TMP_Text buyButtonText;
 
+    // 구매확인창 (구매버튼 누르면 팝업)
+    [SerializeField] PurchasingPanel purchasingPanel;
+    
     private void Start()
     {
         Init();
@@ -138,5 +141,11 @@ public class ShopItem : BaseUI
         popupInstance.Initialize(shopItemData.Products);
         popupInstance.Title.text = "구매 성공!";
     }
-
+    
+    // 구매확인창 열기
+    private void OpenPurchasingPanel()
+    {
+        PurchasingPanel popupInstance = Instantiate(purchasingPanel, GameManager.PopupCanvas);
+        popupInstance.SetItem(this.shopItemData);
+    }
 }

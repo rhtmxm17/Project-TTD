@@ -25,9 +25,7 @@ public class ShopPanel : BaseUI
 
     private List<ShopItem> shopItemsList;
     
-    // 구매확인창 (구매버튼 누르면 팝업)
-    PurchasingPanel purchasingPanel;
-    
+
     private void Start()
     {
         Init();
