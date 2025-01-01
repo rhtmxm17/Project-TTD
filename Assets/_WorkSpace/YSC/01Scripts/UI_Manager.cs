@@ -264,7 +264,7 @@ public class UI_Manager : BaseUI
     /// </summary>
     public void GuestLogin()
     {
-        var _userdataRef = BackendManager.UserDataRef;
+        var _userdataRef = BackendManager.AllUsersDataRef;
         
         BackendManager.Auth.SignInAnonymouslyAsync().ContinueWithOnMainThread(task => 
         {

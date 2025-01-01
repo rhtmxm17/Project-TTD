@@ -26,7 +26,6 @@ public class GameManager : SingletonBehaviour<GameManager>
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     public static void Initialize()
     {
-
         Instantiate(Resources.Load<GameManager>("GameManager"));
     }
 
@@ -39,7 +38,7 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     #region 짧은 로딩
     [SerializeField] RectTransform shortLoadingPanel;
-    private int loadingCounter = 0;
+    //private int loadingCounter = 0;
 
     public void StartShortLoadingUI()
     {
@@ -91,7 +90,6 @@ public class GameManager : SingletonBehaviour<GameManager>
     public void SetLoadStageType(StageData StageData, StageType stageType)
     {
         this.stageType = stageType;
-        Debug.Log($"씬 전환: {SceneManager.GetActiveScene().name} -> StageDefault(스테이지명:{StageData.StageName})");
         this.stageData = StageData;
     }
 

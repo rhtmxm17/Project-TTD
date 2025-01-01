@@ -30,7 +30,7 @@ public class CharacterCombatable : Combatable
             Debug.LogError($"캐릭터 데이터 등록이 선행되어야 함");
         }
 
-        basicSkillButton.transform.GetChild(0).GetComponent<Image>().sprite = characterData.SkillDataSO.SkillSprite;
+        basicSkillButton.transform.GetChild(0).GetComponent<Image>().sprite = characterData.NormalSkillIcon;
         basicSkillButton.GetComponent<Button>().onClick.AddListener(() => {
             if (!basicSkillButton.Interactable || !IsAlive) { Debug.Log("사용 불가");  return; }
             OnSkillCommanded(characterData.SkillDataSO);
@@ -39,7 +39,7 @@ public class CharacterCombatable : Combatable
         });
 
         secondSkillButton.SetSkillCost(characterData.StatusTable.SecondSkillCost);
-        secondSkillButton.transform.GetChild(0).GetComponent<Image>().sprite = characterData.SecondSkillDataSO.SkillSprite;
+        secondSkillButton.transform.GetChild(0).GetComponent<Image>().sprite = characterData.SpecialSkillIcon;
         secondSkillButton.GetComponent<Button>().onClick.AddListener(() => {
             if (!secondSkillButton.Interactable || !IsAlive) { Debug.Log("사용 불가"); return; }
             if (characterData.StatusTable.SecondSkillCost < StageManager.Instance.PartyCost)
