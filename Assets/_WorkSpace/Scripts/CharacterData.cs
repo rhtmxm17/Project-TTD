@@ -358,10 +358,8 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
                     UnityEditor.Events.UnityEventTools.RemovePersistentListener(itemdata.onNumberChanged, 0);
                 }
                 // 직렬화되는 UnityEvent 등록
-                UnityEditor.Events.UnityEventTools.AddPersistentListener(itemdata.onNumberChanged, ItemSO_EventTester);
+                UnityEditor.Events.UnityEventTools.AddPersistentListener(itemdata.onNumberChanged, AcquireCharacter);
                 EditorUtility.SetDirty(itemdata);
-                //AssetDatabase.SaveAssets();
-                //AssetDatabase.Refresh();
             }
         }
         else
@@ -377,9 +375,37 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     }
 #endif
 
-    private void ItemSO_EventTester(int value)
+    private void AcquireCharacter(int itemNumber)
     {
-        Debug.Log($"아이템 개수:{value}");
-        Debug.Log($"구독한 캐릭터 SO파일:{this.name}");
+        Debug.Log($"캐릭터({this.Name}) 획득 회수:{itemNumber}");
+        if (itemNumber <= 0)
+        {
+            Debug.LogError("아이템 정보가 잘못됨!");
+        }
+        else if  (itemNumber == 1)
+        {
+            // 캐릭터 첫 획득일 경우
+            UserDataManager.Instance.StartUpdateStream()
+                .SetDBValue(this.Level, 1)
+                .SetDBValue(this.Enhancement, 1)
+                .Submit((result) =>
+                {
+                    Debug.Log("캐릭터 획득!");
+                });
+        }
+        else
+        {
+            // 중복 획득일 경우
+            ItemData enhanceItem = DataTableManager.Instance.GetItemData(enhanceItemId);
+
+            UserDataManager.Instance.StartUpdateStream()
+                .AddDBValue(enhanceItem.Number, 10)
+                .Submit((result) =>
+                {
+                    Debug.Log("캐릭터 중복 획득으로 강화 아이템으로 전환");
+                    GameManager.OverlayUIManager.PopupItemGain(new List<ItemGain> { new ItemGain() { item = enhanceItem, gain = 10 } });
+                });
+        }
+
     }
 }
