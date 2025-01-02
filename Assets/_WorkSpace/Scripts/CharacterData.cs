@@ -68,12 +68,6 @@ public enum CharacterDragonVeinType
 
 public class CharacterData : ScriptableObject, ICsvRowParseable
 {
-    /// <summary>
-    /// 24.12.19 김민태
-    ///     - skill so 데이터 필드 추가
-    /// </summary>
-
-    // 능력치 표 내지는 계산식으로 변경 필요함
     [System.Serializable]
     public struct Status
     {
@@ -81,7 +75,14 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         public float BasicSkillCooldown;
         public float SecondSkillCost;
 
+        /// <summary>
+        /// 0레벨 공격력
+        /// </summary>
         public float attackPointBase;
+
+        /// <summary>
+        /// 레벨별 공격력 성장치
+        /// </summary>
         public float attackPointGrowth;
         public float healthPointBase;
         public float healthPointGrouth;
@@ -93,47 +94,64 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         public CharacterDragonVeinType dragonVeinType;
     }
 
-    [SerializeField] int id;
     public int Id => id;
 
-    [SerializeField] new string name;
     public string Name => name;
 
-    [SerializeField] Sprite faceIconSprite;
     public Sprite FaceIconSprite => faceIconSprite;
 
-    [SerializeField] Sprite normalSkillIcon;
-    public Sprite NormalSkillIcon => normalSkillIcon;
-
-    [SerializeField] string normalSkillToolTip;
-    public string NormalSkillToolTip => normalSkillToolTip;
-    
-    [SerializeField] Sprite specialSkillIcon;
-    public Sprite SpecialSkillIcon => specialSkillIcon;
-
-    [SerializeField] string specialSkillToolTip;
-    public string SpecialSkillToolTip => specialSkillToolTip;
-    
-    [SerializeField] GameObject modelPrefab;
     public GameObject ModelPrefab => modelPrefab;
 
-    [SerializeField] Status statusTable;
     public Status StatusTable => statusTable;
 
-    [Header("Skill datas")]
-    [SerializeField] Skill basicSkillDataSO;
+    /// <summary>
+    /// 기본 공격
+    /// </summary>
     public Skill BasicSkillDataSO => basicSkillDataSO;
 
-    [SerializeField] Skill skillDataSO;
+    /// <summary>
+    /// 기본 스킬
+    /// </summary>
     public Skill SkillDataSO => skillDataSO;
 
-    [SerializeField] Skill secondSkillDataSO;
+    public Sprite NormalSkillIcon => normalSkillIcon;
+
+    public string NormalSkillToolTip => normalSkillToolTip;
+
+    /// <summary>
+    /// 용맥 해방 스킬
+    /// </summary>
     public Skill SecondSkillDataSO => secondSkillDataSO;
+
+    public Sprite SpecialSkillIcon => specialSkillIcon;
+
+    public string SpecialSkillToolTip => specialSkillToolTip;
+
+    /// <summary>
+    /// 전용 강화 아이템
+    /// </summary>
+    public int EnhanceItemID => enhanceItemId;
+    
+    [SerializeField] int id;
+    [SerializeField] new string name;
+    [SerializeField] Sprite faceIconSprite;
+    [SerializeField] GameObject modelPrefab;
+    [SerializeField] Status statusTable;
+    [Header("Skill datas")]
+    [SerializeField] Skill basicSkillDataSO;
+    [SerializeField] Skill skillDataSO;
+    [SerializeField] Sprite normalSkillIcon;
+    [SerializeField] string normalSkillToolTip;
+    [SerializeField] Skill secondSkillDataSO;
+    [SerializeField] Sprite specialSkillIcon;
+    [SerializeField] string specialSkillToolTip;
+    [SerializeField] int getCharacterItemId;
+    [SerializeField] int enhanceItemId;
 
     #region 유저 데이터
     /// <summary>
     /// 유저 데이터. DataManager의 LoadUserData()가 호출된 적이 있어야 정상적인 값을 갖는다<br/>
-    /// 주의: 에디터의 Enter Play Mode Settings에서 도메인 리로드가 비활성화 되어있을 경우 이전 실행시의 값이 남아있을 수 있음
+    /// 주의: 에디터의 Enter Play Mode Settings에서 도메인 리로드가 비활성화 되어있을 경우 이전 실행시의 값이 남아있을 수 있음<br/>
     /// 주의2: 로그아웃을 구현해야 한다면 마찬가지로 이전 유저의 값이 남아있으므로 인증 정보 변경시 정리하는 메서드 추가할것
     /// </summary>
     public UserDataInt Level { get; private set; }
@@ -178,7 +196,9 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         DEFCON,
         CHAR_TYPE,
         ROLE_TYPE,
-        DRAGONVEIN_TYPE
+        DRAGONVEIN_TYPE,
+        GET_CHARACTER_ITEM,
+        ENHANCE_ITEM,
     }
 
     public void ParseCsvRow(string[] cells)
@@ -319,7 +339,73 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
             return;
         }
         statusTable.dragonVeinType = (CharacterDragonVeinType)dragonType;
+
+        // GET_CHARACTER_ITEM
+        if (int.TryParse(cells[(int)Column.GET_CHARACTER_ITEM], out getCharacterItemId))
+        {
+            ItemData itemdata = DataTableManager.Instance.GetItemData(getCharacterItemId);
+            if (itemdata == null)
+            {
+                Debug.LogError($"캐릭터 획득 아이템(ID:{id})을 찾지 못함");
+            }
+            else
+            {
+                /// 아이템 획득 이벤트에 그 개수를 검사해 캐릭터 또는 전용 강화재료를 획득하는 메서드를 추가한다
+
+                // 직렬화된 UnityEvent 제거 (한 아이템 획득이 여러 메서드를 갖는 경우를 고려하지 않음)
+                while (0 < itemdata.onNumberChanged.GetPersistentEventCount())
+                {
+                    UnityEditor.Events.UnityEventTools.RemovePersistentListener(itemdata.onNumberChanged, 0);
+                }
+                // 직렬화되는 UnityEvent 등록
+                UnityEditor.Events.UnityEventTools.AddPersistentListener(itemdata.onNumberChanged, AcquireCharacter);
+                EditorUtility.SetDirty(itemdata);
+            }
+        }
+        else
+        {
+            getCharacterItemId = 0; // 해당 정보가 필요 없는 캐릭터라면 기본값으로 0 입력
+        }
+
+        // ENHANCE_ITEM
+        if (false == int.TryParse(cells[(int)Column.ENHANCE_ITEM], out enhanceItemId))
+        {
+            enhanceItemId = 0; // 해당 정보가 필요 없는 캐릭터라면 기본값으로 0 입력
+        }
     }
 #endif
 
+    private void AcquireCharacter(int itemNumber)
+    {
+        Debug.Log($"캐릭터({this.Name}) 획득 회수:{itemNumber}");
+        if (itemNumber <= 0)
+        {
+            Debug.LogError("아이템 정보가 잘못됨!");
+        }
+        else if  (itemNumber == 1)
+        {
+            // 캐릭터 첫 획득일 경우
+            UserDataManager.Instance.StartUpdateStream()
+                .SetDBValue(this.Level, 1)
+                .SetDBValue(this.Enhancement, 1)
+                .Submit((result) =>
+                {
+                    Debug.Log("캐릭터 획득!");
+                });
+        }
+        else
+        {
+            // 중복 획득일 경우
+            ItemData enhanceItem = DataTableManager.Instance.GetItemData(enhanceItemId);
+
+            UserDataManager.Instance.StartUpdateStream()
+                .AddDBValue(enhanceItem.Number, 10)
+                .Submit((result) =>
+                {
+                    Debug.Log("캐릭터 중복 획득으로 강화 아이템으로 전환");
+                    GameManager.OverlayUIManager.PopupItemGain(new List<ItemGain> { new ItemGain() { item = enhanceItem, gain = 10 } });
+                });
+        }
+
+    }
 }
