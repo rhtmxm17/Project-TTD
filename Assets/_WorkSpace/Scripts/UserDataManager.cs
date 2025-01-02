@@ -185,7 +185,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
 
                     characterData.Level.SetValueWithDataSnapshot(userData);
                     characterData.Enhancement.SetValueWithDataSnapshot(userData);
-                    characterData.EnhanceMileage.SetValueWithDataSnapshot(userData);
+                    characterData.EnhanceMileagePerMill.SetValueWithDataSnapshot(userData);
                 }
 
             }
@@ -555,12 +555,12 @@ public class UserDataInt : UserDataManager.UpdateDbChain.PropertyAdapter<long>
     public UserDataInt(string key, int defaultValue = default) : base(key, defaultValue) { }
 }
 
-public class UserDataFloat : UserDataManager.UpdateDbChain.PropertyAdapter<double>
-{
-    public new float Value => (float)base.Value;
+//public class UserDataFloat : UserDataManager.UpdateDbChain.PropertyAdapter<double>
+//{
+//    public new float Value => (float)base.Value;
 
-    public UserDataFloat(string key, float defaultValue = default) : base(key, defaultValue) { }
-}
+//    public UserDataFloat(string key, float defaultValue = default) : base(key, defaultValue) { }
+//}
 
 public class UserDataString : UserDataManager.UpdateDbChain.PropertyAdapter<string>
 {

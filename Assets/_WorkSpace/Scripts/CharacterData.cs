@@ -156,13 +156,13 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     /// </summary>
     public UserDataInt Level { get; private set; }
     public UserDataInt Enhancement { get; private set; }
-    public UserDataFloat EnhanceMileage { get; private set; }
+    public UserDataInt EnhanceMileagePerMill { get; private set; } // 0 ~ 1000
 
     private void OnEnable()
     {
         Level = new UserDataInt($"Characters/{id}/Level");
         Enhancement = new UserDataInt($"Characters/{id}/Enhancement");
-        EnhanceMileage = new UserDataFloat($"Characters/{id}/EnhanceMileage");
+        EnhanceMileagePerMill = new UserDataInt($"Characters/{id}/EnhanceMileagePerMill");
     }
     #endregion
 
