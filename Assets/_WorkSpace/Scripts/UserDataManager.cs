@@ -30,19 +30,16 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
     public void ApplyCharacter(int characterIdx)
     {
         //실제 데이터 갱신.
-        haveCharacterIdxList.Add(characterIdx);
-
         CharacterData chData = GameManager.TableData.GetCharacterData(characterIdx);
-
 
         StartUpdateStream()
             .SetDBValue(chData.Level, 1)
             .SetDBValue(chData.Enhancement, 1)
             .Submit((result) =>
             {
-
                 Debug.Log("적용 완료!");
 
+                haveCharacterIdxList.Add(characterIdx);
             });
     }
 
@@ -128,6 +125,28 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             }
 
             DataSnapshot userData = task.Result;
+
+            if (userData.Value == null)
+            {
+                // 첫 접속일 경우 프로필 생성
+                // TODO: UID 할당
+                StartUpdateStream()
+                    .SetDBValue(this.Profile.Name, "새로운 테스터")
+                    .SetDBValue(this.Profile.Level, 1)
+                    .Submit(result =>
+                    {
+                        if (false == result)
+                        {
+                            Debug.LogError("프로필 생성에 실패함");
+                            return;
+                        }
+
+                        Debug.Log("새로운 계정 생성");
+                        onLoadUserDataCompleted?.Invoke();
+                        onLoadUserDataCompleted.RemoveAllListeners();
+                    });
+                return;
+            }
 
             // DB의 데이터를 캐싱
 
