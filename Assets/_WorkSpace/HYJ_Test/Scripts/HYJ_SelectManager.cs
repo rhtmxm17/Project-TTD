@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using static UserDataManager;
 
 public class HYJ_SelectManager : MonoBehaviour
@@ -17,6 +18,9 @@ public class HYJ_SelectManager : MonoBehaviour
     [Header("buttonList")]
     [SerializeField]
     List<Transform> buttonsTransformList;
+
+    [Header("이미지 프리팹")]
+    [SerializeField] public GameObject ChImagePrefab;
 
     [Header("spriteTest")]
     [SerializeField]
@@ -55,32 +59,33 @@ public class HYJ_SelectManager : MonoBehaviour
             });
     }
 
-    public void SetCharcterSprite(int posIdx, int charIdx)
+    public void SetCharacterImage(int posIdx, int charIdx)
     {
+        var chImage = Instantiate(ChImagePrefab, buttonsTransformList[posIdx]);
         CharacterData chData = GameManager.TableData.GetCharacterData(charIdx);
-        var obj = Instantiate(spriteList[charIdx-1], buttonsTransformList[posIdx]);
-        obj.transform.localPosition = Vector3.zero;
+        chImage.transform.localPosition = Vector3.zero;
+        chImage.GetComponent<Image>().sprite = chData.FaceIconSprite;
+        chImage.GetComponent<HYJ_CharacterImage>().curPos = posIdx;
+        chImage.GetComponent<HYJ_CharacterImage>().unitIndex = charIdx;
     }
 
-    public void RemoveCharacterSprite(int posIdx)
+    public void RemoveCharacterImage(int posIdx)
     {
-        Destroy(buttonsTransformList[posIdx].GetComponentInChildren<HYJ_PlayerController>().gameObject);
+        Destroy(buttonsTransformList[posIdx].GetComponentInChildren<HYJ_CharacterImage>().gameObject);
     }
 
-    public void ChangeTo(int fromIdx, int destIdx)
+    public void ChangeImagePos(int fromIdx, int destIdx)
     {
-        if (buttonsTransformList[destIdx].GetComponentInChildren<HYJ_PlayerController>() != null)
+        if (buttonsTransformList[destIdx].GetComponentInChildren<HYJ_CharacterImage>() != null)
         {
-            RemoveCharacterSprite(destIdx);
+            RemoveCharacterImage(destIdx);
         }
-        buttonsTransformList[fromIdx].GetComponentInChildren<HYJ_PlayerController>()
-                .transform.SetParent(buttonsTransformList[destIdx].transform);
+        buttonsTransformList[fromIdx].GetComponentInChildren<HYJ_CharacterImage>().transform.SetParent(buttonsTransformList[destIdx].transform);
 
-        HYJ_PlayerController[] transL = buttonsTransformList[destIdx].GetComponentsInChildren<HYJ_PlayerController>();
+        HYJ_CharacterImage[] transL = buttonsTransformList[destIdx].GetComponentsInChildren<HYJ_CharacterImage>();
         RectTransform trans = transL[transL.Length - 1].GetComponent<RectTransform>();
         trans.anchoredPosition = Vector3.zero;
     }
-
 
     public void TestLog()
     {
@@ -96,5 +101,22 @@ public class HYJ_SelectManager : MonoBehaviour
     public void LoadBattleScene()
     {
         GameManager.Instance.LoadStageScene();
+    }
+
+    public void LoadUserFormation()
+    {
+        // TODO : 유저가 가지고 있는 포메이션 정보 가져오기
+
+    }
+
+    public void UpdateFormation()
+    {
+        if (battleInfo.Count > 0)
+        {
+            foreach (var index in battleInfo)
+            {
+                //SelectM.battleInfo
+            }
+        }
     }
 }
