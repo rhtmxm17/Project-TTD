@@ -94,7 +94,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     {
         _characterEnhance = GetComponent<CharacterEnhance>(); 
         _characterInfoController = GetComponentInParent<CharacterInfoController>();
-         
+
     }
    
     private void Start()
