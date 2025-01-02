@@ -28,15 +28,11 @@ public class IdleReward : MonoBehaviour
 
     private void Start()
     {
-        GameManager.UserData.TryInitDummyUserAsync(28, () =>
-        {
-            Debug.Log("완료");
-            StartIdleReward();
-        });
-        
         // 최대 보상 수령 시간 지정
         maxTimer = new TimeSpan(rewardHour, rewardMinute, rewardSecond);
     }
+
+    private void OnEnable() => StartIdleReward();
 
     private void StartIdleReward()
     {
@@ -45,8 +41,9 @@ public class IdleReward : MonoBehaviour
         lastRewardTime.onValueChanged += lastRewardTime_onValueChanged;
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
+        timerCoroutine = null;
         lastRewardTime.onValueChanged -= lastRewardTime_onValueChanged;
     }
 

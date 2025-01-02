@@ -25,11 +25,6 @@ public class EggSpawner : MonoBehaviour
 
     private void Start()
     {
-        GameManager.UserData.TryInitDummyUserAsync(8, () =>
-        {
-            Debug.Log("완료");
-            StartEggTimer();
-        });
         // 보상 충전 소요시간
         // 필요하면 나중에 변수화 해서 인스펙터에서 수정하도록 변경
         span = new TimeSpan(rewardTime, rewardMinute, rewardSeconds);
@@ -44,6 +39,11 @@ public class EggSpawner : MonoBehaviour
         lastEggTime = GameManager.UserData.PlayData.EggGainTimestamp;
         timerCoroutine = StartCoroutine(TimerTextCo());
         lastEggTime.onValueChanged += LastEggTime_onValueChanged;
+    }
+
+    private void OnDisable()
+    {
+        lastEggTime.onValueChanged -= LastEggTime_onValueChanged;
     }
 
     public void GetEgg()
