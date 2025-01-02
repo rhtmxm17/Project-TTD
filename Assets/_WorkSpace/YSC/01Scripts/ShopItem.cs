@@ -94,19 +94,20 @@ public class ShopItem : BaseUI
 
     private void Buy()
     {
-        var dbUpdateStream = GameManager.UserData.StartUpdateStream() // DB에 갱신 요청 시작
-            .AddDBValue(shopItemData.Bought, 1);  // 요청에 '구매 횟수 증가' 등록
-        
+
         // TODO: 구매확인창 UI && 기능
         // 구매갯수 > 1 || 무제한 => 구매확인창열기 
         int remain = shopItemData.LimitedCount - shopItemData.Bought.Value;
-       // if (remain > 0)
-       // {
+        if (remain > 0)
+        {
             Debug.Log("구매확인창 열기");
-           // OpenPurchasingPanel(); // 확인 팝업띄우는
-       // }
-        
-        
+            OpenPurchasingPanel(); // 확인 팝업띄우는
+            return;
+        }
+
+        var dbUpdateStream = GameManager.UserData.StartUpdateStream() // DB에 갱신 요청 시작
+            .AddDBValue(shopItemData.Bought, 1);  // 요청에 '구매 횟수 증가' 등록
+
 
         ItemData itemGive = shopItemData.Price.item;
         if (null != itemGive) // 무료가 아니라면
