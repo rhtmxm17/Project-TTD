@@ -12,20 +12,18 @@ public class HYJ_CharacterSelect : MonoBehaviour
     GameObject CantPosUI; // 선택 불가 팝업 -> 5개 유닛이 이미 다 배치 되었을 때의 팝업
     public int posNum; // 위치 번호
 
-    int unitIndex; // 유닛 번호
-    Image characterImage; // 캐릭터 이미지
-    TMP_Text levelText; // 캐릭터 레벨 텍스트
-    TMP_Text raceText; //캐릭터 종족 텍스트
-    TMP_Text classText; // 캐릭터 역할 텍스트(탱커/딜러/힐러)
-    TMP_Text attacktypeText; // 캐릭터 공격 타입 텍스트 (단일/광역)
-
     [Header("공용 설정")]
     [SerializeField] 
     HYJ_SelectManager SelectM;
 
-    [Header("유닛변경 확인 버튼설정")]
-    [SerializeField]
-    GameObject UnitChangeUI; // 유닛 변경 확인 팝업 -> 변경하시겠습니까?
+    [Header("유닛 버튼 설정")]
+    [SerializeField] int unitIndex; // 유닛 번호
+    [SerializeField] Image characterImage; // 캐릭터 이미지
+    [SerializeField] TMP_Text levelText; // 캐릭터 레벨 텍스트
+    [SerializeField] TMP_Text raceText; //캐릭터 종족 텍스트
+    [SerializeField] TMP_Text classText; // 캐릭터 역할 텍스트(탱커/딜러/힐러)
+    [SerializeField] TMP_Text attacktypeText; // 캐릭터 공격 타입 텍스트 (단일/광역)
+    [SerializeField] GameObject UnitChangeUI; // 유닛 변경 확인 팝업 -> 변경하시겠습니까?
 
 
     public void InitDataPosBTN(int PosIdx, GameObject CharacterSelectPanel, GameObject CantPosUI)
@@ -101,8 +99,6 @@ public class HYJ_CharacterSelect : MonoBehaviour
             {
                 // 선택한 위치에 선택한 유닛이 다른 위치에 배치되어 있는 경우
                 SelectM.curUnitIndex = unitIndex;
-                // TODO : 현재 위치의 배치된 유닛 삭제 -> 유닛 체인지에서 하자.
-                // TODO : 다른 위치에 배치된 유닛 옮겨오기 -> 유닛 체인지에서 하자.
                 UnitChangeUI.SetActive(true);
             }
         }
@@ -125,7 +121,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
 
     public void ChangeUnit()
     {
-        if (CheckUnitPos(SelectM.curUnitIndex))
+        if (CheckUnitPos(unitIndex))
         {
             RemoveBatch(SelectM.curPos);
         }
