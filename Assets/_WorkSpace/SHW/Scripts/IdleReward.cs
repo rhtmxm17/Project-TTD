@@ -44,12 +44,23 @@ public class IdleReward : MonoBehaviour
         timerCoroutine = StartCoroutine(TimerTextCo());
         lastRewardTime.onValueChanged += lastRewardTime_onValueChanged;
     }
-
+    
+    // 테스트용
+    public void TestReward()
+    {
+        StopCoroutine(timerCoroutine);
+        lastRewardTime.onValueChanged -= lastRewardTime_onValueChanged;
+        spanTime = maxTimer;
+        timeText.text = "테스트 가동중!! 즉시 수령 가능!!";
+        isIdleReward = true;
+    }
+    
     // 보상의 받는 부분
     public void GetReward()
     {
         // 보상을 언제든 받을 수 있기에 받을때 한번 코루틴 초기화?
-        timerCoroutine = null;
+        // timerCoroutine = null;
+        StopCoroutine(timerCoroutine);
         
         // TODO: 시간*100골로 임시 계산
         UserDataInt gold = GameManager.TableData.GetItemData(1).Number;
@@ -72,6 +83,12 @@ public class IdleReward : MonoBehaviour
                 // 보상 수령 확인용 팝업 코루틴
                 StartCoroutine(RewardPopupCo());
             });
+
+        if (isIdleReward)
+        {
+            lastRewardTime.onValueChanged += lastRewardTime_onValueChanged;
+            isIdleReward = false;
+        }
     }
 
     private void lastRewardTime_onValueChanged(long arg0)
