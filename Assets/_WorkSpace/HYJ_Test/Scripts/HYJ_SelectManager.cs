@@ -17,10 +17,6 @@ public class HYJ_SelectManager : MonoBehaviour
     [Header("이미지 프리팹")]
     [SerializeField] public GameObject ChImagePrefab;
 
-    [Header("spriteTest")]
-    [SerializeField]
-    List<HYJ_PlayerController> spriteList;
-
     [SerializeField]
     HYJ_CharacterSelect batchButtonPrefab;
     [SerializeField]
@@ -38,8 +34,9 @@ public class HYJ_SelectManager : MonoBehaviour
         {
             var obj = Instantiate(batchButtonPrefab, batchButtonsTransform);
             buttonsTransformList.Add(obj.transform);
-            obj.posNum = i;
-            obj.GetComponentInChildren<TextMeshProUGUI>().text = i.ToString();
+            obj.InitDataPosBTN(i);
+            //obj.posNum = i;
+            //obj.GetComponentInChildren<TextMeshProUGUI>().text = i.ToString();
         }
 
         GameManager.UserData.PlayData.BatchInfo.onValueChanged += (() =>
