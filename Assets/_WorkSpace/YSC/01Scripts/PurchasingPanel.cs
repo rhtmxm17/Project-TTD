@@ -41,7 +41,7 @@ public class PurchasingPanel : BaseUI
     [SerializeField] ShopItem shopItem;
     
     public ShopItemData shopItemData {get; private set;}
-
+    private int remainCount => shopItemData.LimitedCount - shopItemData.Bought.Value;
 
     void Start()
     {
@@ -98,18 +98,16 @@ public class PurchasingPanel : BaseUI
         shopItemData = data;
         itemNameText.text = data.ShopItemName;
         itemImage.sprite = data.Sprite;
-        int amount = shopItemData.LimitedCount - shopItemData.Bought.Value;
-        itemAmountText.text = $"아이템 수량: {amount}";     //  (8) 아이템수량
+        itemAmountText.text = $"아이템 수량: {remainCount}";     //  (8) 아이템수량
         itemOwnText.text = $""; // (10) 보유량
         // TODO: 유저데이터 가져와서 해당아이템의 보유 갯수 보여줘야함, 어떻게 할지 아직 구상이안됨
     }
 
     public void UpdateInfo()
     {
-        int remain = shopItemData.LimitedCount - shopItemData.Bought.Value;
-        if (remain > 0)
+        if (remainCount > 0)
         {
-            itemAmountText.text = $"아이템 수량: {remain}";
+            itemAmountText.text = $"아이템 수량: {remainCount}";
            // itemAmountText.text = $"아이템 수량: {remain}/{shopItemData.LimitedCount}";
         }
         else
@@ -123,11 +121,19 @@ public class PurchasingPanel : BaseUI
     private void Purchase()
     {
         Debug.Log($"해당 아이템을 {currentNumber}개 구매 합니다");
-        
+
+        ItemData itemPay = shopItemData.Price.item;
+        if (null != itemPay && shopItemData.Price.item.Number.Value < shopItemData.Price.gain * currentNumber)
+        {
+            Debug.LogWarning("비용 부족");
+            // TODO: 팝업UI
+            return;
+        }
+
+
         var dbUpdateStream = GameManager.UserData.StartUpdateStream() // DB에 갱신 요청 시작
             .AddDBValue(shopItemData.Bought, currentNumber);  // 요청에 '구매 횟수만큼 증가' 등록
         
-        ItemData itemPay = shopItemData.Price.item;
         if (null != itemPay) // 무료가 아니라면
         {
             Debug.Log($"골드 소지 개수:{itemPay.Number.Value}/비용:{shopItemData.Price.gain * currentNumber}");
@@ -145,14 +151,15 @@ public class PurchasingPanel : BaseUI
         
         
         dbUpdateStream.Submit(OnComplete);
+
         /* TODO: 상점에 아이템도 업데이트(매진이된다던가)
                  이벤트 제공하고, ShopItem?Panel? 에서 구독해서 숫자 변경되면 변경하기.
         */
-        AmmountChanged();
         // 하려하는데 잘 안됨
         // shopItem.UpdateInfo();
         // shopItem.SetItem(shopItemData);
     }
+
     private void OnComplete(bool result)
     {
         // TODO: 네트워크 로딩 닫기
@@ -164,6 +171,7 @@ public class PurchasingPanel : BaseUI
         }
         Debug.Log($"구매 하였습니다.");
 
+        AmmountChanged();
         UpdateInfo(); // 갱신된 상품 정보(구매 횟수) 반영
         
         
@@ -183,9 +191,9 @@ public class PurchasingPanel : BaseUI
     private void Add()
     {
         currentNumber++;
-        if (currentNumber >= shopItemData.LimitedCount)
+        if (currentNumber >= remainCount)
         {
-            currentNumber = shopItemData.LimitedCount;
+            currentNumber = remainCount;
         }
         UpdateInfo();
         Debug.Log($"갯수를 추가 합니다. 현재갯수: {currentNumber}");
@@ -204,7 +212,7 @@ public class PurchasingPanel : BaseUI
 
     private void Maximize()
     {
-        currentNumber = shopItemData.LimitedCount;
+        currentNumber = remainCount;
         UpdateInfo();
         Debug.Log($"갯수를 최대로 올립니다. 현재갯수: {currentNumber}");
     }

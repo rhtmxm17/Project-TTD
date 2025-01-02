@@ -110,11 +110,18 @@ public class ShopItem : BaseUI
             return;
         }
 
+        ItemData itemGive = shopItemData.Price.item;
+        if (null != itemGive && shopItemData.Price.item.Number.Value < shopItemData.Price.gain)
+        {
+            Debug.LogWarning("비용 부족");
+            // TODO: 팝업UI
+            return;
+        }
+
         var dbUpdateStream = GameManager.UserData.StartUpdateStream() // DB에 갱신 요청 시작
             .AddDBValue(shopItemData.Bought, 1);  // 요청에 '구매 횟수 증가' 등록
 
 
-        ItemData itemGive = shopItemData.Price.item;
         if (null != itemGive) // 무료가 아니라면
         {
             Debug.Log($"소지 개수:{itemGive.Number.Value}/비용:{shopItemData.Price.gain}");
