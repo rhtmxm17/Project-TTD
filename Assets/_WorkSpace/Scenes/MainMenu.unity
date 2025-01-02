@@ -8261,7 +8261,7 @@ GameObject:
   - component: {fileID: 2019127511}
   - component: {fileID: 2019127510}
   - component: {fileID: 2019127509}
-  - component: {fileID: 2019127508}
+  - component: {fileID: 2019127512}
   m_Layer: 5
   m_Name: GoldEnterButton
   m_TagString: Untagged
@@ -8290,20 +8290,6 @@ RectTransform:
   m_AnchoredPosition: {x: -1.3980103, y: -2.32901}
   m_SizeDelta: {x: -1.487915, y: 5.3099976}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2019127508
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2019127506}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc412c2a873b63c41a699e65b2df5332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  stageDataSO: {fileID: 11400000, guid: 8762f0ea627a0de4d85d943c85fb5ec4, type: 2}
-  stageType: 1
 --- !u!114 &2019127509
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8386,6 +8372,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2019127506}
   m_CullTransparentMesh: 1
+--- !u!114 &2019127512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019127506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0e0418b72b880849bcb669a68cf423d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stageDataSO: {fileID: 11400000, guid: 8762f0ea627a0de4d85d943c85fb5ec4, type: 2}
+  stageType: 1
 --- !u!1 &2072629295 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5193976096487267016, guid: 2095a77b34aaf6c4680790f276ffc54e,
