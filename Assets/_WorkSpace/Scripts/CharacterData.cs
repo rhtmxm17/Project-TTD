@@ -385,13 +385,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         else if  (itemNumber == 1)
         {
             // 캐릭터 첫 획득일 경우
-            UserDataManager.Instance.StartUpdateStream()
-                .SetDBValue(this.Level, 1)
-                .SetDBValue(this.Enhancement, 1)
-                .Submit((result) =>
-                {
-                    Debug.Log("캐릭터 획득!");
-                });
+            GameManager.UserData.ApplyCharacter(this.id);
         }
         else
         {
