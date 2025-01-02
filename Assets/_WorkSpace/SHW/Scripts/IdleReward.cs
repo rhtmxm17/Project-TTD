@@ -20,7 +20,7 @@ public class IdleReward : MonoBehaviour
     // 마지막 보상시간:DB
     private UserDataDateTime lastRewardTime;
     // 최대 보상 시간
-    private TimeSpan maxTimer;
+    //[SerializeField] TimeSpan maxTimer;
     // 지난시간
     private TimeSpan spanTime;
     
@@ -29,7 +29,7 @@ public class IdleReward : MonoBehaviour
     private void Start()
     {
         // 최대 보상 수령 시간 지정
-        maxTimer = new TimeSpan(rewardHour, rewardMinute, rewardSecond);
+        // maxTimer = new TimeSpan(rewardHour, rewardMinute, rewardSecond);
     }
 
     private void OnEnable() => StartIdleReward();
@@ -56,7 +56,7 @@ public class IdleReward : MonoBehaviour
             timerCoroutine = null;
         }
         lastRewardTime.onValueChanged -= lastRewardTime_onValueChanged;
-        spanTime = maxTimer;
+        spanTime = new TimeSpan(rewardHour, rewardMinute, rewardSecond);
         timeText.text = "테스트 가동중!! 즉시 수령 가능!!";
         isIdleReward = true;
     }
@@ -109,6 +109,7 @@ public class IdleReward : MonoBehaviour
     IEnumerator TimerTextCo()
     {
         WaitForSeconds wait1Sec = new WaitForSeconds(1f);
+        TimeSpan maxTimer = new TimeSpan(rewardHour, rewardMinute, rewardSecond);
         while (true)
         {
             // 시간 타이머 관련 및 여기서 코루틴 정지 및 시간 정리 해야함
