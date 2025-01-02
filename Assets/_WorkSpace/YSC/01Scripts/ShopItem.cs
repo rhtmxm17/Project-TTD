@@ -51,8 +51,9 @@ public class ShopItem : BaseUI
     {
         shopItemData = data;
         itemNameText.text = data.ShopItemName;
-
         ShopItemImage.sprite = data.Sprite;
+        int remain = shopItemData.LimitedCount - shopItemData.Bought.Value;
+        itemCountText.text = $"구매 가능 횟수 {remain}/{shopItemData.LimitedCount}";
 
         // 가격 표시
         if (null == data.Price.item)

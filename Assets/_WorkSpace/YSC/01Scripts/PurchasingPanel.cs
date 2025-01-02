@@ -118,12 +118,54 @@ public class PurchasingPanel : BaseUI
     private void Purchase()
     {
         Debug.Log($"해당 아이템을 {currentNumber}개 구매 합니다");
+        
+        var dbUpdateStream = GameManager.UserData.StartUpdateStream() // DB에 갱신 요청 시작
+            .AddDBValue(shopItemData.Bought, currentNumber);  // 요청에 '구매 횟수만큼 증가' 등록
+        
+        ItemData itemPay = shopItemData.Price.item;
+        if (null != itemPay) // 무료가 아니라면
+        {
+            Debug.Log($"골드 소지 개수:{itemPay.Number.Value}/비용:{shopItemData.Price.gain * currentNumber}");
+            dbUpdateStream.AddDBValue(itemPay.Number, -shopItemData.Price.gain * currentNumber); // 요청에 요구 수량만큼'비용 지불' 등록
+            Debug.Log($"지불 후 골드 :{itemPay.Number.Value}");   
+            // TODO: 구매 가능/불가 판별 => 불가능 팝업
+            // (소지금 < 가격 => 구매불가(팝업띄우기))
+        }
+        
+        foreach (ItemGain product in shopItemData.Products)
+        {
+            UserDataInt itemGet = product.item.Number;
+            dbUpdateStream.AddDBValue(itemGet, product.gain * currentNumber); // 요청에 갯수만큼 '상품 획득' 등록
+        }
+        
+        
+        dbUpdateStream.Submit(OnComplete);
+    }
+    private void OnComplete(bool result)
+    {
+        // TODO: 네트워크 로딩 닫기
+
+        if (false == result)
+        {
+            Debug.Log($"네트워크 오류");
+            return;
+        }
+        Debug.Log($"구매 하였습니다.");
+
+        UpdateInfo(); // 갱신된 상품 정보(구매 횟수) 반영
+        
+        
+        
+        ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(shopItemData.Products);
+        popupInstance.Title.text = "구매 성공!";
+        // this.shopItem.UpdateInfo(); // 이거 하면 창이 안닫힘
+        ClosePopup();
     }
 
     private void ClosePopup()
     {
        // onPopupClosed?.Invoke();
-        Destroy(gameObject);
+        Destroy(this.gameObject);
     }
 
     private void Add()
