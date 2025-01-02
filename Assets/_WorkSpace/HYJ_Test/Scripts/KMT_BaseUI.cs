@@ -53,7 +53,7 @@ public class KMT_BaseUI : BaseUI
                 HYJ_CharacterSelect button = Instantiate(buttonPrefab, buttonsParent);
                 Debug.Log("TP" + int.TryParse(chInfo.Key,out int Parsd));
                 Debug.Log(Parsd);
-                button.InitData(selectManager, Parsd, unitChangePanel);
+                button.InitDataUnitBTN(selectManager, Parsd, unitChangePanel);
             }
         });
     }
