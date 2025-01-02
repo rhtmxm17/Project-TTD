@@ -44,7 +44,7 @@ public class KMT_BaseUI : BaseUI
                 return;
             }
 
-            Debug.Log(task.Result.ChildrenCount);
+            Debug.Log("가져온 보유 캐릭터 수"+task.Result.ChildrenCount);
 
             DataSnapshot snapshot = task.Result;
 

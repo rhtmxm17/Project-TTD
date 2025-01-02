@@ -155,16 +155,24 @@ public class HYJ_SelectManager : MonoBehaviour
 
     public void LoadBattleScene()
     {
-        SaveBatch(result =>
+        if (battleInfo.Count < 1)
         {
-            if (false == result)
+            // TODO : 팝업창 만들어서 하나 이상의 캐릭터를 배치해야 시작할 수 있다고 알려주기
+            Debug.Log("하나 이상의 캐릭터를 배치해야 게임을 시작할 수 있습니다.");
+        }
+        else
+        {
+            SaveBatch(result =>
             {
-                Debug.LogWarning("db 접속에 실패");
-                return;
-            }
+                if (false == result)
+                {
+                    Debug.LogWarning("db 접속에 실패");
+                    return;
+                }
 
-            GameManager.Instance.LoadStageScene();
-        });
+                GameManager.Instance.LoadStageScene();
+            });
+        }
     }
 
     public void CancelEnterStage()
