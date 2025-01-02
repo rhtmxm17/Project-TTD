@@ -26,8 +26,9 @@ public class BasicAttack : Skill
         self.UnitAnimator.SetTrigger(animationHash);
 
         // 실제로 공격이 적용되는 구간
-        if (target.IsAlive)
+        if (target != null && target.IsAlive)
             target.Damaged(self.AttackPoint.Value, self.igDefenseRate); // 타겟에게 데미지 적용
+
 
     }
 

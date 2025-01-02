@@ -39,7 +39,18 @@ public class LoginCheckTest_kmt : MonoBehaviour
         UserData.myUid = $"Dummy{dummyIdx}";
         UserData.myNickname = GameManager.UserData.Profile.Name.Value;
 
-        SceneManager.LoadScene(destScene);
+        DailyChecker.IsTodayFirstConnect((isFirst) => {
+
+            if (isFirst)
+            {
+                SceneManager.LoadScene("DailyBonusScene");
+            }
+            else
+            {
+                SceneManager.LoadScene(destScene);
+            }
+
+    });
 
     }
 
