@@ -12,8 +12,8 @@ public class HYJ_CharacterSelect : MonoBehaviour
     [SerializeField] HYJ_SelectManager SelectM;
 
     [Header("위치 버튼 설정")]
-    [SerializeField] GameObject CharacterPanel; // 캐릭터 선택 창 
-    [SerializeField] GameObject CantPosUI; // 선택 불가 팝업 -> 5개 유닛이 이미 다 배치 되었을 때의 팝업
+    GameObject CharacterSelectPanel; // 캐릭터 선택 창 
+    GameObject CantPosUI; // 선택 불가 팝업 -> 5개 유닛이 이미 다 배치 되었을 때의 팝업
     [SerializeField] public int posNum; // 위치 번호
 
     [Header("유닛 버튼 설정")]
@@ -25,12 +25,12 @@ public class HYJ_CharacterSelect : MonoBehaviour
     [SerializeField] TMP_Text attacktypeText; // 캐릭터 공격 타입 텍스트 (단일/광역)
     [SerializeField] GameObject UnitChangeUI; // 유닛 변경 확인 팝업 -> 변경하시겠습니까?
 
-    public void InitDataPosBTN(int PosIdx)
+    public void InitDataPosBTN(int PosIdx, GameObject CharacterSelectPanel, GameObject CantPosUI)
     {
-        // TODO : SelectM 찾아서 넣기
         SelectM = gameObject.GetComponentInParent<Transform>().GetComponentInParent<HYJ_SelectManager>();
-        // TODO : 캐릭터 선택 창 찾아서 넣기
-        // TODO : 선택 불가 팝업 찾아서 넣기
+        this.CharacterSelectPanel = CharacterSelectPanel;
+        this.CantPosUI = CantPosUI;
+
         posNum = PosIdx;
         transform.GetComponentInChildren<TextMeshProUGUI>().text = PosIdx.ToString();
     }
@@ -63,13 +63,13 @@ public class HYJ_CharacterSelect : MonoBehaviour
         else if (CheckPos(posNum)) // 위치 리스트가 5개 초과 & 이미 선택한 위치일 경우 
         {
             SelectM.curPos = posNum;
-            CharacterPanel.SetActive(true);
+            CharacterSelectPanel.SetActive(true);
         }
 
         else if (SelectM.battleInfo.Count < 5 && !CheckPos(posNum)) // 위치 리스트가 5개 보다 적고
         {
             SelectM.curPos = posNum;
-            CharacterPanel.SetActive(true);
+            CharacterSelectPanel.SetActive(true);
         }
     }
 
