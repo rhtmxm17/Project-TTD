@@ -23,6 +23,8 @@ public class HYJ_SelectManager : MonoBehaviour
     Transform batchButtonsTransform;
     [SerializeField]
     int buttonCnt;
+    [SerializeField] GameObject CharacterSelectPanel; // 캐릭터 선택 창 
+    [SerializeField] GameObject CantPosUI; // 선택 불가 팝업 -> 5개 유닛이 이미 다 배치 되었을 때의 팝업
 
     // 키 값은 위치 / 밸류 값은 유닛 고유번호;
     public Dictionary<int, int> battleInfo = new Dictionary<int, int>();
@@ -34,7 +36,7 @@ public class HYJ_SelectManager : MonoBehaviour
         {
             var obj = Instantiate(batchButtonPrefab, batchButtonsTransform);
             buttonsTransformList.Add(obj.transform);
-            obj.InitDataPosBTN(i);
+            obj.InitDataPosBTN(i, CharacterSelectPanel, CantPosUI);
             //obj.posNum = i;
             //obj.GetComponentInChildren<TextMeshProUGUI>().text = i.ToString();
         }
