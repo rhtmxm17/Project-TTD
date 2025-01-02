@@ -10,7 +10,7 @@ using UnityEngine.UI;
 
 public class PurchasingPanel : BaseUI
 {
-    public event UnityAction onPopupClosed;
+   // public event UnityAction onPopupClosed;
     
     [Header("버튼들")]
     [SerializeField] private Button backgroundButton;
@@ -98,8 +98,8 @@ public class PurchasingPanel : BaseUI
 
     private void OnPopupCancelButtonClicked()
     {
-        onPopupClosed?.Invoke();
-        Destroy(this.gameObject);
+       // onPopupClosed?.Invoke();
+        Destroy(gameObject);
     }
 
     
