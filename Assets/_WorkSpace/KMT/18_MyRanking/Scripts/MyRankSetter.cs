@@ -11,7 +11,9 @@ public class MyRankSetter : MonoBehaviour
     public void SetRankBlock()
     {
 
-        GameManager.Database.RootReference.Child("boss").GetValueAsync()
+        GameManager.Database.RootReference
+            .Child("boss")
+            .GetValueAsync()
             .ContinueWithOnMainThread(task =>
             {
 
@@ -25,8 +27,26 @@ public class MyRankSetter : MonoBehaviour
                 if (task.Result.HasChild(UserData.myUid))
                 {
 
-                    rankBlock.SetBlockInfo(task.Result.Child(UserData.myUid).Child("nickname").Value.ToString(),
-                                        (long)task.Result.Child(UserData.myUid).Child("score").Value);
+                    GameManager.Database.RootReference
+                        .Child("boss")
+                        .OrderByChild("score")
+                        .StartAt((long)task.Result.Child(UserData.myUid).Child("score").Value)
+                        .GetValueAsync()
+                        .ContinueWithOnMainThread(task2 => {
+
+                            if (task2.IsFaulted || task2.IsCanceled)
+                            {
+                                Debug.Log("랭킹 정보 불러오기 실패");
+                                return;
+                            }
+
+                            rankBlock.SetCounter((int)task2.Result.ChildrenCount);
+
+                            rankBlock.SetBlockInfo(task.Result.Child(UserData.myUid).Child("nickname").Value.ToString(),
+                            (long)task.Result.Child(UserData.myUid).Child("score").Value);
+
+                        });
+
                 }
                 else //기록이 없는 경우
                 {
