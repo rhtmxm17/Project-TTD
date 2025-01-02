@@ -44,6 +44,16 @@ public class IdleReward : MonoBehaviour
         timerCoroutine = StartCoroutine(TimerTextCo());
         lastRewardTime.onValueChanged += lastRewardTime_onValueChanged;
     }
+    
+    // 테스트용
+    public void TestReward()
+    {
+        StopCoroutine(timerCoroutine);
+        lastRewardTime.onValueChanged -= lastRewardTime_onValueChanged;
+        spanTime = maxTimer;
+        timeText.text = "테스트 가동중!! 즉시 수령 가능!!";
+        isIdleReward = true;
+    }
 
     // 보상의 받는 부분
     public void GetReward()
@@ -72,6 +82,12 @@ public class IdleReward : MonoBehaviour
                 // 보상 수령 확인용 팝업 코루틴
                 StartCoroutine(RewardPopupCo());
             });
+
+        if (isIdleReward)
+        {
+            lastRewardTime.onValueChanged += lastRewardTime_onValueChanged;
+            isIdleReward = false;
+        }
     }
 
     private void lastRewardTime_onValueChanged(long arg0)
