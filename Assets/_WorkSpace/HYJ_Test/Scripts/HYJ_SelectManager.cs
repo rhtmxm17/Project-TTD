@@ -2,6 +2,7 @@ using Firebase.Database;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -13,6 +14,9 @@ public class HYJ_SelectManager : MonoBehaviour
     [Header("buttonList")]
     [SerializeField]
     List<Transform> buttonsTransformList;
+
+    [SerializeField] Button enterStageButton;
+    [SerializeField] Button cancelButton;
 
     [Header("이미지 프리팹")]
     [SerializeField] public GameObject ChImagePrefab;
@@ -31,6 +35,8 @@ public class HYJ_SelectManager : MonoBehaviour
 
     private void Start()
     {
+        enterStageButton.onClick.AddListener(LoadBattleScene);
+        cancelButton.onClick.AddListener(CancelEnterStage);
         
         for (int i = 0; i < buttonCnt; i++)
         {
@@ -89,6 +95,14 @@ public class HYJ_SelectManager : MonoBehaviour
     {
         DatabaseReference baseref = BackendManager.CurrentUserDataRef;
 
+        SaveBatch(result =>
+        {
+            Debug.Log($"요청 결과:{result}");
+        });
+    }
+
+    private void SaveBatch(UnityAction<bool> onCompleteCallback)
+    {
         Dictionary<string, long> updates = new Dictionary<string, long>();
         foreach (var pair in battleInfo)
         {
@@ -97,10 +111,7 @@ public class HYJ_SelectManager : MonoBehaviour
 
         GameManager.UserData.StartUpdateStream()
             .SetDBDictionary(GameManager.UserData.PlayData.BatchInfo, updates)
-            .Submit(result =>
-            {
-                Debug.Log($"요청 결과:{result}");
-            });
+            .Submit(onCompleteCallback);
     }
 
     public void SetCharacterImage(int posIdx, int charIdx)
@@ -144,13 +155,30 @@ public class HYJ_SelectManager : MonoBehaviour
 
     public void LoadBattleScene()
     {
-        GameManager.Instance.LoadStageScene();
+        SaveBatch(result =>
+        {
+            if (false == result)
+            {
+                Debug.LogWarning("db 접속에 실패");
+                return;
+            }
+
+            GameManager.Instance.LoadStageScene();
+        });
     }
 
-    public void LoadUserFormation()
+    public void CancelEnterStage()
     {
-        // TODO : 유저가 가지고 있는 포메이션 정보 가져오기
+        SaveBatch(result =>
+        {
+            if (false == result)
+            {
+                Debug.LogWarning("db 접속에 실패");
+                return;
+            }
 
+            GameManager.Instance.LoadMainScene();
+        });
     }
 
     public void UpdateFormation()
