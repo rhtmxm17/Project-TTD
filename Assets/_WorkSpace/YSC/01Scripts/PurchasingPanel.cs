@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem.HID;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class PurchasingPanel : BaseUI
 {
+    public event UnityAction onPopupClosed;
+    
     [Header("버튼들")]
+    [SerializeField] private Button backgroundButton;
     [SerializeField] private Button closeButton;
     [SerializeField] private Button purchaseButton;
     [SerializeField] private Button cancelButton;
@@ -37,7 +41,7 @@ public class PurchasingPanel : BaseUI
     
     public ShopItemData shopItemData {get; private set;}
 
-    
+
     void Start()
     {
         Init();
@@ -46,6 +50,7 @@ public class PurchasingPanel : BaseUI
     private void Init()
     {
         // Buttons
+        backgroundButton = GetUI<Button>("PurchasingBG"); 
         closeButton = GetUI<Button>("CloseButton");
         purchaseButton = GetUI<Button>("PurchaseButton");
         cancelButton = GetUI<Button>("CancelButton");
@@ -61,6 +66,8 @@ public class PurchasingPanel : BaseUI
         itemOwnText = GetUI<TMP_Text>("ItemOwnText");
         currentNumberText = GetUI<TMP_Text>("CurrentNumberText");
         
+        closeButton.onClick.AddListener(OnPopupCancelButtonClicked);
+        cancelButton.onClick.AddListener(OnPopupCancelButtonClicked);
     }
 
     public void SetItem(ShopItemData data)
@@ -72,8 +79,27 @@ public class PurchasingPanel : BaseUI
         itemAmountText.text = $"{amount}";     //  (8) 앙이템수량
         itemOwnText.text = $""; // (10) 보유량
         // TODO: 유저데이터 가져와서 해당아이템의 보유 갯수 보여줘야함, 어떻게 할지 아직 구상이안됨
+    }
 
+    public void UpdateInfo()
+    {
+        int remain = shopItemData.LimitedCount - shopItemData.Bought.Value;
+        if (remain > 0)
+        {
+            itemAmountText.text = $"아이템 수량: {remain}/{shopItemData.LimitedCount}";
+        }
+        else
+        {
+            itemAmountText.text = "매!\t진";
+            itemImage.color = new Color(.3f, .3f, .3f, 1f); 
+        }
         
+    }
+
+    private void OnPopupCancelButtonClicked()
+    {
+        onPopupClosed?.Invoke();
+        Destroy(this.gameObject);
     }
 
     

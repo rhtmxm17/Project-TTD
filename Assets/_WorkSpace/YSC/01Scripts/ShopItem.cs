@@ -101,6 +101,13 @@ public class ShopItem : BaseUI
         
         // TODO: 구매확인창 UI && 기능
         // 구매갯수 > 1 || 무제한 => 구매확인창열기 
+        int remain = shopItemData.LimitedCount - shopItemData.Bought.Value;
+        if (remain > 0)
+        {
+            Debug.Log("구매확인창 열기");
+            OpenPurchasingPanel();
+        }
+        
         
 
         ItemData itemGive = shopItemData.Price.item;
@@ -137,15 +144,15 @@ public class ShopItem : BaseUI
 
         UpdateInfo(); // 갱신된 상품 정보(구매 횟수) 반영
 
-        ItemGainPopup popupInstance = Instantiate(itemGainPopupPrefab, GameManager.PopupCanvas);
-        popupInstance.Initialize(shopItemData.Products);
-        popupInstance.Title.text = "구매 성공!";
+    //    ItemGainPopup popupInstance = Instantiate(itemGainPopupPrefab, GameManager.PopupCanvas);
+    //    popupInstance.Initialize(shopItemData.Products);
+    //    popupInstance.Title.text = "구매 성공!";
     }
     
     // 구매확인창 열기
     private void OpenPurchasingPanel()
     {
         PurchasingPanel popupInstance = Instantiate(purchasingPanel, GameManager.PopupCanvas);
-        popupInstance.SetItem(this.shopItemData);
+       // popupInstance.SetItem(shopItemData);
     }
 }

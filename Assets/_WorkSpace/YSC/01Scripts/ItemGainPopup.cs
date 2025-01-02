@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,13 @@ public class ItemGainPopup : MonoBehaviour
     [SerializeField] Button backGroundButton;           // '빈 곳을 클릭해 닫기'의 빈 곳
     [SerializeField] Button itemGainOkButton;           // 확인버튼
 
-    private void Awake()
+  //  private void Awake()
+  //  {
+  //      backGroundButton.onClick.AddListener(OnPopupOKButtonClicked);
+  //      itemGainOkButton.onClick.AddListener(OnPopupOKButtonClicked);
+  //  }
+
+    private void OnEnable()
     {
         backGroundButton.onClick.AddListener(OnPopupOKButtonClicked);
         itemGainOkButton.onClick.AddListener(OnPopupOKButtonClicked);
