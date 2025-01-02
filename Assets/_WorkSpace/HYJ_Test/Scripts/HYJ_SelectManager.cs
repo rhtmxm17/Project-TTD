@@ -1,14 +1,9 @@
 using Firebase.Database;
-using Firebase.Extensions;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
+using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static UserDataManager;
 
 public class HYJ_SelectManager : MonoBehaviour
 {
@@ -22,15 +17,28 @@ public class HYJ_SelectManager : MonoBehaviour
     [Header("이미지 프리팹")]
     [SerializeField] public GameObject ChImagePrefab;
 
-    [Header("spriteTest")]
     [SerializeField]
-    List<HYJ_PlayerController> spriteList;
+    HYJ_CharacterSelect batchButtonPrefab;
+    [SerializeField]
+    Transform batchButtonsTransform;
+    [SerializeField]
+    int buttonCnt;
 
     // 키 값은 위치 / 밸류 값은 유닛 고유번호;
     public Dictionary<int, int> battleInfo = new Dictionary<int, int>();
 
     private void Start()
     {
+        
+        for (int i = 0; i < buttonCnt; i++)
+        {
+            var obj = Instantiate(batchButtonPrefab, batchButtonsTransform);
+            buttonsTransformList.Add(obj.transform);
+            obj.InitDataPosBTN(i);
+            //obj.posNum = i;
+            //obj.GetComponentInChildren<TextMeshProUGUI>().text = i.ToString();
+        }
+
         GameManager.UserData.PlayData.BatchInfo.onValueChanged += (() =>
         {
             Debug.Log("편성 정보가 갱신됨");
@@ -39,6 +47,40 @@ public class HYJ_SelectManager : MonoBehaviour
         {
             Debug.Log("유저 정보 불러오기 완료 확인");
         });
+
+        // TODO : 편성 정보 가져와서 battleInfo에 저장 > (배치하기) 만들기
+        // ============= 플레이어 캐릭터 초기화 =============
+
+        //키 : 배치정보, 값 : 캐릭터 고유 번호(ID)
+        Dictionary<string, long> batchData = GameManager.UserData.PlayData.BatchInfo.Value;
+        //Dictionary<int, CharacterData> batchDictionary = new Dictionary<int, CharacterData>(batchData.Count);
+
+        foreach (var pair in batchData)
+        {
+            battleInfo[int.Parse(pair.Key)] = (int)pair.Value;
+
+        }
+
+        //battleInfo.Add(GameManager.UserData.PlayData.BatchInfo.)
+
+
+        if (battleInfo.Count > 5)
+        {
+            Debug.LogError("불러온 유저 배치 정보 오류(5개 보다 많은 배치)");
+        }
+        else if (battleInfo.Count > 0)
+        {
+            SetBattleInfo(battleInfo);
+        }
+    }
+
+    public void SetBattleInfo(Dictionary<int, int> battleInfo)
+    {
+        // 불러온 유저 정보를 배치하기
+        foreach (KeyValuePair<int, int> entry in battleInfo)
+        {
+            SetCharacterImage(entry.Key, entry.Value);
+        }
     }
 
     public void LookLog()
@@ -46,7 +88,7 @@ public class HYJ_SelectManager : MonoBehaviour
         DatabaseReference baseref = BackendManager.CurrentUserDataRef;
 
         Dictionary<string, long> updates = new Dictionary<string, long>();
-        foreach(var pair in battleInfo)
+        foreach (var pair in battleInfo)
         {
             updates[pair.Key.ToString()] = pair.Value;
         }

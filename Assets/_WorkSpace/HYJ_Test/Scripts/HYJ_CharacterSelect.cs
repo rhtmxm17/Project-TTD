@@ -1,10 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class HYJ_CharacterSelect : MonoBehaviour
@@ -12,12 +9,12 @@ public class HYJ_CharacterSelect : MonoBehaviour
     // 캐릭터 (9종)
     // 캐릭터 데이터 구조 : index(ID)
     [Header("공용 설정")]
-    [SerializeField] HYJ_SelectManager SelectM; // 캐릭터 선택 정보
+    [SerializeField] HYJ_SelectManager SelectM;
 
     [Header("위치 버튼 설정")]
     [SerializeField] GameObject CharacterPanel; // 캐릭터 선택 창 
     [SerializeField] GameObject CantPosUI; // 선택 불가 팝업 -> 5개 유닛이 이미 다 배치 되었을 때의 팝업
-    [SerializeField] int posNum; // 위치 번호
+    [SerializeField] public int posNum; // 위치 번호
 
     [Header("유닛 버튼 설정")]
     [SerializeField] int unitIndex; // 유닛 번호
@@ -28,9 +25,20 @@ public class HYJ_CharacterSelect : MonoBehaviour
     [SerializeField] TMP_Text attacktypeText; // 캐릭터 공격 타입 텍스트 (단일/광역)
     [SerializeField] GameObject UnitChangeUI; // 유닛 변경 확인 팝업 -> 변경하시겠습니까?
 
-    public void InitData(HYJ_SelectManager manager, int unitIdx, GameObject unitChangeUI)
-    { 
+    public void InitDataPosBTN(int PosIdx)
+    {
+        // TODO : SelectM 찾아서 넣기
+        SelectM = gameObject.GetComponentInParent<Transform>().GetComponentInParent<HYJ_SelectManager>();
+        // TODO : 캐릭터 선택 창 찾아서 넣기
+        // TODO : 선택 불가 팝업 찾아서 넣기
+        posNum = PosIdx;
+        transform.GetComponentInChildren<TextMeshProUGUI>().text = PosIdx.ToString();
+    }
+
+    public void InitDataUnitBTN(HYJ_SelectManager manager, int unitIdx, GameObject unitChangeUI)
+    {
         SelectM = manager;
+
         CharacterData chData = GameManager.TableData.GetCharacterData(unitIdx);
         //chType.FaceIconSprite.texture;
         // Text. ~~~ chType.Level.Value.ToString();
@@ -58,7 +66,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
             CharacterPanel.SetActive(true);
         }
 
-        else if(SelectM.battleInfo.Count < 5 && !CheckPos(posNum)) // 위치 리스트가 5개 보다 적고
+        else if (SelectM.battleInfo.Count < 5 && !CheckPos(posNum)) // 위치 리스트가 5개 보다 적고
         {
             SelectM.curPos = posNum;
             CharacterPanel.SetActive(true);
@@ -127,7 +135,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
     {
         unitIndex = SelectM.battleInfo.FirstOrDefault(x => x.Value == SelectM.curUnitIndex).Key; // 딕셔너리 밸류값(유닛 고유번호)를 갖고 있는 키 값을 찾기
         // 이미 해당 위치에 
-        if(unitIndex == SelectM.curPos)
+        if (unitIndex == SelectM.curPos)
         {
             return true;
         }
@@ -160,9 +168,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
     void ChangeBatch(int victimKey, int newKey, int newValue)
     {
         SelectM.battleInfo.Remove(victimKey);   // 현재 유닛 고유번호를 갖고 있는 키와 밸류 삭제
-        SelectM.battleInfo[newKey] = newValue;      
+        SelectM.battleInfo[newKey] = newValue;
         SelectM.ChangeImagePos(victimKey, newKey);    // 스프라이트 위치 변경
     }
-
-    
 }
