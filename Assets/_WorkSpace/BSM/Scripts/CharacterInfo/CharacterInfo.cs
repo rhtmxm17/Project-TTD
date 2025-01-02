@@ -192,8 +192,13 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController._infoUI._skillBDescText.text = _characterData.SpecialSkillToolTip;
         
         //TODO: 임시 텍스트 -> 속성 이미지로 변경 필요
-        int tempType = (int)_characterData.StatusTable.type;
-        _characterInfoController._infoUI._tempElemetTypeText.text = ((ElementType)tempType).ToString();
+        int tempElementType = (int)_characterData.StatusTable.type;
+        int tempRoleType = (int)_characterData.StatusTable.roleType;
+        int tempDragonVeinType = (int)_characterData.StatusTable.dragonVeinType;
+        
+        _characterInfoController._infoUI._tempElemetTypeText.text = ((ElementType)tempElementType).ToString();
+        _characterInfoController._infoUI._tempRoleTypeText.text = ((RoleType)tempRoleType).ToString();
+        _characterInfoController._infoUI._tempDragonVeinTypeText.text = ((DragonVeinType)tempDragonVeinType).ToString();
     }
   
     /// <summary>

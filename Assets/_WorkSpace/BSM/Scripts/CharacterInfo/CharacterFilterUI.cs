@@ -11,6 +11,12 @@ public class CharacterFilterUI : BaseUI
     [HideInInspector] public Button _groundFilterButton;
     [HideInInspector] public Button _electricFilterButton;
     [HideInInspector] public Button _allFilterButton;
+    [HideInInspector] public Button _deffenseFilterButton;
+    [HideInInspector] public Button _attackFilterButton;
+    [HideInInspector] public Button _supportFilterButton;
+    [HideInInspector] public Button _singleFilterButton;
+    [HideInInspector] public Button _multiFilterButton;
+    
     
     private Button _filterCloseButton;
     
@@ -34,6 +40,12 @@ public class CharacterFilterUI : BaseUI
         _groundFilterButton = GetUI<Button>("GroundFilter");
         _electricFilterButton = GetUI<Button>("ElectricFilter");
         _allFilterButton = GetUI<Button>("AllFilter");
+
+        _deffenseFilterButton = GetUI<Button>("DefensiveFilter");
+        _attackFilterButton = GetUI<Button>("OffensiveFilter");
+        _supportFilterButton = GetUI<Button>("SupportiveFilter");
+        _singleFilterButton = GetUI<Button>("SingleFilter");
+        _multiFilterButton = GetUI<Button>("MultiFilter");
     }
     
     private void SubscribeEvent()

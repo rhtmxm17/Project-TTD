@@ -58,6 +58,8 @@ public class CharacterInfoUI : BaseUI
     private GameObject _infoPopup;
 
     public TextMeshProUGUI _tempElemetTypeText;
+    public TextMeshProUGUI _tempRoleTypeText;
+    public TextMeshProUGUI _tempDragonVeinTypeText;
     
     protected override void Awake()
     {
@@ -76,6 +78,8 @@ public class CharacterInfoUI : BaseUI
     {
         //TODO: 임시 용 타입 UI 특성 지우기
         _tempElemetTypeText = GetUI<TextMeshProUGUI>("ElementTypeText");
+        _tempRoleTypeText = GetUI<TextMeshProUGUI>("RoleTypeText");
+        _tempDragonVeinTypeText = GetUI<TextMeshProUGUI>("DragonVeinTypeText");
         DetailTabUI();
         EnhanceTabUI();
         CommonUI();

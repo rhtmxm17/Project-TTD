@@ -14,8 +14,8 @@ public class CharacterEnhance : MonoBehaviour
 
     private readonly int _maxEnhanceLevel = 10;
     private float _minEnhanceProbability = 0.9f;
-    private float enhanceProbability;
-    private float chance;
+    private float _enhanceProbability;
+    private float _chance;
 
     private int _characterEnhanceLevel;
     private int beforeEnhanceLevel;
@@ -28,6 +28,8 @@ public class CharacterEnhance : MonoBehaviour
     private int _afterAtk;
     private int _afterDef;
 
+    private float _mileage;
+    
     public UnityAction OnBeforeEnhance;
     public UnityAction OnAfterEnhance;
 
@@ -110,16 +112,20 @@ public class CharacterEnhance : MonoBehaviour
 
         //기본 강화 확률 + 추가 재료 강화 확률 > Probability 보다 크면 성공
         //아니면 실패
-        //TODO: 프로토타입 이후 확률 수정 필요
-
+        //TODO: 프로토타입 이후 확률 수정 필요 
         //현재 임시로 강화 레벨에 따라 최소 강화 확률 조정 중
-        _minEnhanceProbability = (_maxEnhanceLevel - _characterEnhanceLevel) * 0.1f;
-        enhanceProbability = GetProbability(Random.Range(_minEnhanceProbability, 1f));
+        
+        //최소 확률 > 임시 80%
+        _minEnhanceProbability = (_maxEnhanceLevel - 3) * 0.1f;
+         
+        //강화 성공 확률 : 0.3 ~ 최대 1f 확률 사이
+        _enhanceProbability = GetProbability(Random.Range(_minEnhanceProbability, 1f));
 
-        chance = _characterEnhanceLevel == 1 ? 1f : GetProbability(Random.Range((enhanceProbability - 0.2f), (enhanceProbability + 0.2f)));
-        chance = Mathf.Clamp(chance, 0.01f, 1f);
+        _chance = GetProbability(Random.Range((_enhanceProbability - 0.3f), (_enhanceProbability + 0.1f)));
+        Debug.Log($"성공 확률 :{_enhanceProbability} >  내 기본 확률 : {_chance} / 마일리지 보정 : {_mileage}");
+        _chance = Mathf.Clamp(_chance + _mileage, 0.01f, 1f);
 
-        if (chance >= enhanceProbability)
+        if (_chance >= _enhanceProbability)
         {
             GameManager.UserData.StartUpdateStream()
                 .SetDBValue(_characterData.Enhancement, _characterData.Enhancement.Value + 1)
@@ -130,40 +136,64 @@ public class CharacterEnhance : MonoBehaviour
             EnhanceFail();
         }
     }
-
+    
+    /// <summary>
+    /// 강화 성공 후
+    /// </summary>
+    /// <param name="result"></param>
     private void EnhanceSuccess(bool result)
     {
         if (!result)
         {
-            _characterInfoController._infoUI._enhanceResultPopup.SetActive(true);
-            _characterInfoController._infoUI._enhanceResultText.text = "강화 실패 \n 사유 : 네트워크 오류";
+            ResultPopup("강화 실패 \n 사유 : 네트워크 오류");
             return;
         }
-        
-        _characterInfoController._infoUI._enhanceResultPopup.SetActive(true);
-        _characterInfoController._infoUI._enhanceResultText.text = "강화에 성공하셨습니다...";
-        
+
+        MileageUpdate(0f); 
+        ResultPopup("강화 성공해서 마일리지 초기화 할게요~.~");
         CharacterStats();
         UpdateInfo();
     }
-
+    
+    /// <summary>
+    /// 강화 실패 후 
+    /// </summary>
     private void EnhanceFail()
     {
-        _characterInfoController._infoUI._enhanceResultPopup.SetActive(true);
-        _characterInfoController._infoUI._enhanceResultText.text = "강화 실패했습니당~ \n 마일리지 추가!";
+        ResultPopup("강화 실패했습니당~ \n 마일리지 추가!");
         
         //TODO: 마일리지 누적 값 수정 필요
+        MileageUpdate(_characterData.EnhanceMileage.Value + 0.1f);
+    }
+    
+    /// <summary>
+    /// 강화 결과에 따라 마일리지 업데이트
+    /// </summary>
+    /// <param name="value">마일리지 값</param>
+    private void MileageUpdate(float value)
+    {
         GameManager.UserData.StartUpdateStream() 
-            .SetDBValue(_characterData.EnhanceMileage, _characterData.EnhanceMileage.Value + 0.1)
+            .SetDBValue(_characterData.EnhanceMileage, value)
             .Submit(result =>
             {
                 if (!result)
                 {
-                    Debug.Log("마일리지 업뎃 실패");
+                    ResultPopup("마일리지 업뎃 실패");
                     return;
                 } 
                 _characterInfoController._infoUI._mileageSlider.value = _characterData.EnhanceMileage.Value;
+                _mileage = _characterData.EnhanceMileage.Value;
             });
+    }
+    
+    /// <summary>
+    /// 강화 결과 팝업
+    /// </summary>
+    /// <param name="text">안내 문구</param>
+    private void ResultPopup(string text)
+    {
+        _characterInfoController._infoUI._enhanceResultPopup.SetActive(true);
+        _characterInfoController._infoUI._enhanceResultText.text = text;
     }
     
     /// <summary>
@@ -172,7 +202,9 @@ public class CharacterEnhance : MonoBehaviour
     /// <param name="value"></param>
     private void MileageValueChange(float value)
     {
-        _characterInfoController._infoUI._mileageValueText.text = $"강화 마일리지 {value}%";
+        _characterInfoController._infoUI._mileageValueText.text = $"강화 마일리지 {value*100}%";
+        _mileage += value;
+        _mileage = Mathf.Clamp(_mileage, 0f, 1f);
     }
 
     /// <summary>
@@ -238,7 +270,8 @@ public class CharacterEnhance : MonoBehaviour
         _beforeHp = _characterInfoController.CurCharacterInfo.Hp;
         _beforeDef = _characterInfoController.CurCharacterInfo.Def;
         _characterInfoController._infoUI._mileageSlider.value = _characterData.EnhanceMileage.Value;
-        Debug.Log(_characterData.EnhanceMileage.Value);
+        _mileage = _characterData.EnhanceMileage.Value;
+         
         EnhanceCheck();
     }
 
