@@ -1,15 +1,9 @@
 using Firebase.Database;
-using Firebase.Extensions;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
-using UnityEditorInternal.Profiling.Memory.Experimental.FileFormat;
+using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static UserDataManager;
 
 public class HYJ_SelectManager : MonoBehaviour
 {
@@ -27,11 +21,27 @@ public class HYJ_SelectManager : MonoBehaviour
     [SerializeField]
     List<HYJ_PlayerController> spriteList;
 
+    [SerializeField]
+    HYJ_CharacterSelect batchButtonPrefab;
+    [SerializeField]
+    Transform batchButtonsTransform;
+    [SerializeField]
+    int buttonCnt;
+
     // 키 값은 위치 / 밸류 값은 유닛 고유번호;
     public Dictionary<int, int> battleInfo = new Dictionary<int, int>();
 
     private void Start()
     {
+        
+        for (int i = 0; i < buttonCnt; i++)
+        {
+            var obj = Instantiate(batchButtonPrefab, batchButtonsTransform);
+            buttonsTransformList.Add(obj.transform);
+            obj.posNum = i;
+            obj.GetComponentInChildren<TextMeshProUGUI>().text = i.ToString();
+        }
+
         GameManager.UserData.PlayData.BatchInfo.onValueChanged += (() =>
         {
             Debug.Log("편성 정보가 갱신됨");
@@ -55,9 +65,9 @@ public class HYJ_SelectManager : MonoBehaviour
         }
 
         //battleInfo.Add(GameManager.UserData.PlayData.BatchInfo.)
-        
 
-        if(battleInfo.Count > 5)
+
+        if (battleInfo.Count > 5)
         {
             Debug.LogError("불러온 유저 배치 정보 오류(5개 보다 많은 배치)");
         }
@@ -67,10 +77,10 @@ public class HYJ_SelectManager : MonoBehaviour
         }
     }
 
-    public void SetBattleInfo(Dictionary<int , int> battleInfo)
+    public void SetBattleInfo(Dictionary<int, int> battleInfo)
     {
         // 불러온 유저 정보를 배치하기
-        foreach(KeyValuePair<int,int> entry in battleInfo)
+        foreach (KeyValuePair<int, int> entry in battleInfo)
         {
             SetCharacterImage(entry.Key, entry.Value);
         }
@@ -81,7 +91,7 @@ public class HYJ_SelectManager : MonoBehaviour
         DatabaseReference baseref = BackendManager.CurrentUserDataRef;
 
         Dictionary<string, long> updates = new Dictionary<string, long>();
-        foreach(var pair in battleInfo)
+        foreach (var pair in battleInfo)
         {
             updates[pair.Key.ToString()] = pair.Value;
         }

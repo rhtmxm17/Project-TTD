@@ -17,7 +17,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
     [Header("위치 버튼 설정")]
     [SerializeField] GameObject CharacterPanel; // 캐릭터 선택 창 
     [SerializeField] GameObject CantPosUI; // 선택 불가 팝업 -> 5개 유닛이 이미 다 배치 되었을 때의 팝업
-    [SerializeField] int posNum; // 위치 번호
+    [SerializeField] public int posNum; // 위치 번호
 
     [Header("유닛 버튼 설정")]
     [SerializeField] int unitIndex; // 유닛 번호
