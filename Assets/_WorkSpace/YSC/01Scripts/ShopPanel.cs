@@ -24,6 +24,7 @@ public class ShopPanel : BaseUI
     [SerializeField] TMP_Text shopNameText;
 
     private List<ShopItem> shopItemsList;
+    
 
     private void Start()
     {
