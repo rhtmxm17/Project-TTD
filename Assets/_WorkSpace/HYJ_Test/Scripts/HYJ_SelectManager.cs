@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
+using UnityEditorInternal.Profiling.Memory.Experimental.FileFormat;
 using UnityEngine;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.SceneManagement;
@@ -39,6 +40,40 @@ public class HYJ_SelectManager : MonoBehaviour
         {
             Debug.Log("유저 정보 불러오기 완료 확인");
         });
+
+        // TODO : 편성 정보 가져와서 battleInfo에 저장 > (배치하기) 만들기
+        // ============= 플레이어 캐릭터 초기화 =============
+
+        //키 : 배치정보, 값 : 캐릭터 고유 번호(ID)
+        Dictionary<string, long> batchData = GameManager.UserData.PlayData.BatchInfo.Value;
+        //Dictionary<int, CharacterData> batchDictionary = new Dictionary<int, CharacterData>(batchData.Count);
+
+        foreach (var pair in batchData)
+        {
+            battleInfo[int.Parse(pair.Key)] = (int)pair.Value;
+
+        }
+
+        //battleInfo.Add(GameManager.UserData.PlayData.BatchInfo.)
+        
+
+        if(battleInfo.Count > 5)
+        {
+            Debug.LogError("불러온 유저 배치 정보 오류(5개 보다 많은 배치)");
+        }
+        else if (battleInfo.Count > 0)
+        {
+            SetBattleInfo(battleInfo);
+        }
+    }
+
+    public void SetBattleInfo(Dictionary<int , int> battleInfo)
+    {
+        // 불러온 유저 정보를 배치하기
+        foreach(KeyValuePair<int,int> entry in battleInfo)
+        {
+            SetCharacterImage(entry.Key, entry.Value);
+        }
     }
 
     public void LookLog()

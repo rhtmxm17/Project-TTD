@@ -163,6 +163,4 @@ public class HYJ_CharacterSelect : MonoBehaviour
         SelectM.battleInfo[newKey] = newValue;      
         SelectM.ChangeImagePos(victimKey, newKey);    // 스프라이트 위치 변경
     }
-
-    
 }
