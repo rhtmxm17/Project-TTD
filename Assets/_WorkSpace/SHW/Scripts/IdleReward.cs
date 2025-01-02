@@ -44,7 +44,12 @@ public class IdleReward : MonoBehaviour
         timerCoroutine = StartCoroutine(TimerTextCo());
         lastRewardTime.onValueChanged += lastRewardTime_onValueChanged;
     }
-    
+
+    private void OnDestroy()
+    {
+        lastRewardTime.onValueChanged -= lastRewardTime_onValueChanged;
+    }
+
     // 테스트용
     public void TestReward()
     {
