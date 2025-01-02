@@ -18,7 +18,7 @@ public class BackendManager : SingletonBehaviour<BackendManager>
     public static FirebaseAuth Auth => auth;
     public static FirebaseDatabase Database => database;
 
-    public static DatabaseReference UserDataRef => usersDataRef;
+    public static DatabaseReference AllUsersDataRef => usersDataRef;
     public static DatabaseReference CurrentUserDataRef => currentUserDataRef;
 
     private void Awake()
