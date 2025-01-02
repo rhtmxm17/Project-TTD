@@ -12,8 +12,7 @@ public static class DailyChecker
 
     public static void IsTodayFirstConnect(Action<bool> callback)
     {
-
-        BackendManager.UserDataRef.Child(UserData.myUid)
+        BackendManager.AllUsersDataRef.Child(UserData.myUid)
             .Child("PlayData")
             .Child("EnterTime")
             .SetValueAsync(ServerValue.Timestamp)
@@ -26,7 +25,7 @@ public static class DailyChecker
                     return;
                 }
 
-                BackendManager.UserDataRef.Child(UserData.myUid)
+                BackendManager.AllUsersDataRef.Child(UserData.myUid)
                     .Child("PlayData")
                     .GetValueAsync()
                     .ContinueWithOnMainThread(t2 =>
@@ -64,7 +63,7 @@ public static class DailyChecker
                         }
 
                         //당일 첫 접속인경우 기록 및 true 콜백 호출
-                        BackendManager.UserDataRef.Child(UserData.myUid)
+                        BackendManager.AllUsersDataRef.Child(UserData.myUid)
                             .Child("PlayData")
                             .Child("DayCount")
                             .SetValueAsync(lastJoindDayCount)
