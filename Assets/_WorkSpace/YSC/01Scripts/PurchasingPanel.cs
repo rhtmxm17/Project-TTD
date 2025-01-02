@@ -9,9 +9,10 @@ using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class PurchasingPanel : BaseUI
-{
-   // public event UnityAction onPopupClosed;
-    
+{ 
+    // public event UnityAction onPopupClosed;
+    public static event UnityAction OnAmountChanged;
+                                          
     [Header("버튼들")]
     [SerializeField] private Button backgroundButton;
     [SerializeField] private Button closeButton;
@@ -37,7 +38,7 @@ public class PurchasingPanel : BaseUI
 
     ShopPanel shopPanel;
     
-    ShopItem shopItem;
+    [SerializeField] ShopItem shopItem;
     
     public ShopItemData shopItemData {get; private set;}
 
@@ -88,6 +89,10 @@ public class PurchasingPanel : BaseUI
 
     }
 
+    /// <summary>
+    /// 아이템 구매확인창에 나오는 아이템 세팅
+    /// </summary>
+    /// <param name="data"></param>
     public void SetItem(ShopItemData data)
     {
         shopItemData = data;
@@ -127,7 +132,7 @@ public class PurchasingPanel : BaseUI
         {
             Debug.Log($"골드 소지 개수:{itemPay.Number.Value}/비용:{shopItemData.Price.gain * currentNumber}");
             dbUpdateStream.AddDBValue(itemPay.Number, -shopItemData.Price.gain * currentNumber); // 요청에 요구 수량만큼'비용 지불' 등록
-            Debug.Log($"지불 후 골드 :{itemPay.Number.Value}");   
+            Debug.Log($"지불 후 골드 :{(itemPay.Number.Value)}");   
             // TODO: 구매 가능/불가 판별 => 불가능 팝업
             // (소지금 < 가격 => 구매불가(팝업띄우기))
         }
@@ -140,6 +145,13 @@ public class PurchasingPanel : BaseUI
         
         
         dbUpdateStream.Submit(OnComplete);
+        /* TODO: 상점에 아이템도 업데이트(매진이된다던가)
+                 이벤트 제공하고, ShopItem?Panel? 에서 구독해서 숫자 변경되면 변경하기.
+        */
+        AmmountChanged();
+        // 하려하는데 잘 안됨
+        // shopItem.UpdateInfo();
+        // shopItem.SetItem(shopItemData);
     }
     private void OnComplete(bool result)
     {
@@ -201,6 +213,12 @@ public class PurchasingPanel : BaseUI
         currentNumber = 1;
         UpdateInfo();
         Debug.Log($"갯수를 최저로 내립니다. 현재갯수: {currentNumber}");
+    }
+
+    public void AmmountChanged()
+    {
+        Debug.Log("갯수변경 이벤트");
+        OnAmountChanged?.Invoke();
     }
     
     

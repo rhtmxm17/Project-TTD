@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -33,7 +35,7 @@ public class ShopItem : BaseUI
     private void Start()
     {
         Init();
-
+        SubscribeEvents();
     }
     private void Init()
     {
@@ -91,6 +93,8 @@ public class ShopItem : BaseUI
             buyButton.onClick.RemoveListener(Buy); //구매버튼 비활성화
             ShopItemImage.color = new Color(.3f, .3f, .3f, 1f); // 어둡게 
         }
+        Debug.Log("아이템정보를 갱신합니다!!!!!!!!!!");
+       
     }
 
     private void Buy()
@@ -147,7 +151,21 @@ public class ShopItem : BaseUI
         ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(shopItemData.Products);
         popupInstance.Title.text = "구매 성공!";
     }
-    
+
+    public void SoldOut()
+    {
+        
+        buyButtonText.text = "매!\t진!";
+        buyButton.onClick.RemoveListener(Buy); //구매버튼 비활성화
+        ShopItemImage.color = new Color(.3f, .3f, .3f, 1f); // 어둡게 
+        
+    }
+
+    public void SubscribeEvents()
+    {
+        // shopItemData.Bought.onValueChanged += UpdateInfo;
+        PurchasingPanel.OnAmountChanged += UpdateInfo;        
+    }
     // 구매확인창 열기
     private void OpenPurchasingPanel()
     {
