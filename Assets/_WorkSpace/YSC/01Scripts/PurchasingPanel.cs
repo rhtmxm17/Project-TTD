@@ -66,8 +66,26 @@ public class PurchasingPanel : BaseUI
         itemOwnText = GetUI<TMP_Text>("ItemOwnText");
         currentNumberText = GetUI<TMP_Text>("CurrentNumberText");
         
-        closeButton.onClick.AddListener(OnPopupCancelButtonClicked);
-        cancelButton.onClick.AddListener(OnPopupCancelButtonClicked);
+        // 구매버튼
+        purchaseButton.onClick.AddListener(Purchase);
+        
+        // 닫기버튼
+        backgroundButton.onClick.AddListener(ClosePopup);
+        closeButton.onClick.AddListener(ClosePopup);
+        cancelButton.onClick.AddListener(ClosePopup);
+        
+        // 갯수변동 버튼
+        // 최소 | 최대
+        maxButton.onClick.AddListener(Maximize);
+        minButton.onClick.AddListener(Minimize);
+        // 추가 | 감소
+        plusButton.onClick.AddListener(Add);
+        minusButton.onClick.AddListener(Subtract);
+        
+        // 현재 아이템 갯수 세팅
+        currentNumber = 1;
+        currentNumberText.text = currentNumber.ToString();
+
     }
 
     public void SetItem(ShopItemData data)
@@ -75,8 +93,8 @@ public class PurchasingPanel : BaseUI
         shopItemData = data;
         itemNameText.text = data.ShopItemName;
         itemImage.sprite = data.Sprite;
-        int amount = shopItemData.LimitedCount;
-        itemAmountText.text = $"{amount}";     //  (8) 앙이템수량
+        int amount = shopItemData.LimitedCount - shopItemData.Bought.Value;
+        itemAmountText.text = $"아이템 수량: {amount}";     //  (8) 아이템수량
         itemOwnText.text = $""; // (10) 보유량
         // TODO: 유저데이터 가져와서 해당아이템의 보유 갯수 보여줘야함, 어떻게 할지 아직 구상이안됨
     }
@@ -86,22 +104,62 @@ public class PurchasingPanel : BaseUI
         int remain = shopItemData.LimitedCount - shopItemData.Bought.Value;
         if (remain > 0)
         {
-            itemAmountText.text = $"아이템 수량: {remain}/{shopItemData.LimitedCount}";
+            itemAmountText.text = $"아이템 수량: {remain}";
+           // itemAmountText.text = $"아이템 수량: {remain}/{shopItemData.LimitedCount}";
         }
         else
         {
             itemAmountText.text = "매!\t진";
             itemImage.color = new Color(.3f, .3f, .3f, 1f); 
         }
-        
+        currentNumberText.text = currentNumber.ToString();
     }
 
-    private void OnPopupCancelButtonClicked()
+    private void Purchase()
+    {
+        Debug.Log($"해당 아이템을 {currentNumber}개 구매 합니다");
+    }
+
+    private void ClosePopup()
     {
        // onPopupClosed?.Invoke();
         Destroy(gameObject);
     }
 
+    private void Add()
+    {
+        currentNumber++;
+        if (currentNumber >= shopItemData.LimitedCount)
+        {
+            currentNumber = shopItemData.LimitedCount;
+        }
+        UpdateInfo();
+        Debug.Log($"갯수를 추가 합니다. 현재갯수: {currentNumber}");
+    }
+    private void Subtract()
+    {
+        currentNumber--;
+        if (currentNumber <= 0)
+        {
+            currentNumber = 1;
+        }
+        
+        UpdateInfo();
+        Debug.Log($"갯수를 감소 합니다. 현재갯수: {currentNumber}");
+    }
+
+    private void Maximize()
+    {
+        currentNumber = shopItemData.LimitedCount;
+        UpdateInfo();
+        Debug.Log($"갯수를 최대로 올립니다. 현재갯수: {currentNumber}");
+    }
+    private void Minimize()
+    {
+        currentNumber = 1;
+        UpdateInfo();
+        Debug.Log($"갯수를 최저로 내립니다. 현재갯수: {currentNumber}");
+    }
     
     
 }
