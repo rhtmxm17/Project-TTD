@@ -131,7 +131,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                 // 첫 접속일 경우 프로필 생성
                 // TODO: UID 할당
                 StartUpdateStream()
-                    .SetDBValue(this.Profile.Name, "새로운 테스터")
+                    .SetDBValue(this.Profile.Name, $"새로운 테스터{ UnityEngine.Random.Range(1000, 10000) }")
                     .SetDBValue(this.Profile.Level, 1)
                     .Submit(result =>
                     {
