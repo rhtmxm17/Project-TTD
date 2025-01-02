@@ -9,18 +9,20 @@ using static GameManager;
 public class EnterStageButton : MonoBehaviour
 {
     [SerializeField]
-    StageData stageDataSO;
+    protected StageData stageDataSO;
     [SerializeField]
-    StageType stageType;
+    protected StageType stageType;
 
-    Button button;
+    protected Button button;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         button = GetComponent<Button>();
-        button.onClick.AddListener(() => { 
+        button.onClick.AddListener(() => {
+
             GameManager.Instance.SetLoadStageType(stageDataSO, stageType);
             SceneManager.LoadSceneAsync("HYJ_BattleFormation");
+
         });
     }
 

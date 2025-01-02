@@ -78,8 +78,9 @@ public class GoldStageManager : StageManager, IDamageAddable
         };
 
         var stream = GameManager.UserData.StartUpdateStream();
-        stream.
-            AddDBValue(reward.item.Number, rewardGold)
+        stream
+            .AddDBValue(reward.item.Number, rewardGold)
+            .AddDBValue(DataTableManager.Instance.GetItemData(9/*골드티켓*/).Number, -1)
             .Submit(result =>
             {
                 if (false == result)

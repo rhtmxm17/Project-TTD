@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using DG.DemiLib;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -11,7 +12,7 @@ using UnityEngine.UI;
 public class CharacterInfoController : BaseUI
 {
     [HideInInspector] public CharacterInfoUI _infoUI;
-    [HideInInspector] public List<CharacterInfo> _characterInfos;
+     public List<CharacterInfo> _characterInfos;
     [HideInInspector] public CharacterInfo CurCharacterInfo;
     [HideInInspector] public CharacterEnhance CurCharacterEnhance;
 
@@ -152,19 +153,31 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void UpdateCharacterList()
     { 
-        _characterInfos = GetComponentsInChildren<CharacterInfo>().ToList();
+        _characterInfos = GetComponentsInChildren<CharacterInfo>(true).ToList();
         
-        //TODO: 임시로 레벨 정보 업데이트, 추후에 로딩과 붙으면 해줄 필요 없음
         for (int i = 0; i < _characterInfos.Count; i++)
         {
             _characterInfos[i].SetCharacterData();
         }
-
+        
         CharacterCount = _characterInfos.Count;
-        _characterSort._sortCharacterInfos = _characterInfos;
+        _characterSort._sortCharacterInfos= _characterInfos;
         _characterSort.CharacterInfoController = this;
         _characterFilter._filterCharacterInfos = _characterInfos;
         StartListSort();
+        
+        for (int i = 0; i < _characterInfos.Count; i++)
+        {
+            if (!GameManager.UserData.HasCharacter(_characterInfos[i]._CharacterData.Id))
+            {
+                _characterInfos[i].gameObject.SetActive(false);  
+            }
+            else
+            {
+                _characterInfos[i].gameObject.SetActive(true);
+            }
+        } 
+
     }
 
     /// <summary>

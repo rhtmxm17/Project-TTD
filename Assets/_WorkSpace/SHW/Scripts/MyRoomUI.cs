@@ -85,4 +85,24 @@ public class MyRoomUI : BaseUI
         GetUI("MyRoomCharacter");
         GetUI<Image>("MyRoomCharacter").sprite = GetUI<Image>(_name).sprite;
     }
+
+    public void ChangeCharacter(int _index)
+    {
+        if (_index < 0 || charaSprites.Length <= _index)
+        {
+            Debug.LogError("마이룸 캐릭터 커스텀 번호가 잘못됨");
+            return;
+        }
+        GetUI<Image>("MyRoomCharacter").sprite = charaSprites[_index];
+    }
+
+    public void ChangeBackground(int _index)
+    {
+        if (_index < 0 || roomSprites.Length <= _index)
+        {
+            Debug.LogError("마이룸 배경 커스텀 번호가 잘못됨");
+            return;
+        }
+        GetUI<Image>("BackImage").sprite = roomSprites[_index];
+    }
 }

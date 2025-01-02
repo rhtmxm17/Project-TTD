@@ -1,14 +1,10 @@
 using Firebase.Database;
-using Firebase.Extensions;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
+using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static UserDataManager;
 
 public class HYJ_SelectManager : MonoBehaviour
 {
@@ -19,18 +15,38 @@ public class HYJ_SelectManager : MonoBehaviour
     [SerializeField]
     List<Transform> buttonsTransformList;
 
+    [SerializeField] Button enterStageButton;
+    [SerializeField] Button cancelButton;
+
     [Header("이미지 프리팹")]
     [SerializeField] public GameObject ChImagePrefab;
 
-    [Header("spriteTest")]
     [SerializeField]
-    List<HYJ_PlayerController> spriteList;
+    HYJ_CharacterSelect batchButtonPrefab;
+    [SerializeField]
+    Transform batchButtonsTransform;
+    [SerializeField]
+    int buttonCnt;
+    [SerializeField] GameObject CharacterSelectPanel; // 캐릭터 선택 창 
+    [SerializeField] GameObject CantPosUI; // 선택 불가 팝업 -> 5개 유닛이 이미 다 배치 되었을 때의 팝업
 
     // 키 값은 위치 / 밸류 값은 유닛 고유번호;
     public Dictionary<int, int> battleInfo = new Dictionary<int, int>();
 
     private void Start()
     {
+        enterStageButton.onClick.AddListener(LoadBattleScene);
+        cancelButton.onClick.AddListener(CancelEnterStage);
+        
+        for (int i = 0; i < buttonCnt; i++)
+        {
+            var obj = Instantiate(batchButtonPrefab, batchButtonsTransform);
+            buttonsTransformList.Add(obj.transform);
+            obj.InitDataPosBTN(i, CharacterSelectPanel, CantPosUI);
+            //obj.posNum = i;
+            //obj.GetComponentInChildren<TextMeshProUGUI>().text = i.ToString();
+        }
+
         GameManager.UserData.PlayData.BatchInfo.onValueChanged += (() =>
         {
             Debug.Log("편성 정보가 갱신됨");
@@ -39,24 +55,63 @@ public class HYJ_SelectManager : MonoBehaviour
         {
             Debug.Log("유저 정보 불러오기 완료 확인");
         });
+
+        // TODO : 편성 정보 가져와서 battleInfo에 저장 > (배치하기) 만들기
+        // ============= 플레이어 캐릭터 초기화 =============
+
+        //키 : 배치정보, 값 : 캐릭터 고유 번호(ID)
+        Dictionary<string, long> batchData = GameManager.UserData.PlayData.BatchInfo.Value;
+        //Dictionary<int, CharacterData> batchDictionary = new Dictionary<int, CharacterData>(batchData.Count);
+
+        foreach (var pair in batchData)
+        {
+            battleInfo[int.Parse(pair.Key)] = (int)pair.Value;
+
+        }
+
+        //battleInfo.Add(GameManager.UserData.PlayData.BatchInfo.)
+
+
+        if (battleInfo.Count > 5)
+        {
+            Debug.LogError("불러온 유저 배치 정보 오류(5개 보다 많은 배치)");
+        }
+        else if (battleInfo.Count > 0)
+        {
+            SetBattleInfo(battleInfo);
+        }
+    }
+
+    public void SetBattleInfo(Dictionary<int, int> battleInfo)
+    {
+        // 불러온 유저 정보를 배치하기
+        foreach (KeyValuePair<int, int> entry in battleInfo)
+        {
+            SetCharacterImage(entry.Key, entry.Value);
+        }
     }
 
     public void LookLog()
     {
         DatabaseReference baseref = BackendManager.CurrentUserDataRef;
 
+        SaveBatch(result =>
+        {
+            Debug.Log($"요청 결과:{result}");
+        });
+    }
+
+    private void SaveBatch(UnityAction<bool> onCompleteCallback)
+    {
         Dictionary<string, long> updates = new Dictionary<string, long>();
-        foreach(var pair in battleInfo)
+        foreach (var pair in battleInfo)
         {
             updates[pair.Key.ToString()] = pair.Value;
         }
 
         GameManager.UserData.StartUpdateStream()
             .SetDBDictionary(GameManager.UserData.PlayData.BatchInfo, updates)
-            .Submit(result =>
-            {
-                Debug.Log($"요청 결과:{result}");
-            });
+            .Submit(onCompleteCallback);
     }
 
     public void SetCharacterImage(int posIdx, int charIdx)
@@ -100,13 +155,30 @@ public class HYJ_SelectManager : MonoBehaviour
 
     public void LoadBattleScene()
     {
-        GameManager.Instance.LoadStageScene();
+        SaveBatch(result =>
+        {
+            if (false == result)
+            {
+                Debug.LogWarning("db 접속에 실패");
+                return;
+            }
+
+            GameManager.Instance.LoadStageScene();
+        });
     }
 
-    public void LoadUserFormation()
+    public void CancelEnterStage()
     {
-        // TODO : 유저가 가지고 있는 포메이션 정보 가져오기
+        SaveBatch(result =>
+        {
+            if (false == result)
+            {
+                Debug.LogWarning("db 접속에 실패");
+                return;
+            }
 
+            GameManager.Instance.LoadMainScene();
+        });
     }
 
     public void UpdateFormation()

@@ -20,14 +20,6 @@ public class StageManager : MonoBehaviour
     [SerializeField]
     StageCharacterSetter characterSetter;
 
-    //데이터 테스트용 임시 구조체
-    [System.Serializable]
-    struct monsterData
-    {
-        [SerializeField] public List<CharacterData> monsters;
-
-    }
-
     [Header("Monsters")]
     [SerializeField] Transform monsterWaveParent;
     [SerializeField] MonsterWaveSetter monsterWavePrefab;
@@ -97,6 +89,7 @@ public class StageManager : MonoBehaviour
         }
 
         characterSetter.InitCharacters(batchDictionary);
+        characterManager.ListClearedEvent.AddListener(OnDefeat);
 
         // ============= 몬스터 캐릭터 초기화 =============
 
@@ -212,6 +205,13 @@ public class StageManager : MonoBehaviour
             popupInstance.Title.text = "스테이지 클리어!";
             popupInstance.onPopupClosed += GameManager.Instance.LoadMainScene;
         });
+    }
+
+    protected virtual void OnDefeat()
+    {
+        ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(null);
+        popupInstance.Title.text = "패배...";
+        popupInstance.onPopupClosed += GameManager.Instance.LoadMainScene;
     }
 
     bool CheckCharactersWait()

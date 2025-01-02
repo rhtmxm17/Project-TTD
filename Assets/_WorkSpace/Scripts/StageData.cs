@@ -139,7 +139,7 @@ public class StageData : ScriptableObject
                 // 첫 행에 다른 ID가 나타났다면 더이상 자신의 데이터가 아님
                 if (false == string.IsNullOrEmpty(cells[(int)Column.ID]))
                 {
-                    Debug.Log("다음 데이터에 도달");
+                    Debug.Log($"스태이지({stageName}) 생성됨");
                     line--;
                     return;
                 }
