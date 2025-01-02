@@ -87,6 +87,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
             }
             else
             {
+                // TODO : 조건 추가?
                 SelectM.curUnitIndex = unitIndex;
                 UnitChangeUI.SetActive(true);
             }
@@ -106,13 +107,14 @@ public class HYJ_CharacterSelect : MonoBehaviour
 
     public void ChangeUnit()
     {
+        // TODO : 조건 추가?
         int unitPos = SelectM.battleInfo.FirstOrDefault(x => x.Value == SelectM.curUnitIndex).Key; // 딕셔너리 밸류값(유닛 고유번호)를 갖고 있는 키 값을 찾기
         ChangeBatch(unitPos, SelectM.curPos, SelectM.curUnitIndex);
     }
 
     public bool CheckUnit(int unitIndex)
     {
-        // 선택한 유닛이 
+        // 선택한 유닛이 이미 배치되어 있는지 검색
         if (SelectM.battleInfo.ContainsValue(unitIndex))
         {
             return true;
@@ -121,11 +123,11 @@ public class HYJ_CharacterSelect : MonoBehaviour
         return false;
     }
 
-    public bool CheckUnitPos(int nuitIndex)
+    public bool CheckUnitPos(int unitIndex)
     {
-        int unitPos = SelectM.battleInfo.FirstOrDefault(x => x.Value == SelectM.curUnitIndex).Key; // 딕셔너리 밸류값(유닛 고유번호)를 갖고 있는 키 값을 찾기
-        // 키 값과 현재 키 값이 동일한지
-        if(unitPos == SelectM.curPos)
+        unitIndex = SelectM.battleInfo.FirstOrDefault(x => x.Value == SelectM.curUnitIndex).Key; // 딕셔너리 밸류값(유닛 고유번호)를 갖고 있는 키 값을 찾기
+        // 이미 해당 위치에 
+        if(unitIndex == SelectM.curPos)
         {
             return true;
         }
@@ -144,34 +146,23 @@ public class HYJ_CharacterSelect : MonoBehaviour
     void AddBatch(int key, int value)
     {
         SelectM.battleInfo.Add(key, value);     // 현재 키 / 밸류 딕셔너리에 추가
-        //SelectM.SetCharcterSprite(key, value);
+        SelectM.SetCharacterImage(key, value);  // 스프라이트 생성
         //Debug.Log(key + "색 추가");
     }
 
     void RemoveBatch(int key)
     {
         SelectM.battleInfo.Remove(key);     // 현재 유닛 고유번호를 갖고 있는 키와 밸류 삭제
-        //SelectM.RemoveCharacterSprite(key);
+        SelectM.RemoveCharacterImage(key); // 스프라이트 제거
         //Debug.Log(key + "색 제거");
     }
 
     void ChangeBatch(int victimKey, int newKey, int newValue)
     {
-        SelectM.battleInfo.Remove(victimKey);     // 현재 유닛 고유번호를 갖고 있는 키와 밸류 삭제
-        SelectM.battleInfo[newKey] = newValue;
-        //SelectM.ChangeTo(victimKey, newKey);
+        SelectM.battleInfo.Remove(victimKey);   // 현재 유닛 고유번호를 갖고 있는 키와 밸류 삭제
+        SelectM.battleInfo[newKey] = newValue;      
+        SelectM.ChangeImagePos(victimKey, newKey);    // 스프라이트 위치 변경
     }
 
-    public void UpdateFormation()
-    {
-        // TODO : 호출 시, 딕셔너리를 참조하여 어느 위치에 어느 유닛이 배치되어 있는지 표기
-        if(SelectM.battleInfo.Count > 0)
-        {
-
-            foreach(var index in SelectM.battleInfo)
-            {
-                //SelectM.battleInfo
-            }
-        }
-    }
+    
 }

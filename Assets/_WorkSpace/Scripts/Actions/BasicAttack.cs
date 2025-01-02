@@ -7,14 +7,14 @@ using UnityEngine;
 public class BasicAttack : Skill
 {
     [SerializeField] Targeting targetingLogic;
+    [SerializeField] string animationTriggerParam = "Attack";
+    private int animationHash;
 
-/*    private void OnEnable()
+    private void OnEnable()
     {
         // 런타임 진입시 필요한 데이터 캐싱
         animationHash = Animator.StringToHash(animationTriggerParam);
-        waitPreDelay = new WaitForSeconds(preDelay);
-        waitPostDelay = new WaitForSeconds(postDelay);
-    }*/
+    }
 
     protected override IEnumerator SkillRoutineImplement(Combatable self)
     {
@@ -23,11 +23,11 @@ public class BasicAttack : Skill
         Combatable target = targetingLogic.GetTarget(self); // 설정된 규칙에 따라 타겟 산출
 
         // 지정된 애니메이션 시작
-        //self.UnitAnimator.SetTrigger(animationHash);
+        self.UnitAnimator.SetTrigger(animationHash);
 
         // 실제로 공격이 적용되는 구간
         if (target.IsAlive)
-            target?.Damaged(self.AttackPoint.Value, self.igDefenseRate); // 타겟에게 데미지 적용
+            target.Damaged(self.AttackPoint.Value, self.igDefenseRate); // 타겟에게 데미지 적용
 
     }
 

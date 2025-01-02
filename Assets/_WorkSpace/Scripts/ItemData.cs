@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -42,6 +44,7 @@ public struct ItemGain
     public int gain;
 }
 
+
 public class ItemData : ScriptableObject, ICsvRowParseable
 {
     [SerializeField] int id;
@@ -53,8 +56,10 @@ public class ItemData : ScriptableObject, ICsvRowParseable
     [SerializeField] Sprite spriteImage;
     public Sprite SpriteImage => spriteImage;
 
-    [SerializeField] string description;
+    [SerializeField, TextArea] string description;
     public string Description => description;
+
+    public UnityEvent<int> onNumberChanged;
 
     #region 유저 데이터
     /// <summary>
@@ -65,7 +70,10 @@ public class ItemData : ScriptableObject, ICsvRowParseable
     private void OnEnable()
     {
         Number = new UserDataInt($"Items/{id}");
+        Number.onValueChanged += OnNumberChanged;
     }
+
+    private void OnNumberChanged(long value) => onNumberChanged?.Invoke((int)value);
     #endregion
 
 #if UNITY_EDITOR

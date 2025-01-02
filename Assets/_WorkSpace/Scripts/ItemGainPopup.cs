@@ -28,23 +28,17 @@ public class ItemGainPopup : MonoBehaviour
         itemGainOkButton.onClick.AddListener(OnPopupOKButtonClicked);
     }
 
-  //  private void OnEnable()
-  //  {
-  //      backGroundButton.onClick.AddListener(OnPopupOKButtonClicked);
-  //      itemGainOkButton.onClick.AddListener(OnPopupOKButtonClicked);
-  //  }
-
-    private void OnPopupOKButtonClicked()
+    protected virtual void OnPopupOKButtonClicked()
     {
         onPopupClosed?.Invoke();
         Destroy(this.gameObject);
     }
 
     /// <summary>
-    /// 획득한 아이템 목록을 등록하는 초기화 함수
+    /// 획득한 아이템 목록을 등록하는 함수, 누적 가능
     /// </summary>
     /// <param name="gain">획득한 아이템과 개수 목록</param>
-    public void Initialize(List<ItemGain> gain)
+    public void AddItemGainCell(List<ItemGain> gain)
     {
          foreach (ItemGain info in gain)
          {
@@ -54,29 +48,4 @@ public class ItemGainPopup : MonoBehaviour
             cell.SetItem(info.item, info.gain);
          }
     }
-
-    //private void Popup(ItemGainCell data)
-    //{
-    //     ShopPopupController popup = Instantiate(infoPopup, GameManager.PopupCanvas);
-    //     popup.Initialize(data);
-    //}
-
-    //private void StageClearReward(StageData data)
-    //{
-    //    ItemGainPopup popup = Instantiate(itemGainPopup, GameManager.PopupCanvas);
-    //}
-
 }
-
-
-/* ListUpItems에 forloop쓰던
-//   foreach (ItemData gains in _items)
-//   {
-//       int index = _items.IndexOf(gains); // for문을 돌려야될거같음
-//       ItemGainCell cell = Instantiate(itemGainCellPrefab, layoutGroup.transform);
-//       Debug.Log($"리스트확인인덱스 {index} ");
-//       cell.SetItem(_item[index]);
-//
-//       cell.GetComponent<Button>().onClick.AddListener(() => Popup(itemGainCellPrefab));
-//   }
-*/

@@ -8,7 +8,6 @@ using System;
 
 public class UserDataManager : SingletonScriptable<UserDataManager>
 {
-
     /// <summary>
     /// 24. 12. 27 김민태 캐릭터 소유 목록 추가
     /// </summary>
@@ -88,25 +87,28 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
 
     private IEnumerator InitDummyUser(int DummyNumber, UnityAction onCompletedCallback)
     {
-        GameManager.Instance.StartShortLoadingUI();
         // Database 초기화 대기
         yield return new WaitWhile(() => GameManager.Database == null);
         // Auth 초기화 대기
         yield return new WaitWhile(() => GameManager.Auth == null);
-
-        GameManager.Auth.SignOut();
+        
+        if (GameManager.Auth.CurrentUser != null)
+        {
+            GameManager.Auth.SignOut();
+        }
+        
         if (BackendManager.CurrentUserDataRef != null) // 이미 더미 인증된 이력이 있을 경우 즉시 완료
         {
             onCompletedCallback?.Invoke();
-            GameManager.Instance.StopShortLoadingUI();
             yield break;
         }
+        GameManager.Instance.StartShortLoadingUI();
 
         BackendManager.Instance.UseDummyUserDataRef(DummyNumber); // 테스트코드
 
-        onLoadUserDataCompleted.AddListener(onCompletedCallback);
+        onLoadUserDataCompleted.AddListener(() => onCompletedCallback?.Invoke());
         onLoadUserDataCompleted.AddListener(GameManager.Instance.StopShortLoadingUI);
-        Instance.LoadUserData();
+        LoadUserData();
     }
 
     [ContextMenu("유저데이터 테스트")]
@@ -251,47 +253,34 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             Debug.LogWarning("플레이모드가 아닐 경우 오작동할 수 있습니다");
         }
 
-        BackendManager.Database.RootReference.Child("Users").GetValueAsync().ContinueWithOnMainThread(t1 => {
+        BackendManager.AllUsersDataRef.Child(othersUID).GetValueAsync().ContinueWithOnMainThread(result =>
+        {
 
-            if (t1.IsFaulted || t1.IsCanceled)
+            if (result.IsFaulted || result.IsCanceled)
             {
                 Debug.Log("데이터베이스 접근 실패");
                 return;
             }
 
-            DataSnapshot dataSnapshot = t1.Result;
+            DataSnapshot profileSnapshot = result.Result;
 
-            if (!dataSnapshot.HasChild(othersUID))
+            if (null == profileSnapshot)
             {
                 Debug.Log("해당 UID의 유저가 존재하지 않음");
                 return;
             }
 
-            BackendManager.Database.RootReference.Child($"Users/{othersUID}")
-            .GetValueAsync().ContinueWithOnMainThread(t2 =>
-            {
+            UserProfile otherProfile = new UserProfile();
 
-                if (t2.IsFaulted || t2.IsCanceled)
-                {
-                    Debug.Log("데이터베이스 접근 실패");
-                    return;
-                }
+            otherProfile.Name.SetValueWithDataSnapshot(profileSnapshot);
+            otherProfile.IconIndex.SetValueWithDataSnapshot(profileSnapshot);
+            otherProfile.Level.SetValueWithDataSnapshot(profileSnapshot);
+            otherProfile.Introduction.SetValueWithDataSnapshot(profileSnapshot);
 
-                DataSnapshot profileSnapshot = t2.Result;
-                UserProfile otherProfile = new UserProfile();
+            otherProfile.MyroomBgIdx.SetValueWithDataSnapshot(profileSnapshot);
+            otherProfile.MyroomCharaIdx.SetValueWithDataSnapshot(profileSnapshot);
 
-                otherProfile.Name.SetValueWithDataSnapshot(profileSnapshot);
-                otherProfile.IconIndex.SetValueWithDataSnapshot(profileSnapshot);
-                otherProfile.Level.SetValueWithDataSnapshot(profileSnapshot);
-                otherProfile.Introduction.SetValueWithDataSnapshot(profileSnapshot);
-
-                otherProfile.MyroomBgIdx.SetValueWithDataSnapshot(profileSnapshot);
-                otherProfile.MyroomCharaIdx.SetValueWithDataSnapshot(profileSnapshot);
-
-                callback?.Invoke(otherProfile);
-
-            });
-
+            callback?.Invoke(otherProfile);
         });
     }
 
@@ -416,7 +405,6 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                         this.Value[pair.Key] = (T)pair.Value;
                     }
                 }
-                ;
             }
 
             /// <summary>

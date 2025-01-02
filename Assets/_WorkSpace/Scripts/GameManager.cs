@@ -16,6 +16,7 @@ public class GameManager : SingletonBehaviour<GameManager>
     public static PlayerInput Input { get; private set; } = null;
     public static DataTableManager TableData => DataTableManager.Instance;
     public static UserDataManager UserData => UserDataManager.Instance;
+    public static OverlayUIManager OverlayUIManager => OverlayUIManager.Instance;
 
     public static RectTransform PopupCanvas => Instance.popupCanvas;
 
@@ -25,7 +26,6 @@ public class GameManager : SingletonBehaviour<GameManager>
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     public static void Initialize()
     {
-
         Instantiate(Resources.Load<GameManager>("GameManager"));
     }
 
@@ -38,27 +38,31 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     #region 짧은 로딩
     [SerializeField] RectTransform shortLoadingPanel;
-    private int loadingCounter = 0;
+    //private int loadingCounter = 0;
 
     public void StartShortLoadingUI()
     {
-        if (loadingCounter == 0)
-            shortLoadingPanel.gameObject.SetActive(true);
+        shortLoadingPanel.gameObject.SetActive(true);
 
-        loadingCounter++;
+        //if (loadingCounter == 0)
+        //    shortLoadingPanel.gameObject.SetActive(true);
+
+        //loadingCounter++;
     }
 
     public void StopShortLoadingUI()
     {
-        loadingCounter--;
+        shortLoadingPanel.gameObject.SetActive(false);
 
-        if (loadingCounter == 0)
-            shortLoadingPanel.gameObject.SetActive(false);
+//        loadingCounter--;
 
-#if DEBUG
-        if (loadingCounter < 0)
-            Debug.LogError("시작되지 않은 로딩이 완료됨");
-#endif
+//        if (loadingCounter == 0)
+//            shortLoadingPanel.gameObject.SetActive(false);
+
+//#if DEBUG
+//        if (loadingCounter < 0)
+//            Debug.LogError("시작되지 않은 로딩이 완료됨");
+//#endif
     }
     #endregion
 
@@ -86,7 +90,6 @@ public class GameManager : SingletonBehaviour<GameManager>
     public void SetLoadStageType(StageData StageData, StageType stageType)
     {
         this.stageType = stageType;
-        Debug.Log($"씬 전환: {SceneManager.GetActiveScene().name} -> StageDefault(스테이지명:{StageData.StageName})");
         this.stageData = StageData;
     }
 
