@@ -157,6 +157,17 @@ public class CharacterInfoController : BaseUI
         
         for (int i = 0; i < _characterInfos.Count; i++)
         {
+            _characterInfos[i].SetCharacterData();
+        }
+        
+        CharacterCount = _characterInfos.Count;
+        _characterSort._sortCharacterInfos= _characterInfos;
+        _characterSort.CharacterInfoController = this;
+        _characterFilter._filterCharacterInfos = _characterInfos;
+        StartListSort();
+        
+        for (int i = 0; i < _characterInfos.Count; i++)
+        {
             if (!GameManager.UserData.HasCharacter(_characterInfos[i]._CharacterData.Id))
             {
                 _characterInfos[i].gameObject.SetActive(false);  
@@ -166,18 +177,7 @@ public class CharacterInfoController : BaseUI
                 _characterInfos[i].gameObject.SetActive(true);
             }
         } 
-        
-        //TODO: 임시로 레벨 정보 업데이트, 추후에 로딩과 붙으면 해줄 필요 없음
-        for (int i = 0; i < _characterInfos.Count; i++)
-        {
-            _characterInfos[i].SetCharacterData();
-        }
-        
-        CharacterCount = _characterInfos.Count;
-        _characterSort._sortCharacterInfos= _characterInfos;
-        _characterSort.CharacterInfoController = this;
-        _characterFilter._filterCharacterInfos = _characterInfos;
-        StartListSort();
+
     }
 
     /// <summary>
