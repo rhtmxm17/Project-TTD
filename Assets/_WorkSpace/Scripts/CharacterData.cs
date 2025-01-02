@@ -403,7 +403,8 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
                 .Submit((result) =>
                 {
                     Debug.Log("캐릭터 중복 획득으로 강화 아이템으로 전환");
-                    GameManager.OverlayUIManager.PopupItemGain(new List<ItemGain> { new ItemGain() { item = enhanceItem, gain = 10 } });
+                    var popup = GameManager.OverlayUIManager.PopupItemGain(new List<ItemGain> { new ItemGain() { item = enhanceItem, gain = 10 } });
+                    popup.Title.text = "중복 캐릭터 획득 전환";
                 });
         }
 

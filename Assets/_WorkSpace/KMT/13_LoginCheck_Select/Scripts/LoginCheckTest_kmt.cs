@@ -36,8 +36,8 @@ public class LoginCheckTest_kmt : MonoBehaviour
         //yield return new WaitWhile(() => GameManager.UserData.Profile.Name.Value.Equals("이름 없음"));
 
 
-        UserData.myUid = $"Dummy{dummyIdx}";
-        UserData.myNickname = GameManager.UserData.Profile.Name.Value;
+        //UserData.myUid = $"Dummy{dummyIdx}";
+        //UserData.myNickname = GameManager.UserData.Profile.Name.Value;
 
         DailyChecker.IsTodayFirstConnect((isFirst) => {
 
