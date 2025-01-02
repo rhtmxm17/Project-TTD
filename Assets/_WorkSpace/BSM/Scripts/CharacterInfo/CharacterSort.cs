@@ -84,6 +84,7 @@ public class CharacterSort : MonoBehaviour
         switch (_curSortType)
         {
             case SortType.LEVEL:
+            default:
                 _sortList = _sortCharacterInfos.Select(x => (object)x.CharacterLevel).ToList();
                 break;
             case SortType.NAME:
