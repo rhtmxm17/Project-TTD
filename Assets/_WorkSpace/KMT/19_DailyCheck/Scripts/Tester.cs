@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Tester : MonoBehaviour
 {
-    public const long oneone = 3600000 * 24; //하루의 밀리초
 
     [ContextMenu("test")]
     public void te()
