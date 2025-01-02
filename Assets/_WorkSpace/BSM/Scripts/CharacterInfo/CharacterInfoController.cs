@@ -12,7 +12,7 @@ using UnityEngine.UI;
 public class CharacterInfoController : BaseUI
 {
     [HideInInspector] public CharacterInfoUI _infoUI;
-    [HideInInspector] public List<CharacterInfo> _characterInfos;
+     public List<CharacterInfo> _characterInfos;
     [HideInInspector] public CharacterInfo CurCharacterInfo;
     [HideInInspector] public CharacterEnhance CurCharacterEnhance;
 
@@ -153,7 +153,7 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void UpdateCharacterList()
     { 
-        _characterInfos = GetComponentsInChildren<CharacterInfo>().ToList();
+        _characterInfos = GetComponentsInChildren<CharacterInfo>(true).ToList();
         
         for (int i = 0; i < _characterInfos.Count; i++)
         {
