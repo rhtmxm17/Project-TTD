@@ -404,7 +404,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 607117765210456684}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -413,13 +413,13 @@ RectTransform:
   - {fileID: 607117766895504192}
   - {fileID: 607117765715398568}
   - {fileID: 607117767068487898}
-  m_Father: {fileID: 607117766827202118}
-  m_RootOrder: 1
+  m_Father: {fileID: 607117765711364386}
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1233, y: 619}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &607117765210456680
 CanvasRenderer:
@@ -1558,11 +1558,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbd2686c963fa4b41b11848bd0287a56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stageButton: {fileID: 0}
   UserID: 
   Nickname: 
   Email: 
-  IsVerified: 0
+  _isVerified: 0
+  _isLoggedIn: 0
+  loginIDInputField: {fileID: 0}
+  loginPWInputField: {fileID: 0}
+  warningPopup: {fileID: 0}
+  warningText: {fileID: 0}
+  warningImage: {fileID: 0}
   _signUpIDInputField: {fileID: 0}
   _signUpPWInputField: {fileID: 0}
   _pWConfirmInputField: {fileID: 0}
@@ -1864,6 +1869,7 @@ RectTransform:
   - {fileID: 607117766277218159}
   - {fileID: 607117765770948106}
   - {fileID: 607117765620289759}
+  - {fileID: 607117765210456683}
   m_Father: {fileID: 607117766111882537}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2561,7 +2567,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 64.85
+  m_fontSize: 72
   m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3054,7 +3060,7 @@ RectTransform:
   - {fileID: 607117765607072071}
   - {fileID: 607117766145315866}
   m_Father: {fileID: 607117766827202118}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -4991,7 +4997,7 @@ RectTransform:
   - {fileID: 607117765827940976}
   - {fileID: 607117767029919980}
   m_Father: {fileID: 607117766827202118}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -8087,7 +8093,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 607117766111882537}
-  - {fileID: 607117765210456683}
   - {fileID: 607117765897434340}
   - {fileID: 607117766241546426}
   - {fileID: 3474542769426879318}
@@ -9247,11 +9252,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbd2686c963fa4b41b11848bd0287a56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stageButton: {fileID: 0}
   UserID: 
   Nickname: 
   Email: 
-  IsVerified: 0
+  _isVerified: 0
+  _isLoggedIn: 0
+  loginIDInputField: {fileID: 0}
+  loginPWInputField: {fileID: 0}
+  warningPopup: {fileID: 0}
+  warningText: {fileID: 0}
+  warningImage: {fileID: 0}
   _signUpIDInputField: {fileID: 0}
   _signUpPWInputField: {fileID: 0}
   _pWConfirmInputField: {fileID: 0}
@@ -9992,7 +10002,7 @@ RectTransform:
   - {fileID: 3474542768276427143}
   - {fileID: 6727564467030354588}
   m_Father: {fileID: 607117766827202118}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}

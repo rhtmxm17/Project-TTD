@@ -21,7 +21,7 @@ public class LogOut : MonoBehaviour
     public void SignOut()
     {
         Debug.Log("LogOut버튼 테스트");
-       // BackendManager.Auth.SignOut();
+        BackendManager.Auth.SignOut();
     }
 
  //   public void OpenDoubleCheck()
