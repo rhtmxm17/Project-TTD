@@ -14,7 +14,7 @@ public class LoginCheckTest_kmt : MonoBehaviour
     {
         for (int i = 0; i < buttons.Length; i++)
         {
-            int dummyIdx = i + 1000;
+            int dummyIdx = i + 2000;
             buttons[i].onClick.AddListener(() => OnClick(dummyIdx));
         }
     }
