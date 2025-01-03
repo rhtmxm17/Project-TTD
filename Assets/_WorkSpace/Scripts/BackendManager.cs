@@ -42,6 +42,8 @@ public class BackendManager : SingletonBehaviour<BackendManager>
                 // Set a flag here to indicate whether Firebase is ready to use by your app.
                 usersDataRef = database.RootReference.Child($"Users");
                 auth.IdTokenChanged += Auth_IdTokenChanged;
+
+                database.SetPersistenceEnabled(false);
             }
             else
             {
