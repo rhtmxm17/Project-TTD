@@ -64,6 +64,9 @@ public class Combatable : MonoBehaviour
         Hp = hp.ToReadOnlyReactiveProperty();
         MaxHp = maxHp.ToReadOnlyReactiveProperty();
         Defense = defense.ToReadOnlyReactiveProperty();
+
+        InitSearchLogic();
+
     }
 
     /// <summary>
@@ -154,7 +157,6 @@ public class Combatable : MonoBehaviour
 
     public void Damaged(float damage, float igDefRate)
     {
-
         if (!IsAlive)
         {
             Debug.Log("이미 죽은 대상.");
@@ -203,8 +205,14 @@ public class Combatable : MonoBehaviour
     #region 스킬_추가 
     public virtual void OnSkillCommanded(Skill skillData)
     {
+        if (foundEnemyLogic == null)
+        {
+            Debug.Log("첫 웨이브 시작 전 스킬 발동 요구됨");
+            return;
+        }
         StopCurActionCoroutine();
         curActionCoroutine = StartCoroutine(skillData.SkillRoutine(this, OnSkillCompleted));
+        agent.ResetPath();
     }
 
     private void OnSkillCompleted()

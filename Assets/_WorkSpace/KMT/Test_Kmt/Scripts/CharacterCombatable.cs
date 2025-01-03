@@ -75,7 +75,7 @@ public class CharacterCombatable : Combatable
         agent.stoppingDistance = 0.05f;
         agent.destination = originPos;
 
-        while (0.1f < agent.remainingDistance)
+        while (agent.pathPending || 0.1f < agent.remainingDistance)
         {
             yield return null;
         }
