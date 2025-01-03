@@ -7,8 +7,6 @@ public class MyroomInitializer : MonoBehaviour
 {
     BaseUI myroomUI;
     MyRoomUI initTarget;
-    Image backImg = null;
-    Image charaImg = null;
 
     DialogueUI dialogueUI = null;
 

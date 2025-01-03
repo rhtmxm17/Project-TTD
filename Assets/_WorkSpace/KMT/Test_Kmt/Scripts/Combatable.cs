@@ -6,9 +6,11 @@ using UnityEngine.Events;
 using UniRx;
 using Unity.Mathematics;
 using UnityEngine.UI;
+using UnityEngine.AI;
+using Spine;
 //using static Spine.Unity.Editor.SkeletonBaker.BoneWeightContainer;
 
-[RequireComponent(typeof(Trackable))]
+[RequireComponent(typeof(NavMeshAgent))]
 public class Combatable : MonoBehaviour
 {
 
@@ -27,17 +29,17 @@ public class Combatable : MonoBehaviour
     public UnityEvent<Combatable> onDeadEvent = new UnityEvent<Combatable>();
     public UnityEvent<float> onDamagedEvent = new UnityEvent<float>();
 
-    protected Trackable trackable;
     protected Coroutine curActionCoroutine = null;
-    protected Coroutine moveCoroutine = null;
     protected SkillButton SkillButton;
 
     Func<Transform, Combatable> foundEnemyLogic = null;
     Func<Transform, Combatable> foundNearEnemyLogic = null;
     Func<Transform, Combatable> foundFarEnemyLogic = null;
 
-    int rangePow;
+    protected float range;
     Skill baseAttack;
+
+    protected NavMeshAgent agent;
 
     [Header("TestParams")]
     [SerializeField]
@@ -55,14 +57,16 @@ public class Combatable : MonoBehaviour
 
     protected virtual void Awake()
     {
-
-        trackable = GetComponent<Trackable>();
         onDeadEvent.AddListener(GetComponentInParent<CombManager>().OnDead);
+        agent = GetComponent<NavMeshAgent>();
 
         AttackPoint = attackPoint.ToReadOnlyReactiveProperty();
         Hp = hp.ToReadOnlyReactiveProperty();
         MaxHp = maxHp.ToReadOnlyReactiveProperty();
         Defense = defense.ToReadOnlyReactiveProperty();
+
+        InitSearchLogic();
+
     }
 
     /// <summary>
@@ -86,8 +90,11 @@ public class Combatable : MonoBehaviour
         }
         characterData = data;
 
+        gameObject.name = data.Name;
+
         // 외형 생성
-        GameObject model = Instantiate(data.ModelPrefab, this.transform);
+        GameObject model = Instantiate(data.ModelPrefab, transform);
+        model.transform.rotation = Quaternion.Euler(90, 0, 0);
         model.name = "Model";
         if (false == model.TryGetComponent(out Animator animator))
         {
@@ -104,7 +111,7 @@ public class Combatable : MonoBehaviour
         if (level < 0)
             level = data.Level.Value;
 
-        CharacterData.Status table  = data.StatusTable;
+        CharacterData.Status table = data.StatusTable;
 
         attackPoint.Value = table.attackPointBase
                           + table.attackPointGrowth * level;
@@ -118,8 +125,11 @@ public class Combatable : MonoBehaviour
                       + table.defensePointGrouth * level;
 
         defConst = table.defenseCon;
-        
-        rangePow = (int)(table.Range * table.Range);//사거리
+
+        agent.stoppingDistance = table.Range;
+        range = table.Range;//사거리
+
+        //TODO : 이동속도가 다른경우 파라미터 추가하기.
 
         baseAttack = data.BasicSkillDataSO;
 
@@ -147,7 +157,6 @@ public class Combatable : MonoBehaviour
 
     public void Damaged(float damage, float igDefRate)
     {
-
         if (!IsAlive)
         {
             Debug.Log("이미 죽은 대상.");
@@ -155,8 +164,6 @@ public class Combatable : MonoBehaviour
         }
 
         damage = DamageCalculator.Calc(damage, igDefRate, defense.Value, defConst);
-
-        //Debug.Log($"피격데미지{damage}");
 
         //View의 setvalue등을 연결하기.
         hp.Value -= damage;
@@ -189,50 +196,30 @@ public class Combatable : MonoBehaviour
         }
     }
 
-    protected void StopCurActionCoroutine()//중지시키는거 더 고려
+    protected void StopCurActionCoroutine()
     {
-
         if (curActionCoroutine != null)
             StopCoroutine(curActionCoroutine);
-
-        if (moveCoroutine != null)
-            StopCoroutine(moveCoroutine);
-
     }
 
     #region 스킬_추가 
     public virtual void OnSkillCommanded(Skill skillData)
     {
-        
+        if (foundEnemyLogic == null)
+        {
+            Debug.Log("첫 웨이브 시작 전 스킬 발동 요구됨");
+            return;
+        }
         StopCurActionCoroutine();
-
         curActionCoroutine = StartCoroutine(skillData.SkillRoutine(this, OnSkillCompleted));
+        agent.ResetPath();
     }
 
     private void OnSkillCompleted()
     {
-
         StopCurActionCoroutine();
         curActionCoroutine = StartCoroutine(TrackingCo());
-        /*        Debug.Log(curActionCoroutine == null);
-                Debug.Log(gameObject == null);*/
     }
-
-    //private IEnumerator SkillRoutine(Skill skillData)
-    //{   
-    //    //TODO : 실제 스킬 발동시키기.
-    //    Debug.Log($"{name} 캐릭터 : 스킬 사용 개시");
-
-    //    yield return new WaitForSeconds(1.5f);
-
-
-    //    Debug.Log($"{name} 캐릭터 : 스킬 종료, 자동 공격 시작");
-
-
-    //    //스킬 사용 종료 후 자동 공격 다시 시작
-    //    StopCurActionCoroutine();
-    //    curActionCoroutine = StartCoroutine(TrackingCo());
-    //}  
 
     #endregion
 
@@ -245,7 +232,6 @@ public class Combatable : MonoBehaviour
         StopCurActionCoroutine();
     }
 
-    [ContextMenu("ChangeToNear")]
     public void ChangeSearchLogicToNear()
     {
         StopCurActionCoroutine();
@@ -254,7 +240,6 @@ public class Combatable : MonoBehaviour
         curActionCoroutine = StartCoroutine(TrackingCo());
     }
 
-    [ContextMenu("ChangeToFar")]
     public void ChangeSearchLogicToFar()
     {
         StopCurActionCoroutine();
@@ -270,6 +255,7 @@ public class Combatable : MonoBehaviour
         InitSearchLogic();
         curActionCoroutine = StartCoroutine(TrackingCo());
     }
+
     public void ChangeSearchLoginInCombat(Func<Transform, Combatable> customSearchLogic)
     {
         StopCurActionCoroutine();
@@ -303,24 +289,23 @@ public class Combatable : MonoBehaviour
         yield return null;
 
         Combatable target = foundEnemyLogic.Invoke(transform);
+
         float trackTime = 0.2f;
         float time = 0;
 
         while (target != null && target.IsAlive && againistObjList != null)
         {
+            agent.stoppingDistance = range;//TODO : 개체별 크기가 다른 경우, 해당 로직에 추가 수정.
+            agent.destination = target.transform.position;
 
-            Vector3 moveDir = (target.transform.position - transform.position).normalized;
-
-            while (target != null && rangePow < Vector3.SqrMagnitude(target.transform.position - transform.position))
+            while (target != null && agent.remainingDistance > agent.stoppingDistance)
             {
                 if (time > trackTime)
                 {
                     time = 0;
-                    moveDir = (target.transform.position - transform.position).normalized;
+                    agent.destination = target.transform.position;
                 }
 
-                //TODO : 이동속도 상수 제거
-                transform.Translate(10 * moveDir.normalized * Time.deltaTime);
                 time += Time.deltaTime;
                 yield return null;
             }
@@ -348,7 +333,8 @@ public class Combatable : MonoBehaviour
     {
         yield return null;
 
-        while (target.IsAlive && rangePow > Vector3.SqrMagnitude(target.transform.position - transform.position))
+        //TODO : 해당 로직 자체를 스킬에 편입시키는 방법을 고려.
+        while (target.IsAlive && range > Vector3.Distance(target.transform.position, transform.position))
         {
             StartCoroutine(baseAttack.SkillRoutine(this, null));
             yield return new WaitForSeconds(1);
@@ -356,43 +342,6 @@ public class Combatable : MonoBehaviour
 
         StopCurActionCoroutine();
         curActionCoroutine = StartCoroutine(TrackingCo());
-        yield break;
     }
-
-    /*
-        //게임에서는 웨이브 자체를 전달. + 특성에 따라 추적 대상 함수등을 전달할수도..
-        IEnumerator CombatCO()
-        {
-            yield return null;
-            Transform ch = foundEnemyLogic.Invoke(transform);
-
-            //추적 대상이 있고, 웨이브가 진행중인 경우.
-            while (ch != null && againistObjList != null)
-            {
-                moveCoroutine = StartCoroutine(trackable.TrackingCO(ch));
-                yield return moveCoroutine;//이동 코루틴
-
-                if (ch == null)//이동중에 적이 쓰러진 경우.
-                {
-                    ch = foundEnemyLogic.Invoke(transform);//새로운 대상 탐색
-                    continue;
-                }
-
-                while (ch != null && trackable.rangePow > Vector3.SqrMagnitude(ch.transform.position - transform.position))
-                {
-                    //ch.transform.Rotate(Vector3.forward * 10);
-                    ch.GetComponent<SpriteRenderer>().color = UnityEngine. Random.ColorHSV();
-                    yield return new WaitForSeconds(1);
-                }
-
-                ch = foundEnemyLogic.Invoke(transform);//적이 사라진 뒤 다음 타깃 탐색
-
-            }
-
-            //전투가 끝난경우.
-            EndCombat();
-
-        }
-    */
 
 }

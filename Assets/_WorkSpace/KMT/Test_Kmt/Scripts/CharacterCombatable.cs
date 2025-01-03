@@ -12,7 +12,6 @@ public class CharacterCombatable : Combatable
     curState state = curState.WAITING;
 
     Vector3 originPos;
-    //BasicSkillButton basicSkillButton;
 
     protected override void Awake()
     {
@@ -20,7 +19,6 @@ public class CharacterCombatable : Combatable
 
         originPos = transform.position;
         waveClearEvent.AddListener(BackToOriginPos);
-
     }
 
     public void InitCharacterData(BasicSkillButton basicSkillButton, SecondSkillButton secondSkillButton)
@@ -34,8 +32,7 @@ public class CharacterCombatable : Combatable
         basicSkillButton.GetComponent<Button>().onClick.AddListener(() => {
             if (!basicSkillButton.Interactable || !IsAlive) { Debug.Log("사용 불가");  return; }
             OnSkillCommanded(characterData.SkillDataSO);
-            Debug.Log(characterData.StatusTable.BasicSkillCooldown);
-            basicSkillButton.StartCoolDown(characterData.StatusTable.BasicSkillCooldown);//쿨타임을 매개변수로 전달하기.
+            basicSkillButton.StartCoolDown(characterData.StatusTable.BasicSkillCooldown);//쿨타임을 매개변수로 전달.
         });
 
         secondSkillButton.SetSkillCost(characterData.StatusTable.SecondSkillCost);
@@ -51,14 +48,7 @@ public class CharacterCombatable : Combatable
 
         onDeadEvent.AddListener(basicSkillButton.OffSkillButton);
         onDeadEvent.AddListener(secondSkillButton.OffSkillButton);
-
     }
-
-/*    public override void OnSkillCommanded(Skill skillData)//필요할지는 모름
-    {
-        
-        base.OnSkillCommanded(skillData);
-    }*/
 
     public override void StartCombat(CombManager againstL)
     {
@@ -82,25 +72,18 @@ public class CharacterCombatable : Combatable
     {
         yield return null;
 
-        float trackTime = 0.2f;
-        float time = 0;
+        agent.stoppingDistance = 0.05f;
+        agent.destination = originPos;
 
-        Vector3 moveDir = (originPos - transform.position).normalized;
-
-        while (0.1f < Vector3.SqrMagnitude(originPos - transform.position))
+        while (agent.pathPending || 0.1f < agent.remainingDistance)
         {
-            if (time > trackTime)
-            {
-                time = 0;
-                moveDir = (originPos - transform.position).normalized;
-            }
-
-            transform.Translate(10 * moveDir.normalized * Time.deltaTime);
-            time += Time.deltaTime;
             yield return null;
         }
 
         transform.position = originPos;
+
+        agent.stoppingDistance = range;//TODO : 개체별 크기가 다른 경우, 해당 로직에 추가 수정.
+
         state = curState.WAITING;
     }
 

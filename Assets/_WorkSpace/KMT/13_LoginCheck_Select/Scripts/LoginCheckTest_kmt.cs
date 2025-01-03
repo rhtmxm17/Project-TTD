@@ -48,7 +48,7 @@ public class LoginCheckTest_kmt : MonoBehaviour
         //UserData.myNickname = GameManager.UserData.Profile.Name.Value;
 
         DailyChecker.IsTodayFirstConnect((isFirst) => {
-
+            Debug.Log("체크끝");
             if (isFirst)
             {
                 SceneManager.LoadScene("DailyBonusScene");
