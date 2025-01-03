@@ -130,9 +130,15 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             {
                 // 첫 접속일 경우 프로필 생성
                 // TODO: UID 할당
+                CharacterData startingChara = DataTableManager.Instance.GetCharacterData(1);
+                ItemData startinCharaItem = DataTableManager.Instance.GetItemData(2001);
+
                 StartUpdateStream()
-                    .SetDBValue(this.Profile.Name, $"새로운 테스터{ UnityEngine.Random.Range(1000, 10000) }")
+                    .SetDBValue(this.Profile.Name, $"새로운 테스터{UnityEngine.Random.Range(1000, 10000)}")
                     .SetDBValue(this.Profile.Level, 1)
+                    .SetDBValue(startingChara.Level, 5)
+                    .SetDBValue(startingChara.Enhancement, 1)
+                    .SetDBValue(startinCharaItem.Number, 1)
                     .Submit(result =>
                     {
                         if (false == result)
@@ -142,6 +148,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                         }
 
                         Debug.Log("새로운 계정 생성");
+                        haveCharacterIdxList.Add(1);
                         onLoadUserDataCompleted?.Invoke();
                         onLoadUserDataCompleted.RemoveAllListeners();
                     });

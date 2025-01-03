@@ -27,8 +27,8 @@ public class HYJ_SelectManager : MonoBehaviour
     Transform batchButtonsTransform;
     [SerializeField]
     int buttonCnt;
-    [SerializeField] GameObject CharacterSelectPanel; // 캐릭터 선택 창 
-    [SerializeField] GameObject CantPosUI; // 선택 불가 팝업 -> 5개 유닛이 이미 다 배치 되었을 때의 팝업
+    [SerializeField] public GameObject CharacterSelectPanel; // 캐릭터 선택 창 
+    [SerializeField] public GameObject CantPosUI; // 선택 불가 팝업 -> 5개 유닛이 이미 다 배치 되었을 때의 팝업
 
     // 키 값은 위치 / 밸류 값은 유닛 고유번호;
     public Dictionary<int, int> battleInfo = new Dictionary<int, int>();
