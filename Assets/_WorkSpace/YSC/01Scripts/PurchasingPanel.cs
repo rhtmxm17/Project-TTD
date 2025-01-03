@@ -132,7 +132,7 @@ public class PurchasingPanel : BaseUI
 
 
         var dbUpdateStream = GameManager.UserData.StartUpdateStream() // DB에 갱신 요청 시작
-            .AddDBValue(shopItemData.Bought, currentNumber);  // 요청에 '구매 횟수만큼 증가' 등록
+            .AddDBValue(shopItemData.Bought, currentNumber);  // 요청에 '구매 횟수만큼 증가' 등록 // 이게 들어가버림
         
         if (null != itemPay) // 무료가 아니라면
         {
@@ -175,7 +175,10 @@ public class PurchasingPanel : BaseUI
         UpdateInfo(); // 갱신된 상품 정보(구매 횟수) 반영
         
         
-        
+        ItemGain itemGain = shopItemData.Products[0];
+        itemGain.gain = currentNumber;
+        shopItemData.Products.Clear();
+        shopItemData.Products.Add(itemGain);
         ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(shopItemData.Products);
         popupInstance.Title.text = "구매 성공!";
         // this.shopItem.UpdateInfo(); // 이거 하면 창이 안닫힘
