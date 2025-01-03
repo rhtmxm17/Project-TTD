@@ -1,6 +1,5 @@
 using System.Linq;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,7 +12,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
     public int posNum; // 위치 번호
 
     [Header("공용 설정")]
-    [SerializeField] 
+    [SerializeField]
     HYJ_SelectManager SelectM;
 
     [Header("유닛 버튼 설정")]
@@ -46,7 +45,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
         GetComponentInChildren<TextMeshProUGUI>().text = $"{unitIdx.ToString()}번 유닛";
         unitIndex = unitIdx;
         UnitChangeUI = unitChangeUI;
-            
+
         characterImage.GetComponent<Image>().sprite = chData.FaceIconSprite;
         levelText.text = chData.Level.Value.ToString();
         //raceText.text = chData.
@@ -86,35 +85,29 @@ public class HYJ_CharacterSelect : MonoBehaviour
 
     public void SelectUnit()
     {
-        if (CheckPos(SelectM.curPos))
+        SelectM.curUnitIndex = unitIndex;
+        if (CheckPos(SelectM.curPos)) // 선택한 위치에 유닛이 배치되어 있을 경우
         {
-            // 선택한 위치에 유닛이 배치되어 있었을 경우
-            if (CheckUnitPos(unitIndex))
+            if (CheckUnitPos(SelectM.curUnitIndex)) // 선택한 위치에 선택된 유닛이 이미 배치되어 있는 경우
             {
-                // 선택한 위치에 선택된 유닛이 이미 배치되어 있는 경우
+                // 아무동작 x
                 Debug.Log("이미 이 위치에 해당 유닛이 배치되어 있습니다.");
                 return;
             }
-            else if (!CheckUnitPos(unitIndex))
+            else // 선택한 위치에 선택한 유닛이 다른 위치에 배치되어 있는 경우
             {
-                // 선택한 위치에 선택한 유닛이 다른 위치에 배치되어 있는 경우
-                SelectM.curUnitIndex = unitIndex;
                 UnitChangeUI.SetActive(true);
             }
         }
-        else
+        else // 선택한 위치에 유닛이 배치되어 있지 않은 경우
         {
-            // 선택한 위치에 유닛이 배치되어 있지 않은 경우
-            if (CheckUnit(unitIndex))
+            if (CheckUnit(SelectM.curUnitIndex)) // 선택한 유닛이 다른 위치에 배치된 경우
             {
-                // 선택한 유닛이 다른 위치에 배치된 경우
-                SelectM.curUnitIndex = unitIndex;
                 UnitChangeUI.SetActive(true);
             }
-            else if (!CheckUnit(unitIndex))
+            else // 선택한 유닛이 어느 위치에도 배치되지 않은 경우
             {
-                // 선택한 유닛이 어느 위치에도 배치되지 않은 경우
-                AddBatch(SelectM.curPos, unitIndex);
+                AddBatch(SelectM.curPos, SelectM.curUnitIndex);
                 SelectM.CharacterSelectPanel.SetActive(false);
             }
         }
@@ -123,9 +116,8 @@ public class HYJ_CharacterSelect : MonoBehaviour
     public void ChangeUnit()
     {
         // 유닛변경 확인 버튼
-        if (CheckUnitPos(unitIndex))
+        if (CheckPos(SelectM.curPos)) // 선택된 위치에 유닛이 배치되어 있을 경우
         {
-            // 
             RemoveBatch(SelectM.curPos);
         }
         int unitPos = SelectM.battleInfo.FirstOrDefault(x => x.Value == SelectM.curUnitIndex).Key; // 딕셔너리 밸류값(유닛 고유번호)를 갖고 있는 키 값을 찾기
@@ -161,7 +153,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
     public void ReleaseUnit()
     {
         // 배치된 유닛을 해제하기
-        if (CheckPos(SelectM.curPos)) 
+        if (CheckPos(SelectM.curPos))
         {
             // 선택한 키 값이 이미 등록되어 있을 때
             RemoveBatch(SelectM.curPos);
