@@ -18,6 +18,13 @@ public interface ICsvRowParseable
 #endif
 }
 
+public interface ICsvMultiRowParseable
+{
+#if UNITY_EDITOR
+    public void ParseCsvMultiRow(string[] lines, ref int line);
+#endif
+}
+
 public interface ICsvSheetParseable
 {
 #if UNITY_EDITOR
@@ -109,6 +116,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     public const string SkillAssetFolder = "Assets/_WorkSpace/Datas/Skills";
     public const string CharacterAssetFolder = "Assets/_WorkSpace/Datas/Character";
     public const string ItemAssetFolder = "Assets/_WorkSpace/Datas/Items";
+    public const string PackageAssetFolder = "Assets/_WorkSpace/Datas/Packages";
 
     [SerializeField] Sprite dummySprite;
     public Sprite DummySprite => dummySprite;
@@ -117,27 +125,16 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     [SerializeField] Object characterDataFolder;
     [SerializeField] Object itemDataFolder;
     [SerializeField] Object stageDataFolder;
+    [SerializeField] Object packageDataFolder;
     [SerializeField] Object storyDirectingDataFolder;
-    [SerializeField] Object shopItemDataFolder;
 
     private string documentID = "1mshKeAWkTmozk0snaJPWp7Jizs3pSeLhlFU-982BqHA";
     private string storyDocumentID = "1mCbO7Xdg0DLPY-J9YjVriGHRueg1PSFvvlKqPZp8pVY";
     private string characterSheetId = "0";
     private string itemSheetId = "1467425655";
+    private string packageSheetId = "1751436041";
     private string stageSheetId = "504606070";
 
-    [ContextMenu("상점 아이템 긁어오기(파싱x)")]
-    private void GetShopItem()
-    {
-        string path = $"{AssetDatabase.GetAssetPath(shopItemDataFolder)}";
-        string[] shopItems = AssetDatabase.FindAssets("t:ShopItemData", new string[] { path } );
-        shopItemDataList.Clear();
-        foreach (var shopItem in shopItems)
-        {
-            shopItemDataList.Add(AssetDatabase.LoadAssetAtPath<ShopItemData>(AssetDatabase.GUIDToAssetPath(shopItem)));
-        }
-        IndexData();
-    }
 
     [ContextMenu("시트에서 캐릭터 데이터 불러오기")]
     private void GetCharacterDataFromSheet()
@@ -156,11 +153,18 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     [ContextMenu("시트에서 스테이지 데이터 불러오기")]
     private void GetStageDataFromSheet()
     {
-        GetStageDataFromSheet(stageSheetId, stageDataFolder, stageDataList);
+        GetMultiRowDataFromSheet(stageSheetId, stageDataFolder, stageDataList);
         IndexData();
     }
 
-    [ContextMenu("스토리 데이터 불러오기 테스트")]
+    [ContextMenu("시트에서 상점 패키지 데이터 불러오기")]
+    private void GetShopItem()
+    {
+        GetMultiRowDataFromSheet(packageSheetId, packageDataFolder, shopItemDataList);
+        IndexData();
+    }
+
+    [ContextMenu("시트에서 스토리 데이터 불러오기")]
     private void GetStroyDataTest()
     {
         GetSheetDataFromDocument<StoryDirectingData>(storyDocumentID, storyDirectingDataFolder, storyDirectingDataList);
@@ -224,7 +228,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
         });
     }
 
-    private void GetStageDataFromSheet(string sheetId, Object dataFolder, List<StageData> dataList)
+    private void GetMultiRowDataFromSheet<T>(string sheetId, Object dataFolder, List<T> dataList) where T : ScriptableObject, ICsvMultiRowParseable
     {
         GoogleSheet.GetSheetData(documentID, sheetId, this, (succeed, result) =>
         {
@@ -246,17 +250,17 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
                     // 1번열은 파일명
                     string soPath = $"{soFolderPath}/{cells[1]}.asset";
 
-                    StageData soAsset;
+                    T soAsset;
                     if (System.IO.File.Exists(soPath))
                     {
-                        soAsset = AssetDatabase.LoadAssetAtPath(soPath, typeof(StageData)) as StageData;
+                        soAsset = AssetDatabase.LoadAssetAtPath(soPath, typeof(T)) as T;
                         soAsset.ParseCsvMultiRow(lines, ref i);
 
                         EditorUtility.SetDirty(soAsset);
                     }
                     else
                     {
-                        soAsset = ScriptableObject.CreateInstance<StageData>();
+                        soAsset = ScriptableObject.CreateInstance<T>();
 
                         soAsset.ParseCsvMultiRow(lines, ref i);
 
