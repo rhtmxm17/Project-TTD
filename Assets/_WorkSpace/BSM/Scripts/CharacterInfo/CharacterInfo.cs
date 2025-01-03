@@ -159,8 +159,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             Debug.LogWarning("접속 실패");
             return;
         }
-        Debug.Log($"{_characterData.name} 레벨업 성공");
-        //테스트 재화 사용
+
         _characterInfoController.UserGold = _characterInfoController.UserGoldData.Value;
         CharacterStats();
         UpdateInfo();
@@ -210,18 +209,16 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// </summary>
     private void CharacterStats()
     {
-        _characterLevel = _characterData.Level.Value;
-
-        _hp = _characterLevel *
-              (int)(_characterData.StatusTable.healthPointBase + _characterData.StatusTable.healthPointGrouth);
-        _atk = _characterLevel *
-               (int)(_characterData.StatusTable.attackPointBase + _characterData.StatusTable.attackPointGrowth);
-        _def = _characterLevel *
-               (int)(_characterData.StatusTable.defensePointBase + _characterData.StatusTable.defensePointBase);
-        
-        _powerLevel = (_hp + _atk + _def);
+        _characterLevel = _characterData.Level.Value; 
+        _hp = Convert.ToInt32(_characterData.HpPointLeveled);
+        _atk = Convert.ToInt32(_characterData.AttackPointLeveled);
+        _def = Convert.ToInt32(_characterData.DefensePointLeveled); 
+        _powerLevel = Convert.ToInt32(_characterData.PowerLevel);
     }
-
+    
+    /// <summary>
+    /// 현재 케릭터 정보 셋팅
+    /// </summary>
     public void SetCharacterData()
     {
         CharacterStats();
@@ -232,7 +229,6 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// </summary>
     private void LevelUpCheck()
     {
-        //TODO: 골드 변수 수정 필요
         _characterInfoController._infoUI._levelUpButton.interactable = _characterInfoController.UserGold >= characterLevelUpCost;
     }
 

@@ -10,19 +10,20 @@ using UnityEngine.UI;
 public class CharacterFilter : MonoBehaviour
 {
     [HideInInspector] public List<CharacterInfo> _filterCharacterInfos;
-
-    public List<int> _elementInfosIndex = new List<int>();
-    public List<ElementType> _elementFilterTypes = new List<ElementType>();
-    public List<RoleType> _roleFiterTypes = new List<RoleType>();
-    public List<DragonVeinType> _dragonVeinFilterTypes = new List<DragonVeinType>();
-
+    [HideInInspector] public List<int> _elementInfosIndex = new List<int>();
+    [HideInInspector] public List<ElementType> _elementFilterTypes = new List<ElementType>();
+    [HideInInspector] public List<RoleType> _roleFiterTypes = new List<RoleType>();
+    [HideInInspector] public List<DragonVeinType> _dragonVeinFilterTypes = new List<DragonVeinType>();
     [HideInInspector] public List<Image> _buttonColors = new List<Image>();
 
     private List<Enum> _filterTypes = new List<Enum>();
 
-
     private CharacterFilterUI _characterFilterUI;
 
+    private int _elementCount = 0;
+    private int _roleCount = 0;
+    private int _dragonVeinCount = 0;
+    
     private void Awake()
     {
         _characterFilterUI = GetComponent<CharacterFilterUI>();
@@ -82,11 +83,6 @@ public class CharacterFilter : MonoBehaviour
         }
     }
 
-
-    private int _elementCount = 0;
-    private int _roleCount = 0;
-    private int _dragonVeinCount = 0;
-
     /// <summary>
     /// 캐릭터 필터 설정 
     /// </summary>
@@ -117,10 +113,7 @@ public class CharacterFilter : MonoBehaviour
         //1 0 1
         //0 1 1
         //1 1 1 
-        // Debug.Log($"속성 :{_elementCount}");
-        // Debug.Log($"역할 :{_roleCount}");
-        // Debug.Log($"용맥 :{_dragonVeinCount}");
-        //
+
         //이미 필터링이 걸려있는 상태
         if (_elementInfosIndex.Count > 0)
         {
@@ -294,7 +287,12 @@ public class CharacterFilter : MonoBehaviour
             }
         }
     }
-
+    
+    /// <summary>
+    /// 필터 해제
+    /// </summary>
+    /// <param name="type"></param>
+    /// <typeparam name="T"></typeparam>
     private void CharacterListFilterClear<T>(T type) where T : Enum
     {
         _filterTypes.Remove(type);

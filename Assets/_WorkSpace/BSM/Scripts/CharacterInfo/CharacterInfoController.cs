@@ -41,7 +41,6 @@ public class CharacterInfoController : BaseUI
     private GameObject _detailTab;
     private GameObject _enhanceTab;
     private GameObject _evolutionTab;
-    private GameObject _meanTab;
 
     private int CharacterCount
     {
@@ -66,13 +65,14 @@ public class CharacterInfoController : BaseUI
     }
 
     private int _userGold;
-
-    public int UserGold
-    {
+    public int UserGold { 
         get => _userGold;
-        set { _userGold = value; }
+        set
+        {
+            _userGold = value;
+        } 
     }
-
+     
     public UserDataInt UserGoldData;
     public TextMeshProUGUI SortButtonText { get; set; }
 
@@ -81,18 +81,15 @@ public class CharacterInfoController : BaseUI
         base.Awake(); 
         Init();
         ButtonOnClickEvent();
-        SetContentFormGridLayOut(); 
-        SetDatabase(); 
+        SetContentFormGridLayOut();
+        GetUserGold(); 
     }
 
-    private void SetDatabase()
-    {
-        UserGoldData = GameManager.TableData.GetItemData(1).Number;
-        _userGold = UserGoldData.Value;
+    private void OnEnable()
+    { 
+        UpdateCharacterList(); 
     }
-
-    private void OnEnable() => UpdateCharacterList();
-
+    
     private void Init()
     {
         _infoPopup = GetUI("InfoPopup");
@@ -100,8 +97,7 @@ public class CharacterInfoController : BaseUI
 
         //Sort, Filter GetBind
         _characterFilter = GetUI<CharacterFilter>("FilterUI");
-        _characterSort = GetUI<CharacterSort>("SortUI");
-        _characterSort.CurSortType = (SortType)PlayerPrefs.GetInt("SortType", 1);
+        _characterSort = GetUI<CharacterSort>("SortUI"); 
         
         _infoUI = GetUI<CharacterInfoUI>("InfoUI");
 
@@ -117,12 +113,20 @@ public class CharacterInfoController : BaseUI
         _detailTab = GetUI("DetailTab");
         _enhanceTab = GetUI("EnhanceTab");
         _evolutionTab = GetUI("EvolutionTab");
-        _meanTab = GetUI("MeanTab");
 
         _characterCellSize = _contentForm.GetComponent<GridLayoutGroup>().cellSize;
         _characterSpacing = _contentForm.GetComponent<GridLayoutGroup>().spacing;
     }
 
+    /// <summary>
+    /// 현재 유저가 보유한 골드 가져옴
+    /// </summary>
+    private void GetUserGold()
+    {
+        UserGoldData = GameManager.TableData.GetItemData(1).Number;
+        _userGold = UserGoldData.Value;
+    }
+    
     private void ButtonOnClickEvent()
     {
         _prevButton.onClick.AddListener(PreviousCharacter);
@@ -136,6 +140,8 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void UpdateCharacterList()
     { 
+        _characterSort.CurSortType = PlayerPrefs.HasKey("SortType") ? (SortType)PlayerPrefs.GetInt("SortType") : SortType.LEVEL;
+        
         _characterInfos = GetComponentsInChildren<CharacterInfo>(true).ToList();
         
         for (int i = 0; i < _characterInfos.Count; i++)
@@ -257,6 +263,5 @@ public class CharacterInfoController : BaseUI
         _detailTab.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
         _enhanceTab.SetActive(_curInfoTabType.Equals(InfoTabType.ENHANCE));
         _evolutionTab.SetActive(_curInfoTabType.Equals(InfoTabType.EVOLUTION));
-        _meanTab.SetActive(_curInfoTabType.Equals(InfoTabType.MEAN));
     }
 }

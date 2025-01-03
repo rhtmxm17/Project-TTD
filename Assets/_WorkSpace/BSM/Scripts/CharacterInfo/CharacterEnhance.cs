@@ -16,10 +16,10 @@ public class CharacterEnhance : MonoBehaviour
     private float _minEnhanceProbability = 0.9f;
     private float _enhanceProbability;
     private float _chance;
-
-    private int _characterEnhanceLevel;
-    private int beforeEnhanceLevel;
-
+    
+    private int _beforeEnhanceLevel;
+    private int _afterEnhanceLevel;
+    
     private int _beforeHp;
     private int _beforeAtk;
     private int _beforeDef;
@@ -82,8 +82,12 @@ public class CharacterEnhance : MonoBehaviour
     /// </summary>
     private void BeforeEnhance()
     {
-        beforeEnhanceLevel = _characterData.Enhancement.Value;
-        _characterInfoController._infoUI._beforeUpGradeText.text = $"현재 등급 {beforeEnhanceLevel}";
+        _beforeEnhanceLevel = _characterData.Enhancement.Value;
+        _beforeHp = Convert.ToInt32(_characterData.HpPointLeveled);
+        _beforeAtk = Convert.ToInt32(_characterData.AttackPointLeveled);
+        _beforeDef = Convert.ToInt32(_characterData.DefensePointLeveled);
+        
+        _characterInfoController._infoUI._beforeUpGradeText.text = $"현재 등급 {_beforeEnhanceLevel}";
         _characterInfoController._infoUI._beforeHpText.text = $"체력 {_beforeHp}";
         _characterInfoController._infoUI._beforeAtkText.text = $"공겨력 {_beforeAtk}";
         _characterInfoController._infoUI._beforeDefText.text = $"방어력 {_beforeDef}"; 
@@ -94,16 +98,25 @@ public class CharacterEnhance : MonoBehaviour
     /// </summary>
     private void AfterEnhance()
     {
-        //TODO: 현재 강화가 10일 때 처리 필요함
-        _characterInfoController._infoUI._afterUpGradeText.text = $"강화 후 등급 {beforeEnhanceLevel + 1}";
+        _afterEnhanceLevel = (_beforeEnhanceLevel + 1);
 
-        _afterHp = (beforeEnhanceLevel + 1) * _characterInfoController.CurCharacterInfo.Hp;
-        _afterAtk = (beforeEnhanceLevel + 1) * _characterInfoController.CurCharacterInfo.Atk;
-        _afterDef = (beforeEnhanceLevel + 1) * _characterInfoController.CurCharacterInfo.Def;
-
-        _characterInfoController._infoUI._afterHpText.text = $"체력 {_afterHp}";
-        _characterInfoController._infoUI._afterAtkText.text = $"공격력 {_afterAtk}";
-        _characterInfoController._infoUI._afterDefText.text = $"방어력 {_afterDef}"; 
+        if (_afterEnhanceLevel > 10)
+        {
+            //TODO: 현재 Max 단계 안내
+            // _characterInfoController._infoUI._afterUpGradeText.text = $"용 이름 + Max";
+            //
+        }
+        else
+        {
+            _afterHp = Convert.ToInt32(_characterData.HpPointLeveled * (1f + 0.1f * _afterEnhanceLevel) / (1f + 0.1f * (_characterData.Enhancement.Value)));
+            _afterAtk = Convert.ToInt32(_characterData.AttackPointLeveled * (1f + 0.1f * _afterEnhanceLevel) / (1f + 0.1f * (_characterData.Enhancement.Value)));
+            _afterDef = Convert.ToInt32(_characterData.DefensePointLeveled * (1f + 0.1f * _afterEnhanceLevel) / (1f + 0.1f * (_characterData.Enhancement.Value)));
+            
+            _characterInfoController._infoUI._afterUpGradeText.text = $"강화 후 등급 {_afterEnhanceLevel}";
+            _characterInfoController._infoUI._afterHpText.text = $"체력 {_afterHp}";
+            _characterInfoController._infoUI._afterAtkText.text = $"공격력 {_afterAtk}";
+            _characterInfoController._infoUI._afterDefText.text = $"방어력 {_afterDef}";  
+        } 
     }
 
     /// <summary>
@@ -125,7 +138,6 @@ public class CharacterEnhance : MonoBehaviour
         _enhanceProbability = GetProbability(Random.Range(_minEnhanceProbability, 1f));
 
         _chance = GetProbability(Random.Range((_enhanceProbability - 0.3f), (_enhanceProbability + 0.1f)));
-        Debug.Log($"성공 확률 :{_enhanceProbability} >  내 기본 확률 : {_chance} / 마일리지 보정 : {_mileage}");
         _chance = Mathf.Clamp(_chance + _mileage, 0.01f, 1f);
 
         if (_chance >= _enhanceProbability)
@@ -155,7 +167,7 @@ public class CharacterEnhance : MonoBehaviour
         MileageUpdate(0); 
         ResultPopup("강화 성공해서 마일리지 초기화 할게요~.~");
         CharacterStats();
-        UpdateInfo();
+        UpdateInfo(); 
     }
     
     /// <summary>
@@ -212,17 +224,7 @@ public class CharacterEnhance : MonoBehaviour
     /// </summary>
     private void CharacterStats()
     {
-        _characterEnhanceLevel = _characterData.Enhancement.Value;
-        
-        //TODO: 캐릭터 강화 수치 수정 필요
-        _characterInfoController.CurCharacterInfo.Hp = _afterHp;
-        _characterInfoController.CurCharacterInfo.Atk = _afterAtk;
-        _characterInfoController.CurCharacterInfo.Def = _afterDef;
-        _characterInfoController.CurCharacterInfo.PowerLevel = _afterHp + _afterAtk + _afterDef;
-
-        _beforeAtk = _afterAtk;
-        _beforeHp = _afterHp;
-        _beforeDef = _afterDef; 
+        _characterInfoController.CurCharacterInfo.UpdateInfo();
         BeforeEnhance();
         AfterEnhance();
     }
@@ -253,7 +255,7 @@ public class CharacterEnhance : MonoBehaviour
     private void EnhanceCheck()
     {
         //TODO: 활성화/비활성화 조건 수정 필요 현재는 테스트로 임시 ~
-        _characterInfoController._infoUI._enhanceButton.interactable = _characterEnhanceLevel < _maxEnhanceLevel;
+        _characterInfoController._infoUI._enhanceButton.interactable = _beforeEnhanceLevel < _maxEnhanceLevel;
     }
 
     /// <summary>
@@ -264,11 +266,6 @@ public class CharacterEnhance : MonoBehaviour
     {
         _characterInfoController.CurCharacterEnhance = this;
         _characterData = characterData;
-        _characterEnhanceLevel = characterData.Enhancement.Value;
-
-        _beforeAtk = _characterInfoController.CurCharacterInfo.Atk;
-        _beforeHp = _characterInfoController.CurCharacterInfo.Hp;
-        _beforeDef = _characterInfoController.CurCharacterInfo.Def;
         _characterInfoController._infoUI._mileageSlider.value = _mileage;
          
         EnhanceCheck();

@@ -24,13 +24,13 @@ public enum BuffType
 public enum SortType
 {
     //추후 레벨, 전투력으로 정렬
-    NONE, NAME, LEVEL, POWERLEVEL
+    NONE, NAME, LEVEL, POWERLEVEL, OFFENSIVEPOWER, DEFENSEIVEPOWER, HEALTH
 }
 
 [System.Serializable]
 public enum InfoTabType
 {
-    DETAIL, ENHANCE, EVOLUTION, MEAN
+    DETAIL, ENHANCE, EVOLUTION
 }
 
 [System.Serializable]

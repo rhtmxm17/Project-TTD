@@ -52,7 +52,6 @@ public class CharacterInfoUI : BaseUI
     private Button _detailTabButton;
     private Button _enhanceTabButton;
     private Button _evolutionTabButton;
-    private Button _meanTabButton; 
      
     private Button _exitButton;
     private GameObject _infoPopup;
@@ -98,7 +97,6 @@ public class CharacterInfoUI : BaseUI
         _detailTabButton = GetUI<Button>("DetailTabButton");
         _enhanceTabButton = GetUI<Button>("EnhanceTabButton");
         _evolutionTabButton = GetUI<Button>("EvolutionTabButton");
-        _meanTabButton = GetUI<Button>("MeanTabButton");
     }
     
     /// <summary>
@@ -154,7 +152,6 @@ public class CharacterInfoUI : BaseUI
         _detailTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.DETAIL);
         _enhanceTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.ENHANCE);
         _evolutionTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.EVOLUTION);
-        _meanTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.MEAN);
         
         _enhanceResultConfirm.onClick.AddListener(()=> _enhanceResultPopup.SetActive(false));
     }
