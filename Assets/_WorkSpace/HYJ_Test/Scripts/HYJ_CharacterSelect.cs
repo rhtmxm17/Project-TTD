@@ -8,7 +8,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
 {
     // 캐릭터 (9종)
     // 캐릭터 데이터 구조 : index(ID)
-    GameObject CharacterSelectPanel; // 캐릭터 선택 창 
+    [SerializeField] GameObject CharacterSelectPanel; // 캐릭터 선택 창 
     GameObject CantPosUI; // 선택 불가 팝업 -> 5개 유닛이 이미 다 배치 되었을 때의 팝업
     public int posNum; // 위치 번호
 
@@ -46,7 +46,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
         GetComponentInChildren<TextMeshProUGUI>().text = $"{unitIdx.ToString()}번 유닛";
         unitIndex = unitIdx;
         UnitChangeUI = unitChangeUI;
-
+            
         characterImage.GetComponent<Image>().sprite = chData.FaceIconSprite;
         levelText.text = chData.Level.Value.ToString();
         //raceText.text = chData.
@@ -115,19 +115,23 @@ public class HYJ_CharacterSelect : MonoBehaviour
             {
                 // 선택한 유닛이 어느 위치에도 배치되지 않은 경우
                 AddBatch(SelectM.curPos, unitIndex);
+                SelectM.CharacterSelectPanel.SetActive(false);
             }
         }
     }
 
     public void ChangeUnit()
     {
+        // 유닛변경 확인 버튼
         if (CheckUnitPos(unitIndex))
         {
+            // 
             RemoveBatch(SelectM.curPos);
         }
         int unitPos = SelectM.battleInfo.FirstOrDefault(x => x.Value == SelectM.curUnitIndex).Key; // 딕셔너리 밸류값(유닛 고유번호)를 갖고 있는 키 값을 찾기
         ChangeBatch(unitPos, SelectM.curPos, SelectM.curUnitIndex);
         UnitChangeUI.SetActive(false);
+        CharacterSelectPanel.SetActive(false);
     }
 
     public bool CheckUnit(int unitIndex)
@@ -157,8 +161,9 @@ public class HYJ_CharacterSelect : MonoBehaviour
     public void ReleaseUnit()
     {
         // 배치된 유닛을 해제하기
-        if (CheckPos(SelectM.curPos)) // 선택한 키 값이 이미 등록되어 있을 때
+        if (CheckPos(SelectM.curPos)) 
         {
+            // 선택한 키 값이 이미 등록되어 있을 때
             RemoveBatch(SelectM.curPos);
         }
     }
@@ -167,20 +172,18 @@ public class HYJ_CharacterSelect : MonoBehaviour
     {
         SelectM.battleInfo.Add(key, value);     // 현재 키 / 밸류 딕셔너리에 추가
         SelectM.SetCharacterImage(key, value);  // 스프라이트 생성
-        //Debug.Log(key + "색 추가");
     }
 
     void RemoveBatch(int key)
     {
         SelectM.battleInfo.Remove(key);     // 현재 유닛 고유번호를 갖고 있는 키와 밸류 삭제
         SelectM.RemoveCharacterImage(key); // 스프라이트 제거
-        //Debug.Log(key + "색 제거");
     }
 
     void ChangeBatch(int victimKey, int newKey, int newValue)
     {
         SelectM.battleInfo.Remove(victimKey);   // 현재 유닛 고유번호를 갖고 있는 키와 밸류 삭제
-        SelectM.battleInfo[newKey] = newValue;
+        SelectM.battleInfo[newKey] = newValue;  // 현재 키값의 밸류 값을 추가하기
         SelectM.ChangeImagePos(victimKey, newKey);    // 스프라이트 위치 변경
     }
 }
