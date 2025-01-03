@@ -11,6 +11,7 @@ public class UserProfileUI : BaseUI
 {
     // 가져오고 써야할 데이터들
    private string nickName; // 닉네임
+   private int iconIndex;   // 아이콘 인덱스
    private int UID; // UID?
    private int level; // 레벨
    private int CP; // 전투력 합계
@@ -21,6 +22,9 @@ public class UserProfileUI : BaseUI
    private int bestRank; // 역대 최고 랭킹
    
    public UnityEvent OnChangeProfile;
+   
+   // (임시) 아이콘 설정용 이미지
+   [SerializeField] Sprite[] iconSprites;
     
     private void Start()
     {
@@ -91,6 +95,8 @@ public class UserProfileUI : BaseUI
         nickName = GameManager.UserData.Profile.Name.Value;
         level = GameManager.UserData.Profile.Level.Value;
         introduction = GameManager.UserData.Profile.Introduction.Value;
+        iconIndex = GameManager.UserData.Profile.IconIndex.Value;
+        GetUI<Image>("Image").sprite = iconSprites[iconIndex];
         
         // TODO: 추가적인 데이터와 그에 따른 실시간 변동사항 고려
     }
@@ -162,7 +168,7 @@ public class UserProfileUI : BaseUI
         GetUI(_name).SetActive(false);
     }
     
-    // (임시) 대표 캐릭터 변경
+    // 프로필 아이콘& 대표캐릭터 변경
     private void SetMainCharacter()
     {
         
