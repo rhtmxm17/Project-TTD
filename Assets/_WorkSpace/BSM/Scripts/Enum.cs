@@ -36,17 +36,17 @@ public enum InfoTabType
 [System.Serializable]
 public enum ElementType
 {
-    FIRE, WATER, GRASS, GROUND, ELECTRIC
+    FIRE, WATER, GRASS, GROUND, ELECTRIC, NONE
 }
 
 [System.Serializable]
 public enum DragonVeinType
 {
-    SINGLE, MULTI
+    SINGLE, MULTI, NONE
 }
 
 [System.Serializable]
 public enum RoleType
 {
-    DEFENDER, ATTACKER, SUPPORTER
+    DEFENDER, ATTACKER, SUPPORTER, NONE
 }

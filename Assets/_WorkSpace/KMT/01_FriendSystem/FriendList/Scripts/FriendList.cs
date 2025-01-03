@@ -8,6 +8,8 @@ public class FriendList : MonoBehaviour
     FriendBlock friendBlockPrefab;
     [SerializeField]
     Transform contentTransform;
+    [SerializeField]
+    OpenableWindow friendPanel;
 
     [SerializeField]
     MyroomInitializer initializer;
@@ -63,8 +65,11 @@ public class FriendList : MonoBehaviour
                 Instantiate(friendBlockPrefab, contentTransform)
                     .InitData(friendsUid.Key, 
                               task.Result.Child($"{friendsUid.Key}/Profile/Name").Value.ToString(),
-                              this, 
-                              initializer.InitRoom);
+                              this,
+                              (str) => {
+                                  initializer.InitRoom(str);
+                                  friendPanel.CloseWindow();
+                              });
 
             }
 

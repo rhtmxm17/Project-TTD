@@ -55,7 +55,7 @@ public class SearchList : MonoBehaviour
                 .OrderByChild("Profile/Name")
 
                 //.EqualTo(findNick)
-                .StartAt(inputField.text).LimitToFirst(5)//대체코드
+                .StartAt(inputField.text).LimitToFirst(20)//대체코드
 
                 .GetValueAsync()
                 .ContinueWithOnMainThread(task2 =>

@@ -30,19 +30,16 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
     public void ApplyCharacter(int characterIdx)
     {
         //실제 데이터 갱신.
-        haveCharacterIdxList.Add(characterIdx);
-
         CharacterData chData = GameManager.TableData.GetCharacterData(characterIdx);
-
 
         StartUpdateStream()
             .SetDBValue(chData.Level, 1)
             .SetDBValue(chData.Enhancement, 1)
             .Submit((result) =>
             {
-
                 Debug.Log("적용 완료!");
 
+                haveCharacterIdxList.Add(characterIdx);
             });
     }
 
@@ -129,6 +126,35 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
 
             DataSnapshot userData = task.Result;
 
+            if (userData.Value == null)
+            {
+                // 첫 접속일 경우 프로필 생성
+                // TODO: UID 할당
+                CharacterData startingChara = DataTableManager.Instance.GetCharacterData(1);
+                ItemData startinCharaItem = DataTableManager.Instance.GetItemData(2001);
+
+                StartUpdateStream()
+                    .SetDBValue(this.Profile.Name, $"새로운 테스터{UnityEngine.Random.Range(1000, 10000)}")
+                    .SetDBValue(this.Profile.Level, 1)
+                    .SetDBValue(startingChara.Level, 5)
+                    .SetDBValue(startingChara.Enhancement, 1)
+                    .SetDBValue(startinCharaItem.Number, 1)
+                    .Submit(result =>
+                    {
+                        if (false == result)
+                        {
+                            Debug.LogError("프로필 생성에 실패함");
+                            return;
+                        }
+
+                        Debug.Log("새로운 계정 생성");
+                        haveCharacterIdxList.Add(1);
+                        onLoadUserDataCompleted?.Invoke();
+                        onLoadUserDataCompleted.RemoveAllListeners();
+                    });
+                return;
+            }
+
             // DB의 데이터를 캐싱
 
             // 프로필 로딩
@@ -166,7 +192,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
 
                     characterData.Level.SetValueWithDataSnapshot(userData);
                     characterData.Enhancement.SetValueWithDataSnapshot(userData);
-                    characterData.EnhanceMileage.SetValueWithDataSnapshot(userData);
+                    characterData.EnhanceMileagePerMill.SetValueWithDataSnapshot(userData);
                 }
 
             }
@@ -536,12 +562,12 @@ public class UserDataInt : UserDataManager.UpdateDbChain.PropertyAdapter<long>
     public UserDataInt(string key, int defaultValue = default) : base(key, defaultValue) { }
 }
 
-public class UserDataFloat : UserDataManager.UpdateDbChain.PropertyAdapter<double>
-{
-    public new float Value => (float)base.Value;
+//public class UserDataFloat : UserDataManager.UpdateDbChain.PropertyAdapter<double>
+//{
+//    public new float Value => (float)base.Value;
 
-    public UserDataFloat(string key, float defaultValue = default) : base(key, defaultValue) { }
-}
+//    public UserDataFloat(string key, float defaultValue = default) : base(key, defaultValue) { }
+//}
 
 public class UserDataString : UserDataManager.UpdateDbChain.PropertyAdapter<string>
 {

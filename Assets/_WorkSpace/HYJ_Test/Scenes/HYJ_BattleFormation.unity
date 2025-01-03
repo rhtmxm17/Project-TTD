@@ -535,8 +535,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f9fda36a8117e741a49201065e120f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SelectM: {fileID: 1706617406}
+  CharacterSelectPanel: {fileID: 0}
   posNum: 0
+  SelectM: {fileID: 1706617406}
   unitIndex: 0
   characterImage: {fileID: 0}
   levelText: {fileID: 0}
@@ -2666,7 +2667,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 1543895942}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 1
   m_Elasticity: 0.1
@@ -3413,19 +3414,7 @@ MonoBehaviour:
   buttonText: "\uC804\uD22C \uC2DC\uC791"
   clickEvent:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1706617406}
-        m_TargetAssemblyTypeName: HYJ_SelectManager, Assembly-CSharp
-        m_MethodName: LoadBattleScene
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   hoverEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -4446,7 +4435,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a12ddbc47b17cd478cb447d1113a22b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttonText: "\uB85C\uADF8\uCC0D\uAE30"
+  buttonText: "(\uC800\uC7A5 \uD14C\uC2A4\uD2B8)"
   clickEvent:
     m_PersistentCalls:
       m_Calls:
@@ -4550,7 +4539,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uB85C\uADF8\uCC0D\uAE30"
+  m_text: "(\uC800\uC7A5 \uD14C\uC2A4\uD2B8)"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 84dd14695854bbc43a5faa24fcf93d0d, type: 2}
   m_sharedMaterial: {fileID: 21261991626553910, guid: 84dd14695854bbc43a5faa24fcf93d0d,
@@ -5166,6 +5155,8 @@ MonoBehaviour:
   curPos: 0
   curUnitIndex: 0
   buttonsTransformList: []
+  enterStageButton: {fileID: 1389332893}
+  cancelButton: {fileID: 1710133317}
   ChImagePrefab: {fileID: 8018720969617175477, guid: 8ae23683b81e5944c84fc6c8143212f2,
     type: 3}
   batchButtonPrefab: {fileID: 5623356892533727784, guid: d5e2d9d71b3b28740a466f68e42d11cf,
@@ -5319,19 +5310,7 @@ MonoBehaviour:
   buttonText: "\uBC30\uCE58\uD234 \uB2EB\uAE30"
   clickEvent:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1706617402}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   hoverEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -6100,15 +6079,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f9fda36a8117e741a49201065e120f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SelectM: {fileID: 1706617406}
+  CharacterSelectPanel: {fileID: 920842153}
   posNum: 0
+  SelectM: {fileID: 1706617406}
   unitIndex: 0
   characterImage: {fileID: 0}
   levelText: {fileID: 0}
   raceText: {fileID: 0}
   classText: {fileID: 0}
   attacktypeText: {fileID: 0}
-  UnitChangeUI: {fileID: 0}
+  UnitChangeUI: {fileID: 285940558}
 --- !u!1 &2016240928
 GameObject:
   m_ObjectHideFlags: 0

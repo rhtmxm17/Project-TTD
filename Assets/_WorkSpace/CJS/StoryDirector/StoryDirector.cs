@@ -165,6 +165,7 @@ public class StoryDirector : BaseUI
         // TODO : 스토리 끝난 이후 할 행동에 대한 구현
         // 기획 의도에 따라 자동으로 다음 스토리로 넘어갈지, 혹은 전투씬에서 스토리를 부를 경우 창을 바로 없앨지 등에 고민
         Debug.Log("스토리 출력 끝");
+        GameManager.Sound.StopBGM();
 
         // 3초 후 창을 닫음
         Destroy(this.gameObject, 3f);

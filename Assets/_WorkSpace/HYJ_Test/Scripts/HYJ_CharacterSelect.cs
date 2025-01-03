@@ -8,13 +8,13 @@ public class HYJ_CharacterSelect : MonoBehaviour
 {
     // 캐릭터 (9종)
     // 캐릭터 데이터 구조 : index(ID)
-    [Header("공용 설정")]
-    [SerializeField] HYJ_SelectManager SelectM;
-
-    [Header("위치 버튼 설정")]
-    GameObject CharacterSelectPanel; // 캐릭터 선택 창 
+    [SerializeField] GameObject CharacterSelectPanel; // 캐릭터 선택 창 
     GameObject CantPosUI; // 선택 불가 팝업 -> 5개 유닛이 이미 다 배치 되었을 때의 팝업
-    [SerializeField] public int posNum; // 위치 번호
+    public int posNum; // 위치 번호
+
+    [Header("공용 설정")]
+    [SerializeField] 
+    HYJ_SelectManager SelectM;
 
     [Header("유닛 버튼 설정")]
     [SerializeField] int unitIndex; // 유닛 번호
@@ -24,6 +24,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
     [SerializeField] TMP_Text classText; // 캐릭터 역할 텍스트(탱커/딜러/힐러)
     [SerializeField] TMP_Text attacktypeText; // 캐릭터 공격 타입 텍스트 (단일/광역)
     [SerializeField] GameObject UnitChangeUI; // 유닛 변경 확인 팝업 -> 변경하시겠습니까?
+
 
     public void InitDataPosBTN(int PosIdx, GameObject CharacterSelectPanel, GameObject CantPosUI)
     {
@@ -45,7 +46,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
         GetComponentInChildren<TextMeshProUGUI>().text = $"{unitIdx.ToString()}번 유닛";
         unitIndex = unitIdx;
         UnitChangeUI = unitChangeUI;
-
+            
         characterImage.GetComponent<Image>().sprite = chData.FaceIconSprite;
         levelText.text = chData.Level.Value.ToString();
         //raceText.text = chData.
@@ -85,39 +86,52 @@ public class HYJ_CharacterSelect : MonoBehaviour
 
     public void SelectUnit()
     {
-        // 유닛을 선택하는 버튼을 누를 때
-        if (CheckUnit(unitIndex))
+        if (CheckPos(SelectM.curPos))
         {
-            // 유닛이 이미 선택되어 있다면
+            // 선택한 위치에 유닛이 배치되어 있었을 경우
             if (CheckUnitPos(unitIndex))
             {
+                // 선택한 위치에 선택된 유닛이 이미 배치되어 있는 경우
                 Debug.Log("이미 이 위치에 해당 유닛이 배치되어 있습니다.");
+                return;
             }
-            else
+            else if (!CheckUnitPos(unitIndex))
             {
-                // TODO : 조건 추가?
+                // 선택한 위치에 선택한 유닛이 다른 위치에 배치되어 있는 경우
                 SelectM.curUnitIndex = unitIndex;
                 UnitChangeUI.SetActive(true);
             }
         }
-
-        else if (!CheckUnit(unitIndex))
+        else
         {
-            // 유닛이 선택이 되어 있지 않다면
-            if (CheckPos(SelectM.curPos)) // 현재 위치가 이미 키 값으로 저장이 되어 있다면
+            // 선택한 위치에 유닛이 배치되어 있지 않은 경우
+            if (CheckUnit(unitIndex))
             {
-                // 키 값을 가지고 있는 값을 제거
-                RemoveBatch(SelectM.curPos);
+                // 선택한 유닛이 다른 위치에 배치된 경우
+                SelectM.curUnitIndex = unitIndex;
+                UnitChangeUI.SetActive(true);
             }
-            AddBatch(SelectM.curPos, unitIndex);
+            else if (!CheckUnit(unitIndex))
+            {
+                // 선택한 유닛이 어느 위치에도 배치되지 않은 경우
+                AddBatch(SelectM.curPos, unitIndex);
+                SelectM.CharacterSelectPanel.SetActive(false);
+            }
         }
     }
 
     public void ChangeUnit()
     {
-        // TODO : 조건 추가?
+        // 유닛변경 확인 버튼
+        if (CheckUnitPos(unitIndex))
+        {
+            // 
+            RemoveBatch(SelectM.curPos);
+        }
         int unitPos = SelectM.battleInfo.FirstOrDefault(x => x.Value == SelectM.curUnitIndex).Key; // 딕셔너리 밸류값(유닛 고유번호)를 갖고 있는 키 값을 찾기
         ChangeBatch(unitPos, SelectM.curPos, SelectM.curUnitIndex);
+        UnitChangeUI.SetActive(false);
+        CharacterSelectPanel.SetActive(false);
     }
 
     public bool CheckUnit(int unitIndex)
@@ -133,8 +147,10 @@ public class HYJ_CharacterSelect : MonoBehaviour
 
     public bool CheckUnitPos(int unitIndex)
     {
-        unitIndex = SelectM.battleInfo.FirstOrDefault(x => x.Value == SelectM.curUnitIndex).Key; // 딕셔너리 밸류값(유닛 고유번호)를 갖고 있는 키 값을 찾기
-        // 이미 해당 위치에 
+        // 딕셔너리 밸류값(유닛 고유번호)를 갖고 있는 키 값을 찾기
+        unitIndex = SelectM.battleInfo.FirstOrDefault(x => x.Value == SelectM.curUnitIndex).Key;
+
+        // 이미 해당 위치에 선택한 유닛이 배치되어 있을 경우
         if (unitIndex == SelectM.curPos)
         {
             return true;
@@ -145,8 +161,9 @@ public class HYJ_CharacterSelect : MonoBehaviour
     public void ReleaseUnit()
     {
         // 배치된 유닛을 해제하기
-        if (CheckPos(SelectM.curPos)) // 선택한 키 값이 이미 등록되어 있을 때
+        if (CheckPos(SelectM.curPos)) 
         {
+            // 선택한 키 값이 이미 등록되어 있을 때
             RemoveBatch(SelectM.curPos);
         }
     }
@@ -155,20 +172,18 @@ public class HYJ_CharacterSelect : MonoBehaviour
     {
         SelectM.battleInfo.Add(key, value);     // 현재 키 / 밸류 딕셔너리에 추가
         SelectM.SetCharacterImage(key, value);  // 스프라이트 생성
-        //Debug.Log(key + "색 추가");
     }
 
     void RemoveBatch(int key)
     {
         SelectM.battleInfo.Remove(key);     // 현재 유닛 고유번호를 갖고 있는 키와 밸류 삭제
         SelectM.RemoveCharacterImage(key); // 스프라이트 제거
-        //Debug.Log(key + "색 제거");
     }
 
     void ChangeBatch(int victimKey, int newKey, int newValue)
     {
         SelectM.battleInfo.Remove(victimKey);   // 현재 유닛 고유번호를 갖고 있는 키와 밸류 삭제
-        SelectM.battleInfo[newKey] = newValue;
+        SelectM.battleInfo[newKey] = newValue;  // 현재 키값의 밸류 값을 추가하기
         SelectM.ChangeImagePos(victimKey, newKey);    // 스프라이트 위치 변경
     }
 }

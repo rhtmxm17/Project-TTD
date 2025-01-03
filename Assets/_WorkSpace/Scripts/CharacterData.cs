@@ -156,13 +156,13 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     /// </summary>
     public UserDataInt Level { get; private set; }
     public UserDataInt Enhancement { get; private set; }
-    public UserDataFloat EnhanceMileage { get; private set; }
+    public UserDataInt EnhanceMileagePerMill { get; private set; } // 0 ~ 1000
 
     private void OnEnable()
     {
         Level = new UserDataInt($"Characters/{id}/Level");
         Enhancement = new UserDataInt($"Characters/{id}/Enhancement");
-        EnhanceMileage = new UserDataFloat($"Characters/{id}/EnhanceMileage");
+        EnhanceMileagePerMill = new UserDataInt($"Characters/{id}/EnhanceMileagePerMill");
     }
     #endregion
 
@@ -385,13 +385,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         else if  (itemNumber == 1)
         {
             // 캐릭터 첫 획득일 경우
-            UserDataManager.Instance.StartUpdateStream()
-                .SetDBValue(this.Level, 1)
-                .SetDBValue(this.Enhancement, 1)
-                .Submit((result) =>
-                {
-                    Debug.Log("캐릭터 획득!");
-                });
+            GameManager.UserData.ApplyCharacter(this.id);
         }
         else
         {

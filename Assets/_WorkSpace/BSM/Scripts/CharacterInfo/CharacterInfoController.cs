@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using DG.DemiLib;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -19,6 +20,8 @@ public class CharacterInfoController : BaseUI
 
     [HideInInspector] public int CurIndex = 0;
 
+    private List<int> _holdingCharactersIndex = new List<int>();
+    
     private GameObject _characterUISet;
     private CharacterSort _characterSort;
     private CharacterFilter _characterFilter;
@@ -85,26 +88,7 @@ public class CharacterInfoController : BaseUI
     private void SetDatabase()
     {
         UserGoldData = GameManager.TableData.GetItemData(1).Number;
-
-        GameManager.UserData.StartUpdateStream()
-            .SetDBValue(UserGoldData, UserGoldData.Value + 10000)
-            .Submit(result =>
-                {
-                    if (false == result)
-                    {
-                        Debug.LogWarning("요청 전송에 실패했습니다");
-                        return;
-                    }
-        
-                    _userGold = UserGoldData.Value;
-                }
-            );
-        
-        /////// 더미 인증 테스트 코드 
-        GameManager.UserData.TryInitDummyUserAsync(38, () =>
-        {
-            // TODO: 유저데이터 불러오기 완료시 처리 
-        });
+        _userGold = UserGoldData.Value;
     }
 
     private void OnEnable() => UpdateCharacterList();
@@ -152,19 +136,34 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void UpdateCharacterList()
     { 
-        _characterInfos = GetComponentsInChildren<CharacterInfo>().ToList();
+        _characterInfos = GetComponentsInChildren<CharacterInfo>(true).ToList();
         
-        //TODO: 임시로 레벨 정보 업데이트, 추후에 로딩과 붙으면 해줄 필요 없음
         for (int i = 0; i < _characterInfos.Count; i++)
         {
             _characterInfos[i].SetCharacterData();
         }
-
+        
         CharacterCount = _characterInfos.Count;
-        _characterSort._sortCharacterInfos = _characterInfos;
+        _characterSort._sortCharacterInfos= _characterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)).ToList();
         _characterSort.CharacterInfoController = this;
-        _characterFilter._filterCharacterInfos = _characterInfos;
+        _characterFilter._filterCharacterInfos = _characterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)).ToList();
         StartListSort();
+        
+        for (int i = 0; i < _characterInfos.Count; i++)
+        {
+            if (!GameManager.UserData.HasCharacter(_characterInfos[i]._CharacterData.Id))
+            {
+                _characterInfos[i].gameObject.SetActive(false);  
+            }
+            else
+            {
+                _characterInfos[i].gameObject.SetActive(true);
+            }
+        }
+
+        _holdingCharactersIndex = _characterInfos.Where(x => GameManager.UserData.HasCharacter(x._CharacterData.Id))
+            .Select(x => _characterInfos.IndexOf(x)).ToList();
+
     }
 
     /// <summary>
@@ -182,18 +181,21 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void PreviousCharacter()
     {
-        //TODO: 상세 팝업창 좌,우 버튼 노출 조건 추가 필요할 것으로 예상중
-        //조건 추가가 필요하다면 _characterInfos 카운트 2 미만이면 노출x
-
-        if (CurIndex == 0)
+        while (true)
         {
-            CurIndex = _characterInfos.Count - 1;
-        }
-        else
-        {
-            CurIndex--;
-        }
+            if (CurIndex == 0)
+            {
+                CurIndex = _characterInfos.Count - 1;
+            }
+            else
+            {
+                CurIndex--;
+            }
 
+            if (_holdingCharactersIndex.Contains(CurIndex)) break;
+            
+        }
+         
         CurCharacterInfo = _characterInfos[CurIndex];
         CurCharacterInfo.UpdateInfo();
     }
@@ -203,15 +205,20 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void NextCharacter()
     {
-        if (CurIndex == _characterInfos.Count - 1)
+        while (true)
         {
-            CurIndex = 0;
+            if (CurIndex == _characterInfos.Count - 1)
+            {
+                CurIndex = 0;
+            }
+            else
+            {
+                CurIndex++;
+            }
+            
+            if (_holdingCharactersIndex.Contains(CurIndex)) break;
         }
-        else
-        {
-            CurIndex++;
-        }
-
+         
         CurCharacterInfo = _characterInfos[CurIndex];
         CurCharacterInfo.UpdateInfo();
     }

@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -27,10 +29,13 @@ public class ShopItem : BaseUI
 
     [SerializeField] private TMP_Text buyButtonText;
 
+    // 구매확인창 (구매버튼 누르면 팝업)
+    [SerializeField] PurchasingPanel purchasingPanel;
+    
     private void Start()
     {
         Init();
-
+        SubscribeEvents();
     }
     private void Init()
     {
@@ -48,8 +53,9 @@ public class ShopItem : BaseUI
     {
         shopItemData = data;
         itemNameText.text = data.ShopItemName;
-
         ShopItemImage.sprite = data.Sprite;
+        int remain = shopItemData.LimitedCount - shopItemData.Bought.Value;
+        itemCountText.text = $"구매 가능 횟수 {remain}/{shopItemData.LimitedCount}";
 
         // 가격 표시
         if (null == data.Price.item)
@@ -87,18 +93,41 @@ public class ShopItem : BaseUI
             buyButton.onClick.RemoveListener(Buy); //구매버튼 비활성화
             ShopItemImage.color = new Color(.3f, .3f, .3f, 1f); // 어둡게 
         }
+        Debug.Log("아이템정보를 갱신합니다!!!!!!!!!!");
+       
     }
 
     private void Buy()
     {
+
+        // TODO: 구매확인창 UI && 기능
+        // 구매갯수 > 1 || 무제한 => 구매확인창열기 
+        int remain = shopItemData.LimitedCount - shopItemData.Bought.Value;
+        if (remain > 0)
+        {
+            Debug.Log("구매확인창 열기");
+            OpenPurchasingPanel(); // 확인 팝업띄우는
+            return;
+        }
+
+        ItemData itemGive = shopItemData.Price.item;
+        if (null != itemGive && shopItemData.Price.item.Number.Value < shopItemData.Price.gain)
+        {
+            Debug.LogWarning("비용 부족");
+            // TODO: 팝업UI
+            return;
+        }
+
         var dbUpdateStream = GameManager.UserData.StartUpdateStream() // DB에 갱신 요청 시작
             .AddDBValue(shopItemData.Bought, 1);  // 요청에 '구매 횟수 증가' 등록
 
-        ItemData itemGive = shopItemData.Price.item;
+
         if (null != itemGive) // 무료가 아니라면
         {
             Debug.Log($"소지 개수:{itemGive.Number.Value}/비용:{shopItemData.Price.gain}");
             dbUpdateStream.AddDBValue(itemGive.Number, -shopItemData.Price.gain); // 요청에 '비용 지불' 등록
+            // TODO: 구매 가능/불가 판별 => 불가능 팝업
+            // (소지금 < 가격 => 구매불가(팝업띄우기))
         }
         
         foreach (ItemGain product in shopItemData.Products)
@@ -130,4 +159,24 @@ public class ShopItem : BaseUI
         popupInstance.Title.text = "구매 성공!";
     }
 
+    public void SoldOut()
+    {
+        
+        buyButtonText.text = "매!\t진!";
+        buyButton.onClick.RemoveListener(Buy); //구매버튼 비활성화
+        ShopItemImage.color = new Color(.3f, .3f, .3f, 1f); // 어둡게 
+        
+    }
+
+    public void SubscribeEvents()
+    {
+        // shopItemData.Bought.onValueChanged += UpdateInfo;
+        PurchasingPanel.OnAmountChanged += UpdateInfo;        
+    }
+    // 구매확인창 열기
+    private void OpenPurchasingPanel()
+    {
+        PurchasingPanel popupInstance = Instantiate(purchasingPanel, GameManager.PopupCanvas);
+        popupInstance.SetItem(shopItemData);
+    }
 }
