@@ -146,7 +146,7 @@ public class CharacterInfoController : BaseUI
         CharacterCount = _characterInfos.Count;
         _characterSort._sortCharacterInfos= _characterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)).ToList();
         _characterSort.CharacterInfoController = this;
-        _characterFilter._filterCharacterInfos = _characterInfos;
+        _characterFilter._filterCharacterInfos = _characterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)).ToList();
         StartListSort();
         
         for (int i = 0; i < _characterInfos.Count; i++)

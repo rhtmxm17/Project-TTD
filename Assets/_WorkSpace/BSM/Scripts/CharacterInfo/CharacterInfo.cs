@@ -99,7 +99,11 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
    
     private void Start()
     {
-        ButtonOnClickEvent();
+        ButtonOnClickEvent(); 
+         
+        SetListNameText(_characterData.Name);
+        SetListTypeText(((ElementType)_characterData.StatusTable.type).ToString());
+        SetListImage(_characterData.FaceIconSprite);
     }
      
     public void OnPointerClick(PointerEventData eventData)
