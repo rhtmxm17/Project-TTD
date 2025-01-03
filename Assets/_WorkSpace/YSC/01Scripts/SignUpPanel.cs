@@ -7,11 +7,13 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-public class SignUpPanel : UI_Manager
+public class SignUpPanel : LoginPanel
 {
-    [SerializeField] TMP_InputField _signUpIDInputField;    
-    [SerializeField] TMP_InputField _signUpPWInputField;
-    [SerializeField] TMP_InputField _pWConfirmInputField;
+    // 인풋필드
+    [Header("입력란")]
+    [SerializeField] TMP_InputField _signUpIDInputField;    // [InputField] 아이디 입력란
+    [SerializeField] TMP_InputField _signUpPWInputField;    // [InputField] 비밀번호 입력란
+    [SerializeField] TMP_InputField _pWConfirmInputField;   // [InputField] 비밀번호 확인 입력란
 
 
    //  AuthError error = AuthError.EmailAlreadyInUse;
@@ -27,17 +29,19 @@ public class SignUpPanel : UI_Manager
     }
     private void Init()
     {
-        _signUpIDInputField = GetUI<TMP_InputField>("SignUpIDInputField");
-        _signUpPWInputField = GetUI<TMP_InputField>("SignUpPWInputField");
-        GetUI<Button>("SignUpConfirmButton").onClick.AddListener(SignUp);
-        _pWConfirmInputField = GetUI<TMP_InputField>("PwConfirmInputField");
+        // UI_Binding
+        _signUpIDInputField = GetUI<TMP_InputField>("SignUpIDInputField");      // 아이디   입력란
+        _signUpPWInputField = GetUI<TMP_InputField>("SignUpPWInputField");      // 비밀번호 입력란
+        _pWConfirmInputField = GetUI<TMP_InputField>("PwConfirmInputField");    // 비번확인 입력란
+        GetUI<Button>("SignUpConfirmButton").onClick.AddListener(SignUp);       // 회원가입 버튼.(가입기능)
+        GetUI<Button>("CloseButton").onClick.AddListener(()=>gameObject.SetActive(false));       // 나가기
         
     }
 
     public void SignUp()
     {
         Debug.Log("SignUpButton 테스트 로그 : 회원가입버튼 눌림");
-
+        // 변수할당
         string _email = _signUpIDInputField.text;
         string _password = _signUpPWInputField.text;
         string _confirmPW = _pWConfirmInputField.text;
@@ -79,10 +83,11 @@ public class SignUpPanel : UI_Manager
             // 계정생성.
             Firebase.Auth.AuthResult result = task.Result;
             Debug.Log($"Firebase user created successfully: {result.User.DisplayName} ({result.User.UserId})");
+            // TODO: 이메일인증 추가 해서 이메일 인증 되야지 되도록? 기획안 보고 그대로 적용하기.
            // _checkPopupMsg.text = $"회원가입을 축하드립니다! \n{result.User.UserId}로 인증메일을 확인해주세요.";
            // gameObject.SetActive(false);
         });
-        SaveUserData();
+        // SaveUserData();
 
     }
     
