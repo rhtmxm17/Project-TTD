@@ -280,7 +280,7 @@ public class StageManager : MonoBehaviour
         StartCoroutine(FirstWaveSetCO());
     }
 
-    IEnumerator FirstWaveSetCO()
+    protected virtual IEnumerator FirstWaveSetCO()
     {
         scroller.StartScroll();
         yield return new WaitForSeconds(3f);//순수이동시간
