@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -12,16 +13,12 @@ public class CharacterFilter : MonoBehaviour
 
     public List<int> _elementInfosIndex = new List<int>();
     public List<ElementType> _elementFilterTypes = new List<ElementType>();
-
-    [HideInInspector] public List<int> _roleInfosIndex = new List<int>();
     public List<RoleType> _roleFiterTypes = new List<RoleType>();
-
-    [HideInInspector] public List<int> _dragonVeinInfosIndex = new List<int>();
     public List<DragonVeinType> _dragonVeinFilterTypes = new List<DragonVeinType>();
 
     [HideInInspector] public List<Image> _buttonColors = new List<Image>();
 
-    public List<Enum> _filterTypes = new List<Enum>();
+    private List<Enum> _filterTypes = new List<Enum>();
 
 
     private CharacterFilterUI _characterFilterUI;
@@ -30,6 +27,8 @@ public class CharacterFilter : MonoBehaviour
     {
         _characterFilterUI = GetComponent<CharacterFilterUI>();
     }
+
+    private void OnEnable() => FilterReset();
 
     private void Start()
     {
@@ -118,106 +117,152 @@ public class CharacterFilter : MonoBehaviour
         //1 0 1
         //0 1 1
         //1 1 1 
-
+        // Debug.Log($"속성 :{_elementCount}");
+        // Debug.Log($"역할 :{_roleCount}");
+        // Debug.Log($"용맥 :{_dragonVeinCount}");
+        //
         //이미 필터링이 걸려있는 상태
-        if (_elementInfosIndex.Count != 0)
+        if (_elementInfosIndex.Count > 0)
         {
+            if (_elementCount > 0 && _roleCount == 0 && _dragonVeinCount == 0)
+            {
+                for (int i = 0; i < _elementInfosIndex.Count; i++)
+                { 
+                    if (_elementFilterTypes.Contains((ElementType)_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.type))
+                    {
+                        _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(true);
+                    } 
+                } 
+            }
+
+            if (_elementCount == 0 && _roleCount > 0 && _dragonVeinCount == 0)
+            {
+                for (int i = 0; i < _elementInfosIndex.Count; i++)
+                {
+                    if (_roleFiterTypes.Contains((RoleType)_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.roleType))
+                    {
+                        _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(true);
+                    }
+                } 
+            }
+
+            if (_elementCount == 0 && _roleCount == 0 && _dragonVeinCount > 0)
+            {
+                for (int i = 0; i < _elementInfosIndex.Count; i++)
+                {
+                    if (_dragonVeinFilterTypes.Contains((DragonVeinType)_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.dragonVeinType))
+                    {
+                        _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(true);
+                    }
+                } 
+            }
+            
+            
             //추가 필터링 적용 
             if (_elementCount > 0 && _roleCount > 0 && _dragonVeinCount == 0)
             {
-                for (int infos = 0; infos < _filterCharacterInfos.Count; infos++)
+                for (int i = 0; i < _elementInfosIndex.Count; i++)
                 {
-                    if (_elementFilterTypes.Contains((ElementType)_filterCharacterInfos[infos]._CharacterData .StatusTable.type)
-                        && _roleFiterTypes.Contains((RoleType)_filterCharacterInfos[infos]._CharacterData.StatusTable .roleType))
+                    if (_elementFilterTypes.Contains((ElementType)_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.type)
+                        && _roleFiterTypes.Contains((RoleType)_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable .roleType))
                     {
-                        _filterCharacterInfos[infos].gameObject.SetActive(true);
-                        _elementInfosIndex.RemoveAt(infos);
-                    }
-                    else
-                    {
-                        _filterCharacterInfos[infos].gameObject.SetActive(false);
-                        _elementInfosIndex.Add(infos);
+                        _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(true);
                     }
                 }
+
+                for (int i = 0; i < _filterCharacterInfos.Count; i++)
+                { 
+                    if (_filterCharacterInfos[i].gameObject.activeSelf)
+                    {
+                        if (!_elementFilterTypes.Contains((ElementType)_filterCharacterInfos[i]._CharacterData.StatusTable.type)
+                             || !_roleFiterTypes.Contains((RoleType)_filterCharacterInfos[i]._CharacterData.StatusTable.roleType))
+                        {
+                            _filterCharacterInfos[i].gameObject.SetActive(false);
+                            _elementInfosIndex.Add(i);
+                        }
+                    } 
+                }
+                
             }
             else if (_elementCount > 0 && _roleCount == 0 && _dragonVeinCount > 0)
             {
-                for (int i = 0; i < _filterCharacterInfos.Count; i++)
+                for (int i = 0; i < _elementInfosIndex.Count; i++)
                 {
-                    if (_elementFilterTypes.Contains((ElementType)_filterCharacterInfos[i]._CharacterData.StatusTable .type)
-                        && _dragonVeinFilterTypes.Contains((DragonVeinType)_filterCharacterInfos[i]._CharacterData.StatusTable.dragonVeinType))
+                    if (_elementFilterTypes.Contains((ElementType)_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.type)
+                        && _dragonVeinFilterTypes.Contains((DragonVeinType)_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.dragonVeinType))
                     {
-                        _filterCharacterInfos[i].gameObject.SetActive(true);
-                        _elementInfosIndex.RemoveAt(i);
-                    }
-                    else
-                    {
-                        _filterCharacterInfos[i].gameObject.SetActive(false);
-                        _elementInfosIndex.Add(i);
-                    }
+                        _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(true);
+                    } 
                 }
+                
+                for (int i = 0; i < _filterCharacterInfos.Count; i++)
+                { 
+                    if (_filterCharacterInfos[i].gameObject.activeSelf)
+                    {
+                        if (!_elementFilterTypes.Contains((ElementType)_filterCharacterInfos[i]._CharacterData.StatusTable.type)
+                            || !_dragonVeinFilterTypes.Contains((DragonVeinType)_filterCharacterInfos[i]._CharacterData.StatusTable.dragonVeinType))
+                        {
+                            _filterCharacterInfos[i].gameObject.SetActive(false);
+                            _elementInfosIndex.Add(i);
+                        }
+                    } 
+                }
+                
             }
             else if (_elementCount == 0 && _roleCount > 0 && _dragonVeinCount > 0)
             {
-                for (int i = 0; i < _filterCharacterInfos.Count; i++)
+                for (int i = 0; i < _elementInfosIndex.Count; i++)
                 {
-                    if (_roleFiterTypes.Contains((RoleType)_filterCharacterInfos[i]._CharacterData.StatusTable.roleType)
-                        && _dragonVeinFilterTypes.Contains((DragonVeinType)_filterCharacterInfos[i]._CharacterData.StatusTable.dragonVeinType))
+                    if (_roleFiterTypes.Contains((RoleType)_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.roleType)
+                        && _dragonVeinFilterTypes.Contains((DragonVeinType)_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.dragonVeinType))
                     {
-                        _filterCharacterInfos[i].gameObject.SetActive(true);
-                        _elementInfosIndex.RemoveAt(i);
-                    }
-                    else
-                    {
-                        _filterCharacterInfos[i].gameObject.SetActive(false);
-                        _elementInfosIndex.Add(i);
+                        _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(true);
                     }
                 }
+                
+                for (int i = 0; i < _filterCharacterInfos.Count; i++)
+                { 
+                    if (_filterCharacterInfos[i].gameObject.activeSelf)
+                    {
+                        if (!_roleFiterTypes.Contains((RoleType)_filterCharacterInfos[i]._CharacterData.StatusTable.roleType)
+                            || !_dragonVeinFilterTypes.Contains((DragonVeinType)_filterCharacterInfos[i]._CharacterData.StatusTable.dragonVeinType))
+                        {
+                            _filterCharacterInfos[i].gameObject.SetActive(false);
+                            _elementInfosIndex.Add(i);
+                        }
+                    } 
+                } 
             }
             else if (_elementCount > 0 && _roleCount > 0 && _dragonVeinCount > 0)
             {
-                for (int i = 0; i < _filterCharacterInfos.Count; i++)
+                for (int i = 0; i < _elementInfosIndex.Count; i++)
                 {
-                    if (_elementFilterTypes.Contains((ElementType)_filterCharacterInfos[i]._CharacterData.StatusTable.type)
-                        && _roleFiterTypes.Contains((RoleType)_filterCharacterInfos[i]._CharacterData.StatusTable.roleType)
-                        && _dragonVeinFilterTypes.Contains((DragonVeinType)_filterCharacterInfos[i]._CharacterData.StatusTable.dragonVeinType))
+                    if (_elementFilterTypes.Contains((ElementType)_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.type)
+                        && _roleFiterTypes.Contains((RoleType)_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.roleType)
+                        && _dragonVeinFilterTypes.Contains((DragonVeinType)_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.dragonVeinType))
                     {
-                        _filterCharacterInfos[i].gameObject.SetActive(true);
-                        _elementInfosIndex.RemoveAt(i);
-                    }
-                    else
+                        _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(true);
+                    } 
+                }
+                
+                for (int i = 0; i < _filterCharacterInfos.Count; i++)
+                { 
+                    if (_filterCharacterInfos[i].gameObject.activeSelf)
                     {
-                        _filterCharacterInfos[i].gameObject.SetActive(false);
-                        _elementInfosIndex.Add(i);
-                    }
+                        if (!_elementFilterTypes.Contains((ElementType)_filterCharacterInfos[i]._CharacterData.StatusTable.type)
+                            || !_roleFiterTypes.Contains((RoleType)_filterCharacterInfos[i]._CharacterData.StatusTable.roleType)
+                            || !_dragonVeinFilterTypes.Contains((DragonVeinType)_filterCharacterInfos[i]._CharacterData.StatusTable.dragonVeinType))
+                        {
+                            _filterCharacterInfos[i].gameObject.SetActive(false);
+                            _elementInfosIndex.Add(i);
+                        }
+                    } 
                 }
             }
-
-
-            //-------------------- Filter OR 구조
-            // for (int i = 0; i < _elementInfosIndex.Count; i++)
-            // {
-            //     compareType = type switch
-            //     {
-            //         ElementType => (int)_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.type,
-            //         RoleType => (int)_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.roleType,
-            //         DragonVeinType => (int)_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.dragonVeinType,
-            //         _ => throw new AggregateException("잘못된 타입이 들어왔어용~")
-            //     };
-            //
-            //     if (compareType == Convert.ToInt32(type))
-            //     {
-            //         _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(true);
-            //         _elementInfosIndex.RemoveAt(i);
-            //         i--;
-            //     }
-            // }
         }
         //처음 필터링 거는 상태
         else
         {
-            Debug.Log(_elementInfosIndex.Count);
-
             if (type is ElementType elementType)
             {
                 int elementValue = Convert.ToInt32(elementType);
@@ -269,7 +314,7 @@ public class CharacterFilter : MonoBehaviour
                
                 for (int i = 0; i < tempArr.Length; i++)
                 {
-                    if (!_roleFiterTypes.Contains((RoleType)_filterCharacterInfos[tempArr[i]]._CharacterData.StatusTable.roleType) && !_dragonVeinFilterTypes.Contains((DragonVeinType)_filterCharacterInfos[tempArr[i]]._CharacterData.StatusTable.dragonVeinType))
+                    if (_elementFilterTypes.Count > 0)
                     {
                         _filterCharacterInfos[tempArr[i]].gameObject.SetActive(false);
                         _elementInfosIndex.Add(tempArr[i]);
@@ -278,14 +323,16 @@ public class CharacterFilter : MonoBehaviour
 
                 for (int j = 0; j < _elementInfosIndex.Count; j++)
                 {
-                    
-                    //속성 카운트가 한개였을 때? 
-                    if (_roleFiterTypes.Contains((RoleType)_filterCharacterInfos[_elementInfosIndex[j]]._CharacterData.StatusTable.roleType)
-                        || _dragonVeinFilterTypes.Contains((DragonVeinType)_filterCharacterInfos[_elementInfosIndex[j]]._CharacterData.StatusTable.dragonVeinType))
+                    if (_elementFilterTypes.Count == 0)
                     {
-                        _filterCharacterInfos[_elementInfosIndex[j]].gameObject.SetActive(true);
-                        _elementInfosIndex.RemoveAt(_elementInfosIndex[j]);
-                    }
+                        if (_roleFiterTypes.Contains((RoleType)_filterCharacterInfos[_elementInfosIndex[j]]._CharacterData.StatusTable.roleType)
+                            || _dragonVeinFilterTypes.Contains((DragonVeinType)_filterCharacterInfos[_elementInfosIndex[j]]._CharacterData.StatusTable.dragonVeinType))
+                        {  
+                            _filterCharacterInfos[_elementInfosIndex[j]].gameObject.SetActive(true);
+                            _elementInfosIndex.RemoveAt(j);
+                            j--; 
+                        }
+                    } 
                 }
 
             }
@@ -299,23 +346,26 @@ public class CharacterFilter : MonoBehaviour
 
                 for (int i = 0; i < tempArr.Length; i++)
                 {
-                    if(!_elementFilterTypes.Contains((ElementType)_filterCharacterInfos[tempArr[i]]._CharacterData.StatusTable.type) && !_dragonVeinFilterTypes.Contains((DragonVeinType)_filterCharacterInfos[tempArr[i]]._CharacterData.StatusTable.dragonVeinType))
+                    if (_roleFiterTypes.Count > 0)
                     {
-                        _filterCharacterInfos[tempArr[i]].gameObject.SetActive(false);    
+                        _filterCharacterInfos[tempArr[i]].gameObject.SetActive(false);
                         _elementInfosIndex.Add(tempArr[i]);
                     }
                 }
 
                 for(int j = 0; j < _elementInfosIndex.Count; j++)
                 {
-                    if (_elementFilterTypes.Contains((ElementType)_filterCharacterInfos[_elementInfosIndex[j]]._CharacterData.StatusTable.type) 
-                        || _dragonVeinFilterTypes.Contains((DragonVeinType)_filterCharacterInfos[_elementInfosIndex[j]]._CharacterData.StatusTable.dragonVeinType))
+                    if (_roleFiterTypes.Count == 0)
                     {
-                        _filterCharacterInfos[_elementInfosIndex[j]].gameObject.SetActive(true);
-                        _elementInfosIndex.RemoveAt(_elementInfosIndex[j]);
-                    }
-                }
-
+                        if (_elementFilterTypes.Contains((ElementType)_filterCharacterInfos[_elementInfosIndex[j]]._CharacterData.StatusTable.type) 
+                            || _dragonVeinFilterTypes.Contains((DragonVeinType)_filterCharacterInfos[_elementInfosIndex[j]]._CharacterData.StatusTable.dragonVeinType))
+                        {
+                            _filterCharacterInfos[_elementInfosIndex[j]].gameObject.SetActive(true);
+                            _elementInfosIndex.RemoveAt(j);
+                            j--;
+                        }
+                    } 
+                } 
             }
             else if (type is DragonVeinType dragonVeinType)
             {
@@ -327,26 +377,25 @@ public class CharacterFilter : MonoBehaviour
                 
                 for (int i = 0; i < tempArr.Length; i++)
                 {
-                    if (!_elementFilterTypes.Contains((ElementType)_filterCharacterInfos[tempArr[i]]._CharacterData
-                            .StatusTable.type)
-                        && !_roleFiterTypes.Contains((RoleType)_filterCharacterInfos[tempArr[i]]._CharacterData
-                            .StatusTable.roleType))
+                    if (_dragonVeinFilterTypes.Count > 0)
                     {
                         _filterCharacterInfos[tempArr[i]].gameObject.SetActive(false);
-                        _elementInfosIndex.Add(tempArr[i]);
+                        _elementInfosIndex.Add(tempArr[i]); 
                     }
                 }
 
                 for (int j = 0; j < _elementInfosIndex.Count; j++)
                 {
-                    if (_elementFilterTypes.Contains((ElementType)_filterCharacterInfos[_elementInfosIndex[j]]
-                            ._CharacterData.StatusTable.type)
-                        || _roleFiterTypes.Contains((RoleType)_filterCharacterInfos[_elementInfosIndex[j]]
-                            ._CharacterData.StatusTable.roleType))
+                    if (_dragonVeinFilterTypes.Count == 0)
                     {
-                        _filterCharacterInfos[_elementInfosIndex[j]].gameObject.SetActive(true);
-                        _elementInfosIndex.RemoveAt(_elementInfosIndex[j]);
-                    }
+                        if (_elementFilterTypes.Contains((ElementType)_filterCharacterInfos[_elementInfosIndex[j]]._CharacterData.StatusTable.type)
+                            || _roleFiterTypes.Contains((RoleType)_filterCharacterInfos[_elementInfosIndex[j]]._CharacterData.StatusTable.roleType))
+                        {
+                            _filterCharacterInfos[_elementInfosIndex[j]].gameObject.SetActive(true);
+                            _elementInfosIndex.RemoveAt(j);
+                            j--;
+                        }
+                    } 
                 } 
             } 
         }
@@ -357,54 +406,14 @@ public class CharacterFilter : MonoBehaviour
             {
                 _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(true);
             }
-
+            
             _elementInfosIndex.Clear();
+            _elementFilterTypes.Clear();
+            _roleFiterTypes.Clear();
+            _dragonVeinFilterTypes.Clear();
         }
     }
-
-
-    //필터 걸었을 때 전부 Active False 시키고, 그 중 현재 걸려있는 필터들의 속성에 해당하는 애들은 다시 Active True?
-
-    //IF elementFilter.Count > 0 || roleFilter.Count > 0 || dragonVeinFilter.Count > 0
-    // 현재 Active False 인 애들 중 새로 등록된 필터의 속성과 같은 애들을 확인
-    // 같은 애들이 발견되면 그 애들은 해당 필터의 리스트에 등록
-
-
-    // 걸어둔 필터가 2개인데 2개다 같은 애들이 있다? 이 경우에는 하나가 꺼져도 상관없기 때문에 Pass
-
-    /// <summary>
-    /// 캐릭터 필터 해제
-    /// </summary>
-    /// <param name="elementType"></param>
-    // private void CharacterListFilterClear(ElementType elementType)
-    // {
-    //     _elementFilterTypes.Remove(elementType);
-    //
-    //     //필터 제거했을 때 마지막이 아닌 상태
-    //     if (_elementFilterTypes.Count > 0)
-    //     {
-    //         //필터가 1개 남아있는 상태이므로 그 타입을 제외한 해제한 타입은 필터링 진행
-    //         int[] tempArr = _filterCharacterInfos.Where(x => (int)x._CharacterData.StatusTable.type == (int)elementType)
-    //             .Select(x => _filterCharacterInfos.IndexOf(x)).ToArray();
-    //
-    //         for (int i = 0; i < tempArr.Length; i++)
-    //         {
-    //             _filterCharacterInfos[tempArr[i]].gameObject.SetActive(false);
-    //             _elementInfosIndex.Add(tempArr[i]);
-    //         }
-    //     }
-    //     else
-    //     {
-    //         //모든 필터링이 해제되는 상황이므로 필터링된 애들 모두 활성화
-    //         for (int i = 0; i < _elementInfosIndex.Count; i++)
-    //         {
-    //             _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(true);
-    //         }
-    //
-    //         _elementInfosIndex.Clear();
-    //     }
-    // }
-
+    
     /// <summary>
     /// 현재 필터링되어 있는 상태 해제
     /// </summary>
@@ -422,5 +431,31 @@ public class CharacterFilter : MonoBehaviour
         _buttonColors.Clear();
         _filterTypes.Clear();
         _elementInfosIndex.Clear();
+        _elementFilterTypes.Clear();
+        _roleFiterTypes.Clear();
+        _dragonVeinFilterTypes.Clear();
     }
+    
+    
+    /// <summary>
+    /// 캐릭터 탭 진입 시 필터 초기화
+    /// </summary>
+    private void FilterReset()
+    {
+        if (_buttonColors.Count == 0) return; 
+        _buttonColors.ForEach(x => x.color = Color.white);
+
+        for (int i = 0; i < _filterCharacterInfos.Count; i++)
+        {
+            _filterCharacterInfos[i].gameObject.SetActive(true);
+        }
+        
+        _buttonColors.Clear();
+        _filterTypes.Clear();
+        _elementInfosIndex.Clear();
+        _elementFilterTypes.Clear();
+        _roleFiterTypes.Clear();
+        _dragonVeinFilterTypes.Clear();
+    }
+    
 }

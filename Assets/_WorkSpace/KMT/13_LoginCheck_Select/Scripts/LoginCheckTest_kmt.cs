@@ -10,6 +10,14 @@ public class LoginCheckTest_kmt : MonoBehaviour
     [SerializeField]
     Button[] buttons;
 
+    private void Awake()
+    {
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            int dummyIdx = i + 1000;
+            buttons[i].onClick.AddListener(() => OnClick(dummyIdx));
+        }
+    }
 
     public void OnClick(int dummyIdx)
     {

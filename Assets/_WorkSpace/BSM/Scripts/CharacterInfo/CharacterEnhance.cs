@@ -28,7 +28,10 @@ public class CharacterEnhance : MonoBehaviour
     private int _afterAtk;
     private int _afterDef;
 
-    private float _mileage;
+    /// <summary>
+    /// 0.0f ~ 1.0f 범위 마일리지
+    /// </summary>
+    private float _mileage => Mathf.Clamp(_characterData.EnhanceMileagePerMill.Value * 0.001f, 0f, 1f);
     
     public UnityAction OnBeforeEnhance;
     public UnityAction OnAfterEnhance;
@@ -149,7 +152,7 @@ public class CharacterEnhance : MonoBehaviour
             return;
         }
 
-        MileageUpdate(0f); 
+        MileageUpdate(0); 
         ResultPopup("강화 성공해서 마일리지 초기화 할게요~.~");
         CharacterStats();
         UpdateInfo();
@@ -163,26 +166,25 @@ public class CharacterEnhance : MonoBehaviour
         ResultPopup("강화 실패했습니당~ \n 마일리지 추가!");
         
         //TODO: 마일리지 누적 값 수정 필요
-        MileageUpdate(_characterData.EnhanceMileage.Value + 0.1f);
+        MileageUpdate(_characterData.EnhanceMileagePerMill.Value + 100);
     }
     
     /// <summary>
     /// 강화 결과에 따라 마일리지 업데이트
     /// </summary>
-    /// <param name="value">마일리지 값</param>
-    private void MileageUpdate(float value)
+    /// <param name="perMill">마일리지 값 퍼밀(1/1000)</param>
+    private void MileageUpdate(int perMill)
     {
         GameManager.UserData.StartUpdateStream() 
-            .SetDBValue(_characterData.EnhanceMileage, value)
+            .SetDBValue(_characterData.EnhanceMileagePerMill, perMill)
             .Submit(result =>
             {
                 if (!result)
                 {
                     ResultPopup("마일리지 업뎃 실패");
                     return;
-                } 
-                _characterInfoController._infoUI._mileageSlider.value = _characterData.EnhanceMileage.Value;
-                _mileage = _characterData.EnhanceMileage.Value;
+                }
+                _characterInfoController._infoUI._mileageSlider.value = _mileage;
             });
     }
     
@@ -202,9 +204,7 @@ public class CharacterEnhance : MonoBehaviour
     /// <param name="value"></param>
     private void MileageValueChange(float value)
     {
-        _characterInfoController._infoUI._mileageValueText.text = $"강화 마일리지 {value*100}%";
-        _mileage += value;
-        _mileage = Mathf.Clamp(_mileage, 0f, 1f);
+        _characterInfoController._infoUI._mileageValueText.text = $"강화 마일리지 {value * 100f}%";
     }
 
     /// <summary>
@@ -269,8 +269,7 @@ public class CharacterEnhance : MonoBehaviour
         _beforeAtk = _characterInfoController.CurCharacterInfo.Atk;
         _beforeHp = _characterInfoController.CurCharacterInfo.Hp;
         _beforeDef = _characterInfoController.CurCharacterInfo.Def;
-        _characterInfoController._infoUI._mileageSlider.value = _characterData.EnhanceMileage.Value;
-        _mileage = _characterData.EnhanceMileage.Value;
+        _characterInfoController._infoUI._mileageSlider.value = _mileage;
          
         EnhanceCheck();
     }

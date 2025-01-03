@@ -20,7 +20,7 @@ public class IdleReward : MonoBehaviour
     // 마지막 보상시간:DB
     private UserDataDateTime lastRewardTime;
     // 최대 보상 시간
-    private TimeSpan maxTimer;
+    //[SerializeField] TimeSpan maxTimer;
     // 지난시간
     private TimeSpan spanTime;
     
@@ -28,15 +28,11 @@ public class IdleReward : MonoBehaviour
 
     private void Start()
     {
-        GameManager.UserData.TryInitDummyUserAsync(28, () =>
-        {
-            Debug.Log("완료");
-            StartIdleReward();
-        });
-        
         // 최대 보상 수령 시간 지정
-        maxTimer = new TimeSpan(rewardHour, rewardMinute, rewardSecond);
+        // maxTimer = new TimeSpan(rewardHour, rewardMinute, rewardSecond);
     }
+
+    private void OnEnable() => StartIdleReward();
 
     private void StartIdleReward()
     {
@@ -44,13 +40,23 @@ public class IdleReward : MonoBehaviour
         timerCoroutine = StartCoroutine(TimerTextCo());
         lastRewardTime.onValueChanged += lastRewardTime_onValueChanged;
     }
-    
+
+    private void OnDisable()
+    {
+        timerCoroutine = null;
+        lastRewardTime.onValueChanged -= lastRewardTime_onValueChanged;
+    }
+
     // 테스트용
     public void TestReward()
     {
-        StopCoroutine(timerCoroutine);
+        if (timerCoroutine != null)
+        {
+            StopCoroutine(timerCoroutine);
+            timerCoroutine = null;
+        }
         lastRewardTime.onValueChanged -= lastRewardTime_onValueChanged;
-        spanTime = maxTimer;
+        spanTime = new TimeSpan(rewardHour, rewardMinute, rewardSecond);
         timeText.text = "테스트 가동중!! 즉시 수령 가능!!";
         isIdleReward = true;
     }
@@ -59,9 +65,12 @@ public class IdleReward : MonoBehaviour
     public void GetReward()
     {
         // 보상을 언제든 받을 수 있기에 받을때 한번 코루틴 초기화?
-        // timerCoroutine = null;
-        StopCoroutine(timerCoroutine);
-        
+        if (timerCoroutine != null)
+        {
+            StopCoroutine(timerCoroutine);
+            timerCoroutine = null;
+        }
+
         // TODO: 시간*100골로 임시 계산
         UserDataInt gold = GameManager.TableData.GetItemData(1).Number;
 
@@ -100,6 +109,7 @@ public class IdleReward : MonoBehaviour
     IEnumerator TimerTextCo()
     {
         WaitForSeconds wait1Sec = new WaitForSeconds(1f);
+        TimeSpan maxTimer = new TimeSpan(rewardHour, rewardMinute, rewardSecond);
         while (true)
         {
             // 시간 타이머 관련 및 여기서 코루틴 정지 및 시간 정리 해야함
