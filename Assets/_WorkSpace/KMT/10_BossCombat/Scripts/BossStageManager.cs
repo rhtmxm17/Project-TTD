@@ -31,6 +31,11 @@ public class BossStageManager : StageManager, IDamageAddable
         scoreText.text = "0";
         score = 0;
         isTimeOver = false;
+    }
+
+    protected override IEnumerator FirstWaveSetCO()
+    {
+        yield return base.FirstWaveSetCO();
 
         StartCoroutine(StartTimerCO());
 
