@@ -4,7 +4,10 @@ using UnityEngine;
 
 public abstract class Targeting : ScriptableObject
 {
-    // 시전자를 매개변수로 대상을 반환받기
-    // 입력과 반환 타입은 Combatable등으로 할 필요가 있을듯
+    /// <summary>
+    /// 오버라이드된 타겟팅 로직에 따라 타깃 대상을 반환.
+    /// </summary>
+    /// <param name="self">본인의 CombManager그룹</param>
+    /// <returns>타겟팅 대상 반환, 없으면 null 반환하도록 오버라이드하기.</returns>
     public abstract Combatable GetTarget(Combatable self);
 }

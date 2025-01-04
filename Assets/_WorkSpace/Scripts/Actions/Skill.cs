@@ -5,11 +5,16 @@ using UnityEngine.Events;
 
 public abstract class Skill : ScriptableObject
 {
-    public IEnumerator SkillRoutine(Combatable self, UnityAction onCompletedCallback)
+
+    [field: SerializeField]
+    public Targeting TargetingLogic { get; protected set; }
+
+    public IEnumerator SkillRoutine(Combatable self, Combatable target, UnityAction onCompletedCallback)
     {
-        yield return SkillRoutineImplement(self);
+        yield return null;
+        yield return SkillRoutineImplement(self, target);
         onCompletedCallback?.Invoke();
     }
 
-    protected abstract IEnumerator SkillRoutineImplement(Combatable self);
+    protected abstract IEnumerator SkillRoutineImplement(Combatable self, Combatable target);
 }

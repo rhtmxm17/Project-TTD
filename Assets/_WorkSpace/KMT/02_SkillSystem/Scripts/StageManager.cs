@@ -288,7 +288,6 @@ public class StageManager : MonoBehaviour
         yield return StartCoroutine(WaitMonsterWaveCO(monsterWaveQueue[0].transform));//몬스터 웨이브 이동시간
         scroller.StopScroll();
 
-
         characterManager.StartCombat(monsterWaveQueue[0]);
         monsterWaveQueue[0].StartCombat(characterManager);
     }

@@ -31,7 +31,7 @@ public class CharacterCombatable : Combatable
         basicSkillButton.transform.GetChild(0).GetComponent<Image>().sprite = characterData.NormalSkillIcon;
         basicSkillButton.GetComponent<Button>().onClick.AddListener(() => {
             if (!basicSkillButton.Interactable || !IsAlive) { Debug.Log("사용 불가");  return; }
-            OnSkillCommanded(characterData.SkillDataSO);
+            if (!OnSkillCommanded(characterData.SkillDataSO)) { Debug.Log("스킬 타깃이 없음. 사용 취소"); basicSkillButton.DisplayNonTargetText(); return; }
             basicSkillButton.StartCoolDown(characterData.StatusTable.BasicSkillCooldown);//쿨타임을 매개변수로 전달.
         });
 
@@ -39,7 +39,8 @@ public class CharacterCombatable : Combatable
         secondSkillButton.transform.GetChild(0).GetComponent<Image>().sprite = characterData.SpecialSkillIcon;
         secondSkillButton.GetComponent<Button>().onClick.AddListener(() => {
             if (!secondSkillButton.Interactable || !IsAlive) { Debug.Log("사용 불가"); return; }
-            if (characterData.StatusTable.SecondSkillCost < StageManager.Instance.PartyCost)
+            if (!OnSkillCommanded(characterData.SkillDataSO)) { Debug.Log("스킬 타깃이 없음. 사용 취소"); return; }
+            if (characterData.StatusTable.SecondSkillCost < StageManager.Instance.PartyCost)//비용이 충분한지 확인.
             {
                 StageManager.Instance.UsePartyCost(characterData.StatusTable.SecondSkillCost);
                 OnSkillCommanded(characterData.SecondSkillDataSO);

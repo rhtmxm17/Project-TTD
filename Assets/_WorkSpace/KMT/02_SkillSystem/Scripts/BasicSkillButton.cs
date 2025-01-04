@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,11 +11,16 @@ public class BasicSkillButton : MonoBehaviour
     [SerializeField]
     Button skillButton;
 
+    [SerializeField]
+    TextMeshProUGUI nonTargetText;
+
+    Coroutine textCoroutine = null;
+    WaitForSeconds displayTime = new WaitForSeconds(0.5f);
+
     public bool Interactable => skillButton.interactable;
 
     Coroutine skillCooldownCoroutine = null;
     float waitedCooltime = 0;
-
 
     public void OffSkillButton(Combatable obj)
     {
@@ -26,6 +32,23 @@ public class BasicSkillButton : MonoBehaviour
 
         skillButton.enabled = false;
         cooldownImg.fillAmount = 1;
+    }
+
+    public void DisplayNonTargetText()
+    {
+        if (textCoroutine != null)
+        { 
+            StopCoroutine(textCoroutine);
+        }
+        textCoroutine = StartCoroutine(TextDisplayCO());
+    }
+
+    IEnumerator TextDisplayCO()
+    {
+        nonTargetText.gameObject.SetActive(true);
+        yield return displayTime;
+        nonTargetText.gameObject.SetActive(false);
+        textCoroutine = null;
     }
 
     public void StartCoolDown(float coolTime)
