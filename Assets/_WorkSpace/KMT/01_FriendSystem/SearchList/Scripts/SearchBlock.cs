@@ -52,7 +52,11 @@ public class SearchBlock : MonoBehaviour
 
             }
 
-            Debug.Log("요청 성공");
+            GameManager.OverlayUIManager.OpenSimpleInfoPopup(
+                $"{text.text}님에게 친구신청과 \n약간의 [성의]를 보냈습니다.",
+                "헉...!",
+                null
+            );
 
             requestBtn.interactable = false;
 

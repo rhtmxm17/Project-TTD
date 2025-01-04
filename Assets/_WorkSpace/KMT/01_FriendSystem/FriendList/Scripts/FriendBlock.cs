@@ -56,6 +56,12 @@ public class FriendBlock : MonoBehaviour
                 return;
             }
 
+            GameManager.OverlayUIManager.OpenSimpleInfoPopup(
+                $"{nickname}님과 더이상 \n 친구가 아니게 되었어요...",
+                "그렇게 됐네요.",
+                null
+            );
+
             friendListRoot.RefreshList();
 
         });

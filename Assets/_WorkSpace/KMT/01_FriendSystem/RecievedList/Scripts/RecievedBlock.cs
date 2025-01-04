@@ -58,8 +58,13 @@ public class RecievedBlock : MonoBehaviour
                 return;
             }
 
-            recievedList.RefreshList();
+            GameManager.OverlayUIManager.OpenSimpleInfoPopup(
+                $"{nickname}님과 친구가 되었어요! \n 얏호~!",
+                "와아~! 와아~~!",
+                null
+            );
 
+            recievedList.RefreshList();
 
         });
     }
@@ -80,6 +85,12 @@ public class RecievedBlock : MonoBehaviour
                 Debug.LogError("수정실패{친구신청거부}");
                 return;
             }
+
+            GameManager.OverlayUIManager.OpenSimpleInfoPopup(
+                $"{nickname}님의 \n 건방진 친구요청을 거절했어요!",
+                "어딜 감히!",
+                null
+            );
 
             recievedList.RefreshList();
 

@@ -51,6 +51,12 @@ public class RequestedBlock : MonoBehaviour
                 return;
             }
 
+            GameManager.OverlayUIManager.OpenSimpleInfoPopup(
+                $"{nickname}님에게 잘못보내신 \n 친구요청을 취소했어요!",
+                "이게 맞지",
+                null
+            );
+
             reqListWindow.RefreshList();
 
         });

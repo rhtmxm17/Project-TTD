@@ -62,13 +62,20 @@ public class FriendList : MonoBehaviour
 
                 Debug.Log(task.Result.Child($"{friendsUid.Key}/Profile/Name").Value);
 
+                string nickname = task.Result.Child($"{friendsUid.Key}/Profile/Name").Value.ToString();
+
                 Instantiate(friendBlockPrefab, contentTransform)
-                    .InitData(friendsUid.Key, 
-                              task.Result.Child($"{friendsUid.Key}/Profile/Name").Value.ToString(),
+                    .InitData(friendsUid.Key,
+                              nickname,
                               this,
                               (str) => {
                                   initializer.InitRoom(str);
                                   friendPanel.CloseWindow();
+                                  GameManager.OverlayUIManager.OpenSimpleInfoPopup(
+                                        $"{nickname}님의 방이에요! \n 비싼 물건을 찾아보죠!",
+                                        "....?",
+                                        null
+                                    );
                               });
 
             }
