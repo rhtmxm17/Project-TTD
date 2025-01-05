@@ -34,6 +34,7 @@ public class Combatable : MonoBehaviour
     Skill baseAttack;
 
     protected NavMeshAgent agent;
+    protected GameObject characterModel;
 
     [Header("TestParams")]
     [SerializeField]
@@ -83,12 +84,12 @@ public class Combatable : MonoBehaviour
         gameObject.name = data.Name;
 
         // 외형 생성
-        GameObject model = Instantiate(data.ModelPrefab, transform);
-        model.transform.rotation = Quaternion.Euler(90, 0, 0);
-        model.name = "Model";
-        if (false == model.TryGetComponent(out Animator animator))
+        characterModel = Instantiate(data.ModelPrefab, transform);
+        characterModel.transform.rotation = Quaternion.Euler(90, 0, 0);
+        characterModel.name = "Model";
+        if (false == characterModel.TryGetComponent(out Animator animator))
         {
-            animator = model.GetComponentInChildren<Animator>();
+            animator = characterModel.GetComponentInChildren<Animator>();
         }
         UnitAnimator = animator;
 
@@ -122,7 +123,7 @@ public class Combatable : MonoBehaviour
         //TODO : 이동속도가 다른경우 파라미터 추가하기.
 
         baseAttack = data.BasicSkillDataSO;
-        
+
         hp.Subscribe(x => {
 
             hpSlider.value = x / MaxHp.Value;
@@ -204,6 +205,7 @@ public class Combatable : MonoBehaviour
             return false;
 
         StopCurActionCoroutine();
+        Look(skillTarget.transform);
         curActionCoroutine = StartCoroutine(skillData.SkillRoutine(this, skillTarget, OnSkillCompleted));
         agent.ResetPath();
         return true;
@@ -255,6 +257,8 @@ public class Combatable : MonoBehaviour
         {
             agent.stoppingDistance = range;//TODO : 개체별 크기가 다른 경우, 해당 로직에 추가 수정.
             agent.destination = target.transform.position;
+            Look(target.transform);
+            yield return new WaitWhile(() => agent.pathPending);
 
             while (target != null && agent.remainingDistance > agent.stoppingDistance)
             {
@@ -262,6 +266,9 @@ public class Combatable : MonoBehaviour
                 {
                     time = 0;
                     agent.destination = target.transform.position;
+                    Look(target.transform);
+                    yield return new WaitWhile(() => agent.pathPending);
+
                 }
 
                 time += Time.deltaTime;
@@ -285,6 +292,26 @@ public class Combatable : MonoBehaviour
         //전투가 끝난경우.
         EndCombat();
 
+    }
+
+    protected void Look(Transform target)
+    {
+        //본인이 타깃인 경우 보는 방향을 바꾸지 않음
+        if (target == transform)
+            return;
+
+        Look(target.position);
+    } 
+    protected void Look(Vector3 target)
+    {
+        if (Vector3.Dot(target - transform.position, Vector3.right) > -0.1f)
+        {
+            characterModel.transform.localRotation = Quaternion.Euler(new Vector3(-90, -90, -90));
+        }
+        else
+        {
+            characterModel.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
+        }
     }
 
     IEnumerator CombatCO(Combatable target)

@@ -2,7 +2,6 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
-using UniRx;
 
 public class CharacterCombatable : Combatable
 {
@@ -49,6 +48,8 @@ public class CharacterCombatable : Combatable
 
         onDeadEvent.AddListener(basicSkillButton.OffSkillButton);
         onDeadEvent.AddListener(secondSkillButton.OffSkillButton);
+
+        characterModel.transform.localRotation = Quaternion.Euler(new Vector3(-90, -90, -90));
     }
 
     public override void StartCombat(CombManager againstL)
@@ -76,7 +77,11 @@ public class CharacterCombatable : Combatable
         agent.stoppingDistance = 0.05f;
         agent.destination = originPos;
 
-        while (agent.pathPending || 0.1f < agent.remainingDistance)
+        yield return new WaitWhile(() => agent.pathPending);
+
+        Look(originPos);
+
+        while (0.1f < agent.remainingDistance)
         {
             yield return null;
         }
@@ -84,6 +89,8 @@ public class CharacterCombatable : Combatable
         transform.position = originPos;
 
         agent.stoppingDistance = range;//TODO : 개체별 크기가 다른 경우, 해당 로직에 추가 수정.
+
+        characterModel.transform.localRotation = Quaternion.Euler(new Vector3(-90, -90, -90));
 
         state = curState.WAITING;
     }
