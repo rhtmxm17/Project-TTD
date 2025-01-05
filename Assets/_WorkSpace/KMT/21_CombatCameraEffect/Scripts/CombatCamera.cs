@@ -23,22 +23,12 @@ public class CombatCamera : MonoBehaviour
     float originViewSize;
 
     Coroutine shakeCoroutine = null;
-    WaitForSeconds shakeOffset = new WaitForSeconds(0.01f);
+    WaitForSeconds shakeOffset = new WaitForSeconds(0.02f);
 
     private void Awake()
     {
         originPos = transform.position;
         originViewSize = Camera.main.orthographicSize;
-    }
-
-    public void StartFocus() 
-    {
-        StartCoroutine(StartFocusCO());
-    }
-
-    public void StartRelease() 
-    {
-        StartCoroutine(ReleaseFocusCO());
     }
 
     public void Shake()
@@ -53,7 +43,7 @@ public class CombatCamera : MonoBehaviour
         shakeCoroutine = StartCoroutine(ShakeCO());
     }
 
-    IEnumerator StartFocusCO()
+    public IEnumerator StartFocusCO()
     {
         yield return null;
         while (Vector3.SqrMagnitude(focusPos - transform.position) > 0.001f)
@@ -67,7 +57,7 @@ public class CombatCamera : MonoBehaviour
         Camera.main.orthographicSize = focusViewSize;
 
     }
-    IEnumerator ReleaseFocusCO()
+    public IEnumerator ReleaseFocusCO()
     {
         yield return null;
         while (Vector3.SqrMagnitude(originPos - transform.position) > 0.001f)
@@ -81,6 +71,7 @@ public class CombatCamera : MonoBehaviour
         Camera.main.orthographicSize = originViewSize;
 
     }
+
 
     IEnumerator ShakeCO()
     {
