@@ -22,13 +22,13 @@ public class SimpleInfoUI : OpenableWindow
     /// <param name="content">출력할 내용 문자열</param>
     /// <param name="closeButtonText">닫기 버튼에 출력될 내용 문자열</param>
     /// <param name="onCloseAction">창이 닫힐 때 실행시킬 action, 없으면 null 전달</param>
-    public void SetAndOpenSimpleWindow(in string content, in string closeButtonText, Action closeAction)
+    public void SetAndOpenSimpleWindow(in string content, in string closeButtonText, Action onCloseAction)
     {
         if (gameObject.activeSelf)
             return;
 
         closeAction = null;
-        closeAction += closeAction;
+        closeAction += onCloseAction;
         text.text = content;
         this.closeButtonText.text = closeButtonText;
         OpenWindow();

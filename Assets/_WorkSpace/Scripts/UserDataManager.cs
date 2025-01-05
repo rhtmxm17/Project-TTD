@@ -480,6 +480,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             return this;
         }
 
+        [Obsolete]
         public UpdateDbChain AddDBValue(PropertyAdapter<double> property, float value)
         {
 #if DEBUG
@@ -516,6 +517,27 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
 #endif //DEBUG
 
             property.RegisterTimestampToChain(this);
+
+            return this;
+        }
+
+        /// <summary>
+        /// DB경로를 직접 지정하여 값을 갱신
+        /// </summary>
+        /// <typeparam name="T">갱신될 값의 타입</typeparam>
+        /// <param name="databasePath">데이터베이스의 경로 [Users/uid]기준 경로</param>
+        /// <param name="value">갱신될 값</param>
+        /// <returns></returns>
+        public UpdateDbChain SetDBValue<T>(string databasePath, T value)
+        {
+#if DEBUG
+            if (updates.ContainsKey(databasePath))
+            {
+                Debug.LogWarning("한 스트림에 데이터를 두번 갱신하고 있음");
+            }
+#endif //DEBUG
+
+            updates[databasePath] = value;
 
             return this;
         }

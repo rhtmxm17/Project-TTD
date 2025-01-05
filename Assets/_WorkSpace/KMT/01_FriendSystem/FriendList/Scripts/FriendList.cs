@@ -1,5 +1,6 @@
 using Firebase.Database;
 using Firebase.Extensions;
+using System;
 using UnityEngine;
 
 public class FriendList : MonoBehaviour
@@ -69,19 +70,58 @@ public class FriendList : MonoBehaviour
                               nickname,
                               this,
                               (str) => {
-                                  initializer.InitRoom(str);
-                                  friendPanel.CloseWindow();
-                                  GameManager.OverlayUIManager.OpenSimpleInfoPopup(
-                                        $"{nickname}님의 방이에요! \n 비싼 물건을 찾아보죠!",
-                                        "....?",
-                                        null
-                                    );
+
+                                  ItemData friendTicket = DataTableManager.Instance.GetItemData(10/*친구방문 보상 수령 카운트*/);
+                                  ItemData gold = DataTableManager.Instance.GetItemData(1/*골드*/);
+
+                                  if (!task.Result.Child($"{UserData.myUid}/friends/visitedList").HasChild(friendsUid.Key)
+                                     && friendTicket.Number.Value > 0)
+                                  {//보상 받을수 있는 방문
+                                      GameManager.UserData.StartUpdateStream()
+                                        .AddDBValue(friendTicket.Number, -1)
+                                        .AddDBValue(gold.Number, 100)
+                                        .SetDBValue($"friends/visitedList/{friendsUid.Key}", "")
+                                        .Submit((result) => {
+
+                                            if (result)
+                                            {
+                                                 VisitFriend(str, $"{nickname}님의 방이에요! \n 비싼 물건을 찾아보죠!", 
+                                                     () => {
+                                                         GameManager.OverlayUIManager.OpenSimpleInfoPopup(
+                                                              $"100골드정도는 가져가도 괜찮겠죠! \n (경찰이 오기까지 [{friendTicket.Number.Value}/10])",
+                                                              "ㄹㅇㄹㅇ",
+                                                              null
+                                                        );
+                                                     });
+                                            }
+                                            else
+                                            {
+                                                Debug.Log("놀러가기 실패.");
+                                            }
+
+                                        });
+                                  }
+                                  else
+                                  {
+                                      VisitFriend(str, $"{nickname}님의 방이에요! \n 오늘은 이제 구경만 하도록 하죠.", null);
+                                  }
                               });
 
             }
 
         });
 
+    }
+
+    void VisitFriend(in string uid, in string popupText, Action closeWindowCallback)
+    {
+        initializer.InitRoom(uid);
+        friendPanel.CloseWindow();
+        GameManager.OverlayUIManager.OpenSimpleInfoPopup(
+              popupText,
+              "....?",
+              closeWindowCallback
+        );
     }
 
 }
