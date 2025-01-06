@@ -20,7 +20,7 @@ public class StageDataDataEditor : Editor
 }
 #endif
 
-public class StageData : ScriptableObject
+public class StageData : ScriptableObject, ICsvMultiRowParseable
 {
     /// <summary>
     /// 각 스테이지의 고유 번호

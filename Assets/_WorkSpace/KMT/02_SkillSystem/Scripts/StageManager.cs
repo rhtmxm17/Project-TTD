@@ -14,17 +14,35 @@ public class StageManager : MonoBehaviour
     [SerializeField] StageData stageData;
     private StageData stageDataOnLoad;
 
+    [Header("Camera Effecter")]
+    [SerializeField]
+    CombatCamera combatCamera;
+
     [Header("Characters")]
     [SerializeField]
     CombManager characterManager;
     [SerializeField]
     StageCharacterSetter characterSetter;
 
+    [Header("Scroller")]
+    [SerializeField]
+    BGScroller scroller;
+
+    //데이터 테스트용 임시 구조체
+    [System.Serializable]
+    struct monsterData
+    {
+        [SerializeField] public List<CharacterData> monsters;
+
+    }
+
     [Header("Monsters")]
     [SerializeField] Transform monsterWaveParent;
     [SerializeField] MonsterWaveSetter monsterWavePrefab;
     [SerializeField]
     List<CombManager> monsterWaveQueue = new List<CombManager>();
+    [SerializeField]
+    float monsterWaveOffset;
 
     [Header("Party Gauge")]
     [SerializeField]
@@ -103,6 +121,7 @@ public class StageManager : MonoBehaviour
                 StartCoroutine(GoNextWaveCO());
             });
             monsterWaveQueue.Add(monsterWave.GetComponent<CombManager>());
+            monsterWave.transform.position += new Vector3(monsterWaveOffset, 0, 0);
         }
 
         maxWave = monsterWaveQueue.Count;
@@ -174,13 +193,39 @@ public class StageManager : MonoBehaviour
 
         }
 
+
+
         AddWaveText();
         Debug.Log("다음 웨이브로 이동중...");
-        //yield return new WaitForSeconds(3f);
 
+        scroller.StartScroll();
+        yield return StartCoroutine(combatCamera.StartFocusCO());
+
+        StartCoroutine(combatCamera.ReleaseFocusCO());//줌아웃과 동시에 다음 웨이브 활성화
         monsterWaveQueue[0].gameObject.SetActive(true);
+        yield return StartCoroutine(WaitMonsterWaveCO(monsterWaveQueue[0].transform));//몬스터 웨이브 이동시간
+
+        scroller.StopScroll();
+
+
         characterManager.StartCombat(monsterWaveQueue[0]);
         monsterWaveQueue[0].StartCombat(characterManager);
+    }
+
+    IEnumerator WaitMonsterWaveCO(Transform monsterWave)
+    {
+        yield return null;
+
+        float curMonved = 0;
+
+        while (curMonved < monsterWaveOffset)
+        {
+            float delta = 8/*웨이브 접근 속도*/ * Time.deltaTime;
+            curMonved += delta;
+            monsterWave.transform.position += new Vector3(-delta, 0, 0);
+            yield return null;
+        }
+
     }
 
     protected virtual void OnClear()
@@ -239,24 +284,34 @@ public class StageManager : MonoBehaviour
         costSlider.value = 0;
         costText.text = PartyCost.ToString();
 
+        StartCoroutine(FirstWaveSetCO());
+    }
+
+    protected virtual IEnumerator FirstWaveSetCO()
+    {
+        scroller.StartScroll();
+        yield return new WaitForSeconds(3f);//순수이동시간
         monsterWaveQueue[0].gameObject.SetActive(true);
+        yield return StartCoroutine(WaitMonsterWaveCO(monsterWaveQueue[0].transform));//몬스터 웨이브 이동시간
+        scroller.StopScroll();
+
         characterManager.StartCombat(monsterWaveQueue[0]);
         monsterWaveQueue[0].StartCombat(characterManager);
     }
 
-    void Update()
+    [ContextMenu("StartGame")]
+    public void S()
     {
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            StartGame();
-        }
-
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            Debug.Log("F눌림");
-            characterManager.EndCombat();
-            monsterWaveQueue[0].EndCombat();
-            monsterWaveQueue.RemoveAt(0);
-        }
+        StartGame();
     }
+
+    [ContextMenu("FinishGame")]
+    public void F()
+    {
+        Debug.Log("F눌림");
+        characterManager.EndCombat();
+        monsterWaveQueue[0].EndCombat();
+        monsterWaveQueue.RemoveAt(0);
+    }
+
 }

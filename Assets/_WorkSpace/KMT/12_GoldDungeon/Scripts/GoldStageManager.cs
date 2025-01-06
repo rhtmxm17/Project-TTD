@@ -29,7 +29,11 @@ public class GoldStageManager : StageManager, IDamageAddable
         maxTimeLimit = timeLimit;
         gainGold = 0;
         isTimeOver = false;
+    }
 
+    protected override IEnumerator FirstWaveSetCO()
+    {
+        yield return base.FirstWaveSetCO();
         StartCoroutine(StartTimerCO());
     }
 

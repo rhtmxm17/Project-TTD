@@ -6,16 +6,16 @@ using UnityEngine.Events;
 using UniRx;
 using Unity.Mathematics;
 using UnityEngine.UI;
+using UnityEngine.AI;
+using Spine;
 //using static Spine.Unity.Editor.SkeletonBaker.BoneWeightContainer;
 
-[RequireComponent(typeof(Trackable))]
+[RequireComponent(typeof(NavMeshAgent))]
 public class Combatable : MonoBehaviour
 {
 
     [SerializeField]
     CombManager againistObjList;
-    [SerializeField]
-    SearchLogic searchLogicType;
 
     [SerializeField]
     Slider hpSlider;
@@ -27,22 +27,18 @@ public class Combatable : MonoBehaviour
     public UnityEvent<Combatable> onDeadEvent = new UnityEvent<Combatable>();
     public UnityEvent<float> onDamagedEvent = new UnityEvent<float>();
 
-    protected Trackable trackable;
     protected Coroutine curActionCoroutine = null;
-    protected Coroutine moveCoroutine = null;
     protected SkillButton SkillButton;
 
-    Func<Transform, Combatable> foundEnemyLogic = null;
-    Func<Transform, Combatable> foundNearEnemyLogic = null;
-    Func<Transform, Combatable> foundFarEnemyLogic = null;
-
-    int rangePow;
+    protected float range;
     Skill baseAttack;
+
+    protected NavMeshAgent agent;
+    protected GameObject characterModel;
 
     [Header("TestParams")]
     [SerializeField]
     public float igDefenseRate;
-
     //무적 디버그를 위한 public
     [SerializeField]
     public float defConst;
@@ -55,9 +51,8 @@ public class Combatable : MonoBehaviour
 
     protected virtual void Awake()
     {
-
-        trackable = GetComponent<Trackable>();
         onDeadEvent.AddListener(GetComponentInParent<CombManager>().OnDead);
+        agent = GetComponent<NavMeshAgent>();
 
         AttackPoint = attackPoint.ToReadOnlyReactiveProperty();
         Hp = hp.ToReadOnlyReactiveProperty();
@@ -86,12 +81,15 @@ public class Combatable : MonoBehaviour
         }
         characterData = data;
 
+        gameObject.name = data.Name;
+
         // 외형 생성
-        GameObject model = Instantiate(data.ModelPrefab, this.transform);
-        model.name = "Model";
-        if (false == model.TryGetComponent(out Animator animator))
+        characterModel = Instantiate(data.ModelPrefab, transform);
+        characterModel.transform.rotation = Quaternion.Euler(90, 0, 0);
+        characterModel.name = "Model";
+        if (false == characterModel.TryGetComponent(out Animator animator))
         {
-            animator = model.GetComponentInChildren<Animator>();
+            animator = characterModel.GetComponentInChildren<Animator>();
         }
         UnitAnimator = animator;
 
@@ -104,7 +102,7 @@ public class Combatable : MonoBehaviour
         if (level < 0)
             level = data.Level.Value;
 
-        CharacterData.Status table  = data.StatusTable;
+        CharacterData.Status table = data.StatusTable;
 
         attackPoint.Value = table.attackPointBase
                           + table.attackPointGrowth * level;
@@ -118,8 +116,11 @@ public class Combatable : MonoBehaviour
                       + table.defensePointGrouth * level;
 
         defConst = table.defenseCon;
-        
-        rangePow = (int)(table.Range * table.Range);//사거리
+
+        agent.stoppingDistance = table.Range;
+        range = table.Range;//사거리
+
+        //TODO : 이동속도가 다른경우 파라미터 추가하기.
 
         baseAttack = data.BasicSkillDataSO;
 
@@ -145,9 +146,21 @@ public class Combatable : MonoBehaviour
     protected ReactiveProperty<float> defense = new ReactiveProperty<float>();
     public ReadOnlyReactiveProperty<float> Defense;
 
+    public void Healed(float amount)
+    {
+        if (!IsAlive)
+        {
+            Debug.Log("이미 죽은 대상.");
+            return;
+        }
+
+        float afterHp = MathF.Min(MaxHp.Value, hp.Value + amount);
+        hp.Value = afterHp;
+
+    }
+
     public void Damaged(float damage, float igDefRate)
     {
-
         if (!IsAlive)
         {
             Debug.Log("이미 죽은 대상.");
@@ -155,8 +168,6 @@ public class Combatable : MonoBehaviour
         }
 
         damage = DamageCalculator.Calc(damage, igDefRate, defense.Value, defConst);
-
-        //Debug.Log($"피격데미지{damage}");
 
         //View의 setvalue등을 연결하기.
         hp.Value -= damage;
@@ -173,66 +184,38 @@ public class Combatable : MonoBehaviour
     }
 
 
-    void InitSearchLogic()
-    {
-        switch (searchLogicType)
-        {
-            case SearchLogic.NEAR_FIRST:
-                foundEnemyLogic = foundNearEnemyLogic;
-                break;
-            case SearchLogic.FAR_FIRST:
-                foundEnemyLogic = foundFarEnemyLogic;
-                break;
-            default:
-                Debug.LogError("정의되지 않은 초기 로직.");
-                break;
-        }
-    }
 
-    protected void StopCurActionCoroutine()//중지시키는거 더 고려
-    {
 
+    protected void StopCurActionCoroutine()
+    {
         if (curActionCoroutine != null)
             StopCoroutine(curActionCoroutine);
-
-        if (moveCoroutine != null)
-            StopCoroutine(moveCoroutine);
-
     }
 
     #region 스킬_추가 
-    public virtual void OnSkillCommanded(Skill skillData)
+    /// <summary>
+    /// 스킬의 타겟팅 로직을 실행해본 뒤, 타겟이 있다면 스킬을 실행.
+    /// </summary>
+    /// <param name="skillData">실행할 스킬 데이터</param>
+    /// <returns>타겟 대상이 있는경우 스킬을 실행하고 true 반환, 없을경우 단순 false 반환.</returns>
+    public bool OnSkillCommanded(Skill skillData)
     {
-        
-        StopCurActionCoroutine();
+        Combatable skillTarget = skillData.TargetingLogic.GetTarget(this);
+        if (skillTarget == null)
+            return false;
 
-        curActionCoroutine = StartCoroutine(skillData.SkillRoutine(this, OnSkillCompleted));
+        StopCurActionCoroutine();
+        Look(skillTarget.transform);
+        curActionCoroutine = StartCoroutine(skillData.SkillRoutine(this, skillTarget, OnSkillCompleted));
+        agent.ResetPath();
+        return true;
     }
 
     private void OnSkillCompleted()
     {
-
         StopCurActionCoroutine();
         curActionCoroutine = StartCoroutine(TrackingCo());
-        /*        Debug.Log(curActionCoroutine == null);
-                Debug.Log(gameObject == null);*/
     }
-
-    //private IEnumerator SkillRoutine(Skill skillData)
-    //{   
-    //    //TODO : 실제 스킬 발동시키기.
-    //    Debug.Log($"{name} 캐릭터 : 스킬 사용 개시");
-
-    //    yield return new WaitForSeconds(1.5f);
-
-
-    //    Debug.Log($"{name} 캐릭터 : 스킬 종료, 자동 공격 시작");
-
-
-    //    //스킬 사용 종료 후 자동 공격 다시 시작
-    //    StopCurActionCoroutine();
-    //    curActionCoroutine = StartCoroutine(TrackingCo());
-    //}  
 
     #endregion
 
@@ -245,46 +228,9 @@ public class Combatable : MonoBehaviour
         StopCurActionCoroutine();
     }
 
-    [ContextMenu("ChangeToNear")]
-    public void ChangeSearchLogicToNear()
-    {
-        StopCurActionCoroutine();
-        searchLogicType = SearchLogic.NEAR_FIRST;
-        InitSearchLogic();
-        curActionCoroutine = StartCoroutine(TrackingCo());
-    }
-
-    [ContextMenu("ChangeToFar")]
-    public void ChangeSearchLogicToFar()
-    {
-        StopCurActionCoroutine();
-        searchLogicType = SearchLogic.FAR_FIRST;
-        InitSearchLogic();
-        curActionCoroutine = StartCoroutine(TrackingCo());
-    }
-
-    public void ChangeSearchLoginInCombat(SearchLogic searchLogic)
-    {
-        StopCurActionCoroutine();
-        searchLogicType = searchLogic;
-        InitSearchLogic();
-        curActionCoroutine = StartCoroutine(TrackingCo());
-    }
-    public void ChangeSearchLoginInCombat(Func<Transform, Combatable> customSearchLogic)
-    {
-        StopCurActionCoroutine();
-        foundEnemyLogic = customSearchLogic;
-        curActionCoroutine = StartCoroutine(TrackingCo());
-    }
-
     public virtual void StartCombat(CombManager againstL)
     {
         againistObjList = againstL;
-
-        foundNearEnemyLogic = againistObjList.GetNearestTrackable;
-        foundFarEnemyLogic = againistObjList.GetFarestTrackable;
-
-        InitSearchLogic();
 
         StopCurActionCoroutine();
         curActionCoroutine = StartCoroutine(TrackingCo());
@@ -302,25 +248,29 @@ public class Combatable : MonoBehaviour
     {
         yield return null;
 
-        Combatable target = foundEnemyLogic.Invoke(transform);
+        Combatable target = baseAttack.TargetingLogic.GetTarget(this);
+
         float trackTime = 0.2f;
         float time = 0;
 
         while (target != null && target.IsAlive && againistObjList != null)
         {
+            agent.stoppingDistance = range;//TODO : 개체별 크기가 다른 경우, 해당 로직에 추가 수정.
+            agent.destination = target.transform.position;
+            Look(target.transform);
+            yield return new WaitWhile(() => agent.pathPending);
 
-            Vector3 moveDir = (target.transform.position - transform.position).normalized;
-
-            while (target != null && rangePow < Vector3.SqrMagnitude(target.transform.position - transform.position))
+            while (target != null && agent.remainingDistance > agent.stoppingDistance)
             {
                 if (time > trackTime)
                 {
                     time = 0;
-                    moveDir = (target.transform.position - transform.position).normalized;
+                    agent.destination = target.transform.position;
+                    Look(target.transform);
+                    yield return new WaitWhile(() => agent.pathPending);
+
                 }
 
-                //TODO : 이동속도 상수 제거
-                transform.Translate(10 * moveDir.normalized * Time.deltaTime);
                 time += Time.deltaTime;
                 yield return null;
             }
@@ -328,7 +278,7 @@ public class Combatable : MonoBehaviour
 
             if (!target.IsAlive)//이동중에 적이 쓰러진 경우.
             {
-                target = foundEnemyLogic.Invoke(transform);//새로운 대상 탐색
+                target = baseAttack.TargetingLogic.GetTarget(this);//새로운 대상 탐색
             }
             else
             {
@@ -344,55 +294,106 @@ public class Combatable : MonoBehaviour
 
     }
 
+    protected void Look(Transform target)
+    {
+        //본인이 타깃인 경우 보는 방향을 바꾸지 않음
+        if (target == null || target == transform)
+            return;
+
+        Look(target.position);
+    } 
+    protected void Look(Vector3 target)
+    {
+        if (Vector3.Dot(target - transform.position, Vector3.right) > -0.1f)
+        {
+            characterModel.transform.localRotation = Quaternion.Euler(new Vector3(-90, -90, -90));
+        }
+        else
+        {
+            characterModel.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
+        }
+    }
+
     IEnumerator CombatCO(Combatable target)
     {
         yield return null;
 
-        while (target.IsAlive && rangePow > Vector3.SqrMagnitude(target.transform.position - transform.position))
+        while (target != null && target.IsAlive && range > Vector3.Distance(target.transform.position, transform.position))
         {
-            StartCoroutine(baseAttack.SkillRoutine(this, null));
+            StartCoroutine(baseAttack.SkillRoutine(this, target, null));
             yield return new WaitForSeconds(1);
         }
 
         StopCurActionCoroutine();
         curActionCoroutine = StartCoroutine(TrackingCo());
-        yield break;
     }
 
-    /*
-        //게임에서는 웨이브 자체를 전달. + 특성에 따라 추적 대상 함수등을 전달할수도..
-        IEnumerator CombatCO()
+
+    // Legacy Targeting Logic
+    #region 이전 타겟팅 코드 영역 [ 현재 사용되지 않음 ]
+
+    SearchLogic searchLogicType;
+
+    Func<Transform, Combatable> foundEnemyLogic = null;
+    Func<Transform, Combatable> foundNearEnemyLogic = null;
+    Func<Transform, Combatable> foundFarEnemyLogic = null;
+
+
+    /// <summary>
+    /// targeting타입 SO를 오버라이드하여 Skill에 지정하여 사용하세요.
+    /// </summary>
+    [Obsolete]
+    void InitSearchLogic()
+    {
+        switch (searchLogicType)
         {
-            yield return null;
-            Transform ch = foundEnemyLogic.Invoke(transform);
-
-            //추적 대상이 있고, 웨이브가 진행중인 경우.
-            while (ch != null && againistObjList != null)
-            {
-                moveCoroutine = StartCoroutine(trackable.TrackingCO(ch));
-                yield return moveCoroutine;//이동 코루틴
-
-                if (ch == null)//이동중에 적이 쓰러진 경우.
-                {
-                    ch = foundEnemyLogic.Invoke(transform);//새로운 대상 탐색
-                    continue;
-                }
-
-                while (ch != null && trackable.rangePow > Vector3.SqrMagnitude(ch.transform.position - transform.position))
-                {
-                    //ch.transform.Rotate(Vector3.forward * 10);
-                    ch.GetComponent<SpriteRenderer>().color = UnityEngine. Random.ColorHSV();
-                    yield return new WaitForSeconds(1);
-                }
-
-                ch = foundEnemyLogic.Invoke(transform);//적이 사라진 뒤 다음 타깃 탐색
-
-            }
-
-            //전투가 끝난경우.
-            EndCombat();
-
+            case SearchLogic.NEAR_FIRST:
+                foundEnemyLogic = foundNearEnemyLogic;
+                break;
+            case SearchLogic.FAR_FIRST:
+                foundEnemyLogic = foundFarEnemyLogic;
+                break;
+            default:
+                Debug.LogError("정의되지 않은 초기 로직.");
+                break;
         }
-    */
+    }
+
+    [Obsolete]
+    public void ChangeSearchLogicToNear()
+    {
+        StopCurActionCoroutine();
+        searchLogicType = SearchLogic.NEAR_FIRST;
+        InitSearchLogic();
+        curActionCoroutine = StartCoroutine(TrackingCo());
+    }
+
+    [Obsolete]
+    public void ChangeSearchLogicToFar()
+    {
+        StopCurActionCoroutine();
+        searchLogicType = SearchLogic.FAR_FIRST;
+        InitSearchLogic();
+        curActionCoroutine = StartCoroutine(TrackingCo());
+    }
+
+    [Obsolete]
+    public void ChangeSearchLoginInCombat(SearchLogic searchLogic)
+    {
+        StopCurActionCoroutine();
+        searchLogicType = searchLogic;
+        InitSearchLogic();
+        curActionCoroutine = StartCoroutine(TrackingCo());
+    }
+
+    [Obsolete]
+    public void ChangeSearchLoginInCombat(Func<Transform, Combatable> customSearchLogic)
+    {
+        StopCurActionCoroutine();
+        foundEnemyLogic = customSearchLogic;
+        curActionCoroutine = StartCoroutine(TrackingCo());
+    }
+
+    #endregion
 
 }

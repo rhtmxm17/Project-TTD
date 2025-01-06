@@ -25,7 +25,7 @@ public class StageCharacterSetter : MonoBehaviour
     [SerializeField]
     List<Transform> spawnPositions;
 
-    List<Vector2> position = new List<Vector2>();
+    List<Vector3> position = new List<Vector3>();
 
     private void Awake()
     {
