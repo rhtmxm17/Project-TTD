@@ -51,7 +51,10 @@ public class CharacterFilter : MonoBehaviour
         _characterFilterUI._singleFilterButton.onClick.AddListener(() => FilterEventFunc(DragonVeinType.SINGLE, _characterFilterUI._singleFilterButton));
         _characterFilterUI._multiFilterButton.onClick.AddListener(() => FilterEventFunc(DragonVeinType.MULTI, _characterFilterUI._multiFilterButton));
 
-        _characterFilterUI._allFilterButton.onClick.AddListener(AllFilterClear);
+        _characterFilterUI._elementAllFilterButton.onClick.AddListener(AllFilterClear);
+        _characterFilterUI._roleAllFilterButton.onClick.AddListener(AllFilterClear);
+        _characterFilterUI._dragonAllFilterButton.onClick.AddListener(AllFilterClear);
+        
     }
 
     private void FilterEventFunc(Enum type, Button button)

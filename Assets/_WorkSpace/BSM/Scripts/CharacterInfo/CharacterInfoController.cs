@@ -26,11 +26,11 @@ public class CharacterInfoController : BaseUI
     private CharacterSort _characterSort;
     private CharacterFilter _characterFilter;
 
-    private TextMeshProUGUI _orderText;
+    private TextMeshProUGUI _sortingText;
     private Button _prevButton;
     private Button _nextButton;
     private Button _sortButton;
-    private Button _orderButton;
+    private Button _sortingButton;
     private Button _elementFilterButton;
     private Button _roleFilterButton;
     private Button _dragonVeinFilterButton;
@@ -111,8 +111,8 @@ public class CharacterInfoController : BaseUI
 
         _sortButton = GetUI<Button>("SortButton");
         SortButtonText = _sortButton.GetComponentInChildren<TextMeshProUGUI>();
-        _orderButton = GetUI<Button>("OrderButton");
-        _orderText = GetUI<TextMeshProUGUI>("OrderButtonText");
+        _sortingButton = GetUI<Button>("SortingButton");
+        _sortingText = GetUI<TextMeshProUGUI>("SortingButtonText");
         
         _elementFilterButton = GetUI<Button>("ElementFilterButton");
         _roleFilterButton = GetUI<Button>("RoleFilterButton");
@@ -141,11 +141,11 @@ public class CharacterInfoController : BaseUI
         _prevButton.onClick.AddListener(PreviousCharacter);
         _nextButton.onClick.AddListener(NextCharacter);
         _sortButton.onClick.AddListener(() => _characterSort.transform.GetChild(0).gameObject.SetActive(true));
-        _orderButton.onClick.AddListener(()=> Debug.Log("정렬 버튼 클릭"));
+        _sortingButton.onClick.AddListener(()=> _characterSort.SortingLayerEvent());
         
         _elementFilterButton.onClick.AddListener(() => _characterFilter.transform.GetChild(0).gameObject.SetActive(true));
-        _roleFilterButton.onClick.AddListener(() => Debug.Log("역할 필터 클릭"));
-        _dragonVeinFilterButton.onClick.AddListener(() => Debug.Log("용맥 버튼 클릭"));
+        _roleFilterButton.onClick.AddListener(() => _characterFilter.transform.GetChild(1).gameObject.SetActive(true));
+        _dragonVeinFilterButton.onClick.AddListener(() =>_characterFilter.transform.GetChild(2).gameObject.SetActive(true));
         
     }
 
@@ -167,7 +167,7 @@ public class CharacterInfoController : BaseUI
         CharacterCount = _characterInfos.Count;
         _characterSort._sortCharacterInfos= _characterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)).ToList();
         _characterSort.CharacterInfoController = this;
-        _characterSort.OrderText = _orderText;
+        _characterSort.SortingText = _sortingText;
         _characterFilter._filterCharacterInfos = _characterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)).ToList(); 
         StartListSort();
         
@@ -185,7 +185,6 @@ public class CharacterInfoController : BaseUI
 
         _holdingCharactersIndex = _characterInfos.Where(x => GameManager.UserData.HasCharacter(x._CharacterData.Id))
             .Select(x => _characterInfos.IndexOf(x)).ToList();
-
     }
 
     /// <summary>
@@ -194,7 +193,7 @@ public class CharacterInfoController : BaseUI
     private void StartListSort()
     {
         //1 : 내림차순 , 0 : 오름차순
-        _characterSort.IsSorting = PlayerPrefs.GetInt("IsSorting") == 1;
+        _characterSort.IsSorting = PlayerPrefs.HasKey("IsSorting") ? PlayerPrefs.GetInt("IsSorting") == 1 : true;
         _characterSort.CharacterListSort();
     }
 

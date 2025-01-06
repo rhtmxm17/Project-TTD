@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 
 public class CharacterSort : MonoBehaviour
@@ -14,7 +15,7 @@ public class CharacterSort : MonoBehaviour
     private List<int> _sortList;
 
     private CharacterSortUI _characterSortUI;
-    public TextMeshProUGUI OrderText;
+    [FormerlySerializedAs("OrderText")] public TextMeshProUGUI SortingText;
     
     private int _sortValue;
     private SortType _curSortType;
@@ -30,7 +31,10 @@ public class CharacterSort : MonoBehaviour
     public bool IsSorting
     {
         get => _isSorting;
-        set { _isSorting = value; }
+        set
+        {
+            _isSorting = value;
+        }
     }
 
     private bool _isStart;
@@ -66,22 +70,17 @@ public class CharacterSort : MonoBehaviour
     /// <param name="type"></param>
     private void SortEventFunc(SortType type)
     {
-        //TODO: isSorting 변경을 함수 분리하기.
-        if (_curSortType.Equals(type))
-        {
-            _isSorting = !_isSorting;
-        }
-        else
-        {
-            _isSorting = true;
-        }
-
-        _curSortType = type;
-
-        PlayerPrefs.SetInt("IsSorting", _isSorting ? 1 : 0);
+        _curSortType = type; 
         CharacterListSort();
     }
 
+    public void SortingLayerEvent()
+    {
+        _isSorting = !_isSorting;
+        PlayerPrefs.SetInt("IsSorting", _isSorting ? 1 : 0);
+        CharacterListSort();
+    }
+    
     /// <summary>
     /// 캐릭터 리스트 정렬 기능
     /// </summary>
@@ -122,7 +121,7 @@ public class CharacterSort : MonoBehaviour
             _sortList.Sort();
         }
 
-        OrderText.text = _isSorting ? "↓" : "↑";
+        SortingText.text = _isSorting ? "↓" : "↑";
         
         if (!_isStart)
         {
