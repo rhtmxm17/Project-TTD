@@ -23,7 +23,6 @@ public enum BuffType
 [System.Serializable]
 public enum SortType
 {
-    //추후 레벨, 전투력으로 정렬
     NONE, LEVEL, POWERLEVEL, ENHANCELEVEL, OFFENSIVEPOWER, DEFENSEIVEPOWER, HEALTH
 }
 
@@ -36,7 +35,8 @@ public enum InfoTabType
 [System.Serializable]
 public enum ElementType
 {
-    FIRE, WATER, GRASS, GROUND, ELECTRIC, NONE
+    //0: 화룡, 1: 수룡, 2:정룡 ? 3: 토룡, 4: 진룡
+    FIRE, WATER, WOOD, EARTH, METAL, NONE
 }
 
 [System.Serializable]

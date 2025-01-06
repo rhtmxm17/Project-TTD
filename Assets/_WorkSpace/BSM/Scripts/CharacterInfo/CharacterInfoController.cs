@@ -26,7 +26,12 @@ public class CharacterInfoController : BaseUI
     private CharacterSort _characterSort;
     private CharacterFilter _characterFilter;
 
-    private TextMeshProUGUI _sortingText;
+    public TextMeshProUGUI SortButtonText;
+    public TextMeshProUGUI ElementFilterText;
+    public TextMeshProUGUI RoleFilterText;
+    public TextMeshProUGUI DragonVeinFilterText;
+    
+    private TextMeshProUGUI _sortingText; 
     private Button _prevButton;
     private Button _nextButton;
     private Button _sortButton;
@@ -78,7 +83,6 @@ public class CharacterInfoController : BaseUI
     }
      
     public UserDataInt UserGoldData;
-    public TextMeshProUGUI SortButtonText { get; set; }
 
     protected override void Awake()
     {
@@ -117,7 +121,9 @@ public class CharacterInfoController : BaseUI
         _elementFilterButton = GetUI<Button>("ElementFilterButton");
         _roleFilterButton = GetUI<Button>("RoleFilterButton");
         _dragonVeinFilterButton = GetUI<Button>("DragonVeinFilterButton");
-         
+        ElementFilterText = GetUI<TextMeshProUGUI>("ElementFilterText"); 
+        RoleFilterText = GetUI<TextMeshProUGUI>("RoleFilterText");
+        DragonVeinFilterText = GetUI<TextMeshProUGUI>("DragonVeinFilterText");
         
         _detailTab = GetUI("DetailTab");
         _enhanceTab = GetUI("EnhanceTab");
@@ -168,7 +174,8 @@ public class CharacterInfoController : BaseUI
         _characterSort._sortCharacterInfos= _characterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)).ToList();
         _characterSort.CharacterInfoController = this;
         _characterSort.SortingText = _sortingText;
-        _characterFilter._filterCharacterInfos = _characterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)).ToList(); 
+        _characterFilter._filterCharacterInfos = _characterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)).ToList();
+        _characterFilter.CharacterController = this;
         StartListSort();
         
         for (int i = 0; i < _characterInfos.Count; i++)
@@ -192,7 +199,7 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void StartListSort()
     {
-        //1 : 내림차순 , 0 : 오름차순
+        //1(True) : 내림차순 , 0(False) : 오름차순
         _characterSort.IsSorting = PlayerPrefs.HasKey("IsSorting") ? PlayerPrefs.GetInt("IsSorting") == 1 : true;
         _characterSort.CharacterListSort();
     }

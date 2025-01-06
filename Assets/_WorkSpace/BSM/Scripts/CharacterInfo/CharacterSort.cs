@@ -161,10 +161,29 @@ public class CharacterSort : MonoBehaviour
             }
         }
 
-        CharacterInfoController.SortButtonText.text = _curSortType.ToString();
+        ChangeSortButtonText();
         PlayerPrefs.SetInt("SortType", (int)_curSortType);
     }
-
+    
+    /// <summary>
+    /// 현재 정렬 타입으로 버튼명 변경
+    /// </summary>
+    /// <exception cref="AggregateException"></exception>
+    private void ChangeSortButtonText()
+    {
+        CharacterInfoController.SortButtonText.text = _curSortType switch
+        {
+            SortType.LEVEL => "레벨",
+            SortType.POWERLEVEL => "전투력",
+            SortType.ENHANCELEVEL => "강화",
+            SortType.OFFENSIVEPOWER => "공격력",
+            SortType.DEFENSEIVEPOWER => "방어력",
+            SortType.HEALTH => "체력",
+            _ => throw new AggregateException("잘못된 타입")
+        };
+    }
+    
+    
     private void StartSort()
     {
         for (int i = 0; i < _sortCharacterInfos.Count; i++)
