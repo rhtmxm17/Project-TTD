@@ -55,6 +55,9 @@ public class LoginPanel : BaseUI
         warningImage = GetUI<Image>("warningImage");
 
         
+        // 비밀번호 찾기
+        GetUI<Button>("EmailAuthButton").onClick.AddListener(() => Open("EmailAuthPopup"));
+
         
         // 인증메일 팝업창
         GetUI("EmailAuthPopup");
@@ -186,11 +189,11 @@ public class LoginPanel : BaseUI
         });
     }
 
-    
-    
-    
-    
-    
+
+    public void ResetPW()
+    {
+        
+    }
     
     /// <summary>
     /// 로그아웃합니다.
@@ -199,7 +202,6 @@ public class LoginPanel : BaseUI
     {
         BackendManager.Auth.SignOut();
     }
-
 
     public void CheckUserInfo()
     {

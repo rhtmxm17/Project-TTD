@@ -23,6 +23,8 @@ public class LogOut : MonoBehaviour
         Debug.Log("LogOut버튼 테스트");
         BackendManager.Auth.SignOut();
     }
+    
+    // TODO: 로그아웃경고 팝업 띄우기
 
  //   public void OpenDoubleCheck()
  //   {
