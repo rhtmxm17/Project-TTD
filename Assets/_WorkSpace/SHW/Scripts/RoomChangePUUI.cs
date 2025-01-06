@@ -34,7 +34,9 @@ public class RoomChangePUUI : BaseUI
         GetUI<Button>("BeforeButton").onClick.AddListener(()=>BeforeImage());
         
         GetUI("BuyRoomButton").SetActive(false);    // 초기 1번 방은 무조건 열어둘거라 false로 설정
-        
+        // UI숨기기 버튼
+        GetUI<Button>("HideUIButton").onClick.AddListener(()=>HideUI());
+        GetUI<Button>("MarkUIButton").onClick.AddListener(()=>MarkUI());
         // 배경 이미지 구매
         GetUI<Button>("BuyRoomButton").onClick.AddListener(()=>BuyRoom());
         
@@ -52,6 +54,7 @@ public class RoomChangePUUI : BaseUI
         GetUI<Image>("RoomPreview").sprite = rooms[spriteIndex].RoomSprite;
         GetUI<TMP_Text>("RoomNameText").text = rooms[spriteIndex].RoomName;
         GetUI<TMP_Text>("ExplainText").text = rooms[spriteIndex].RoomDescription;
+        hasRoom = rooms[spriteIndex].isHas;
     }
     
     // 방 이미지 변경
@@ -83,6 +86,7 @@ public class RoomChangePUUI : BaseUI
         }
         
         // 구매
+        // TODO: DB생기면 바꿀 곳
         rooms[spriteIndex].isHas = true;
         hasRoom = rooms[spriteIndex].isHas;
         // TODO: 구매한 방의 bool 값 DB에 저장
@@ -113,6 +117,7 @@ public class RoomChangePUUI : BaseUI
         GetUI<Image>("RoomPreview").sprite = rooms[spriteIndex].RoomSprite;
         GetUI<TMP_Text>("RoomNameText").text = rooms[spriteIndex].RoomName;
         GetUI<TMP_Text>("ExplainText").text = rooms[spriteIndex].RoomDescription;
+        // TODO: DB생기면 바꿀 곳
         hasRoom = rooms[spriteIndex].isHas;
         // 방 소유하지 않았으면 구매버튼 활성화
         if (hasRoom == false)
@@ -136,6 +141,7 @@ public class RoomChangePUUI : BaseUI
         GetUI<Image>("RoomPreview").sprite = rooms[spriteIndex].RoomSprite;
         GetUI<TMP_Text>("RoomNameText").text = rooms[spriteIndex].RoomName;
         GetUI<TMP_Text>("ExplainText").text = rooms[spriteIndex].RoomDescription;
+        // TODO: DB생기면 바꿀 곳
         hasRoom = rooms[spriteIndex].isHas;
         // 방 소유하지 않았으면 구매버튼 활성화
         if (hasRoom == false)
@@ -146,6 +152,34 @@ public class RoomChangePUUI : BaseUI
         {
             GetUI("BuyRoomButton").SetActive(false);
         }
+    }
+    
+    // UI숨기기 버튼
+    private void HideUI()
+    {
+        GetUI("CloseChangeRoomPopup").SetActive(false);
+        GetUI("Title").SetActive(false);
+        GetUI("NextButton").SetActive(false);
+        GetUI("BeforeButton").SetActive(false);
+        GetUI("ExplainPopup").SetActive(false);
+        GetUI("HomeButton").SetActive(false);
+        GetUI("MenuButton").SetActive(false);
+        GetUI("HideUIButton").SetActive(false);
+        GetUI("MarkUIButton").SetActive(true);
+    }
+
+    // UI 다시 나타내기 버튼
+    private void MarkUI()
+    {
+        GetUI("CloseChangeRoomPopup").SetActive(true);
+        GetUI("Title").SetActive(true);
+        GetUI("NextButton").SetActive(true);
+        GetUI("BeforeButton").SetActive(true);
+        GetUI("ExplainPopup").SetActive(true);
+        GetUI("HomeButton").SetActive(true);
+        GetUI("MenuButton").SetActive(true);
+        GetUI("HideUIButton").SetActive(true);
+        GetUI("MarkUIButton").SetActive(false);
     }
     
     // 창닫기
