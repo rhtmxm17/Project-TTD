@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -12,12 +13,16 @@ using UnityEngine.UI;
 /// </summary>
 public class PopupContoller : MonoBehaviour
 {
+  public TMP_Text Mesage => popupText; 
+  
   [SerializeField] PlayerInput input;
   [SerializeField] GameObject popup;
+  [SerializeField]  TMP_Text popupText;
 
   private void Start()
   {
     input = GameManager.Input;
+    popupText = gameObject.GetComponentInChildren<TMP_Text>();
   }
 
   private void Update()

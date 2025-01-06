@@ -3676,7 +3676,6 @@ MonoBehaviour:
   _signUpIDInputField: {fileID: 0}
   _signUpPWInputField: {fileID: 0}
   _pWConfirmInputField: {fileID: 0}
-  messagePopup: {fileID: 0}
 --- !u!114 &550133879
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7153,6 +7152,7 @@ GameObject:
   - component: {fileID: 1087474275}
   - component: {fileID: 1087474278}
   - component: {fileID: 1087474277}
+  - component: {fileID: 1087474276}
   m_Layer: 5
   m_Name: FindPWPanel
   m_TagString: Untagged
@@ -7185,6 +7185,33 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1087474276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1087474274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbd2686c963fa4b41b11848bd0287a56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UserID: 
+  Nickname: 
+  Email: 
+  _isVerified: 0
+  _isLoggedIn: 0
+  loginIDInputField: {fileID: 0}
+  loginPWInputField: {fileID: 0}
+  warningPopup: {fileID: 0}
+  warningText: {fileID: 0}
+  warningImage: {fileID: 0}
+  findPWPanel: {fileID: 0}
+  resetPWInputField: {fileID: 0}
+  _signUpIDInputField: {fileID: 0}
+  _signUpPWInputField: {fileID: 0}
+  _pWConfirmInputField: {fileID: 0}
 --- !u!114 &1087474277
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7281,7 +7308,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uB9AC\uC14B\uBA54\uC77C\uBC1C\uC1A1"
+  m_text: "\uAC00\uC785"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5b7e2e63840f74144b95ba697fffe934, type: 2}
   m_sharedMaterial: {fileID: 6086472556309017595, guid: 5b7e2e63840f74144b95ba697fffe934,
@@ -7309,7 +7336,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 59.05
+  m_fontSize: 72
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -11019,7 +11046,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 64.9
+  m_fontSize: 64.85
   m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -11148,7 +11175,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC774\uBA54\uC77C\uC744 \uC785\uB825\uD558\uC138\uC694"
+  m_text: "\uCC3D\uC758\uB825\uC744 \uBC1C\uD718\uD558\uC138\uC6A9"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5b7e2e63840f74144b95ba697fffe934, type: 2}
   m_sharedMaterial: {fileID: 6086472556309017595, guid: 5b7e2e63840f74144b95ba697fffe934,
@@ -12062,7 +12089,7 @@ MonoBehaviour:
   _isLoggedIn: 0
   loginIDInputField: {fileID: 0}
   loginPWInputField: {fileID: 0}
-  warningPopup: {fileID: 4059120235921220602}
+  warningPopup: {fileID: 0}
   warningText: {fileID: 0}
   warningImage: {fileID: 0}
   findPWPanel: {fileID: 0}
@@ -12070,7 +12097,6 @@ MonoBehaviour:
   _signUpIDInputField: {fileID: 0}
   _signUpPWInputField: {fileID: 0}
   _pWConfirmInputField: {fileID: 0}
-  messagePopup: {fileID: 4059120235921220606}
 --- !u!114 &1430879292937428936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12470,7 +12496,7 @@ MonoBehaviour:
   m_fontSize: 50
   m_fontSizeBase: 50
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 1

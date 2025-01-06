@@ -4,8 +4,10 @@ using Firebase.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Firebase;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 public class SignUpPanel : LoginPanel
 {
@@ -14,6 +16,8 @@ public class SignUpPanel : LoginPanel
     [SerializeField] TMP_InputField _signUpIDInputField;    // [InputField] 아이디 입력란
     [SerializeField] TMP_InputField _signUpPWInputField;    // [InputField] 비밀번호 입력란
     [SerializeField] TMP_InputField _pWConfirmInputField;   // [InputField] 비밀번호 확인 입력란
+    [Header("팝업프리펩")]
+    [SerializeField] PopupContoller messagePopup;
 
 
    //  AuthError error = AuthError.EmailAlreadyInUse;
@@ -50,16 +54,18 @@ public class SignUpPanel : LoginPanel
         {
             // TODO : 시간이된다면 팝업창으로 띄우기..?
             Debug.LogWarning("입력하지 않은 곳이 있습니다. \n다시한번 확인해주세요");
+            messagePopup.gameObject.SetActive(true);   
+            messagePopup.Mesage.text = $"입력하지 않은 곳이 있습니다. \n다시한번 확인해주세요";
 
-           // _checkPopup.SetActive(true);
-           // _checkPopupMsg.text = "입력하지 않은 곳이 있습니다. \n다시한번 확인해주세요";
+
             return;
         }
         if (_password != _confirmPW)
         {
             Debug.LogWarning("패스워드가 일치하지 않습니다.");
-            // _checkPopup.SetActive(true);
-            // _checkPopupMsg.text = "패스워드가 일치하지 않습니다.";
+            messagePopup.gameObject.SetActive(true);   
+            messagePopup.Mesage.text = $"패스워드가 일치하지 않습니다.";
+
             return;
         }
         BackendManager.Auth.CreateUserWithEmailAndPasswordAsync(_email, _password).ContinueWithOnMainThread(task =>
@@ -67,15 +73,18 @@ public class SignUpPanel : LoginPanel
             if (task.IsCanceled)
             {
                 Debug.LogError("회원가입이 취소되었습니다.");
+                GetErrorMessage(task.Exception);
                // _checkPopup.SetActive(true);
               //  _checkPopupMsg.text = "회원가입이 취소되었습니다.";
                 return;
             }
             if (task.IsFaulted)
             {
-                Debug.LogWarning("이메일/비밀번호 계정생성중 에러: " + task.Exception);
-              //  _checkPopup.SetActive(true);
-              //  _checkPopupMsg.text = $"{task.Exception} 에러가 일어났습니다.";
+               // Debug.LogWarning(" 계정생성중 에러: " + task.Exception);
+                GetErrorMessage(task.Exception);
+                messagePopup.gameObject.SetActive(true);   
+                messagePopup.Mesage.text = $"{GetErrorMessage(task.Exception)} 에러가 발생했습니다..";
+                // TODO: 간략하게 어떤에러 인지 나오게 하기 (아이디중복입니다)라는 식으로
                 return;
             }
             // 체크팝업 _checkPopup.SetActive(true);
@@ -90,6 +99,39 @@ public class SignUpPanel : LoginPanel
         // SaveUserData();
 
     }
-    
+
+    public string GetErrorMessage(Exception exception)
+    {
+        Debug.Log(exception.ToString());
+        Firebase.FirebaseException firebaseException = exception as FirebaseException;
+        if (firebaseException != null)
+        {
+            var errorCode = (AuthError)firebaseException.ErrorCode;
+            return GetErrorMessage(errorCode);
+        }
+
+        return exception.ToString();
+
+    }
+
+    private string GetErrorMessage(AuthError errorCode)
+    {
+        var message = "";
+        switch (errorCode)
+        {
+            case AuthError.MissingEmail:
+                message = "이메일을 입력하세요";
+                break;
+            case AuthError.InvalidEmail:
+                message = "올바른 이메일을 입력하세요";
+                break;
+            case AuthError.EmailAlreadyInUse:
+                message = "이미 사용중인 이메일입니다.";
+                break;
+            
+        }
+
+        return message;
+    }
 
 }
