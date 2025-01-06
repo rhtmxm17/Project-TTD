@@ -89,12 +89,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
         // Auth 초기화 대기
         yield return new WaitWhile(() => GameManager.Auth == null);
         
-        if (GameManager.Auth.CurrentUser != null)
-        {
-            GameManager.Auth.SignOut();
-        }
-        
-        if (BackendManager.CurrentUserDataRef != null) // 이미 더미 인증된 이력이 있을 경우 즉시 완료
+        if (BackendManager.CurrentUserDataRef != null) // 더미를 포함에 이미 인증된 이력이 있을 경우 즉시 완료
         {
             onCompletedCallback?.Invoke();
             yield break;
