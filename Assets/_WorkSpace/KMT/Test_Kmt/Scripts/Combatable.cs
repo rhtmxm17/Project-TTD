@@ -297,7 +297,7 @@ public class Combatable : MonoBehaviour
     protected void Look(Transform target)
     {
         //본인이 타깃인 경우 보는 방향을 바꾸지 않음
-        if (target == transform)
+        if (target == null || target == transform)
             return;
 
         Look(target.position);

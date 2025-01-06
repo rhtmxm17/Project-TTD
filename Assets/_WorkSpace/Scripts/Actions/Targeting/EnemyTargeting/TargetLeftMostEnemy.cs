@@ -5,7 +5,7 @@ using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 
-[CustomEditor(typeof(TargetRightMostEnemy))]
+[CustomEditor(typeof(TargetLeftMostEnemy))]
 public class TragetLeftMostEnemyLabel : Editor
 {
     public override void OnInspectorGUI()
@@ -16,7 +16,7 @@ public class TragetLeftMostEnemyLabel : Editor
 }
 #endif
 
-public class TragetLeftMostEnemy : Targeting
+public class TargetLeftMostEnemy : Targeting
 {
     public override Combatable GetTarget(Combatable self)
     {
