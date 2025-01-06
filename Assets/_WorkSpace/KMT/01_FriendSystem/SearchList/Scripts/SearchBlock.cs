@@ -34,33 +34,39 @@ public class SearchBlock : MonoBehaviour
     [ContextMenu("sendreq")]
     public void Request()
     {
+        GameManager.OverlayUIManager.OpenDoubleInfoPopup(
+            $"{text.text}님에게 \n 친구비를 내실건가요?",
+            "그정도는 아닌듯", "친구가 되어줘...!",
+            null, () => {
 
-        Dictionary<string, object> updates = new Dictionary<string, object>
-        {
-            { $"{UserData.myUid}/friends/sentRequestList/{destUid}", " " },
-            { $"{destUid}/friends/recievedRequestList/{UserData.myUid}", " "}
-        };
+                Dictionary<string, object> updates = new Dictionary<string, object>
+                {
+                    { $"{UserData.myUid}/friends/sentRequestList/{destUid}", " " },
+                    { $"{destUid}/friends/recievedRequestList/{UserData.myUid}", " "}
+                };
 
-        userNode.UpdateChildrenAsync(updates)
-        .ContinueWithOnMainThread(task =>
-        {
+                userNode.UpdateChildrenAsync(updates)
+                .ContinueWithOnMainThread(task =>
+                {
 
-            if (task.IsFaulted || task.IsCanceled)
-            {
+                    if (task.IsFaulted || task.IsCanceled)
+                    {
 
-                Debug.Log("<color=red>요청 전달하기.</color>");
+                        Debug.Log("<color=red>요청 전달하기.</color>");
+
+                    }
+
+                    GameManager.OverlayUIManager.OpenSimpleInfoPopup(
+                        $"{text.text}님에게 친구신청과 \n약간의 [성의]를 보냈습니다.",
+                        "헉...!",
+                        null
+                    );
+
+                    requestBtn.interactable = false;
+
+                });
 
             }
-
-            GameManager.OverlayUIManager.OpenSimpleInfoPopup(
-                $"{text.text}님에게 친구신청과 \n약간의 [성의]를 보냈습니다.",
-                "헉...!",
-                null
-            );
-
-            requestBtn.interactable = false;
-
-        });
-
+        );
     }
 }

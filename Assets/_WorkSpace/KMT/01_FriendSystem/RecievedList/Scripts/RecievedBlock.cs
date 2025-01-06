@@ -39,62 +39,76 @@ public class RecievedBlock : MonoBehaviour
 
     void Accept()
     {
+        GameManager.OverlayUIManager.OpenDoubleInfoPopup(
+            $"{nickname}님과 아는사이가 \n 되시는건가요?",
+            "누구시죠?", "넌 내 친구다...!",
+            null, () => {
 
-        //요청사항 제거 + 친구추가.
-        //TODO : 디버그용이므로 나중에 myuid로 바꾸는 작업 필요!!!{my,other 스왑 작업}
-        Dictionary<string, object> updates = new Dictionary<string, object>
-        {
-            { $"{UserData.myUid}/friends/recievedRequestList/{uid}", null },
-            { $"{UserData.myUid}/friends/friendList/{uid}", "" },
-            { $"{uid}/friends/sentRequestList/{UserData.myUid}", null},
-            { $"{uid}/friends/friendList/{UserData.myUid}", "" }
-        };
+                Dictionary<string, object> updates = new Dictionary<string, object>
+                {
+                    { $"{UserData.myUid}/friends/recievedRequestList/{uid}", null },
+                    { $"{UserData.myUid}/friends/friendList/{uid}", "" },
+                    { $"{uid}/friends/sentRequestList/{UserData.myUid}", null},
+                    { $"{uid}/friends/friendList/{UserData.myUid}", "" }
+                };
 
-        dataRef.UpdateChildrenAsync(updates).ContinueWithOnMainThread(task => {
+                dataRef.UpdateChildrenAsync(updates).ContinueWithOnMainThread(task => {
 
-            if (task.IsFaulted || task.IsCanceled)
-            {
-                Debug.LogError("수정실패{상호 친구 등록 실패}");
-                return;
+                    if (task.IsFaulted || task.IsCanceled)
+                    {
+                        Debug.LogError("수정실패{상호 친구 등록 실패}");
+                        return;
+                    }
+
+                    GameManager.OverlayUIManager.OpenSimpleInfoPopup(
+                        $"{nickname}님과 친구가 되었어요! \n 얏호~!",
+                        "와아~! 와아~~!",
+                        null
+                    );
+
+                    recievedList.RefreshList();
+
+                });
+
             }
+        );
 
-            GameManager.OverlayUIManager.OpenSimpleInfoPopup(
-                $"{nickname}님과 친구가 되었어요! \n 얏호~!",
-                "와아~! 와아~~!",
-                null
-            );
-
-            recievedList.RefreshList();
-
-        });
+        
     }
 
     void Deny()
     {
 
-        Dictionary<string, object> updates = new Dictionary<string, object>
-        {
-            { $"{UserData.myUid}/friends/recievedRequestList/{uid}", null },
-            { $"{uid}/friends/sentRequestList/{UserData.myUid}", null}
-        };
-
-        dataRef.UpdateChildrenAsync(updates).ContinueWithOnMainThread(task => {
-
-            if (task.IsFaulted || task.IsCanceled)
+        GameManager.OverlayUIManager.OpenDoubleInfoPopup(
+            $"{nickname}님의 친구요청을 \n 스팸메일함으로 보낼까요?",
+            "실수 실수~~", "광고 차단합니다~",
+            null, () =>
             {
-                Debug.LogError("수정실패{친구신청거부}");
-                return;
+                Dictionary<string, object> updates = new Dictionary<string, object>
+                {
+                    { $"{UserData.myUid}/friends/recievedRequestList/{uid}", null },
+                    { $"{uid}/friends/sentRequestList/{UserData.myUid}", null}
+                };
+
+                dataRef.UpdateChildrenAsync(updates).ContinueWithOnMainThread(task => {
+
+                    if (task.IsFaulted || task.IsCanceled)
+                    {
+                        Debug.LogError("수정실패{친구신청거부}");
+                        return;
+                    }
+
+                    GameManager.OverlayUIManager.OpenSimpleInfoPopup(
+                        $"{nickname}님의 \n 건방진 친구요청을 거절했어요!",
+                        "어딜 감히!",
+                        null
+                    );
+
+                    recievedList.RefreshList();
+
+                });
             }
-
-            GameManager.OverlayUIManager.OpenSimpleInfoPopup(
-                $"{nickname}님의 \n 건방진 친구요청을 거절했어요!",
-                "어딜 감히!",
-                null
-            );
-
-            recievedList.RefreshList();
-
-        });
+        );
 
     }
 
