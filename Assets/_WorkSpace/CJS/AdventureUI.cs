@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static GameManager;
 
 public class AdventureUI : BaseUI
 {
-    [SerializeField] List<StageData> stages;
+    [SerializeField] float verticalSpacing;
 
     [Header("prefabs")]
     [SerializeField] SimpleInfoPopup popupPrefab;
@@ -18,23 +17,42 @@ public class AdventureUI : BaseUI
 
     [Header("combat Scene Type")]
     [SerializeField]
-    StageType stageType;
+    GameManager.StageType stageType;
 
-    protected override void Awake()
+    private List<StageData> stagesData;
+    private List<GameObject> stageButtons = new List<GameObject>();
+
+    public void SetChapterData(List<StageData> stagesData)
     {
-        base.Awake();
-
-        // 프로토타입: 직렬화 필드로 등록된 스테이지 데이터로부터 UI 구성하기
-        for (int i = 0; i < stages.Count; i++)
+        this.stagesData = stagesData;
+        foreach (GameObject oldButton in stageButtons)
         {
-            StageButton instance = Instantiate(stageButtonPrefab, stageButtonGroup.transform);
+            Destroy(oldButton);
+        }
+        stageButtons.Clear();
+
+        bool isOdd = true;
+
+        for (int i = 0; i < stagesData.Count; i++)
+        {
+            GameObject buttonHolder = new GameObject($"_{i}", typeof(RectTransform));
+            buttonHolder.GetComponent<RectTransform>().SetParent(stageButtonGroup.transform);
+
+            StageButton instance = Instantiate(stageButtonPrefab, buttonHolder.transform);
+            RectTransform rt = instance.GetComponent<RectTransform>();
+            rt.anchorMin = rt.anchorMax = Vector2.one * 0.5f;
+            rt.anchoredPosition = new Vector2(0f, isOdd ? -verticalSpacing : verticalSpacing);
+
             instance.Id = i;
             instance.Button.onClick.AddListener(() =>
             {
                 Debug.Log(instance.Id);
-                Popup(stages[instance.Id]);
+                Popup(this.stagesData[instance.Id]);
             });
-            instance.Text.text = stages[i].StageName;
+            instance.Text.text = stagesData[i].StageName;
+
+            stageButtons.Add(buttonHolder);
+            isOdd = !isOdd;
         }
     }
 
