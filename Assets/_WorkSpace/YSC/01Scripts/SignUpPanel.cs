@@ -131,9 +131,7 @@ public class SignUpPanel : LoginPanel
             var errorCode = (AuthError)firebaseException.ErrorCode;
             return GetErrorMessage(errorCode);
         }
-
         return exception.ToString();
-
     }
 
     private string GetErrorMessage(AuthError errorCode)
@@ -150,12 +148,9 @@ public class SignUpPanel : LoginPanel
             case AuthError.EmailAlreadyInUse:
                 message = "이미 사용중인 이메일입니다.";
                 break;
-            
         }
-
         return message;
     }
-
     #endregion
     
 
