@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.U2D.Path.GUIFramework;
 using UnityEngine;
 using UnityEngine.Events;
 using Random = UnityEngine.Random;
@@ -27,7 +28,10 @@ public class CharacterEnhance : MonoBehaviour
     private int _afterHp;
     private int _afterAtk;
     private int _afterDef;
-
+    
+    private int _enhanceGoldCost;
+    private int _enhanceMaterialCost;
+    
     /// <summary>
     /// 0.0f ~ 1.0f 범위 마일리지
     /// </summary>
@@ -49,7 +53,7 @@ public class CharacterEnhance : MonoBehaviour
     private void OnEnable() => SubscribeEvent();
 
     private void OnDisable() => UnSubscribeEvent();
-
+ 
     private void Init()
     {
         _characterInfoController = GetComponentInParent<CharacterInfoController>();   
@@ -86,13 +90,15 @@ public class CharacterEnhance : MonoBehaviour
         _beforeHp = Convert.ToInt32(_characterData.HpPointLeveled);
         _beforeAtk = Convert.ToInt32(_characterData.AttackPointLeveled);
         _beforeDef = Convert.ToInt32(_characterData.DefensePointLeveled);
+
+        SetEnhanceCost();
         
         _characterInfoController._infoUI._beforeUpGradeText.text = $"현재 등급 {_beforeEnhanceLevel}";
         _characterInfoController._infoUI._beforeHpText.text = $"체력 {_beforeHp}";
         _characterInfoController._infoUI._beforeAtkText.text = $"공겨력 {_beforeAtk}";
         _characterInfoController._infoUI._beforeDefText.text = $"방어력 {_beforeDef}"; 
     }
-    
+ 
     /// <summary>
     /// 강화 이후 정보
     /// </summary>
@@ -104,6 +110,7 @@ public class CharacterEnhance : MonoBehaviour
         
         if (_afterEnhanceLevel > 10)
         {
+            //강화 Max 단계 정보
             _characterInfoController._infoUI._afterMaxTitleText.text = $"{_characterData.Name} +{_beforeEnhanceLevel}";
             _characterInfoController._infoUI._afterMaxHpText.text = $"체력 : {_characterData.HpPointLeveled}";
             _characterInfoController._infoUI._afterMaxAtkText.text = $"공격력 : {_characterData.AttackPointLeveled}";
@@ -111,6 +118,7 @@ public class CharacterEnhance : MonoBehaviour
         }
         else
         {
+            //다음 강화 스탯 정보
             _afterHp = Convert.ToInt32(_characterData.HpPointLeveled * (1f + 0.1f * _afterEnhanceLevel) / (1f + 0.1f * (_characterData.Enhancement.Value)));
             _afterAtk = Convert.ToInt32(_characterData.AttackPointLeveled * (1f + 0.1f * _afterEnhanceLevel) / (1f + 0.1f * (_characterData.Enhancement.Value)));
             _afterDef = Convert.ToInt32(_characterData.DefensePointLeveled * (1f + 0.1f * _afterEnhanceLevel) / (1f + 0.1f * (_characterData.Enhancement.Value)));
@@ -134,7 +142,7 @@ public class CharacterEnhance : MonoBehaviour
         //TODO: 프로토타입 이후 확률 수정 필요 
         //현재 임시로 강화 레벨에 따라 최소 강화 확률 조정 중
         
-        //최소 확률 > 임시 80%
+        //최소 확률 > 임시 70%
         _minEnhanceProbability = (_maxEnhanceLevel - 3) * 0.1f;
          
         //강화 성공 확률 : 0.3 ~ 최대 1f 확률 사이
@@ -146,7 +154,9 @@ public class CharacterEnhance : MonoBehaviour
         if (_chance >= _enhanceProbability)
         {
             GameManager.UserData.StartUpdateStream()
-                .SetDBValue(_characterData.Enhancement, _characterData.Enhancement.Value + 1)
+                .SetDBValue(_characterData.Enhancement, _characterData.Enhancement.Value + 1) 
+                .SetDBValue(_characterInfoController.UserGoldData, _characterInfoController.UserGoldData.Value - _enhanceGoldCost)
+                .SetDBValue(_characterInfoController.UserEnhanceMaterialData, _characterInfoController.UserEnhanceMaterialData.Value - _enhanceMaterialCost)
                 .Submit(EnhanceSuccess);
         }
         else
@@ -166,11 +176,12 @@ public class CharacterEnhance : MonoBehaviour
             ResultPopup("강화 실패 \n 사유 : 네트워크 오류", _characterInfoController._infoUI.EnhanceResultIcons[2]);
             return;
         }
-
+ 
         MileageUpdate(0); 
         ResultPopup($"+{_characterData.Enhancement.Value} 강화에 성공하셨습니다.", _characterInfoController._infoUI.EnhanceResultIcons[0]);
         CharacterStats();
-        UpdateInfo(); 
+        UpdateInfo();  
+        EnhanceCheck();
     }
     
     /// <summary>
@@ -238,9 +249,9 @@ public class CharacterEnhance : MonoBehaviour
     /// </summary>
     private void UpdateInfo()
     {
-        //TODO: 강화 탭 스탯 UI 변경 필요 
-        _characterInfoController._infoUI._enhanceText.text = $"+{_characterData.Enhancement.Value.ToString()}";
-        EnhanceCheck();
+        _characterInfoController.UserGold = _characterInfoController.UserGoldData.Value;
+        _characterInfoController.UserEnhanceMaterial = _characterInfoController.UserEnhanceMaterialData.Value;
+        _characterInfoController._infoUI._enhanceText.text = $"+{_characterData.Enhancement.Value.ToString()}"; 
     }
 
     /// <summary>
@@ -254,12 +265,30 @@ public class CharacterEnhance : MonoBehaviour
     }
 
     /// <summary>
+    /// 강화 비용 업데이트 및 UI 반영
+    /// </summary>
+    private void SetEnhanceCost()
+    {
+        _enhanceMaterialCost = 500 * (_beforeEnhanceLevel + 1);
+        _enhanceGoldCost = 100 * (_beforeEnhanceLevel + 1); 
+        _characterInfoController._infoUI._enhanceCoinText.text = _enhanceGoldCost.ToString();
+        _characterInfoController._infoUI._enhanceMaterialText.text = _enhanceMaterialCost.ToString();
+    }
+    
+    /// <summary>
     /// 강화 가능 여부 체크
     /// </summary>
     private void EnhanceCheck()
     {
         //TODO: 활성화/비활성화 조건 수정 필요 현재는 테스트로 임시 ~
-        _characterInfoController._infoUI._enhanceButton.interactable = _beforeEnhanceLevel < _maxEnhanceLevel;
+        _characterInfoController._infoUI._enhanceCoinText.color = _characterInfoController.UserGold >= _enhanceGoldCost ? Color.white : Color.red;
+        _characterInfoController._infoUI._enhanceMaterialText.color =
+            _characterInfoController.UserEnhanceMaterial >= _enhanceMaterialCost ? Color.white : Color.red;
+        
+        _characterInfoController._infoUI._enhanceButton.interactable = 
+            _beforeEnhanceLevel < _maxEnhanceLevel && 
+            _characterInfoController.UserGold >= _enhanceGoldCost && 
+            _characterInfoController.UserEnhanceMaterial >= _enhanceMaterialCost;
     }
 
     /// <summary>
@@ -271,7 +300,7 @@ public class CharacterEnhance : MonoBehaviour
         _characterInfoController.CurCharacterEnhance = this;
         _characterData = characterData;
         _characterInfoController._infoUI._mileageSlider.value = _mileage;
-         
+        
         EnhanceCheck();
     }
 

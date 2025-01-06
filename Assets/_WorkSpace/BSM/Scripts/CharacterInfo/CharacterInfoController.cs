@@ -81,23 +81,53 @@ public class CharacterInfoController : BaseUI
             _userGold = value;
         } 
     }
-     
-    public UserDataInt UserGoldData;
 
+    private int _userLevelMaterial;
+
+    public int UserLevelMaterial
+    {
+        get => _userLevelMaterial;
+        set
+        {
+            _userLevelMaterial = value;
+        }
+    }
+
+    private int _userEnhanceMaterial; 
+    public int UserEnhanceMaterial
+    {
+        get => _userEnhanceMaterial;
+        set
+        {
+            _userEnhanceMaterial = value;
+        }
+    }
+    
+    
+    public UserDataInt UserGoldData;
+    public UserDataInt UserLevelMaterialData;
+    public UserDataInt UserEnhanceMaterialData;
+    
+    
     protected override void Awake()
     {
         base.Awake(); 
         Init();
         ButtonOnClickEvent();
         SetContentFormGridLayOut();
-        GetUserGold(); 
+        GetUserMaterials(); 
     }
 
     private void OnEnable()
     { 
         UpdateCharacterList(); 
     }
-    
+
+    private void OnDisable()
+    {
+        _infoUI.InfoPopupClose();
+    }
+
     private void Init()
     {
         _infoPopup = GetUI("InfoPopup");
@@ -136,10 +166,32 @@ public class CharacterInfoController : BaseUI
     /// <summary>
     /// 현재 유저가 보유한 골드 가져옴
     /// </summary>
-    private void GetUserGold()
+    private void GetUserMaterials()
     {
         UserGoldData = GameManager.TableData.GetItemData(1).Number;
+        UserLevelMaterialData = GameManager.TableData.GetItemData(2).Number;
+        UserEnhanceMaterialData = GameManager.TableData.GetItemData(3).Number;
+        
+        //TODO: 재화 셋팅되면 지울것
+        GameManager.UserData.StartUpdateStream()
+            .SetDBValue(UserLevelMaterialData, 10000)
+            .Submit(result =>
+            {
+                if (!result) return; 
+            });
+
+        GameManager.UserData.StartUpdateStream()
+            .SetDBValue(UserEnhanceMaterialData, 10000)
+            .Submit(result =>
+            {
+                if(!result) return; 
+            }); 
+        
         _userGold = UserGoldData.Value;
+        _userLevelMaterial = UserLevelMaterialData.Value;
+        _userEnhanceMaterial = UserEnhanceMaterialData.Value;
+        Debug.Log($"임시 레벨업 재화 충전 완료 :{_userLevelMaterial}");
+        Debug.Log($"임시 강화 재화 충전 완료 {_userEnhanceMaterial}");
     }
     
     private void ButtonOnClickEvent()
@@ -197,7 +249,7 @@ public class CharacterInfoController : BaseUI
     /// <summary>
     /// 마지막 정렬 방식 저장 후 시작했을 때 해당 방식으로 정렬
     /// </summary>
-    private void StartListSort()
+    public void StartListSort()
     {
         //1(True) : 내림차순 , 0(False) : 오름차순
         _characterSort.IsSorting = PlayerPrefs.HasKey("IsSorting") ? PlayerPrefs.GetInt("IsSorting") == 1 : true;

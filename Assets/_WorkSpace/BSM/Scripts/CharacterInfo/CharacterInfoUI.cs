@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -17,8 +18,8 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _hpText;
     [HideInInspector] public TextMeshProUGUI _defText;
     [HideInInspector] public TextMeshProUGUI _powerLevelText; 
-    [HideInInspector] public TextMeshProUGUI _coinText;
-    [HideInInspector] public TextMeshProUGUI _jewelryText;
+    [HideInInspector] public TextMeshProUGUI _levelUpCoinText;
+    [HideInInspector] public TextMeshProUGUI _levelUpMaterialText;
     [HideInInspector] public TextMeshProUGUI _enhanceText;
     [HideInInspector] public TextMeshProUGUI _skillADescText;
     [HideInInspector] public TextMeshProUGUI _skillBDescText;
@@ -43,6 +44,9 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _afterMaxHpText;
     [HideInInspector] public TextMeshProUGUI _afterMaxAtkText;
     [HideInInspector] public TextMeshProUGUI _afterMaxDefText;
+    [HideInInspector] public TextMeshProUGUI _enhanceCoinText;
+    [HideInInspector] public TextMeshProUGUI _enhanceMaterialText;
+    
     
     [HideInInspector] public Slider _mileageSlider;
     [HideInInspector] public GameObject _beforeMax;
@@ -81,7 +85,7 @@ public class CharacterInfoUI : BaseUI
         UIBind();
         ButtonAddListener(); 
     }
-
+    
     private void Init()
     {
         _controller = transform.GetComponentInParent<CharacterInfoController>();
@@ -144,6 +148,8 @@ public class CharacterInfoUI : BaseUI
         _afterMaxHpText = GetUI<TextMeshProUGUI>("AfterMaxHpText");
         _afterMaxAtkText = GetUI<TextMeshProUGUI>("AfterMaxAtkText");
         _afterMaxDefText = GetUI<TextMeshProUGUI>("AfterMaxDefText");
+        _enhanceCoinText = GetUI<TextMeshProUGUI>("EnhanceCoinText");
+        _enhanceMaterialText = GetUI<TextMeshProUGUI>("EnhanceMaterialText");
         
         _mileageSlider = GetUI<Slider>("MileageSlider");
         _enhanceButton = GetUI<Button>("EnhanceButton"); 
@@ -157,8 +163,8 @@ public class CharacterInfoUI : BaseUI
     /// </summary>
     private void DetailTabUI()
     {
-        _coinText = GetUI<TextMeshProUGUI>("CoinText");
-        _jewelryText = GetUI<TextMeshProUGUI>("JewelryText");
+        _levelUpCoinText = GetUI<TextMeshProUGUI>("LevelUpCoinText");
+        _levelUpMaterialText = GetUI<TextMeshProUGUI>("LevelUpMaterialText");
         _levelText = GetUI<TextMeshProUGUI>("LevelText");
         _nameText = GetUI<TextMeshProUGUI>("NameText");
         _powerLevelText = GetUI<TextMeshProUGUI>("PowerLevelText");
@@ -197,9 +203,13 @@ public class CharacterInfoUI : BaseUI
     /// <summary>
     /// 상세 팝업 종료 후 탭 타입 변경
     /// </summary>
-    private void InfoPopupClose()
+    public void InfoPopupClose()
     {
         _infoPopup.SetActive(false);
+        _controller.StartListSort();
+        _detailTabColor.color = Color.white;
+        _enhanceTabColor.color = Color.white;
+        _evolutionTabColor.color = Color.white;
         _controller.CurInfoTabType = InfoTabType.DETAIL;
     }
     

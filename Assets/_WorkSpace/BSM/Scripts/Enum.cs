@@ -29,7 +29,7 @@ public enum SortType
 [System.Serializable]
 public enum InfoTabType
 {
-    DETAIL, ENHANCE, EVOLUTION
+    DETAIL, ENHANCE, EVOLUTION, NONE
 }
 
 [System.Serializable]
