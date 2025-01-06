@@ -19,7 +19,7 @@ public class PopupContoller : MonoBehaviour
   [SerializeField] GameObject popup;
   [SerializeField]  TMP_Text popupText;
 
-  private void Start()
+  private void OnEnable()
   {
     input = GameManager.Input;
     popupText = gameObject.GetComponentInChildren<TMP_Text>();
