@@ -33,11 +33,7 @@ public class RoomChangePUUI : BaseUI
         // 이전으로 넘기는 버튼 (좌버튼)
         GetUI<Button>("BeforeButton").onClick.AddListener(()=>BeforeImage());
         
-        // 초기 이미지 및 설명 표기용
-        // TODO: 왠지 초기 이미지의 셋팅에 문제있음 나중에 수정..일단 보류(기능상 문제는 없음)
-        GetUI<Image>("RoomPreview").sprite = rooms[spriteIndex].RoomSprite;
-        GetUI<TMP_Text>("RoomNameText").text = rooms[spriteIndex].RoomName;
-        GetUI<TMP_Text>("ExplainText").text = rooms[spriteIndex].RoomDescription;
+        GetUI("BuyRoomButton").SetActive(false);    // 초기 1번 방은 무조건 열어둘거라 false로 설정
         
         // 배경 이미지 구매
         GetUI<Button>("BuyRoomButton").onClick.AddListener(()=>BuyRoom());
@@ -54,6 +50,8 @@ public class RoomChangePUUI : BaseUI
     {
         spriteIndex = GameManager.UserData.Profile.MyroomBgIdx.Value;
         GetUI<Image>("RoomPreview").sprite = rooms[spriteIndex].RoomSprite;
+        GetUI<TMP_Text>("RoomNameText").text = rooms[spriteIndex].RoomName;
+        GetUI<TMP_Text>("ExplainText").text = rooms[spriteIndex].RoomDescription;
     }
     
     // 방 이미지 변경
