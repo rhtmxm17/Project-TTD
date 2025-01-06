@@ -26,11 +26,20 @@ public class CharacterInfoController : BaseUI
     private CharacterSort _characterSort;
     private CharacterFilter _characterFilter;
 
+    public TextMeshProUGUI SortButtonText;
+    public TextMeshProUGUI ElementFilterText;
+    public TextMeshProUGUI RoleFilterText;
+    public TextMeshProUGUI DragonVeinFilterText;
+    
+    private TextMeshProUGUI _sortingText; 
     private Button _prevButton;
     private Button _nextButton;
     private Button _sortButton;
-    private Button _filterButton;
-
+    private Button _sortingButton;
+    private Button _elementFilterButton;
+    private Button _roleFilterButton;
+    private Button _dragonVeinFilterButton;
+     
     private SortType _lastSortType;
     private RectTransform _contentForm;
     private Vector2 _characterCellSize;
@@ -41,7 +50,6 @@ public class CharacterInfoController : BaseUI
     private GameObject _detailTab;
     private GameObject _enhanceTab;
     private GameObject _evolutionTab;
-    private GameObject _meanTab;
 
     private int CharacterCount
     {
@@ -66,32 +74,59 @@ public class CharacterInfoController : BaseUI
     }
 
     private int _userGold;
-
-    public int UserGold
-    {
+    public int UserGold { 
         get => _userGold;
-        set { _userGold = value; }
+        set
+        {
+            _userGold = value;
+        } 
     }
 
-    public UserDataInt UserGoldData;
-    public TextMeshProUGUI SortButtonText { get; set; }
+    private int _userLevelMaterial;
 
+    public int UserLevelMaterial
+    {
+        get => _userLevelMaterial;
+        set
+        {
+            _userLevelMaterial = value;
+        }
+    }
+
+    private int _userEnhanceMaterial; 
+    public int UserEnhanceMaterial
+    {
+        get => _userEnhanceMaterial;
+        set
+        {
+            _userEnhanceMaterial = value;
+        }
+    }
+    
+    
+    public UserDataInt UserGoldData;
+    public UserDataInt UserLevelMaterialData;
+    public UserDataInt UserEnhanceMaterialData;
+    
+    
     protected override void Awake()
     {
         base.Awake(); 
         Init();
         ButtonOnClickEvent();
-        SetContentFormGridLayOut(); 
-        SetDatabase(); 
+        SetContentFormGridLayOut();
+        GetUserMaterials(); 
     }
 
-    private void SetDatabase()
+    private void OnEnable()
+    { 
+        UpdateCharacterList(); 
+    }
+
+    private void OnDisable()
     {
-        UserGoldData = GameManager.TableData.GetItemData(1).Number;
-        _userGold = UserGoldData.Value;
+        _infoUI.InfoPopupClose();
     }
-
-    private void OnEnable() => UpdateCharacterList();
 
     private void Init()
     {
@@ -100,8 +135,7 @@ public class CharacterInfoController : BaseUI
 
         //Sort, Filter GetBind
         _characterFilter = GetUI<CharacterFilter>("FilterUI");
-        _characterSort = GetUI<CharacterSort>("SortUI");
-        _characterSort.CurSortType = (SortType)PlayerPrefs.GetInt("SortType", 1);
+        _characterSort = GetUI<CharacterSort>("SortUI"); 
         
         _infoUI = GetUI<CharacterInfoUI>("InfoUI");
 
@@ -111,24 +145,49 @@ public class CharacterInfoController : BaseUI
 
         _sortButton = GetUI<Button>("SortButton");
         SortButtonText = _sortButton.GetComponentInChildren<TextMeshProUGUI>();
-        _filterButton = GetUI<Button>("FilterButton");
-
-
+        _sortingButton = GetUI<Button>("SortingButton");
+        _sortingText = GetUI<TextMeshProUGUI>("SortingButtonText");
+        
+        _elementFilterButton = GetUI<Button>("ElementFilterButton");
+        _roleFilterButton = GetUI<Button>("RoleFilterButton");
+        _dragonVeinFilterButton = GetUI<Button>("DragonVeinFilterButton");
+        ElementFilterText = GetUI<TextMeshProUGUI>("ElementFilterText"); 
+        RoleFilterText = GetUI<TextMeshProUGUI>("RoleFilterText");
+        DragonVeinFilterText = GetUI<TextMeshProUGUI>("DragonVeinFilterText");
+        
         _detailTab = GetUI("DetailTab");
         _enhanceTab = GetUI("EnhanceTab");
         _evolutionTab = GetUI("EvolutionTab");
-        _meanTab = GetUI("MeanTab");
 
         _characterCellSize = _contentForm.GetComponent<GridLayoutGroup>().cellSize;
         _characterSpacing = _contentForm.GetComponent<GridLayoutGroup>().spacing;
     }
 
+    /// <summary>
+    /// 현재 유저가 보유한 골드 가져옴
+    /// </summary>
+    private void GetUserMaterials()
+    {
+        UserGoldData = GameManager.TableData.GetItemData(1).Number;
+        UserLevelMaterialData = GameManager.TableData.GetItemData(2).Number;
+        UserEnhanceMaterialData = GameManager.TableData.GetItemData(3).Number;
+
+        _userGold = UserGoldData.Value;
+        _userLevelMaterial = UserLevelMaterialData.Value;
+        _userEnhanceMaterial = UserEnhanceMaterialData.Value; 
+    }
+    
     private void ButtonOnClickEvent()
     {
         _prevButton.onClick.AddListener(PreviousCharacter);
         _nextButton.onClick.AddListener(NextCharacter);
         _sortButton.onClick.AddListener(() => _characterSort.transform.GetChild(0).gameObject.SetActive(true));
-        _filterButton.onClick.AddListener(() => _characterFilter.transform.GetChild(0).gameObject.SetActive(true));
+        _sortingButton.onClick.AddListener(()=> _characterSort.SortingLayerEvent());
+        
+        _elementFilterButton.onClick.AddListener(() => _characterFilter.transform.GetChild(0).gameObject.SetActive(true));
+        _roleFilterButton.onClick.AddListener(() => _characterFilter.transform.GetChild(1).gameObject.SetActive(true));
+        _dragonVeinFilterButton.onClick.AddListener(() =>_characterFilter.transform.GetChild(2).gameObject.SetActive(true));
+        
     }
 
     /// <summary>
@@ -136,17 +195,22 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void UpdateCharacterList()
     { 
+        _characterSort.CurSortType = PlayerPrefs.HasKey("SortType") ? (SortType)PlayerPrefs.GetInt("SortType") : SortType.LEVEL;
+        
         _characterInfos = GetComponentsInChildren<CharacterInfo>(true).ToList();
         
         for (int i = 0; i < _characterInfos.Count; i++)
         {
             _characterInfos[i].SetCharacterData();
         }
+        //TODO: characterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)) 조건 삭제 필요
         
         CharacterCount = _characterInfos.Count;
         _characterSort._sortCharacterInfos= _characterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)).ToList();
         _characterSort.CharacterInfoController = this;
+        _characterSort.SortingText = _sortingText;
         _characterFilter._filterCharacterInfos = _characterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)).ToList();
+        _characterFilter.CharacterController = this;
         StartListSort();
         
         for (int i = 0; i < _characterInfos.Count; i++)
@@ -163,16 +227,15 @@ public class CharacterInfoController : BaseUI
 
         _holdingCharactersIndex = _characterInfos.Where(x => GameManager.UserData.HasCharacter(x._CharacterData.Id))
             .Select(x => _characterInfos.IndexOf(x)).ToList();
-
     }
 
     /// <summary>
     /// 마지막 정렬 방식 저장 후 시작했을 때 해당 방식으로 정렬
     /// </summary>
-    private void StartListSort()
+    public void StartListSort()
     {
-        //1 : 내림차순 , 0 : 오름차순
-        _characterSort.IsSorting = PlayerPrefs.GetInt("IsSorting") == 1;
+        //1(True) : 내림차순 , 0(False) : 오름차순
+        _characterSort.IsSorting = PlayerPrefs.HasKey("IsSorting") ? PlayerPrefs.GetInt("IsSorting") == 1 : true;
         _characterSort.CharacterListSort();
     }
 
@@ -257,6 +320,5 @@ public class CharacterInfoController : BaseUI
         _detailTab.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
         _enhanceTab.SetActive(_curInfoTabType.Equals(InfoTabType.ENHANCE));
         _evolutionTab.SetActive(_curInfoTabType.Equals(InfoTabType.EVOLUTION));
-        _meanTab.SetActive(_curInfoTabType.Equals(InfoTabType.MEAN));
     }
 }

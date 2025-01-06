@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -7,6 +8,9 @@ using UnityEngine.UI;
 
 public class CharacterInfoUI : BaseUI
 {
+    [HideInInspector] private Sprite[] _enhanceResultIcons = new Sprite[3];
+    public Sprite[] EnhanceResultIcons => _enhanceResultIcons;
+    
     //DetailTab
     [HideInInspector] public TextMeshProUGUI _levelText;
     [HideInInspector] public TextMeshProUGUI _nameText;
@@ -14,8 +18,8 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _hpText;
     [HideInInspector] public TextMeshProUGUI _defText;
     [HideInInspector] public TextMeshProUGUI _powerLevelText; 
-    [HideInInspector] public TextMeshProUGUI _coinText;
-    [HideInInspector] public TextMeshProUGUI _jewelryText;
+    [HideInInspector] public TextMeshProUGUI _levelUpCoinText;
+    [HideInInspector] public TextMeshProUGUI _levelUpMaterialText;
     [HideInInspector] public TextMeshProUGUI _enhanceText;
     [HideInInspector] public TextMeshProUGUI _skillADescText;
     [HideInInspector] public TextMeshProUGUI _skillBDescText;
@@ -36,27 +40,44 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _afterAtkText;
     [HideInInspector] public TextMeshProUGUI _afterDefText;
     [HideInInspector] public TextMeshProUGUI _mileageValueText;
+    [HideInInspector] public TextMeshProUGUI _afterMaxTitleText;
+    [HideInInspector] public TextMeshProUGUI _afterMaxHpText;
+    [HideInInspector] public TextMeshProUGUI _afterMaxAtkText;
+    [HideInInspector] public TextMeshProUGUI _afterMaxDefText;
+    [HideInInspector] public TextMeshProUGUI _enhanceCoinText;
+    [HideInInspector] public TextMeshProUGUI _enhanceMaterialText;
+    
+    
     [HideInInspector] public Slider _mileageSlider;
-
+    [HideInInspector] public GameObject _beforeMax;
+    [HideInInspector] public GameObject _afterMax;
     [HideInInspector] public GameObject _enhanceResultPopup;
     [HideInInspector] public TextMeshProUGUI _enhanceResultText;
+    [HideInInspector] public Image _enhanceResultIcon;
     [HideInInspector] public Button _enhanceResultConfirm;
     [HideInInspector] public Button _enhanceButton;
+    [HideInInspector] public Button _mileageUseButton;
+    [HideInInspector] public Button _mileageUseConfirmButton;
+    [HideInInspector] public GameObject _mileageUsePopup;
+    private Button _mileageCancelButton;
     
     //EvolutionTab
     
-    //MeanTab
-     
+
     private CharacterInfoController _controller;
     
     private Button _detailTabButton;
     private Button _enhanceTabButton;
     private Button _evolutionTabButton;
-    private Button _meanTabButton; 
-     
+    private Image _detailTabColor;
+    private Image _enhanceTabColor;
+    private Image _evolutionTabColor;
+    
+    
     private Button _exitButton;
     private GameObject _infoPopup;
-
+   
+    
     public TextMeshProUGUI _tempElemetTypeText;
     public TextMeshProUGUI _tempRoleTypeText;
     public TextMeshProUGUI _tempDragonVeinTypeText;
@@ -68,10 +89,13 @@ public class CharacterInfoUI : BaseUI
         UIBind();
         ButtonAddListener(); 
     }
-
+    
     private void Init()
     {
         _controller = transform.GetComponentInParent<CharacterInfoController>();
+        _enhanceResultIcons[0] = Resources.Load<Sprite>("Sprites/Icon/White/Icon_White_128/Icon_White_128_Emoji_Smile_02");
+        _enhanceResultIcons[1] = Resources.Load<Sprite>("Sprites/Icon/White/Icon_White_128/Icon_White_128_Emoji_Sad_02");
+        _enhanceResultIcons[2] = Resources.Load<Sprite>("Sprites/Icon/White/Icon_White_128/Icon_White_128_Error_Png");
     }
     
     private void UIBind()
@@ -93,12 +117,15 @@ public class CharacterInfoUI : BaseUI
         _infoPopup = GetUI("InfoPopup");  
         _enhanceText = GetUI<TextMeshProUGUI>("EnhanceText"); 
         _exitButton = GetUI<Button>("ExitButton");
- 
+         
         //좌측 Tab 버튼 바인딩
         _detailTabButton = GetUI<Button>("DetailTabButton");
         _enhanceTabButton = GetUI<Button>("EnhanceTabButton");
         _evolutionTabButton = GetUI<Button>("EvolutionTabButton");
-        _meanTabButton = GetUI<Button>("MeanTabButton");
+        
+        _detailTabColor = _detailTabButton.GetComponent<Image>();
+        _enhanceTabColor = _enhanceTabButton.GetComponent<Image>();
+        _evolutionTabColor = _evolutionTabButton.GetComponent<Image>(); 
     }
     
     /// <summary>
@@ -106,6 +133,8 @@ public class CharacterInfoUI : BaseUI
     /// </summary>
     private void EnhanceTabUI()
     {
+        _beforeMax = GetUI("BeforeMax");
+        _afterMax = GetUI("AfterMax");
         _curEnhanceLevelText = GetUI<TextMeshProUGUI>("CurEnhanceLevelText");
         _beforeUpGradeText = GetUI<TextMeshProUGUI>("BeforeUpGradeText");
         _beforeHpText = GetUI<TextMeshProUGUI>("BeforeHpText");
@@ -116,12 +145,24 @@ public class CharacterInfoUI : BaseUI
         _afterAtkText = GetUI<TextMeshProUGUI>("AfterAtkText");
         _afterDefText = GetUI<TextMeshProUGUI>("AfterDefText");
         _enhanceResultText = GetUI<TextMeshProUGUI>("EnhanceResultText");
+        _enhanceResultIcon = GetUI<Image>("EnhanceResultImage");
         _mileageValueText = GetUI<TextMeshProUGUI>("MileageValueText");
+        
+        _afterMaxTitleText = GetUI<TextMeshProUGUI>("AfterMaxTitleText");
+        _afterMaxHpText = GetUI<TextMeshProUGUI>("AfterMaxHpText");
+        _afterMaxAtkText = GetUI<TextMeshProUGUI>("AfterMaxAtkText");
+        _afterMaxDefText = GetUI<TextMeshProUGUI>("AfterMaxDefText");
+        _enhanceCoinText = GetUI<TextMeshProUGUI>("EnhanceCoinText");
+        _enhanceMaterialText = GetUI<TextMeshProUGUI>("EnhanceMaterialText");
         
         _mileageSlider = GetUI<Slider>("MileageSlider");
         _enhanceButton = GetUI<Button>("EnhanceButton"); 
         _enhanceResultConfirm = GetUI<Button>("EnhanceResultConfirm");
+        _mileageUseButton = GetUI<Button>("MileageUseButton");
+        _mileageUseConfirmButton = GetUI<Button>("MileageConfirmButton");
+        _mileageCancelButton = GetUI<Button>("MileageCancelButton");
         
+        _mileageUsePopup = GetUI("MileageUsePopup");
         _enhanceResultPopup = GetUI("EnhanceResultPopup");
     }
     
@@ -130,8 +171,8 @@ public class CharacterInfoUI : BaseUI
     /// </summary>
     private void DetailTabUI()
     {
-        _coinText = GetUI<TextMeshProUGUI>("CoinText");
-        _jewelryText = GetUI<TextMeshProUGUI>("JewelryText");
+        _levelUpCoinText = GetUI<TextMeshProUGUI>("LevelUpCoinText");
+        _levelUpMaterialText = GetUI<TextMeshProUGUI>("LevelUpMaterialText");
         _levelText = GetUI<TextMeshProUGUI>("LevelText");
         _nameText = GetUI<TextMeshProUGUI>("NameText");
         _powerLevelText = GetUI<TextMeshProUGUI>("PowerLevelText");
@@ -151,20 +192,34 @@ public class CharacterInfoUI : BaseUI
     private void ButtonAddListener()
     {
         _exitButton.onClick.AddListener(InfoPopupClose);
-        _detailTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.DETAIL);
-        _enhanceTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.ENHANCE);
-        _evolutionTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.EVOLUTION);
-        _meanTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.MEAN);
+        _detailTabButton.onClick.AddListener(() => TabButtonClick(InfoTabType.DETAIL));
+        _enhanceTabButton.onClick.AddListener(() => TabButtonClick(InfoTabType.ENHANCE));
+        _evolutionTabButton.onClick.AddListener(() => TabButtonClick(InfoTabType.EVOLUTION));
         
         _enhanceResultConfirm.onClick.AddListener(()=> _enhanceResultPopup.SetActive(false));
+        _mileageUseButton.onClick.AddListener(() => _mileageUsePopup.SetActive(true));
+        _mileageCancelButton.onClick.AddListener(() => _mileageUsePopup.SetActive(false));
+    }
+
+    private void TabButtonClick(InfoTabType tabType)
+    {
+        _controller.CurInfoTabType = tabType;
+        _detailTabColor.color = _controller.CurInfoTabType == InfoTabType.DETAIL ? Color.cyan : Color.white;
+        _enhanceTabColor.color = _controller.CurInfoTabType == InfoTabType.ENHANCE ? Color.cyan : Color.white;
+        _evolutionTabColor.color = _controller.CurInfoTabType == InfoTabType.EVOLUTION ? Color.cyan : Color.white;
+        
     }
     
     /// <summary>
     /// 상세 팝업 종료 후 탭 타입 변경
     /// </summary>
-    private void InfoPopupClose()
+    public void InfoPopupClose()
     {
         _infoPopup.SetActive(false);
+        _controller.StartListSort();
+        _detailTabColor.color = Color.white;
+        _enhanceTabColor.color = Color.white;
+        _evolutionTabColor.color = Color.white;
         _controller.CurInfoTabType = InfoTabType.DETAIL;
     }
     
