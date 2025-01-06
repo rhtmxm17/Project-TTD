@@ -74,17 +74,38 @@ public class SignUpPanel : LoginPanel
             {
                 Debug.LogError("회원가입이 취소되었습니다.");
                 GetErrorMessage(task.Exception);
-               // _checkPopup.SetActive(true);
-              //  _checkPopupMsg.text = "회원가입이 취소되었습니다.";
+                messagePopup.gameObject.SetActive(true);   
+                messagePopup.Mesage.text = $"{GetErrorMessage(task.Exception)}";
                 return;
             }
             if (task.IsFaulted)
             {
-               // Debug.LogWarning(" 계정생성중 에러: " + task.Exception);
+                
                 GetErrorMessage(task.Exception);
                 messagePopup.gameObject.SetActive(true);   
-                messagePopup.Mesage.text = $"{GetErrorMessage(task.Exception)} 에러가 발생했습니다..";
-                // TODO: 간략하게 어떤에러 인지 나오게 하기 (아이디중복입니다)라는 식으로
+                messagePopup.Mesage.text = $"{GetErrorMessage(task.Exception)}";
+                
+                /* 에러종류뽑기 밑에옮김
+            //    var exception = task.Exception.InnerExceptions[0] as FirebaseException;
+            //    var ErrorCode = (AuthError)exception.ErrorCode;
+            //    print(ErrorCode);
+            //    switch (ErrorCode)
+            //    {
+            //        case AuthError.MissingEmail:
+            //            Debug.LogWarning($" 계정생성중 에러: {ErrorCode}" );
+            //            messagePopup.Mesage.text = "이메일을 입력하세요";
+            //            break;
+            //        case AuthError.InvalidEmail:
+            //            Debug.LogWarning($" 계정생성중 에러: {ErrorCode}");
+            //            messagePopup.Mesage.text = "올바른 이메일을 입력하세요";
+            //        break;
+            //        case AuthError.EmailAlreadyInUse:
+            //            Debug.LogWarning($" 계정생성중 에러: {ErrorCode}" );
+            //            messagePopup.Mesage.text =  "이미 사용중인 이메일입니다.";
+            //        break;
+            //    }
+            */
+
                 return;
             }
             // 체크팝업 _checkPopup.SetActive(true);
@@ -100,10 +121,11 @@ public class SignUpPanel : LoginPanel
 
     }
 
+    #region 에러관련
     public string GetErrorMessage(Exception exception)
     {
         Debug.Log(exception.ToString());
-        Firebase.FirebaseException firebaseException = exception as FirebaseException;
+        FirebaseException firebaseException = exception.InnerException as FirebaseException;
         if (firebaseException != null)
         {
             var errorCode = (AuthError)firebaseException.ErrorCode;
@@ -133,5 +155,8 @@ public class SignUpPanel : LoginPanel
 
         return message;
     }
+
+    #endregion
+    
 
 }
