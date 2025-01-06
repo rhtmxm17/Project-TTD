@@ -37,7 +37,11 @@ public class RoomChangePUUI : BaseUI
         GetUI<TMP_Text>("ExplainText").text = descriptions[spriteIndex];
         
         // 배경 이미지 바꾸기 결정
-        GetUI<Button>("SetImageButton").onClick.AddListener(()=>ChangeRoom("RoomPreview"));
+        GetUI<Button>("SetImageButton").onClick.AddListener(()=>
+        {
+            ChangeRoom("RoomPreview");
+            CloseTap("RoomChangePopup");
+        });
     }
     
     private void LoadRoomImage()
@@ -84,5 +88,11 @@ public class RoomChangePUUI : BaseUI
         GetUI<Image>("RoomPreview").sprite = sprites[spriteIndex];
         GetUI<TMP_Text>("RoomNameText").text = names[spriteIndex];
         GetUI<TMP_Text>("ExplainText").text = descriptions[spriteIndex];
+    }
+    
+    // 창닫기
+    private void CloseTap(string _name)
+    {
+        GetUI(_name).SetActive(false);
     }
 }
