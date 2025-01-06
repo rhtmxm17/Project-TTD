@@ -23,6 +23,8 @@ public class RecievedBlock : MonoBehaviour
     string uid;
     string nickname;
 
+    bool isTransactionSuccess;
+
     public void InitData(in string uid, in string nickname, RecievedList recievedList)
     { 
         this.uid = uid;
@@ -37,6 +39,36 @@ public class RecievedBlock : MonoBehaviour
         dataRef = GameManager.Database.RootReference.Child("Users");
     }
 
+    TransactionResult Transactions(MutableData data)
+    {
+
+        if (data.Child(UserData.myUid).HasChild("friends/friendList") &&
+            data.Child(UserData.myUid).Child("friends/friendList").ChildrenCount >= FriendList.MAX_FRIEND_CNT)
+        {
+            GameManager.OverlayUIManager.OpenSimpleInfoPopup($"친구가 너무 많아요! \n 친구좀 줄이고 오시죠", "앗 아아..", null);
+            isTransactionSuccess = false;
+            return TransactionResult.Abort();
+        }
+
+        if (data.Child(uid).HasChild("friends/friendList") && 
+            data.Child(uid).Child("friends/friendList").ChildrenCount >= FriendList.MAX_FRIEND_CNT)
+        {
+            GameManager.OverlayUIManager.OpenSimpleInfoPopup(
+                $"{data.Child(uid).Child("Profile/Name").Value.ToString()}님은 인싸에요! \n 더 받아줄수 없다네요...", "비겁한 인싸녀석들...", null);
+            isTransactionSuccess = false;
+            return TransactionResult.Abort();
+        }
+
+        data.Child($"{UserData.myUid}/friends/recievedRequestList/{uid}").Value = null;
+        data.Child($"{UserData.myUid}/friends/friendList/{uid}").Value = "";
+        data.Child($"{uid}/friends/sentRequestList/{UserData.myUid}").Value = null;
+        data.Child($"{uid}/friends/friendList/{UserData.myUid}").Value = "";
+
+        isTransactionSuccess = true;
+        return TransactionResult.Success(data);
+
+    }
+
     void Accept()
     {
         GameManager.OverlayUIManager.OpenDoubleInfoPopup(
@@ -44,36 +76,35 @@ public class RecievedBlock : MonoBehaviour
             "누구시죠?", "넌 내 친구다...!",
             null, () => {
 
-                Dictionary<string, object> updates = new Dictionary<string, object>
-                {
-                    { $"{UserData.myUid}/friends/recievedRequestList/{uid}", null },
-                    { $"{UserData.myUid}/friends/friendList/{uid}", "" },
-                    { $"{uid}/friends/sentRequestList/{UserData.myUid}", null},
-                    { $"{uid}/friends/friendList/{UserData.myUid}", "" }
-                };
+                isTransactionSuccess = false;
 
-                dataRef.UpdateChildrenAsync(updates).ContinueWithOnMainThread(task => {
+                dataRef.RunTransaction(Transactions).ContinueWithOnMainThread(t1 => {
 
-                    if (task.IsFaulted || task.IsCanceled)
+                    if (t1.IsFaulted || t1.IsCanceled)
                     {
-                        Debug.LogError("수정실패{상호 친구 등록 실패}");
+                        Debug.Log("트렌젝션 abort 또는 트랜젝션 실패");
                         return;
                     }
 
-                    GameManager.OverlayUIManager.OpenSimpleInfoPopup(
+                    if (isTransactionSuccess)
+                    {
+                        GameManager.OverlayUIManager.OpenSimpleInfoPopup(
                         $"{nickname}님과 친구가 되었어요! \n 얏호~!",
                         "와아~! 와아~~!",
                         null
-                    );
+                        );
 
-                    recievedList.RefreshList();
+                        recievedList.RefreshList();
+                    }
+
+
+
 
                 });
 
             }
         );
 
-        
     }
 
     void Deny()

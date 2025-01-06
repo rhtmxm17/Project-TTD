@@ -1,10 +1,14 @@
 using Firebase.Database;
 using Firebase.Extensions;
 using System;
+using TMPro;
 using UnityEngine;
 
 public class FriendList : MonoBehaviour
 {
+
+    public const int MAX_FRIEND_CNT = 10;
+
     [SerializeField]
     FriendBlock friendBlockPrefab;
     [SerializeField]
@@ -14,6 +18,9 @@ public class FriendList : MonoBehaviour
 
     [SerializeField]
     MyroomInitializer initializer;
+
+    [SerializeField]
+    TextMeshProUGUI friendCountText;
 
     DatabaseReference userRef;
 
@@ -45,12 +52,14 @@ public class FriendList : MonoBehaviour
             if (!task.Result.HasChild($"{UserData.myUid}/friends/friendList"))
             {
                 Debug.Log("친구 없음");
+                friendCountText.text = $"0/{MAX_FRIEND_CNT}";
                 return;
             }
 
             DataSnapshot myFriends = task.Result.Child($"{UserData.myUid}/friends/friendList");
 
             Debug.Log(myFriends.ChildrenCount + " : 친구수");
+            friendCountText.text = $"{myFriends.ChildrenCount}/{MAX_FRIEND_CNT}";
 
             foreach (DataSnapshot friendsUid in myFriends.Children)
             {
