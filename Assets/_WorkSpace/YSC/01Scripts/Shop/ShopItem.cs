@@ -27,7 +27,7 @@ public class ShopItem : BaseUI
     [Header("구매버튼")]
     [SerializeField] Button buyButton;
 
-    [SerializeField] private TMP_Text buyButtonText;
+    [SerializeField] private TMP_Text buyButtonText;    // 매진되면 매진나오는 텍스트
 
     // 구매확인창 (구매버튼 누르면 팝업)
     [SerializeField] PurchasingPanel purchasingPanel;
