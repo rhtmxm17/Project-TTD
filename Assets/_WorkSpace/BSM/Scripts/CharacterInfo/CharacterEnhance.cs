@@ -99,12 +99,15 @@ public class CharacterEnhance : MonoBehaviour
     private void AfterEnhance()
     {
         _afterEnhanceLevel = (_beforeEnhanceLevel + 1);
-
+        _characterInfoController._infoUI._afterMax.SetActive(_beforeEnhanceLevel >= 10);
+        _characterInfoController._infoUI._beforeMax.SetActive(_beforeEnhanceLevel < 10);
+        
         if (_afterEnhanceLevel > 10)
         {
-            //TODO: 현재 Max 단계 안내
-            // _characterInfoController._infoUI._afterUpGradeText.text = $"용 이름 + Max";
-            //
+            _characterInfoController._infoUI._afterMaxTitleText.text = $"{_characterData.Name} +{_beforeEnhanceLevel}";
+            _characterInfoController._infoUI._afterMaxHpText.text = $"체력 : {_characterData.HpPointLeveled}";
+            _characterInfoController._infoUI._afterMaxAtkText.text = $"공격력 : {_characterData.AttackPointLeveled}";
+            _characterInfoController._infoUI._afterMaxDefText.text = $"방어력 : {_characterData.DefensePointLeveled}";
         }
         else
         {
@@ -160,12 +163,12 @@ public class CharacterEnhance : MonoBehaviour
     {
         if (!result)
         {
-            ResultPopup("강화 실패 \n 사유 : 네트워크 오류");
+            ResultPopup("강화 실패 \n 사유 : 네트워크 오류", _characterInfoController._infoUI.EnhanceResultIcons[2]);
             return;
         }
 
         MileageUpdate(0); 
-        ResultPopup("강화 성공해서 마일리지 초기화 할게요~.~");
+        ResultPopup($"+{_characterData.Enhancement.Value} 강화에 성공하셨습니다.", _characterInfoController._infoUI.EnhanceResultIcons[0]);
         CharacterStats();
         UpdateInfo(); 
     }
@@ -175,7 +178,7 @@ public class CharacterEnhance : MonoBehaviour
     /// </summary>
     private void EnhanceFail()
     {
-        ResultPopup("강화 실패했습니당~ \n 마일리지 추가!");
+        ResultPopup($"+{_characterData.Enhancement.Value +1} 강화에 실패하셨습니다. \n 마일리지 적립 +10%", _characterInfoController._infoUI.EnhanceResultIcons[1]);
         
         //TODO: 마일리지 누적 값 수정 필요
         MileageUpdate(_characterData.EnhanceMileagePerMill.Value + 100);
@@ -193,7 +196,7 @@ public class CharacterEnhance : MonoBehaviour
             {
                 if (!result)
                 {
-                    ResultPopup("마일리지 업뎃 실패");
+                    ResultPopup("마일리지 적립 실패 \n 사유 : 네트워크 오류", _characterInfoController._infoUI.EnhanceResultIcons[2]);
                     return;
                 }
                 _characterInfoController._infoUI._mileageSlider.value = _mileage;
@@ -204,10 +207,11 @@ public class CharacterEnhance : MonoBehaviour
     /// 강화 결과 팝업
     /// </summary>
     /// <param name="text">안내 문구</param>
-    private void ResultPopup(string text)
+    private void ResultPopup(string text, Sprite sprite)
     {
         _characterInfoController._infoUI._enhanceResultPopup.SetActive(true);
         _characterInfoController._infoUI._enhanceResultText.text = text;
+        _characterInfoController._infoUI._enhanceResultIcon.sprite = sprite;
     }
     
     /// <summary>

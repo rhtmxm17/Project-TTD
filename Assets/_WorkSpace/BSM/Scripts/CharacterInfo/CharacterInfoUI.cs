@@ -7,6 +7,9 @@ using UnityEngine.UI;
 
 public class CharacterInfoUI : BaseUI
 {
+    [HideInInspector] private Sprite[] _enhanceResultIcons = new Sprite[3];
+    public Sprite[] EnhanceResultIcons => _enhanceResultIcons;
+    
     //DetailTab
     [HideInInspector] public TextMeshProUGUI _levelText;
     [HideInInspector] public TextMeshProUGUI _nameText;
@@ -36,10 +39,17 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _afterAtkText;
     [HideInInspector] public TextMeshProUGUI _afterDefText;
     [HideInInspector] public TextMeshProUGUI _mileageValueText;
+    [HideInInspector] public TextMeshProUGUI _afterMaxTitleText;
+    [HideInInspector] public TextMeshProUGUI _afterMaxHpText;
+    [HideInInspector] public TextMeshProUGUI _afterMaxAtkText;
+    [HideInInspector] public TextMeshProUGUI _afterMaxDefText;
+    
     [HideInInspector] public Slider _mileageSlider;
-
+    [HideInInspector] public GameObject _beforeMax;
+    [HideInInspector] public GameObject _afterMax;
     [HideInInspector] public GameObject _enhanceResultPopup;
     [HideInInspector] public TextMeshProUGUI _enhanceResultText;
+    [HideInInspector] public Image _enhanceResultIcon;
     [HideInInspector] public Button _enhanceResultConfirm;
     [HideInInspector] public Button _enhanceButton;
     
@@ -75,6 +85,9 @@ public class CharacterInfoUI : BaseUI
     private void Init()
     {
         _controller = transform.GetComponentInParent<CharacterInfoController>();
+        _enhanceResultIcons[0] = Resources.Load<Sprite>("Sprites/Icon/White/Icon_White_128/Icon_White_128_Emoji_Smile_02");
+        _enhanceResultIcons[1] = Resources.Load<Sprite>("Sprites/Icon/White/Icon_White_128/Icon_White_128_Emoji_Sad_02");
+        _enhanceResultIcons[2] = Resources.Load<Sprite>("Sprites/Icon/White/Icon_White_128/Icon_White_128_Error_Png");
     }
     
     private void UIBind()
@@ -112,6 +125,8 @@ public class CharacterInfoUI : BaseUI
     /// </summary>
     private void EnhanceTabUI()
     {
+        _beforeMax = GetUI("BeforeMax");
+        _afterMax = GetUI("AfterMax");
         _curEnhanceLevelText = GetUI<TextMeshProUGUI>("CurEnhanceLevelText");
         _beforeUpGradeText = GetUI<TextMeshProUGUI>("BeforeUpGradeText");
         _beforeHpText = GetUI<TextMeshProUGUI>("BeforeHpText");
@@ -122,7 +137,13 @@ public class CharacterInfoUI : BaseUI
         _afterAtkText = GetUI<TextMeshProUGUI>("AfterAtkText");
         _afterDefText = GetUI<TextMeshProUGUI>("AfterDefText");
         _enhanceResultText = GetUI<TextMeshProUGUI>("EnhanceResultText");
+        _enhanceResultIcon = GetUI<Image>("EnhanceResultImage");
         _mileageValueText = GetUI<TextMeshProUGUI>("MileageValueText");
+        
+        _afterMaxTitleText = GetUI<TextMeshProUGUI>("AfterMaxTitleText");
+        _afterMaxHpText = GetUI<TextMeshProUGUI>("AfterMaxHpText");
+        _afterMaxAtkText = GetUI<TextMeshProUGUI>("AfterMaxAtkText");
+        _afterMaxDefText = GetUI<TextMeshProUGUI>("AfterMaxDefText");
         
         _mileageSlider = GetUI<Slider>("MileageSlider");
         _enhanceButton = GetUI<Button>("EnhanceButton"); 
