@@ -5,9 +5,13 @@ using UnityEngine.UI;
 
 public class CharacterSortUI : BaseUI
 {
-    [HideInInspector] public Button NameSortButton;
     [HideInInspector] public Button LevelSortButton;
     [HideInInspector] public Button PowerLevelSortButton;
+    [HideInInspector] public Button EnhanceLevelSortButton;
+    [HideInInspector] public Button AttackPowerSortButton;
+    [HideInInspector] public Button DefensePowerSortButton;
+    [HideInInspector] public Button HealthPowerSortButton;
+    
     
     private Button _sortCloseButton;
 
@@ -22,9 +26,12 @@ public class CharacterSortUI : BaseUI
     private void UIBind()
     {
         _sortCloseButton = GetUI<Button>("SortCloseButton");
-        NameSortButton = GetUI<Button>("NameSort");
         LevelSortButton = GetUI<Button>("LevelSort");
         PowerLevelSortButton = GetUI<Button>("PowerLevelSort");
+        EnhanceLevelSortButton = GetUI<Button>("EnhanceLevelSort");
+        AttackPowerSortButton = GetUI<Button>("AttackPowerSortButton");
+        DefensePowerSortButton = GetUI<Button>("DefensePowerSortButton");
+        HealthPowerSortButton = GetUI<Button>("HealthPowerSortButton"); 
     }
 
     private void SubscribeEvent()

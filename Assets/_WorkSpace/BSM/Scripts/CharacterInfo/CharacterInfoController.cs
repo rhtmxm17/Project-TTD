@@ -26,11 +26,15 @@ public class CharacterInfoController : BaseUI
     private CharacterSort _characterSort;
     private CharacterFilter _characterFilter;
 
+    private TextMeshProUGUI _orderText;
     private Button _prevButton;
     private Button _nextButton;
     private Button _sortButton;
-    private Button _filterButton;
-
+    private Button _orderButton;
+    private Button _elementFilterButton;
+    private Button _roleFilterButton;
+    private Button _dragonVeinFilterButton;
+     
     private SortType _lastSortType;
     private RectTransform _contentForm;
     private Vector2 _characterCellSize;
@@ -107,9 +111,14 @@ public class CharacterInfoController : BaseUI
 
         _sortButton = GetUI<Button>("SortButton");
         SortButtonText = _sortButton.GetComponentInChildren<TextMeshProUGUI>();
-        _filterButton = GetUI<Button>("FilterButton");
-
-
+        _orderButton = GetUI<Button>("OrderButton");
+        _orderText = GetUI<TextMeshProUGUI>("OrderButtonText");
+        
+        _elementFilterButton = GetUI<Button>("ElementFilterButton");
+        _roleFilterButton = GetUI<Button>("RoleFilterButton");
+        _dragonVeinFilterButton = GetUI<Button>("DragonVeinFilterButton");
+         
+        
         _detailTab = GetUI("DetailTab");
         _enhanceTab = GetUI("EnhanceTab");
         _evolutionTab = GetUI("EvolutionTab");
@@ -132,7 +141,12 @@ public class CharacterInfoController : BaseUI
         _prevButton.onClick.AddListener(PreviousCharacter);
         _nextButton.onClick.AddListener(NextCharacter);
         _sortButton.onClick.AddListener(() => _characterSort.transform.GetChild(0).gameObject.SetActive(true));
-        _filterButton.onClick.AddListener(() => _characterFilter.transform.GetChild(0).gameObject.SetActive(true));
+        _orderButton.onClick.AddListener(()=> Debug.Log("정렬 버튼 클릭"));
+        
+        _elementFilterButton.onClick.AddListener(() => _characterFilter.transform.GetChild(0).gameObject.SetActive(true));
+        _roleFilterButton.onClick.AddListener(() => Debug.Log("역할 필터 클릭"));
+        _dragonVeinFilterButton.onClick.AddListener(() => Debug.Log("용맥 버튼 클릭"));
+        
     }
 
     /// <summary>
@@ -148,11 +162,13 @@ public class CharacterInfoController : BaseUI
         {
             _characterInfos[i].SetCharacterData();
         }
+        //TODO: characterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)) 조건 삭제 필요
         
         CharacterCount = _characterInfos.Count;
         _characterSort._sortCharacterInfos= _characterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)).ToList();
         _characterSort.CharacterInfoController = this;
-        _characterFilter._filterCharacterInfos = _characterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)).ToList();
+        _characterSort.OrderText = _orderText;
+        _characterFilter._filterCharacterInfos = _characterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)).ToList(); 
         StartListSort();
         
         for (int i = 0; i < _characterInfos.Count; i++)

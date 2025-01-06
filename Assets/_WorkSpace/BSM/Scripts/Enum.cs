@@ -24,7 +24,7 @@ public enum BuffType
 public enum SortType
 {
     //추후 레벨, 전투력으로 정렬
-    NONE, NAME, LEVEL, POWERLEVEL, OFFENSIVEPOWER, DEFENSEIVEPOWER, HEALTH
+    NONE, LEVEL, POWERLEVEL, ENHANCELEVEL, OFFENSIVEPOWER, DEFENSEIVEPOWER, HEALTH
 }
 
 [System.Serializable]

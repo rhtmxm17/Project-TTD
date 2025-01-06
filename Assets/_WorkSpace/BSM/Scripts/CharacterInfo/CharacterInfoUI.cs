@@ -52,7 +52,11 @@ public class CharacterInfoUI : BaseUI
     private Button _detailTabButton;
     private Button _enhanceTabButton;
     private Button _evolutionTabButton;
-     
+    private Image _detailTabColor;
+    private Image _enhanceTabColor;
+    private Image _evolutionTabColor;
+    
+    
     private Button _exitButton;
     private GameObject _infoPopup;
 
@@ -92,11 +96,15 @@ public class CharacterInfoUI : BaseUI
         _infoPopup = GetUI("InfoPopup");  
         _enhanceText = GetUI<TextMeshProUGUI>("EnhanceText"); 
         _exitButton = GetUI<Button>("ExitButton");
- 
+         
         //좌측 Tab 버튼 바인딩
         _detailTabButton = GetUI<Button>("DetailTabButton");
         _enhanceTabButton = GetUI<Button>("EnhanceTabButton");
         _evolutionTabButton = GetUI<Button>("EvolutionTabButton");
+        
+        _detailTabColor = _detailTabButton.GetComponent<Image>();
+        _enhanceTabColor = _enhanceTabButton.GetComponent<Image>();
+        _evolutionTabColor = _evolutionTabButton.GetComponent<Image>(); 
     }
     
     /// <summary>
@@ -149,11 +157,20 @@ public class CharacterInfoUI : BaseUI
     private void ButtonAddListener()
     {
         _exitButton.onClick.AddListener(InfoPopupClose);
-        _detailTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.DETAIL);
-        _enhanceTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.ENHANCE);
-        _evolutionTabButton.onClick.AddListener(() => _controller.CurInfoTabType = InfoTabType.EVOLUTION);
+        _detailTabButton.onClick.AddListener(() => TabButtonClick(InfoTabType.DETAIL));
+        _enhanceTabButton.onClick.AddListener(() => TabButtonClick(InfoTabType.ENHANCE));
+        _evolutionTabButton.onClick.AddListener(() => TabButtonClick(InfoTabType.EVOLUTION));
         
         _enhanceResultConfirm.onClick.AddListener(()=> _enhanceResultPopup.SetActive(false));
+    }
+
+    private void TabButtonClick(InfoTabType tabType)
+    {
+        _controller.CurInfoTabType = tabType;
+        _detailTabColor.color = _controller.CurInfoTabType == InfoTabType.DETAIL ? Color.cyan : Color.white;
+        _enhanceTabColor.color = _controller.CurInfoTabType == InfoTabType.ENHANCE ? Color.cyan : Color.white;
+        _evolutionTabColor.color = _controller.CurInfoTabType == InfoTabType.EVOLUTION ? Color.cyan : Color.white;
+        
     }
     
     /// <summary>

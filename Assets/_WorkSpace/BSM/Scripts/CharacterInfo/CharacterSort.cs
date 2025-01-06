@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 
@@ -10,9 +11,12 @@ public class CharacterSort : MonoBehaviour
     [HideInInspector] public CharacterInfoController CharacterInfoController;
     [HideInInspector] public List<CharacterInfo> _sortCharacterInfos;
 
-    private List<object> _sortList;
+    private List<int> _sortList;
 
     private CharacterSortUI _characterSortUI;
+    public TextMeshProUGUI OrderText;
+    
+    private int _sortValue;
     private SortType _curSortType;
 
     public SortType CurSortType
@@ -48,9 +52,12 @@ public class CharacterSort : MonoBehaviour
 
     private void SubscribeEvent()
     {
-        _characterSortUI.NameSortButton.onClick.AddListener(() => SortEventFunc(SortType.NAME));
         _characterSortUI.LevelSortButton.onClick.AddListener(() => SortEventFunc(SortType.LEVEL));
         _characterSortUI.PowerLevelSortButton.onClick.AddListener(() => SortEventFunc(SortType.POWERLEVEL));
+        _characterSortUI.EnhanceLevelSortButton.onClick.AddListener(() => SortEventFunc(SortType.ENHANCELEVEL));
+        _characterSortUI.AttackPowerSortButton.onClick.AddListener(() => SortEventFunc(SortType.OFFENSIVEPOWER));
+        _characterSortUI.DefensePowerSortButton.onClick.AddListener(()=> SortEventFunc(SortType.DEFENSEIVEPOWER));
+        _characterSortUI.HealthPowerSortButton.onClick.AddListener(() => SortEventFunc(SortType.HEALTH)); 
     }
 
     /// <summary>
@@ -59,6 +66,7 @@ public class CharacterSort : MonoBehaviour
     /// <param name="type"></param>
     private void SortEventFunc(SortType type)
     {
+        //TODO: isSorting 변경을 함수 분리하기.
         if (_curSortType.Equals(type))
         {
             _isSorting = !_isSorting;
@@ -84,14 +92,22 @@ public class CharacterSort : MonoBehaviour
         switch (_curSortType)
         {
             case SortType.LEVEL:
-            default:
-                _sortList = _sortCharacterInfos.Select(x => (object)x.CharacterLevel).ToList();
-                break;
-            case SortType.NAME:
-                _sortList = _sortCharacterInfos.Select(x => (object)x.CharacterName).ToList();
+                _sortList = _sortCharacterInfos.Select(x => x.CharacterLevel).ToList();
                 break;
             case SortType.POWERLEVEL:
-                _sortList = _sortCharacterInfos.Select(x => (object)x.PowerLevel).ToList();
+                _sortList = _sortCharacterInfos.Select(x => x.PowerLevel).ToList();
+                break;
+            case SortType.ENHANCELEVEL:
+                _sortList = _sortCharacterInfos.Select(x => x._CharacterData.Enhancement.Value).ToList();
+                break;
+            case SortType.OFFENSIVEPOWER:
+                _sortList = _sortCharacterInfos.Select(x => (int)x._CharacterData.AttackPointLeveled).ToList();
+                break;
+            case SortType.DEFENSEIVEPOWER:
+                _sortList = _sortCharacterInfos.Select(x => (int)x._CharacterData.DefensePointLeveled).ToList();
+                break;
+            case SortType.HEALTH:
+                _sortList = _sortCharacterInfos.Select(x => (int)x._CharacterData.HpPointLeveled).ToList();
                 break;
         }
 
@@ -106,6 +122,8 @@ public class CharacterSort : MonoBehaviour
             _sortList.Sort();
         }
 
+        OrderText.text = _isSorting ? "↓" : "↑";
+        
         if (!_isStart)
         {
             _isStart = true;
@@ -155,27 +173,25 @@ public class CharacterSort : MonoBehaviour
             _sortCharacterInfos[i].StartSetCharacterUI();
         }
     }
-
+ 
     /// <summary>
     /// 정렬할 타입에 따라 정렬 값 분류
     /// </summary>
     /// <param name="characterInfo">캐릭터 데이터</param>
     /// <returns>정렬할 값</returns>
-    private object GetSortValue(CharacterInfo characterInfo)
+    private int GetSortValue(CharacterInfo characterInfo)
     {
-        if (_curSortType.Equals(SortType.NAME))
+        _sortValue = _curSortType switch
         {
-            return characterInfo.CharacterName;
-        }
-        else if (_curSortType.Equals(SortType.LEVEL))
-        {
-            return characterInfo.CharacterLevel;
-        }
-        else if (_curSortType.Equals(SortType.POWERLEVEL))
-        {
-            return characterInfo.PowerLevel;
-        }
-
-        return null;
+            SortType.LEVEL => characterInfo.CharacterLevel,
+            SortType.POWERLEVEL => characterInfo.PowerLevel,
+            SortType.ENHANCELEVEL => characterInfo._CharacterData.Enhancement.Value,
+            SortType.OFFENSIVEPOWER => (int)characterInfo._CharacterData.AttackPointLeveled,
+            SortType.DEFENSEIVEPOWER => (int)characterInfo._CharacterData.DefensePointLeveled,
+            SortType.HEALTH => (int)characterInfo._CharacterData.HpPointLeveled,
+            _ => throw new AggregateException("잘못된 타입 들어옴") 
+        };
+        
+        return _sortValue;
     }
 }
