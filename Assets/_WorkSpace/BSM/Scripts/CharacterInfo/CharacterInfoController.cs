@@ -171,27 +171,10 @@ public class CharacterInfoController : BaseUI
         UserGoldData = GameManager.TableData.GetItemData(1).Number;
         UserLevelMaterialData = GameManager.TableData.GetItemData(2).Number;
         UserEnhanceMaterialData = GameManager.TableData.GetItemData(3).Number;
-        
-        //TODO: 재화 셋팅되면 지울것
-        GameManager.UserData.StartUpdateStream()
-            .SetDBValue(UserLevelMaterialData, 10000)
-            .Submit(result =>
-            {
-                if (!result) return; 
-            });
 
-        GameManager.UserData.StartUpdateStream()
-            .SetDBValue(UserEnhanceMaterialData, 10000)
-            .Submit(result =>
-            {
-                if(!result) return; 
-            }); 
-        
         _userGold = UserGoldData.Value;
         _userLevelMaterial = UserLevelMaterialData.Value;
-        _userEnhanceMaterial = UserEnhanceMaterialData.Value;
-        Debug.Log($"임시 레벨업 재화 충전 완료 :{_userLevelMaterial}");
-        Debug.Log($"임시 강화 재화 충전 완료 {_userEnhanceMaterial}");
+        _userEnhanceMaterial = UserEnhanceMaterialData.Value; 
     }
     
     private void ButtonOnClickEvent()

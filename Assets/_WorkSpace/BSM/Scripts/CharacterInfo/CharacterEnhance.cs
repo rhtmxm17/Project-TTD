@@ -66,6 +66,7 @@ public class CharacterEnhance : MonoBehaviour
 
         _characterInfoController._infoUI._enhanceButton.onClick.AddListener(Enhance);
         _characterInfoController._infoUI._mileageSlider.onValueChanged.AddListener(value => MileageValueChange(value));
+        _characterInfoController._infoUI._mileageUseConfirmButton.onClick.AddListener(UseMileage);
     }
 
     private void SubscribeEvent()
@@ -115,6 +116,9 @@ public class CharacterEnhance : MonoBehaviour
             _characterInfoController._infoUI._afterMaxHpText.text = $"체력 : {_characterData.HpPointLeveled}";
             _characterInfoController._infoUI._afterMaxAtkText.text = $"공격력 : {_characterData.AttackPointLeveled}";
             _characterInfoController._infoUI._afterMaxDefText.text = $"방어력 : {_characterData.DefensePointLeveled}";
+
+            _characterInfoController._infoUI._enhanceCoinText.text = "-";
+            _characterInfoController._infoUI._enhanceMaterialText.text = "-";
         }
         else
         {
@@ -143,14 +147,17 @@ public class CharacterEnhance : MonoBehaviour
         //현재 임시로 강화 레벨에 따라 최소 강화 확률 조정 중
         
         //최소 확률 > 임시 70%
-        _minEnhanceProbability = (_maxEnhanceLevel - 3) * 0.1f;
+        _minEnhanceProbability = (_maxEnhanceLevel - 7) * 0.1f;
          
-        //강화 성공 확률 : 0.3 ~ 최대 1f 확률 사이
-        _enhanceProbability = GetProbability(Random.Range(_minEnhanceProbability, 1f));
+        //강화 성공 확률
+        _enhanceProbability = GetProbability(Random.Range(_minEnhanceProbability + ((_beforeEnhanceLevel + 0.1f) * 0.1f), 0.9f));
 
-        _chance = GetProbability(Random.Range((_enhanceProbability - 0.3f), (_enhanceProbability + 0.1f)));
-        _chance = Mathf.Clamp(_chance + _mileage, 0.01f, 1f);
-
+        //0.2 ~ 
+        _chance = GetProbability(Random.Range(0.2f, _enhanceProbability + 0.05f));
+        _chance = Mathf.Clamp(_chance, 0.01f, 1f);
+        
+        Debug.Log($"성공 최소 확률:{_enhanceProbability} / 나의 확률 :{_chance}");
+        
         if (_chance >= _enhanceProbability)
         {
             GameManager.UserData.StartUpdateStream()
@@ -176,8 +183,7 @@ public class CharacterEnhance : MonoBehaviour
             ResultPopup("강화 실패 \n 사유 : 네트워크 오류", _characterInfoController._infoUI.EnhanceResultIcons[2]);
             return;
         }
- 
-        MileageUpdate(0); 
+        
         ResultPopup($"+{_characterData.Enhancement.Value} 강화에 성공하셨습니다.", _characterInfoController._infoUI.EnhanceResultIcons[0]);
         CharacterStats();
         UpdateInfo();  
@@ -211,6 +217,7 @@ public class CharacterEnhance : MonoBehaviour
                     return;
                 }
                 _characterInfoController._infoUI._mileageSlider.value = _mileage;
+                _characterInfoController._infoUI._mileageUseButton.interactable = _mileage >= 1f;
             });
     }
     
@@ -234,6 +241,25 @@ public class CharacterEnhance : MonoBehaviour
         _characterInfoController._infoUI._mileageValueText.text = $"강화 마일리지 {value * 100f}%";
     }
 
+    private void UseMileage()
+    {
+        if (_characterInfoController.CurCharacterEnhance != this) return;
+
+        GameManager.UserData.StartUpdateStream()
+            .SetDBValue(_characterData.Enhancement, _characterData.Enhancement.Value + 1) 
+            .SetDBValue(_characterInfoController.UserGoldData, _characterInfoController.UserGoldData.Value - _enhanceGoldCost)
+            .SetDBValue(_characterInfoController.UserEnhanceMaterialData, _characterInfoController.UserEnhanceMaterialData.Value - _enhanceMaterialCost)
+            .Submit(result =>
+            {
+                EnhanceSuccess(result);
+
+                if (!result) return;
+                MileageUpdate(0);
+                _characterInfoController._infoUI._mileageUseButton.interactable = false;
+                _characterInfoController._infoUI._mileageUsePopup.SetActive(false);
+            }); 
+    }
+    
     /// <summary>
     /// 강화 완료 후 스탯 반영
     /// </summary>
@@ -269,7 +295,7 @@ public class CharacterEnhance : MonoBehaviour
     /// </summary>
     private void SetEnhanceCost()
     {
-        _enhanceMaterialCost = 500 * (_beforeEnhanceLevel + 1);
+        _enhanceMaterialCost = 0 * (_beforeEnhanceLevel + 1);
         _enhanceGoldCost = 100 * (_beforeEnhanceLevel + 1); 
         _characterInfoController._infoUI._enhanceCoinText.text = _enhanceGoldCost.ToString();
         _characterInfoController._infoUI._enhanceMaterialText.text = _enhanceMaterialCost.ToString();
@@ -300,10 +326,10 @@ public class CharacterEnhance : MonoBehaviour
         _characterInfoController.CurCharacterEnhance = this;
         _characterData = characterData;
         _characterInfoController._infoUI._mileageSlider.value = _mileage;
-        
+        _characterInfoController._infoUI._mileageUseButton.interactable = _mileage >= 1f;
         EnhanceCheck();
     }
-
+    
     public void CheatEnhance(int enhanceLevel)
     {
         if (_characterInfoController.CurCharacterEnhance != this) return;

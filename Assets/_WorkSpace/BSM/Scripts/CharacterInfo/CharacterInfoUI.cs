@@ -56,11 +56,14 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public Image _enhanceResultIcon;
     [HideInInspector] public Button _enhanceResultConfirm;
     [HideInInspector] public Button _enhanceButton;
+    [HideInInspector] public Button _mileageUseButton;
+    [HideInInspector] public Button _mileageUseConfirmButton;
+    [HideInInspector] public GameObject _mileageUsePopup;
+    private Button _mileageCancelButton;
     
     //EvolutionTab
     
-    //MeanTab
-     
+
     private CharacterInfoController _controller;
     
     private Button _detailTabButton;
@@ -73,7 +76,8 @@ public class CharacterInfoUI : BaseUI
     
     private Button _exitButton;
     private GameObject _infoPopup;
-
+   
+    
     public TextMeshProUGUI _tempElemetTypeText;
     public TextMeshProUGUI _tempRoleTypeText;
     public TextMeshProUGUI _tempDragonVeinTypeText;
@@ -154,7 +158,11 @@ public class CharacterInfoUI : BaseUI
         _mileageSlider = GetUI<Slider>("MileageSlider");
         _enhanceButton = GetUI<Button>("EnhanceButton"); 
         _enhanceResultConfirm = GetUI<Button>("EnhanceResultConfirm");
+        _mileageUseButton = GetUI<Button>("MileageUseButton");
+        _mileageUseConfirmButton = GetUI<Button>("MileageConfirmButton");
+        _mileageCancelButton = GetUI<Button>("MileageCancelButton");
         
+        _mileageUsePopup = GetUI("MileageUsePopup");
         _enhanceResultPopup = GetUI("EnhanceResultPopup");
     }
     
@@ -189,6 +197,8 @@ public class CharacterInfoUI : BaseUI
         _evolutionTabButton.onClick.AddListener(() => TabButtonClick(InfoTabType.EVOLUTION));
         
         _enhanceResultConfirm.onClick.AddListener(()=> _enhanceResultPopup.SetActive(false));
+        _mileageUseButton.onClick.AddListener(() => _mileageUsePopup.SetActive(true));
+        _mileageCancelButton.onClick.AddListener(() => _mileageUsePopup.SetActive(false));
     }
 
     private void TabButtonClick(InfoTabType tabType)
