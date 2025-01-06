@@ -8,7 +8,6 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "ScriptableObjects/Skill/SingleTargetDamage")]
 public class SingleTargetDamage : Skill
 {
-    [SerializeField] Targeting targetingLogic;
     [SerializeField] float atkMultiplier = 1f;
     [SerializeField] string animationTriggerParam;
     [SerializeField, Tooltip("선딜레이")] float preDelay;
@@ -27,10 +26,8 @@ public class SingleTargetDamage : Skill
         waitPostDelay = new WaitForSeconds(postDelay);
     }
 
-    protected override IEnumerator SkillRoutineImplement(Combatable self)
+    protected override IEnumerator SkillRoutineImplement(Combatable self, Combatable target)
     {
-        Combatable target = targetingLogic.GetTarget(self); // 설정된 규칙에 따라 타겟 산출
-
         // 지정된 애니메이션 시작
         self.UnitAnimator.SetTrigger(animationHash);
 
@@ -38,7 +35,7 @@ public class SingleTargetDamage : Skill
         
         // 실제로 공격이 적용되는 구간
         if(target != null && target.IsAlive)
-            target?.Damaged(self.AttackPoint.Value * atkMultiplier, self.igDefenseRate); // 타겟에게 데미지 적용
+            target.Damaged(self.AttackPoint.Value * atkMultiplier, self.igDefenseRate); // 타겟에게 데미지 적용
         
         // 히트스캔 이펙트 추가
 

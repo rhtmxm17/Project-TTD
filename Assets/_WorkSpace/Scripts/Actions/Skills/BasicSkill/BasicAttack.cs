@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class BasicAttack : Skill
 {
-    [SerializeField] Targeting targetingLogic;
     [SerializeField] string animationTriggerParam = "Attack";
     private int animationHash;
 
@@ -16,11 +15,9 @@ public class BasicAttack : Skill
         animationHash = Animator.StringToHash(animationTriggerParam);
     }
 
-    protected override IEnumerator SkillRoutineImplement(Combatable self)
+    protected override IEnumerator SkillRoutineImplement(Combatable self, Combatable target)
     {
         yield return null;
-
-        Combatable target = targetingLogic.GetTarget(self); // 설정된 규칙에 따라 타겟 산출
 
         // 지정된 애니메이션 시작
         self.UnitAnimator.SetTrigger(animationHash);
@@ -28,7 +25,6 @@ public class BasicAttack : Skill
         // 실제로 공격이 적용되는 구간
         if (target != null && target.IsAlive)
             target.Damaged(self.AttackPoint.Value, self.igDefenseRate); // 타겟에게 데미지 적용
-
 
     }
 
