@@ -17,7 +17,8 @@ public class RoomChangePUUI : BaseUI
     
     int spriteIndex = 0;
     // 방의 소유 여부
-
+    // TODO: DB로 보내는 작업 해야함..ㅠㅠㅠ 
+    bool hasRoom = false;
 
     private void Start()
     {
@@ -38,6 +39,8 @@ public class RoomChangePUUI : BaseUI
         GetUI<TMP_Text>("RoomNameText").text = rooms[spriteIndex].RoomName;
         GetUI<TMP_Text>("ExplainText").text = rooms[spriteIndex].RoomDescription;
         
+        // 배경 이미지 구매
+        GetUI<Button>("BuyRoomButton").onClick.AddListener(()=>BuyRoom());
         
         // 배경 이미지 바꾸기 결정
         GetUI<Button>("SetImageButton").onClick.AddListener(()=>
@@ -75,12 +78,15 @@ public class RoomChangePUUI : BaseUI
         UserDataInt gold = GameManager.TableData.GetItemData(1).Number;
         int price = rooms[spriteIndex].roomPrice;
         
-
         if ( gold.Value < price)
         {
             Debug.LogWarning("골드부족!");
             return;
         }
+        
+        // 구매
+        rooms[spriteIndex].isHas = true;
+        hasRoom = rooms[spriteIndex].isHas;
         // TODO: 구매한 방의 bool 값 DB에 저장
         GameManager.UserData.StartUpdateStream()
             .SetDBValue(gold, gold.Value -price)
@@ -94,6 +100,8 @@ public class RoomChangePUUI : BaseUI
 
                 Debug.Log("방 구매 성공!");
             });
+        
+        GetUI("BuyRoomButton").SetActive(false);
     }
     
     // 우버튼 
@@ -107,7 +115,16 @@ public class RoomChangePUUI : BaseUI
         GetUI<Image>("RoomPreview").sprite = rooms[spriteIndex].RoomSprite;
         GetUI<TMP_Text>("RoomNameText").text = rooms[spriteIndex].RoomName;
         GetUI<TMP_Text>("ExplainText").text = rooms[spriteIndex].RoomDescription;
-        
+        hasRoom = rooms[spriteIndex].isHas;
+        // 방 소유하지 않았으면 구매버튼 활성화
+        if (hasRoom == false)
+        {
+            GetUI("BuyRoomButton").SetActive(true);
+        }
+        else
+        {
+            GetUI("BuyRoomButton").SetActive(false);
+        }
     }
     
     // 좌버튼
@@ -121,7 +138,16 @@ public class RoomChangePUUI : BaseUI
         GetUI<Image>("RoomPreview").sprite = rooms[spriteIndex].RoomSprite;
         GetUI<TMP_Text>("RoomNameText").text = rooms[spriteIndex].RoomName;
         GetUI<TMP_Text>("ExplainText").text = rooms[spriteIndex].RoomDescription;
-        
+        hasRoom = rooms[spriteIndex].isHas;
+        // 방 소유하지 않았으면 구매버튼 활성화
+        if (hasRoom == false)
+        {
+            GetUI("BuyRoomButton").SetActive(true);
+        }
+        else
+        {
+            GetUI("BuyRoomButton").SetActive(false);
+        }
     }
     
     // 창닫기
