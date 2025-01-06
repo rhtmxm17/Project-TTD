@@ -27,6 +27,9 @@ public class LoginPanel : BaseUI
     [SerializeField] TMP_Text warningText;
     [SerializeField] Image warningImage;
 
+    //비밀번호 리셋
+    [SerializeField] GameObject findPWPanel;
+    [SerializeField] private TMP_InputField resetPWInputField;
     
     void Start()
     {
@@ -55,6 +58,11 @@ public class LoginPanel : BaseUI
         warningImage = GetUI<Image>("warningImage");
 
         
+        // 비밀번호 찾기
+        GetUI<Button>("FindPWButton").onClick.AddListener(() => Open("FindPWPanel"));
+        resetPWInputField = GetUI<TMP_InputField>("ResetPWInputField");
+        GetUI<Button>("ResetPWButton").onClick.AddListener(ResetPW);
+
         
         // 인증메일 팝업창
         GetUI("EmailAuthPopup");
@@ -186,11 +194,35 @@ public class LoginPanel : BaseUI
         });
     }
 
-    
-    
-    
-    
-    
+
+    public void ResetPW()
+    {
+        string email = resetPWInputField.text;
+        BackendManager.Auth.SendPasswordResetEmailAsync(email).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCanceled)
+            {
+                Debug.LogWarning("SendPasswordResetEmailAsync was canceled.");
+                warningPopup.SetActive(true);
+                warningText.text = "비밀번호 리셋이 취소되었습니다.";
+                return;
+            }
+            if (task.IsFaulted)
+            {
+                Debug.LogWarning("SendPasswordResetEmailAsync encountered an error: " + task.Exception);
+                //TODO: 에러등으로 실패했다는 알림창?
+                warningPopup.SetActive(true);
+                warningText.text = $"에러가 발생했습니다. {task.Exception}.";
+                return;
+            }
+            Debug.Log("Password reset email sent successfully.");
+            warningPopup.SetActive(true);
+            warningText.text = $"비밀번호 리셋 이메일이 발송됐습니다.";
+            Close("FindPWPanel");
+            // findPWPanel.SetActive(false);
+        });
+
+    }
     
     /// <summary>
     /// 로그아웃합니다.
@@ -199,7 +231,6 @@ public class LoginPanel : BaseUI
     {
         BackendManager.Auth.SignOut();
     }
-
 
     public void CheckUserInfo()
     {
