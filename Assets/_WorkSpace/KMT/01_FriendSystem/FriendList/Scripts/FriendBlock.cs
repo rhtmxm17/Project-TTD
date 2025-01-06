@@ -35,30 +35,52 @@ public class FriendBlock : MonoBehaviour
 
         text.text = nickname;
 
-        visitBtn.onClick.AddListener(() => visitAction?.Invoke(this.uid));
+        visitBtn.onClick.AddListener(() => { VisitFriend(visitAction); });
         deleteFriendBtn.onClick.AddListener(DeleteFriend);
     }
 
-    private void DeleteFriend()
+    void VisitFriend(Action<string> visitAction)
     {
-        //요청사항 제거 + 친구추가.
-        Dictionary<string, object> updates = new Dictionary<string, object>
-        {
-            { $"{UserData.myUid}/friends/friendList/{uid}", null },
-            { $"{uid}/friends/friendList/{UserData.myUid}", null }
-        };
+        GameManager.OverlayUIManager.OpenDoubleInfoPopup(
+            $"{nickname}님의 방으로 \n 잠입하실건가요?",
+            "ㄴㄴㄴㄴㄴ", "ㄱㄱㄱㄱㄱ",
+            null, () => visitAction.Invoke(uid));
+    }
 
-        userRef.UpdateChildrenAsync(updates).ContinueWithOnMainThread(task => {
+    void DeleteFriend()
+    {
 
-            if (task.IsFaulted || task.IsCanceled)
+        GameManager.OverlayUIManager.OpenDoubleInfoPopup(
+            $"{nickname}님과 더이상 \n 친구가 아닌가요...?",
+            "아뇨아뇨아뇨!", "그렇게 됐네요",
+            null, () => 
             {
-                Debug.LogError("수정실패{상호 친구 제거 실패}");
-                return;
-            }
+                Dictionary<string, object> updates = new Dictionary<string, object>
+                {
+                    { $"{UserData.myUid}/friends/friendList/{uid}", null },
+                    { $"{uid}/friends/friendList/{UserData.myUid}", null }
+                };
 
-            friendListRoot.RefreshList();
+                userRef.UpdateChildrenAsync(updates).ContinueWithOnMainThread(task => {
 
-        });
+                    if (task.IsFaulted || task.IsCanceled)
+                    {
+                        Debug.LogError("수정실패{상호 친구 제거 실패}");
+                        return;
+                    }
+
+                    GameManager.OverlayUIManager.OpenSimpleInfoPopup(
+                        $"{nickname}님과 더이상 \n 친구가 아니게 되었어요...",
+                        "친구창 확보 조아써",
+                        null
+                    );
+
+                    friendListRoot.RefreshList();
+
+                });
+            });
+
+        
     }
 
 

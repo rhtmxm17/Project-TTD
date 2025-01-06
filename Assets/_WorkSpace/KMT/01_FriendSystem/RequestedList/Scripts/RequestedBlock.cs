@@ -37,22 +37,38 @@ public class RequestedBlock : MonoBehaviour
 
     void Cancel()
     {
-        Dictionary<string, object> updates = new Dictionary<string, object>
-        {
-            { $"{UserData.myUid}/friends/sentRequestList/{uid}", null },
-            { $"{uid}/friends/recievedRequestList/{UserData.myUid}", null}
-        };
 
-        dataRef.UpdateChildrenAsync(updates).ContinueWithOnMainThread(task => {
+        GameManager.OverlayUIManager.OpenDoubleInfoPopup(
+            $"{nickname}님에게 보낸 \n 친구요청을 취소할까요?",
+            "그대로 둬주세요.", "내!",
+            null, () => {
 
-            if (task.IsFaulted || task.IsCanceled)
-            {
-                Debug.LogError("수정실패{친구신청취소}");
-                return;
+                Dictionary<string, object> updates = new Dictionary<string, object>
+                {
+                    { $"{UserData.myUid}/friends/sentRequestList/{uid}", null },
+                    { $"{uid}/friends/recievedRequestList/{UserData.myUid}", null}
+                };
+
+                dataRef.UpdateChildrenAsync(updates).ContinueWithOnMainThread(task => {
+
+                    if (task.IsFaulted || task.IsCanceled)
+                    {
+                        Debug.LogError("수정실패{친구신청취소}");
+                        return;
+                    }
+
+                    GameManager.OverlayUIManager.OpenSimpleInfoPopup(
+                        $"{nickname}님에게 잘못보내신 \n 친구요청을 취소했어요!",
+                        "이게 맞지",
+                        null
+                    );
+
+                    reqListWindow.RefreshList();
+
+                });
+
             }
+        );
 
-            reqListWindow.RefreshList();
-
-        });
     }
 }

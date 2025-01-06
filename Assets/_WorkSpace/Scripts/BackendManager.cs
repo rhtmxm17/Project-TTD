@@ -43,9 +43,9 @@ public class BackendManager : SingletonBehaviour<BackendManager>
                 usersDataRef = database.RootReference.Child($"Users");
                 auth.IdTokenChanged += Auth_IdTokenChanged;
 
-                #if DEBUG
+#if UNITY_EDITOR
                 database.SetPersistenceEnabled(false);
-                #endif
+#endif
             }
             else
             {
