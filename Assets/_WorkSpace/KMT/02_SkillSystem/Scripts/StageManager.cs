@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 public class StageManager : MonoBehaviour
@@ -29,12 +30,12 @@ public class StageManager : MonoBehaviour
     BGScroller scroller;
 
     //데이터 테스트용 임시 구조체
-    [System.Serializable]
+/*    [System.Serializable]
     struct monsterData
     {
         [SerializeField] public List<CharacterData> monsters;
 
-    }
+    }*/
 
     [Header("Monsters")]
     [SerializeField] Transform monsterWaveParent;
@@ -48,6 +49,15 @@ public class StageManager : MonoBehaviour
     [SerializeField]
     float MaxPartyCost;
 
+    //TODO : 이것도 스테이지별로 파라미터 지정하기.
+    [Header("Timer")]
+    [SerializeField]
+    protected int timeLimit;
+    [SerializeField]
+    protected TextMeshProUGUI leftTimeText;
+
+    protected bool isTimeOver;
+
     [Header("Debug")]
     [Space(20)]
     [SerializeField]
@@ -60,6 +70,8 @@ public class StageManager : MonoBehaviour
     int curWave;
     int maxWave;
     string MAX_WAVE;
+
+    protected bool isCombatEnd;
 
     private void Awake()
     {
@@ -106,7 +118,7 @@ public class StageManager : MonoBehaviour
                 GameManager.TableData.GetCharacterData((int)pair.Value);
         }
 
-        characterSetter.InitCharacters(batchDictionary);
+        characterSetter.InitCharacters(batchDictionary, _stageData.TileBuff);
         characterManager.ListClearedEvent.AddListener(OnDefeat);
 
         // ============= 몬스터 캐릭터 초기화 =============
@@ -230,6 +242,14 @@ public class StageManager : MonoBehaviour
 
     protected virtual void OnClear()
     {
+        if (isCombatEnd)
+        {
+            Debug.Log("이미 전투가 종료됨");
+            return;
+        }
+
+        isCombatEnd = true;
+
         Debug.Log("클리어!");
         var stream = GameManager.UserData.StartUpdateStream();
         foreach (var item in stageDataOnLoad.Reward)
@@ -254,6 +274,14 @@ public class StageManager : MonoBehaviour
 
     protected virtual void OnDefeat()
     {
+        if (isCombatEnd)
+        {
+            Debug.Log("이미 전투가 종료됨");
+            return;
+        }
+
+        isCombatEnd = true;
+
         ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(null);
         popupInstance.Title.text = "패배...";
         popupInstance.onPopupClosed += GameManager.Instance.LoadMainScene;
@@ -278,6 +306,8 @@ public class StageManager : MonoBehaviour
             return;
         }
 
+        isCombatEnd = false;
+
         //파티 공유 게이지 충전 시작.
         StartCoroutine(StartPartyCostCO());
 
@@ -285,6 +315,9 @@ public class StageManager : MonoBehaviour
         costText.text = PartyCost.ToString();
 
         StartCoroutine(FirstWaveSetCO());
+
+        leftTimeText.text = "웨이브 대기중...";
+
     }
 
     protected virtual IEnumerator FirstWaveSetCO()
@@ -297,6 +330,26 @@ public class StageManager : MonoBehaviour
 
         characterManager.StartCombat(monsterWaveQueue[0]);
         monsterWaveQueue[0].StartCombat(characterManager);
+
+        StartCoroutine(StartTimerCO());
+    }
+
+    protected virtual IEnumerator StartTimerCO()
+    {
+        TimeSpan leftTimeSpan = TimeSpan.FromSeconds(timeLimit);
+        leftTimeText.text = $"{leftTimeSpan.Minutes:D2} : {leftTimeSpan.Seconds:D2}";
+
+        while (timeLimit > 0)
+        {
+            yield return new WaitForSeconds(1);
+            timeLimit -= 1;
+            leftTimeSpan = TimeSpan.FromSeconds(timeLimit);
+            leftTimeText.text = $"{leftTimeSpan.Minutes:D2} : {leftTimeSpan.Seconds:D2}";
+        }
+
+        Debug.Log("타임 오버!");
+        OnDefeat();
+
     }
 
     [ContextMenu("StartGame")]
