@@ -159,6 +159,22 @@ public class Combatable : MonoBehaviour
 
     }
 
+    public void StatusBuffed(StatusBuffType type, float value)
+    {
+        switch (type)
+        {
+            case StatusBuffType.ATK_PERCENTAGE:
+                attackPoint.Value *= (1f + value * 0.01f);
+                break;
+            case StatusBuffType.DEF_PERCENTAGE:
+                defense.Value *= (1f + value * 0.01f);
+                break;
+            default:
+                Debug.LogWarning("잘못되었거나 정의되지 않은 버프 타입");
+                break;
+        }
+    }
+
     public void Damaged(float damage, float igDefRate)
     {
         if (!IsAlive)
