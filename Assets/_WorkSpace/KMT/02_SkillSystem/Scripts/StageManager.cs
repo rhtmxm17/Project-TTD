@@ -106,7 +106,7 @@ public class StageManager : MonoBehaviour
                 GameManager.TableData.GetCharacterData((int)pair.Value);
         }
 
-        characterSetter.InitCharacters(batchDictionary);
+        characterSetter.InitCharacters(batchDictionary, _stageData.TileBuff);
         characterManager.ListClearedEvent.AddListener(OnDefeat);
 
         // ============= 몬스터 캐릭터 초기화 =============

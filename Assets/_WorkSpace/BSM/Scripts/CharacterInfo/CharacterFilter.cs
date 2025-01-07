@@ -10,25 +10,27 @@ using UnityEngine.UI;
 public class CharacterFilter : MonoBehaviour
 {
     [HideInInspector] public List<CharacterInfo> _filterCharacterInfos;
-
-    public List<int> _elementInfosIndex = new List<int>();
-    public List<ElementType> _elementFilterTypes = new List<ElementType>();
-    public List<RoleType> _roleFiterTypes = new List<RoleType>();
-    public List<DragonVeinType> _dragonVeinFilterTypes = new List<DragonVeinType>();
-
+    [HideInInspector] public List<int> _elementInfosIndex = new List<int>();
+    [HideInInspector] public List<ElementType> _elementFilterTypes = new List<ElementType>();
+    [HideInInspector] public List<RoleType> _roleFiterTypes = new List<RoleType>();
+    [HideInInspector] public List<DragonVeinType> _dragonVeinFilterTypes = new List<DragonVeinType>();
     [HideInInspector] public List<Image> _buttonColors = new List<Image>();
 
     private List<Enum> _filterTypes = new List<Enum>();
 
-
-    private CharacterFilterUI _characterFilterUI;
-
+    private CharacterFilterUI _characterFilterUI; 
+    public CharacterInfoController CharacterController;
+    
+    private int _elementCount = 0;
+    private int _roleCount = 0;
+    private int _dragonVeinCount = 0;
+    
     private void Awake()
     {
         _characterFilterUI = GetComponent<CharacterFilterUI>();
     }
 
-    private void OnEnable() => FilterReset();
+    private void OnEnable() => AllFilterClear();
 
     private void Start()
     {
@@ -39,9 +41,9 @@ public class CharacterFilter : MonoBehaviour
     {
         _characterFilterUI._fireFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.FIRE, _characterFilterUI._fireFilterButton));
         _characterFilterUI._waterFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.WATER, _characterFilterUI._waterFilterButton));
-        _characterFilterUI._grassFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.GRASS, _characterFilterUI._grassFilterButton));
-        _characterFilterUI._groundFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.GROUND, _characterFilterUI._groundFilterButton));
-        _characterFilterUI._electricFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.ELECTRIC, _characterFilterUI._electricFilterButton));
+        _characterFilterUI._grassFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.WOOD, _characterFilterUI._grassFilterButton));
+        _characterFilterUI._groundFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.EARTH, _characterFilterUI._groundFilterButton));
+        _characterFilterUI._electricFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.METAL, _characterFilterUI._electricFilterButton));
 
         _characterFilterUI._deffenseFilterButton.onClick.AddListener(() => FilterEventFunc(RoleType.DEFENDER, _characterFilterUI._deffenseFilterButton));
         _characterFilterUI._attackFilterButton.onClick.AddListener(() => FilterEventFunc(RoleType.ATTACKER, _characterFilterUI._attackFilterButton));
@@ -50,7 +52,10 @@ public class CharacterFilter : MonoBehaviour
         _characterFilterUI._singleFilterButton.onClick.AddListener(() => FilterEventFunc(DragonVeinType.SINGLE, _characterFilterUI._singleFilterButton));
         _characterFilterUI._multiFilterButton.onClick.AddListener(() => FilterEventFunc(DragonVeinType.MULTI, _characterFilterUI._multiFilterButton));
 
-        _characterFilterUI._allFilterButton.onClick.AddListener(AllFilterClear);
+        _characterFilterUI._elementAllFilterButton.onClick.AddListener(AllFilterClear);
+        _characterFilterUI._roleAllFilterButton.onClick.AddListener(AllFilterClear);
+        _characterFilterUI._dragonAllFilterButton.onClick.AddListener(AllFilterClear);
+        
     }
 
     private void FilterEventFunc(Enum type, Button button)
@@ -82,11 +87,6 @@ public class CharacterFilter : MonoBehaviour
         }
     }
 
-
-    private int _elementCount = 0;
-    private int _roleCount = 0;
-    private int _dragonVeinCount = 0;
-
     /// <summary>
     /// 캐릭터 필터 설정 
     /// </summary>
@@ -94,8 +94,7 @@ public class CharacterFilter : MonoBehaviour
     /// <typeparam name="T">Enum형으로 해당 캐릭터의 속성, 역할군, 용맥 특성</typeparam>
     private void CharacterListFilter<T>(T type) where T : Enum
     {
-        int compareType = 0;
-        // 0:불 / 1:물 / 2:풀 / 3:땅 / 4:번개 
+        // 0:화룡 / 1:수룡 / 2:정룡 / 3:토룡 / 4: 지룡
 
         if (type is ElementType element)
         {
@@ -117,10 +116,7 @@ public class CharacterFilter : MonoBehaviour
         //1 0 1
         //0 1 1
         //1 1 1 
-        // Debug.Log($"속성 :{_elementCount}");
-        // Debug.Log($"역할 :{_roleCount}");
-        // Debug.Log($"용맥 :{_dragonVeinCount}");
-        //
+
         //이미 필터링이 걸려있는 상태
         if (_elementInfosIndex.Count > 0)
         {
@@ -293,8 +289,78 @@ public class CharacterFilter : MonoBehaviour
                 _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(false);
             }
         }
+
+        ChangeFilterText();
     }
 
+    private void ChangeFilterText()
+    {
+        if (_elementFilterTypes.Count > 1)
+        {
+            CharacterController.ElementFilterText.text = "..."; 
+        }
+        else if (_elementFilterTypes.Count > 0)
+        {
+            CharacterController.ElementFilterText.text = _elementFilterTypes[0] switch
+            {
+                //0: 화룡, 1: 수룡, 2:정룡 ? 3: 토룡, 4: 진룡
+                ElementType.FIRE => "화룡",
+                ElementType.WATER => "수룡",
+                ElementType.WOOD => "정룡",
+                ElementType.EARTH => "토룡",
+                ElementType.METAL => "진룡",
+                _ => throw new AggregateException("잘못된 타입")
+            };
+        }
+        else
+        {
+            CharacterController.ElementFilterText.text = "전체";
+        }
+        
+        if (_roleFiterTypes.Count > 1)
+        {
+            CharacterController.RoleFilterText.text = "...";
+        }
+        else if(_roleFiterTypes.Count > 0)
+        {  
+            CharacterController.RoleFilterText.text = _roleFiterTypes[0] switch
+            {
+                RoleType.ATTACKER => "공격형",
+                RoleType.DEFENDER => "방어형",
+                RoleType.SUPPORTER => "지원형",
+                _ => throw new AggregateException("잘못된 타입")
+            };
+        }
+        else
+        {
+            CharacterController.RoleFilterText.text = "전체";
+        }
+
+        if (_dragonVeinFilterTypes.Count > 1)
+        {
+            CharacterController.DragonVeinFilterText.text = "...";
+        }
+        else if(_dragonVeinFilterTypes.Count > 0)
+        { 
+            CharacterController.DragonVeinFilterText.text = _dragonVeinFilterTypes[0] switch
+            {
+                DragonVeinType.SINGLE => "단일 공격",
+                DragonVeinType.MULTI => "광역 공격",
+                _ => throw new AggregateException("잘못된 타입")
+            }; 
+        }
+        else
+        {
+            CharacterController.DragonVeinFilterText.text = "전체";
+        }
+    }
+    
+    
+    /// <summary>
+    /// 필터 해제
+    /// </summary>
+    /// <param name="type"></param>
+    /// <typeparam name="T"></typeparam>
     private void CharacterListFilterClear<T>(T type) where T : Enum
     {
         _filterTypes.Remove(type);
@@ -303,7 +369,6 @@ public class CharacterFilter : MonoBehaviour
         if (_filterTypes.Count > 0)
         {
             //필터가 1개 남아있는 상태이므로 그 타입을 제외한 해제한 타입은 필터링 진행
-
             if (type is ElementType elementType)
             {
                 _elementFilterTypes.Remove(elementType);
@@ -401,17 +466,10 @@ public class CharacterFilter : MonoBehaviour
         }
         else
         {
-            //모든 필터링이 해제되는 상황이므로 필터링된 애들 모두 활성화
-            for (int i = 0; i < _elementInfosIndex.Count; i++)
-            {
-                _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(true);
-            }
-            
-            _elementInfosIndex.Clear();
-            _elementFilterTypes.Clear();
-            _roleFiterTypes.Clear();
-            _dragonVeinFilterTypes.Clear();
+            AllFilterClear(); 
         }
+
+        ChangeFilterText();
     }
     
     /// <summary>
@@ -419,43 +477,19 @@ public class CharacterFilter : MonoBehaviour
     /// </summary>
     private void AllFilterClear()
     {
-        if (_buttonColors.Count == 0) return;
-
-        _buttonColors.ForEach(x => x.color = Color.white);
-
+        _buttonColors?.ForEach(x => x.color = Color.white);
+        
         for (int i = 0; i < _elementInfosIndex.Count; i++)
         {
             _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(true);
-        }
-
-        _buttonColors.Clear();
-        _filterTypes.Clear();
-        _elementInfosIndex.Clear();
-        _elementFilterTypes.Clear();
-        _roleFiterTypes.Clear();
-        _dragonVeinFilterTypes.Clear();
-    }
-    
-    
-    /// <summary>
-    /// 캐릭터 탭 진입 시 필터 초기화
-    /// </summary>
-    private void FilterReset()
-    {
-        if (_buttonColors.Count == 0) return; 
-        _buttonColors.ForEach(x => x.color = Color.white);
-
-        for (int i = 0; i < _filterCharacterInfos.Count; i++)
-        {
-            _filterCharacterInfos[i].gameObject.SetActive(true);
-        }
+        } 
         
-        _buttonColors.Clear();
+        _buttonColors?.Clear();
         _filterTypes.Clear();
         _elementInfosIndex.Clear();
         _elementFilterTypes.Clear();
         _roleFiterTypes.Clear();
         _dragonVeinFilterTypes.Clear();
+        ChangeFilterText(); 
     }
-    
 }
