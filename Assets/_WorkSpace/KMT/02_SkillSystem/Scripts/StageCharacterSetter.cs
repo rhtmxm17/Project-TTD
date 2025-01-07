@@ -34,6 +34,9 @@ public class StageCharacterSetter : MonoBehaviour
     GameObject costSkillToggleButton;
 
     [SerializeField]
+    GameObject blockerDummyButtonPrefab;
+
+    [SerializeField]
     List<Transform> spawnPositions;
 
     List<Vector3> position = new List<Vector3>();
@@ -87,6 +90,14 @@ public class StageCharacterSetter : MonoBehaviour
                     charObj.StatusBuffed(buffInfo.type, buffInfo.value);
                 }
             }
+        }
+
+        //5칸까지 캐릭터를 추가.
+        for (int i = 0; i < 5 - characterDataList.Count; i++)
+        {
+            Instantiate(blockerDummyButtonPrefab, skillPanel.transform);
+            Instantiate(blockerDummyButtonPrefab, levelupButtonPanel.transform);
+            Instantiate(blockerDummyButtonPrefab, secondSkillPanel.transform);
         }
 
         GetComponent<CombManager>().CharList = characters;
