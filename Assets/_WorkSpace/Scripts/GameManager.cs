@@ -103,18 +103,20 @@ public class GameManager : SingletonBehaviour<GameManager>
         string sceneName;
         switch (menu)
         {
-            case MenuType.CHARACTERS:
             case MenuType.ACHIEVEMENT:
                 Debug.LogWarning("아직 씬이 준비되지 않음");
                 return;
+            case MenuType.CHARACTERS:
+                sceneName = "CharacterMenuScene";
+                break;
             case MenuType.STORY:
                 sceneName = "StoryMenuScene";
                 break;
-            case MenuType.MYROOM:
-                sceneName = "MyRoomScene";
-                break;
             case MenuType.SHOP:
                 sceneName = "ShopMenuScene";
+                break;
+            case MenuType.MYROOM:
+                sceneName = "MyRoomScene";
                 break;
             case MenuType.ADVANTURE:
                 sceneName = "AdvantureMenuScene";
