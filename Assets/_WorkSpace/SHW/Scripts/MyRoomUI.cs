@@ -25,9 +25,6 @@ public class MyRoomUI : BaseUI
 
     private void SetMyRoomUI()
     {
-        // 뒤로가기 버튼
-        GetUI<Button>("MyRoomBackButton").onClick.AddListener(()=>CloseTap("MyRoom"));
-        
         // 방뒷배경 바꾸기 팝업 띄우기
         GetUI<Button>("RoomChangeButton").onClick.AddListener(()=>OpenSetRoomPopup("RoomChangePopup"));
         // 배경 바꾸기 팝업 닫기
