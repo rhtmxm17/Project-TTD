@@ -90,9 +90,6 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private void Start()
     {
         ButtonOnClickEvent();
-        SetListNameText(_characterData.Name);
-        SetListTypeText(((ElementType)_characterData.StatusTable.type).ToString());
-        SetListImage(_characterData.FaceIconSprite);
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -145,7 +142,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// 현재 캐릭터 정보 할당 기능
     /// </summary>
     private void SetInfoPopup()
-    {  
+    {
         _characterInfoController.CurCharacterInfo = this;
         _characterInfoController.CurCharacterEnhance = _characterEnhance; 
         _characterInfoController.CurIndex = _characterInfoController._characterInfos.IndexOf(this);
@@ -162,9 +159,24 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterEnhance.OnBeforeEnhance?.Invoke();
         _characterEnhance.OnAfterEnhance?.Invoke();
         CharacterStats();
-        SetCurrentCost();
-        LevelUpCheck();
- 
+        
+        if (GameManager.UserData.HasCharacter(_characterData.Id))
+        {
+            SetCurrentCost();
+            LevelUpCheck();
+            
+            _characterInfoController._infoUI._levelUpCoinText.text = _characterLevelUpGoldCost.ToString();
+            _characterInfoController._infoUI._levelUpMaterialText.text = _characterLevelUpMaterialCost.ToString();
+            
+            _characterInfoController._infoUI._materialGroup.SetActive(true);
+            _characterInfoController._infoUI._levelUpButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            _characterInfoController._infoUI._materialGroup.SetActive(false);
+            _characterInfoController._infoUI._levelUpButton.gameObject.SetActive(false);
+        }
+        
         _characterInfoController._infoUI._nameText.text = _characterData.Name;
         _characterInfoController._infoUI._characterImage.sprite = _characterData.FaceIconSprite;
         _characterInfoController._infoUI._levelText.text = _characterData.Level.Value.ToString();
@@ -173,9 +185,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController._infoUI._atkText.text = $"공격력 {_atk}";
         _characterInfoController._infoUI._hpText.text = $"체력 {_hp}";
         _characterInfoController._infoUI._defText.text = $"방어력 {_def}";
-        _characterInfoController._infoUI._levelUpCoinText.text = _characterLevelUpGoldCost.ToString();
-        _characterInfoController._infoUI._levelUpMaterialText.text = _characterLevelUpMaterialCost.ToString();
-        
+ 
         _characterInfoController._infoUI._skillAIconImage.sprite = _characterData.NormalSkillIcon;
         _characterInfoController._infoUI._skillBIconImage.sprite = _characterData.SpecialSkillIcon;
 
@@ -204,6 +214,9 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _powerLevel = Convert.ToInt32(_characterData.PowerLevel);
     }
     
+    /// <summary>
+    /// 캐릭터 레벨업 비용
+    /// </summary>
     private void SetCurrentCost()
     {
         //TODO: 임시 캐릭터 레벨업 코스트
@@ -212,7 +225,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     }
     
     /// <summary>
-    /// 현재 케릭터 정보 셋팅
+    /// 외부에서 사용하기 위한 현재 케릭터 정보 셋팅
     /// </summary>
     public void SetCharacterData()
     {
@@ -250,10 +263,24 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     {
         _characterListImage.sprite = sprite;
     }
-
-    public void SetListTypeText(string type)
+    
+    
+    /// <summary>
+    /// 캐릭터 속성 설정
+    /// </summary>
+    /// <param name="type"></param>
+    /// <exception cref="AggregateException"></exception>
+    public void SetListTypeText(ElementType type)
     {
-        _characterTypeText.text = type;
+        _characterTypeText.text = type switch
+        {
+            ElementType.FIRE => "화룡",
+            ElementType.WATER => "수룡",
+            ElementType.WOOD => "정룡",
+            ElementType.EARTH => "토룡",
+            ElementType.METAL => "진룡",
+            _ => throw new AggregateException("잘못된 타입")
+        };
     }
     
     /// <summary>

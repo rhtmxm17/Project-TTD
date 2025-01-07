@@ -15,22 +15,19 @@ public class CharacterInfoController : BaseUI
     [HideInInspector] public List<CharacterInfo> _characterInfos;
     [HideInInspector] public CharacterInfo CurCharacterInfo;
     [HideInInspector] public CharacterEnhance CurCharacterEnhance;
-
+    [HideInInspector] public TextMeshProUGUI SortButtonText;
     [HideInInspector] public GameObject _infoPopup;
-
     [HideInInspector] public int CurIndex = 0;
-
+    [HideInInspector] public TextMeshProUGUI ElementFilterText;
+    [HideInInspector] public TextMeshProUGUI RoleFilterText;
+    [HideInInspector] public TextMeshProUGUI DragonVeinFilterText;
+    
     private List<int> _holdingCharactersIndex = new List<int>();
     
     private GameObject _characterUISet;
     private CharacterSort _characterSort;
     private CharacterFilter _characterFilter;
-
-    public TextMeshProUGUI SortButtonText;
-    public TextMeshProUGUI ElementFilterText;
-    public TextMeshProUGUI RoleFilterText;
-    public TextMeshProUGUI DragonVeinFilterText;
-    
+     
     private TextMeshProUGUI _sortingText; 
     private Button _prevButton;
     private Button _nextButton;
@@ -40,27 +37,11 @@ public class CharacterInfoController : BaseUI
     private Button _roleFilterButton;
     private Button _dragonVeinFilterButton;
      
-    private SortType _lastSortType;
-    private RectTransform _contentForm;
-    private Vector2 _characterCellSize;
-    private Vector2 _characterSpacing;
-
-    private int _characterCount;
-
     private GameObject _detailTab;
     private GameObject _enhanceTab;
     private GameObject _evolutionTab;
-
-    private int CharacterCount
-    {
-        get => _characterInfos.Count;
-        set
-        {
-            _characterCount = value;
-            ResizeContentForm();
-        }
-    }
-
+    
+    private SortType _lastSortType;
     private InfoTabType _curInfoTabType;
 
     public InfoTabType CurInfoTabType
@@ -114,7 +95,6 @@ public class CharacterInfoController : BaseUI
         base.Awake(); 
         Init();
         ButtonOnClickEvent();
-        SetContentFormGridLayOut();
         GetUserMaterials(); 
     }
 
@@ -138,8 +118,7 @@ public class CharacterInfoController : BaseUI
         _characterSort = GetUI<CharacterSort>("SortUI"); 
         
         _infoUI = GetUI<CharacterInfoUI>("InfoUI");
-
-        _contentForm = GetUI<RectTransform>("Content");
+        
         _prevButton = GetUI<Button>("PreviousButton");
         _nextButton = GetUI<Button>("NextButton");
 
@@ -158,9 +137,6 @@ public class CharacterInfoController : BaseUI
         _detailTab = GetUI("DetailTab");
         _enhanceTab = GetUI("EnhanceTab");
         _evolutionTab = GetUI("EvolutionTab");
-
-        _characterCellSize = _contentForm.GetComponent<GridLayoutGroup>().cellSize;
-        _characterSpacing = _contentForm.GetComponent<GridLayoutGroup>().spacing;
     }
 
     /// <summary>
@@ -203,32 +179,15 @@ public class CharacterInfoController : BaseUI
         {
             _characterInfos[i].SetCharacterData();
         }
-        //TODO: characterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)) 조건 삭제 필요
-        
-        CharacterCount = _characterInfos.Count;
-        _characterSort._sortCharacterInfos= _characterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)).ToList();
+
+        _characterSort._sortCharacterInfos= _characterInfos;
         _characterSort.CharacterInfoController = this;
         _characterSort.SortingText = _sortingText;
-        _characterFilter._filterCharacterInfos = _characterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)).ToList();
+        _characterFilter._filterCharacterInfos = _characterInfos;
         _characterFilter.CharacterController = this;
         StartListSort();
-        
-        for (int i = 0; i < _characterInfos.Count; i++)
-        {
-            if (!GameManager.UserData.HasCharacter(_characterInfos[i]._CharacterData.Id))
-            {
-                _characterInfos[i].gameObject.SetActive(false);  
-            }
-            else
-            {
-                _characterInfos[i].gameObject.SetActive(true);
-            }
-        }
-
-        _holdingCharactersIndex = _characterInfos.Where(x => GameManager.UserData.HasCharacter(x._CharacterData.Id))
-            .Select(x => _characterInfos.IndexOf(x)).ToList();
     }
-
+    
     /// <summary>
     /// 마지막 정렬 방식 저장 후 시작했을 때 해당 방식으로 정렬
     /// </summary>
@@ -244,21 +203,15 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void PreviousCharacter()
     {
-        while (true)
+        if (CurIndex == 0)
         {
-            if (CurIndex == 0)
-            {
-                CurIndex = _characterInfos.Count - 1;
-            }
-            else
-            {
-                CurIndex--;
-            }
-
-            if (_holdingCharactersIndex.Contains(CurIndex)) break;
-            
+            CurIndex = _characterInfos.Count - 1;
         }
-         
+        else
+        {
+            CurIndex--;
+        }
+        
         CurCharacterInfo = _characterInfos[CurIndex];
         CurCharacterInfo.UpdateInfo();
     }
@@ -268,47 +221,17 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void NextCharacter()
     {
-        while (true)
+        if (CurIndex == _characterInfos.Count - 1)
         {
-            if (CurIndex == _characterInfos.Count - 1)
-            {
-                CurIndex = 0;
-            }
-            else
-            {
-                CurIndex++;
-            }
-            
-            if (_holdingCharactersIndex.Contains(CurIndex)) break;
+            CurIndex = 0;
         }
-         
+        else
+        {
+            CurIndex++;
+        }
+        
         CurCharacterInfo = _characterInfos[CurIndex];
         CurCharacterInfo.UpdateInfo();
-    }
-
-    /// <summary>
-    /// ContentForm GridLayout 설정
-    /// </summary>
-    private void SetContentFormGridLayOut()
-    {
-        GridLayoutGroup contentFormGrid = _contentForm.GetComponent<GridLayoutGroup>();
-        contentFormGrid.cellSize = new Vector2(300, 467);
-        contentFormGrid.spacing = new Vector2(80, 0);
-    }
-
-    /// <summary>
-    /// 캐릭터 리스트 Content Form ReSize 기능
-    /// </summary>
-    private void ResizeContentForm()
-    {
-        //Width 300 + space 80  
-        //(캐릭터 Width + spacing) * List.Count + 1 > Content.SizeDelta.x -> ReSize 진행
-        float totalWidth = (_characterCellSize.x + _characterSpacing.x) * _characterInfos.Count + 1;
-        float contentWidth = _contentForm.sizeDelta.x;
-
-        if (totalWidth < contentWidth) return;
-
-        _contentForm.sizeDelta = new Vector2(totalWidth, _contentForm.sizeDelta.y);
     }
 
     /// <summary>

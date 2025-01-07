@@ -10,14 +10,12 @@ using UnityEngine.Serialization;
 public class CharacterSort : MonoBehaviour
 {
     [HideInInspector] public CharacterInfoController CharacterInfoController;
-    [HideInInspector] public List<CharacterInfo> _sortCharacterInfos;
-
+    public List<CharacterInfo> _sortCharacterInfos;
+    [HideInInspector] public TextMeshProUGUI SortingText;
+   
     private List<int> _sortList;
-
     private CharacterSortUI _characterSortUI;
-    [FormerlySerializedAs("OrderText")] public TextMeshProUGUI SortingText;
     
-    private int _sortValue;
     private SortType _curSortType;
 
     public SortType CurSortType
@@ -81,13 +79,19 @@ public class CharacterSort : MonoBehaviour
         CharacterListSort();
     }
     
+    public List<CharacterInfo> _ownedCharacters;
+    public List<CharacterInfo> _unownedCharacters;
+    
     /// <summary>
     /// 캐릭터 리스트 정렬 기능
     /// </summary>
     public void CharacterListSort()
     {
         if (_sortList != null && _sortList.Count > 0) _sortList.Clear();
-
+        
+        if(_ownedCharacters != null && _ownedCharacters.Count > 0) _ownedCharacters.Clear();
+        if(_unownedCharacters != null && _unownedCharacters.Count > 0) _unownedCharacters.Clear();
+        
         switch (_curSortType)
         {
             case SortType.LEVEL:
@@ -109,20 +113,28 @@ public class CharacterSort : MonoBehaviour
                 _sortList = _sortCharacterInfos.Select(x => (int)x._CharacterData.HpPointLeveled).ToList();
                 break;
         }
-
+ 
+        //보유 캐릭터 = 전체 캐릭터 개수 - 보유하지 않은 캐릭터의 개수 까지만 반복?
+        //보유하지 않은 캐릭터 = 보유하지 않은 캐릭터의 개수부터 정렬 진행?
+        int ownedCount = _sortCharacterInfos.Count(x => !GameManager.UserData.HasCharacter(x._CharacterData.Id));
+        int unOwnedCount = _sortCharacterInfos.Count - ownedCount;
+        
         //TRUE : 내림차순, FALSE : 오름차순
         if (_isSorting)
         {
+            //TODO: 정렬 구조
             _sortList.Sort();
-            _sortList.Reverse();
+            _sortList.Reverse(); 
         }
         else
         {
             _sortList.Sort();
         }
-
+        
+        //TODO: 현재 임시로 화살표 텍스트로 표시
         SortingText.text = _isSorting ? "↓" : "↑";
         
+        //시작 시 1회 캐릭터 리스트 UI 설정
         if (!_isStart)
         {
             _isStart = true;
@@ -133,37 +145,43 @@ public class CharacterSort : MonoBehaviour
         {
             for (int j = i + 1; j < _sortCharacterInfos.Count; j++)
             {
+                //TODO: 고민중 -> 보유하지 않은 애들을 맨 뒤로..
                 if (_sortList[i].Equals(GetSortValue(_sortCharacterInfos[j])))
                 {
+                    //if (GetSortValue(_sortCharacterInfos[i]) == GetSortValue(_sortCharacterInfos[j])) break; 
+                     
                     CharacterData newData = _sortCharacterInfos[j]._CharacterData;
                     CharacterData oldData = _sortCharacterInfos[i]._CharacterData;
-
+        
                     _sortCharacterInfos[i]._CharacterData = newData;
                     _sortCharacterInfos[j]._CharacterData = oldData;
-
+        
                     _sortCharacterInfos[i].SetListNameText(newData.Name);
                     _sortCharacterInfos[j].SetListNameText(oldData.Name);
-
-                    int newType = (int)newData.StatusTable.type;
-                    int oldType = (int)oldData.StatusTable.type;
-
+                    
                     int temp = _sortCharacterInfos[i].PowerLevel;
                     _sortCharacterInfos[i].PowerLevel = _sortCharacterInfos[j].PowerLevel;
                     _sortCharacterInfos[j].PowerLevel = temp;
-
-                    _sortCharacterInfos[i].SetListTypeText(((ElementType)newType).ToString());
-                    _sortCharacterInfos[j].SetListTypeText(((ElementType)oldType).ToString());
-
+        
+                    _sortCharacterInfos[i].SetListTypeText((ElementType)newData.StatusTable.type);
+                    _sortCharacterInfos[j].SetListTypeText((ElementType)oldData.StatusTable.type);
+        
                     _sortCharacterInfos[i].SetListImage(newData.FaceIconSprite);
                     _sortCharacterInfos[j].SetListImage(oldData.FaceIconSprite);
                     break;
                 }
             }
         }
-
+        
+        _ownedCharacters = _sortCharacterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)).ToList();
+        _unownedCharacters = _sortCharacterInfos.Where(x => !GameManager.UserData.HasCharacter(x._CharacterData.Id)).ToList();
+        Debug.Log($"보유:{_sortCharacterInfos.Count(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id))}");
+        Debug.Log($"미보유:{_sortCharacterInfos.Count(x=> !GameManager.UserData.HasCharacter(x._CharacterData.Id))}");
+        
         ChangeSortButtonText();
         PlayerPrefs.SetInt("SortType", (int)_curSortType);
     }
+
     
     /// <summary>
     /// 현재 정렬 타입으로 버튼명 변경
@@ -184,6 +202,9 @@ public class CharacterSort : MonoBehaviour
     }
     
     
+    /// <summary>
+    /// 게임 시작 시 캐릭터 리스트 UI 설정
+    /// </summary>
     private void StartSort()
     {
         for (int i = 0; i < _sortCharacterInfos.Count; i++)
@@ -199,7 +220,7 @@ public class CharacterSort : MonoBehaviour
     /// <returns>정렬할 값</returns>
     private int GetSortValue(CharacterInfo characterInfo)
     {
-        _sortValue = _curSortType switch
+        return _curSortType switch
         {
             SortType.LEVEL => characterInfo.CharacterLevel,
             SortType.POWERLEVEL => characterInfo.PowerLevel,
@@ -209,7 +230,5 @@ public class CharacterSort : MonoBehaviour
             SortType.HEALTH => (int)characterInfo._CharacterData.HpPointLeveled,
             _ => throw new AggregateException("잘못된 타입 들어옴") 
         };
-        
-        return _sortValue;
     }
 }
