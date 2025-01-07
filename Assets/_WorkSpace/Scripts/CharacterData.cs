@@ -171,7 +171,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
 
     private void OnEnable()
     {
-        Level = new UserDataInt($"Characters/{id}/Level");
+        Level = new UserDataInt($"Characters/{id}/Level", 1);
         Enhancement = new UserDataInt($"Characters/{id}/Enhancement");
         EnhanceMileagePerMill = new UserDataInt($"Characters/{id}/EnhanceMileagePerMill");
     }
