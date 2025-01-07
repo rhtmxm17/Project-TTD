@@ -263,6 +263,8 @@ public class Combatable : MonoBehaviour
     {
         yield return null;
 
+        Debug.Log(gameObject.name);
+        Debug.Log(baseAttack.TargetingLogic.GetTarget(this));
         Combatable target = baseAttack.TargetingLogic.GetTarget(this);
 
         float trackTime = 0.2f;

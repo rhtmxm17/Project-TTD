@@ -60,6 +60,11 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
     /// </summary>
     public UserDataInt ClearCount { get; private set; }
 
+    /// <summary>
+    /// 스테이지 뒷배경 정보 프리팹
+    /// </summary>
+    public ScrollableBG BackgroundTypePrefab => backgroundTypePrefab;
+
     [SerializeField] int id;
 
     [SerializeField] string stageName;

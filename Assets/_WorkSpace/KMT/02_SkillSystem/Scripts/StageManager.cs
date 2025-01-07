@@ -106,6 +106,9 @@ public class StageManager : MonoBehaviour
             Destroy(monsterWaveParent.GetChild(i).gameObject);
         }
 
+        scroller.SetScroller(_stageData.BackgroundTypePrefab);
+
+
         // ============= 플레이어 캐릭터 초기화 =============
 
         //키 : 배치정보, 값 : 캐릭터 고유 번호(ID)
