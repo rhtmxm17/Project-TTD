@@ -9,17 +9,17 @@ public class LobbyScene : MonoBehaviour
     [System.Serializable]
     private struct ChildUIField
     {
-        public Button charactersButton;
-        public Button achievementButton;
-        public Button storyButton;
-        public Button shopButton;
-        public Button myRoomButton;
-        public Button advantureButton;
+        [EnumNamedArray(typeof(GameManager.MenuType))]
+        public List<Button> menuSceneButtons;
     }
     [SerializeField] ChildUIField childUIField;
 
     private void Awake()
     {
-
+        for (int i = 0; i < childUIField.menuSceneButtons.Count; i++)
+        {
+            GameManager.MenuType menu = (GameManager.MenuType)i;
+            childUIField.menuSceneButtons[i].onClick.AddListener(() => GameManager.Instance.LoadMenuScene(menu));
+        }
     }
 }
