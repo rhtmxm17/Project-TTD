@@ -10,7 +10,7 @@ public class AdventureUI : BaseUI
 
     [Header("prefabs")]
     [SerializeField] SimpleInfoPopup popupPrefab;
-    [SerializeField] StageButton stageButtonPrefab;
+    [SerializeField] IndexedButton stageButtonPrefab;
 
     [Header("child")]
     [SerializeField] LayoutGroup stageButtonGroup;
@@ -38,7 +38,7 @@ public class AdventureUI : BaseUI
             GameObject buttonHolder = new GameObject($"_{i}", typeof(RectTransform));
             buttonHolder.GetComponent<RectTransform>().SetParent(stageButtonGroup.transform);
 
-            StageButton instance = Instantiate(stageButtonPrefab, buttonHolder.transform);
+            IndexedButton instance = Instantiate(stageButtonPrefab, buttonHolder.transform);
             RectTransform rt = instance.GetComponent<RectTransform>();
             rt.anchorMin = rt.anchorMax = Vector2.one * 0.5f;
             rt.anchoredPosition = new Vector2(0f, isOdd ? -verticalSpacing : verticalSpacing);
