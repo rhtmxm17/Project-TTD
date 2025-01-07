@@ -14,10 +14,17 @@ public class CharacterInviteUI : BaseUI
     private void Start()
     {
         GameObject gameObject = new GameObject("CharacterInviteUI");
-        ActiveCharacter();
         GetUI<Button>("InviteButton").onClick.AddListener(()=>SetCharacter());
     }
-    
+
+    private void OnEnable()
+    {
+        ActiveCharacter();
+    }
+
+    /// <summary>
+    /// 보유하고 있는 캐릭터만 활성화 하여 초대 가능
+    /// </summary>
     private void ActiveCharacter()
     {
         if (GameManager.UserData.HasCharacter(id))
