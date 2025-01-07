@@ -34,6 +34,8 @@ public class ShopPopupController : BaseUI
 
 
     }
+    // TODO: 아이템 구매할때 경고팝업으로 (재화부족하면 재화 부족 띄우기)
+    
 
     void Update()
     {

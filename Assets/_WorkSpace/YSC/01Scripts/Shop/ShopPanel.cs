@@ -17,8 +17,8 @@ public class ShopPanel : BaseUI
     [SerializeField] LayoutGroup shopLayoutGroup;
     [SerializeField] ShopItem shopCellPrefab;
 
-    // 정보팝업창
-    [SerializeField] SimpleInfoPopup shopPopupPrefab;
+    // 정보팝업창 - 이제 안씀
+    // [SerializeField] SimpleInfoPopup shopPopupPrefab;
 
     // 상점이름, 추후에 상점종류많아지면 열고 닫을때 교체
     [SerializeField] TMP_Text shopNameText;
@@ -49,7 +49,7 @@ public class ShopPanel : BaseUI
         {
             ShopItem cellInstance = Instantiate(shopCellPrefab, shopLayoutGroup.transform);
             cellInstance.SetItem(shopitem);
-            cellInstance.GetComponent<Button>().onClick.AddListener(() => OpenPopup(cellInstance.shopItemData)); // 정보팝업 열기 버튼 추가
+           // 이제안써서 합치고 추후에 삭제 cellInstance.GetComponent<Button>().onClick.AddListener(() => OpenPopup(cellInstance.shopItemData)); // 정보팝업 열기 버튼 추가
         }
     }
     
@@ -58,6 +58,8 @@ public class ShopPanel : BaseUI
     /// 그 할당된 정보를 업뎃하고 보여주기
     /// </summary>
     /// <param name="data"></param>
+    
+    /* 정보만나오는거 안씀
     public void OpenPopup(ShopItemData data)
     {
         SimpleInfoPopup popupInstance = Instantiate(shopPopupPrefab, GameManager.PopupCanvas);
@@ -65,6 +67,7 @@ public class ShopPanel : BaseUI
         popupInstance.Description.text = data.Description;
         popupInstance.Image.sprite = data.Sprite;
     }
+    */
 
 
     #region 기본여닫이

@@ -38,34 +38,9 @@ public class OutskirtsUI : MonoBehaviour
     public Button QuickMoveMenuButton => childUIField.quickMoveMenuButton;
 
     /// <summary>
-    /// 캐릭터 창 빠른 이동 버튼
+    /// 빠른 이동 버튼 리스트
     /// </summary>
-    public Button CharactersButton => childUIField.charactersButton;
-
-    /// <summary>
-    /// 엄적 창 빠른 이동 버튼
-    /// </summary>
-    public Button AchievementButton => childUIField.achievementButton;
-
-    /// <summary>
-    /// 스토리 창 빠른 이동 버튼
-    /// </summary>
-    public Button StoryButton => childUIField.storyButton;
-
-    /// <summary>
-    /// 상점 창 빠른 이동 버튼
-    /// </summary>
-    public Button ShopButton => childUIField.shopButton;
-
-    /// <summary>
-    /// 나만의 공간 빠른 이동 버튼
-    /// </summary>
-    public Button MyRoomButton => childUIField.myRoomButton;
-
-    /// <summary>
-    /// 모험 창 빠른 이동 버튼
-    /// </summary>
-    public Button AdvantureButton => childUIField.advantureButton;
+    public List<Button> MenuSceneButtons => childUIField.menuSceneButtons;
 
     [System.Serializable]
     private struct ChildUIField
@@ -75,27 +50,31 @@ public class OutskirtsUI : MonoBehaviour
         public Button homeButton;
         public Button quickMoveMenuButton;
         public LayoutGroup quickMoveLayout;
-        public Button charactersButton;
-        public Button achievementButton;
-        public Button storyButton;
-        public Button shopButton;
-        public Button myRoomButton;
-        public Button advantureButton;
+        [EnumNamedArray(typeof(GameManager.MenuType))]
+        public List<Button> menuSceneButtons;
     }
     [SerializeField] ChildUIField childUIField;
 
-    private bool quickMoveToggleState = false;
+    private bool quickMoveToggleState;
 
     private void Awake()
     {
-        childUIField.quickMoveLayout.gameObject.SetActive(false);
+        quickMoveToggleState = childUIField.quickMoveLayout.gameObject.activeSelf;
         QuickMoveMenuButton.onClick.AddListener(ToggleQuickMove);
 
         ReturnButton.onClick.AddListener(OnReturnButtonClicked);
         // 다른 팝업으로 가려졌을때는 동작하지 않아야 함
         //GameManager.Input.actions["Cancel"].started += OnReturnButtonClicked;
 
+        // 홈 버튼에 씬 전환 등록
         HomeButton.onClick.AddListener(OnHomeButtonClicked);
+
+        // 각 빠른이동 버튼에 해당 씬 전환 함수 등록
+        for (int i = 0; i < childUIField.menuSceneButtons.Count; i++)
+        {
+            GameManager.MenuType menu = (GameManager.MenuType)i;
+            childUIField.menuSceneButtons[i].onClick.AddListener(() => GameManager.Instance.LoadMenuScene(menu));
+        }
     }
 
     private void ToggleQuickMove()
@@ -130,6 +109,6 @@ public class OutskirtsUI : MonoBehaviour
 
     private void OnHomeButtonClicked()
     {
-        GameManager.Instance.LoadMainScene();
+        GameManager.Instance.LoadLobbyScene();
     }
 }

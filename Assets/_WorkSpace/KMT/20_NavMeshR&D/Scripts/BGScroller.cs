@@ -7,17 +7,22 @@ public class BGScroller : MonoBehaviour
 {
 
     [SerializeField]
-    Image scrollImg;
-    [SerializeField]
-    float scrollSpeed;
+    Transform scrollerParentCanvas;
+
+    ScrollableBG scrollableBG;
 
     Coroutine scrollCoroutine = null;
+
+    public void SetScroller(ScrollableBG scrollableBGPrefab)
+    {
+        scrollableBG = Instantiate(scrollableBGPrefab);
+    }
 
     public void StartScroll()
     {
         if (scrollCoroutine == null)
         {
-            scrollCoroutine = StartCoroutine(ScrollCO());
+           scrollCoroutine = StartCoroutine(scrollableBG.ScrollCO());
         }
     }
 
@@ -32,15 +37,5 @@ public class BGScroller : MonoBehaviour
 
     }
 
-    IEnumerator ScrollCO()
-    {
-        yield return null;
-
-        while (true)
-        {
-            scrollImg.material.mainTextureOffset += Vector2.right * scrollSpeed * Time.deltaTime;
-            yield return null;
-        }
-    }
 
 }
