@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class StageButton : MonoBehaviour
+public class IndexedButton : MonoBehaviour
 {
     public int Id { get; set; }
 
