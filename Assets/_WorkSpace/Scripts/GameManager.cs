@@ -87,12 +87,38 @@ public class GameManager : SingletonBehaviour<GameManager>
     /// </summary>
     public enum MenuType { CHARACTERS, ACHIEVEMENT, STORY, SHOP, MYROOM, ADVANTURE, }
 
+    public void LoadLobbyScene()
+    {
+        SceneManager.LoadSceneAsync("LobbyScene");
+    }
+
     /// <summary>
     /// 지정된 메뉴로 이동
     /// </summary>
     /// <param name="menu"></param>
     public void LoadMenuScene(MenuType menu)
     {
+        Debug.Log($"{menu} 메뉴 씬으로 이동 호출됨");
+
+        string sceneName;
+        switch (menu)
+        {
+            case MenuType.CHARACTERS:
+            case MenuType.ACHIEVEMENT:
+            case MenuType.STORY:
+            case MenuType.SHOP:
+            case MenuType.MYROOM:
+                Debug.LogWarning("아직 씬이 준비되지 않음");
+                return;
+                break;
+            case MenuType.ADVANTURE:
+                sceneName = "AdvantureMenuScene";
+                break;
+            default:
+                Debug.LogWarning($"잘못된 MenuType: {menu}");
+                return;
+        }
+        SceneManager.LoadSceneAsync(sceneName);
 
     }
 
