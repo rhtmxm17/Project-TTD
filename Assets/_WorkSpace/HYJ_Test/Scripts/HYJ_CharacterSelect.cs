@@ -15,6 +15,9 @@ public class HYJ_CharacterSelect : MonoBehaviour
     [SerializeField]
     HYJ_SelectManager SelectM;
 
+    [Header("위치 버튼 설정")]
+    [SerializeField] GameObject posBTNImage;
+    
     [Header("유닛 버튼 설정")]
     [SerializeField] int unitIndex; // 유닛 번호
     [SerializeField] Image characterImage; // 캐릭터 이미지
@@ -33,6 +36,10 @@ public class HYJ_CharacterSelect : MonoBehaviour
 
         posNum = PosIdx;
         transform.GetComponentInChildren<TextMeshProUGUI>().text = PosIdx.ToString();
+        if (CheckPos(posNum))
+        {
+            SetBTNChImage(true, SelectM.battleInfo[posNum]);
+        }
     }
 
     public void InitDataUnitBTN(HYJ_SelectManager manager, int unitIdx, GameObject unitChangeUI)
@@ -60,13 +67,19 @@ public class HYJ_CharacterSelect : MonoBehaviour
         {
             CantPosUI.SetActive(true);
         }
-        else if (CheckPos(posNum)) // 위치 리스트가 5개 초과 & 이미 선택한 위치일 경우 
-        {
-            SelectM.curPos = posNum;
-            CharacterSelectPanel.SetActive(true);
-        }
+        //else if (CheckPos(posNum)) // 위치 리스트가 5개 초과 & 이미 선택한 위치일 경우 
+        //{
+        //    SelectM.curPos = posNum;
+        //    CharacterSelectPanel.SetActive(true);
+        //}
+//
+        //else if (SelectM.battleInfo.Count < 5 && !CheckPos(posNum)) // 위치 리스트가 5개 보다 적고
+        //{
+        //    SelectM.curPos = posNum;
+        //    CharacterSelectPanel.SetActive(true);
+        //}
 
-        else if (SelectM.battleInfo.Count < 5 && !CheckPos(posNum)) // 위치 리스트가 5개 보다 적고
+        else
         {
             SelectM.curPos = posNum;
             CharacterSelectPanel.SetActive(true);
@@ -113,15 +126,16 @@ public class HYJ_CharacterSelect : MonoBehaviour
         }
     }
 
-    public void ChangeUnit()
+    public void ChangeUnit() // 유닛변경 확인 버튼
     {
-        // 유닛변경 확인 버튼
         if (CheckPos(SelectM.curPos)) // 선택된 위치에 유닛이 배치되어 있을 경우
         {
             RemoveBatch(SelectM.curPos);
         }
+        
+        
         int unitPos = SelectM.battleInfo.FirstOrDefault(x => x.Value == SelectM.curUnitIndex).Key; // 딕셔너리 밸류값(유닛 고유번호)를 갖고 있는 키 값을 찾기
-        ChangeBatch(unitPos, SelectM.curPos, SelectM.curUnitIndex);
+        ChangeBatch(unitPos, SelectM.curPos, SelectM.curUnitIndex); //
         UnitChangeUI.SetActive(false);
         CharacterSelectPanel.SetActive(false);
     }
@@ -163,19 +177,48 @@ public class HYJ_CharacterSelect : MonoBehaviour
     void AddBatch(int key, int value)
     {
         SelectM.battleInfo.Add(key, value);     // 현재 키 / 밸류 딕셔너리에 추가
-        SelectM.SetCharacterImage(key, value);  // 스프라이트 생성
+        
+        //SelectM.SetCharacterImage(key, value);  // 스프라이트 생성
+        SetBTNChImage(true,value);
     }
 
     void RemoveBatch(int key)
     {
         SelectM.battleInfo.Remove(key);     // 현재 유닛 고유번호를 갖고 있는 키와 밸류 삭제
-        SelectM.RemoveCharacterImage(key); // 스프라이트 제거
+        
+        //SelectM.RemoveCharacterImage(key); // 스프라이트 제거
+        SetBTNChImage(false,unitIndex);
     }
 
     void ChangeBatch(int victimKey, int newKey, int newValue)
     {
         SelectM.battleInfo.Remove(victimKey);   // 현재 유닛 고유번호를 갖고 있는 키와 밸류 삭제
         SelectM.battleInfo[newKey] = newValue;  // 현재 키값의 밸류 값을 추가하기
-        SelectM.ChangeImagePos(victimKey, newKey);    // 스프라이트 위치 변경
+        
+        //SelectM.ChangeImagePos(victimKey, newKey);    // 스프라이트 위치 변경
+        //이걸 어케해야할까...
+    }
+    
+    /// <summary>
+    /// 음.. 이미지를 생성 삭제하는게 아니라 위치 버튼에 유닛용 이미지가 있어서 그걸 바꾸는 방식
+    ///     1. 이미지를 바꾼다.
+    ///     2. 이미지를 원래대로 만든다.
+    /// </summary>
+    /// <param name="isOn"></param>true면 캐릭터 이미지로 변경, false면 초기화
+    public void SetBTNChImage(bool isOn,int unitIdx)
+    {
+        Color color = new Color32(255, 255, 255, 0);
+        if (isOn)
+        {
+            CharacterData chData = GameManager.TableData.GetCharacterData(unitIdx);
+            color = new Color(255,255,255,255);
+            posBTNImage.GetComponent<Image>().color = color;
+            posBTNImage.GetComponent<Image>().sprite = chData.FaceIconSprite;
+        }
+        else
+        {
+            color = new Color32(255, 255, 255, 0);
+            posBTNImage.GetComponent<Image>().color = color;
+        }
     }
 }
