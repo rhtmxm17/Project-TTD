@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -12,16 +13,12 @@ public class BossStageManager : StageManager, IDamageAddable
     TextMeshProUGUI scoreText;
     [SerializeField]
     Slider leftTimeBar;
-    [SerializeField]
-    float timeLimit;
 
     [Header("Reward UI")]
     [SerializeField] ItemGainPopup itemGainPopupPrefab;
 
     float maxTimeLimit;
     float score;
-
-    bool isTimeOver;
 
     protected override void StartGame()
     {
@@ -30,41 +27,42 @@ public class BossStageManager : StageManager, IDamageAddable
         maxTimeLimit = timeLimit;
         scoreText.text = "0";
         score = 0;
-        isTimeOver = false;
     }
 
-    protected override IEnumerator FirstWaveSetCO()
-    {
-        yield return base.FirstWaveSetCO();
-
-        StartCoroutine(StartTimerCO());
-
-    }
 
     public void IDamageAdd(float damage)
     {
-        if (isTimeOver)
+        if (isCombatEnd)
             return;
 
         score += damage;
         scoreText.text = score.ToString();
     }
 
-    IEnumerator StartTimerCO()
+    protected override IEnumerator StartTimerCO()
     {
+        TimeSpan leftTimeSpan = TimeSpan.FromSeconds(timeLimit);
+        leftTimeText.text = $"{leftTimeSpan.Minutes:D2} : {leftTimeSpan.Seconds:D2}";
+
         while (timeLimit > 0)
         {
             leftTimeBar.value = timeLimit / maxTimeLimit;
-            timeLimit = Mathf.Clamp(timeLimit - Time.deltaTime, -0.01f, maxTimeLimit);
-            yield return null;
+
+            yield return new WaitForSeconds(1);
+            timeLimit -= 1;
+            leftTimeSpan = TimeSpan.FromSeconds(timeLimit);
+            leftTimeText.text = $"{leftTimeSpan.Minutes:D2} : {leftTimeSpan.Seconds:D2}";
         }
 
+        if (isCombatEnd)
+        {
+            Debug.Log("이미 전투가 종료됨");
+            yield break;
+        }
+
+        isCombatEnd = true;
         Debug.Log("타임 오버!");
-        isTimeOver = true;
-
-        Debug.Log(UserData.myUid);
-        Debug.Log(UserData.myNickname);
-
+        
         RankApplier.ApplyRank("boss", UserData.myUid, GameManager.UserData.Profile.Name.Value, (long)(score + timeLimit), () =>
         {
             // 클리어 팝업 + 확인 클릭시 메인 화면으로
@@ -80,7 +78,22 @@ public class BossStageManager : StageManager, IDamageAddable
         // TODO: 보스 몬스터 처치 구현 필요시 여기서 결과 처리
         Debug.LogWarning("아직 정의되지 않은 동작");
 
-        base.OnClear();
+        if (isCombatEnd)
+        {
+            Debug.Log("이미 전투가 종료됨");
+            return;
+        }
+
+        isCombatEnd = true;
+
+        RankApplier.ApplyRank("boss", UserData.myUid, GameManager.UserData.Profile.Name.Value, (long)(score + timeLimit), () =>
+        {
+            // 클리어 팝업 + 확인 클릭시 메인 화면으로
+            ItemGainPopup popupInstance = Instantiate(itemGainPopupPrefab, GameManager.PopupCanvas);
+            popupInstance.Title.text = "보스전 종료!";
+            popupInstance.onPopupClosed += GameManager.Instance.LoadMainScene;
+
+        });
     }
 
 }
