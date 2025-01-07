@@ -13,7 +13,21 @@ public class CharacterInviteUI : BaseUI
 
     private void Start()
     {
+        GameObject gameObject = new GameObject("CharacterInviteUI");
+        ActiveCharacter();
         GetUI<Button>("InviteButton").onClick.AddListener(()=>SetCharacter());
+    }
+    
+    private void ActiveCharacter()
+    {
+        if (GameManager.UserData.HasCharacter(id))
+        {
+            gameObject.SetActive(true);
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     private void SetCharacter()
