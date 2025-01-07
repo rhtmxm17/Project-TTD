@@ -7,39 +7,40 @@ public class DailyBonus : MonoBehaviour
 {
 
     const int REFILL_GOLDTICKET_COUNT = 3;
+    const int REFILL_FriendTicket_COUNT = 10;
 
     public void OnClick()
     {
 
         ItemData goldTicket = DataTableManager.Instance.GetItemData(9/*골드티켓*/);
+        ItemData friendTicket = DataTableManager.Instance.GetItemData(10/*친구방문 보상 수령 카운트*/);
 
-        //TODO : 일일보상 갱신조건등등을 여기에 추가
+        UserDataManager.UpdateDbChain updateChain = GameManager.UserData.StartUpdateStream();
+
+        //TODO : 일일보상 여기에 추가
         if (goldTicket.Number.Value < 3)
-        {
-            //부족하니까 티켓을 채움
+            updateChain.SetDBValue(goldTicket.Number, REFILL_GOLDTICKET_COUNT);
 
-            //TODO : 일일보상 여기에 추가
-            GameManager.UserData.StartUpdateStream()
-                .SetDBValue(goldTicket.Number, REFILL_GOLDTICKET_COUNT)
-                .Submit((result) =>
+        if(friendTicket.Number.Value < 10)
+            updateChain.SetDBValue(friendTicket.Number, REFILL_FriendTicket_COUNT);
+
+        updateChain.SetDBValue<object>("friends/visitedList", null);
+
+        updateChain
+            .Submit((result) =>
+            {
+                if (result)
                 {
-                    if (result)
-                    {
-                        Debug.Log("골드티켓 획득 성공");
-                        SceneManager.LoadSceneAsync("MainMenu");
-                    }
-                    else 
-                    {
-                        Debug.Log("골드티켓 획득 실패");
-                    }
-                });
+                    Debug.Log("일일보상처리 완료");
+                    SceneManager.LoadSceneAsync("MainMenu");
+                }
+                else 
+                {
+                    Debug.Log("일일보상 획득 실패");
+                }
+            });
 
-        }
-        else
-        {
-            Debug.Log("이미 3개 이상 있음");
-            SceneManager.LoadSceneAsync("MainMenu");
-        }
+        
 
     }
 

@@ -14,6 +14,10 @@ public class StageManager : MonoBehaviour
     [SerializeField] StageData stageData;
     private StageData stageDataOnLoad;
 
+    [Header("Camera Effecter")]
+    [SerializeField]
+    CombatCamera combatCamera;
+
     [Header("Characters")]
     [SerializeField]
     CombManager characterManager;
@@ -195,9 +199,12 @@ public class StageManager : MonoBehaviour
         Debug.Log("다음 웨이브로 이동중...");
 
         scroller.StartScroll();
-        yield return new WaitForSeconds(3f);//순수이동시간
+        yield return StartCoroutine(combatCamera.StartFocusCO());
+
+        StartCoroutine(combatCamera.ReleaseFocusCO());//줌아웃과 동시에 다음 웨이브 활성화
         monsterWaveQueue[0].gameObject.SetActive(true);
         yield return StartCoroutine(WaitMonsterWaveCO(monsterWaveQueue[0].transform));//몬스터 웨이브 이동시간
+
         scroller.StopScroll();
 
 
@@ -287,7 +294,6 @@ public class StageManager : MonoBehaviour
         monsterWaveQueue[0].gameObject.SetActive(true);
         yield return StartCoroutine(WaitMonsterWaveCO(monsterWaveQueue[0].transform));//몬스터 웨이브 이동시간
         scroller.StopScroll();
-
 
         characterManager.StartCombat(monsterWaveQueue[0]);
         monsterWaveQueue[0].StartCombat(characterManager);

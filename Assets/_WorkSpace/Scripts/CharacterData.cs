@@ -49,20 +49,23 @@ public class CharacterDataEditor : Editor
 /// </summary>
 public enum CharacterType
 {
-    _0,
-    _1,
-    _2,
-    _3,
-    _4,
+    // 0: 불, 1: 물, 2: 풀, 3: 땅, 4: 전기
+    _0, 
+    _1, 
+    _2, 
+    _3, 
+    _4, 
 }
 
 public enum CharacterRoleType
 {
+    // 0: 방어형, 1: 공격형, 2: 지원형
     _0, _1, _2
 }
 
 public enum CharacterDragonVeinType
 {
+    // 0: 단일 공격, 1: 범위 공격
     _0, _1
 }
 
@@ -98,6 +101,14 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
 
     public string Name => name;
 
+    public float AttackPointLeveled => ((statusTable.attackPointBase + statusTable.attackPointGrowth) * Level.Value) * (1f + 0.1f * Enhancement.Value);
+
+    public float HpPointLeveled => ((statusTable.healthPointBase + statusTable.healthPointGrouth) * Level.Value) * (1f + 0.1f * Enhancement.Value);
+
+    public float DefensePointLeveled => ((statusTable.defensePointBase + statusTable.defensePointGrouth) * Level.Value) * (1f + 0.1f * Enhancement.Value);
+
+    public float PowerLevel => (AttackPointLeveled + HpPointLeveled + DefensePointLeveled);
+    
     public Sprite FaceIconSprite => faceIconSprite;
 
     public GameObject ModelPrefab => modelPrefab;
