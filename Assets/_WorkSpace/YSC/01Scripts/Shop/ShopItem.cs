@@ -27,11 +27,12 @@ public class ShopItem : BaseUI
     [Header("구매버튼")]
     [SerializeField] Button buyButton;
 
-    [SerializeField] private TMP_Text buyButtonText;
+    [SerializeField] private TMP_Text buyButtonText;    // 매진되면 매진나오는 텍스트
 
     // 구매확인창 (구매버튼 누르면 팝업)
     [SerializeField] PurchasingPanel purchasingPanel;
-    
+
+    [SerializeField] private ShopPopupController shopPopup;
     private void Start()
     {
         Init();
@@ -115,6 +116,7 @@ public class ShopItem : BaseUI
         {
             Debug.LogWarning("비용 부족");
             // TODO: 팝업UI
+            OpenWarning();
             return;
         }
 
@@ -177,6 +179,13 @@ public class ShopItem : BaseUI
     private void OpenPurchasingPanel()
     {
         PurchasingPanel popupInstance = Instantiate(purchasingPanel, GameManager.PopupCanvas);
+        popupInstance.transform.SetAsFirstSibling();
         popupInstance.SetItem(shopItemData);
+    }
+
+    private void OpenWarning()
+    {
+        OverlayUIManager popupInstance = GameManager.OverlayUIManager;
+        popupInstance.OpenSimpleInfoPopup("소지하신 재료가 부족합니다.", "닫기", null);
     }
 }
