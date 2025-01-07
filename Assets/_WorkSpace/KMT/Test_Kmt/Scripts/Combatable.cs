@@ -8,7 +8,6 @@ using Unity.Mathematics;
 using UnityEngine.UI;
 using UnityEngine.AI;
 using Spine;
-//using static Spine.Unity.Editor.SkeletonBaker.BoneWeightContainer;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class Combatable : MonoBehaviour
@@ -33,7 +32,7 @@ public class Combatable : MonoBehaviour
     Skill baseAttack;
 
     protected NavMeshAgent agent;
-    protected GameObject characterModel;
+    protected CharacterModel characterModel;
 
     [Header("TestParams")]
     [SerializeField]
@@ -82,15 +81,7 @@ public class Combatable : MonoBehaviour
 
         gameObject.name = data.Name;
 
-        // 외형 생성
-        characterModel = Instantiate(data.ModelPrefab, transform);
-        characterModel.transform.rotation = Quaternion.Euler(90, 0, 0);
-        characterModel.name = "Model";
-        if (false == characterModel.TryGetComponent(out Animator animator))
-        {
-            animator = characterModel.GetComponentInChildren<Animator>();
-        }
-        UnitAnimator = animator;
+        SetCharacterModel(data.ModelPrefab);
 
         // 그룹 지정
         this.Group = Group;
@@ -123,11 +114,32 @@ public class Combatable : MonoBehaviour
 
         baseAttack = data.BasicSkillDataSO;
 
-        hp.Subscribe(x => {
+        hp.Subscribe(x =>
+        {
 
             hpSlider.value = x / MaxHp.Value;
 
         });
+    }
+
+    /// <summary>
+    /// 모델을 세팅하는 함수
+    /// </summary>
+    /// <param name="modelData">세팅할 모델 프리팹</param>
+    protected virtual void SetCharacterModel(CharacterModel modelData)
+    {
+        if(characterModel != null)
+            Destroy(characterModel.gameObject);
+
+        // 외형 생성
+        characterModel = Instantiate(modelData, transform);
+        characterModel.transform.rotation = Quaternion.Euler(90, 0, 0);
+        characterModel.name = "Model";
+        if (false == characterModel.TryGetComponent(out Animator animator))
+        {
+            animator = characterModel.GetComponentInChildren<Animator>();
+        }
+        UnitAnimator = animator;
     }
 
     public Animator UnitAnimator { get; private set; }
@@ -263,8 +275,6 @@ public class Combatable : MonoBehaviour
     {
         yield return null;
 
-        Debug.Log(gameObject.name);
-        Debug.Log(baseAttack.TargetingLogic.GetTarget(this));
         Combatable target = baseAttack.TargetingLogic.GetTarget(this);
 
         float trackTime = 0.2f;
@@ -331,11 +341,11 @@ public class Combatable : MonoBehaviour
     {
         if (Vector3.Dot(target - transform.position, Vector3.right) > -0.1f)
         {
-            characterModel.transform.localRotation = Quaternion.Euler(new Vector3(-90, -90, -90));
+            characterModel.transform.localRotation = Quaternion.Euler(-90, -90, -90);
         }
         else
         {
-            characterModel.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
+            characterModel.transform.localRotation = Quaternion.Euler(90, 0, 0);
         }
     }
 
@@ -345,6 +355,7 @@ public class Combatable : MonoBehaviour
 
         while (target != null && target.IsAlive && range > Vector3.Distance(target.transform.position, transform.position))
         {
+            Look(target.transform);
             StartCoroutine(baseAttack.SkillRoutine(this, target, null));
             yield return new WaitForSeconds(1);
         }
