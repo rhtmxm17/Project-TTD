@@ -88,7 +88,6 @@ public class OutskirtsUI : MonoBehaviour
 
     private void Awake()
     {
-        childUIField.quickMoveLayout.gameObject.SetActive(false);
         QuickMoveMenuButton.onClick.AddListener(ToggleQuickMove);
 
         ReturnButton.onClick.AddListener(OnReturnButtonClicked);

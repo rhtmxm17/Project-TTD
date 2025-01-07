@@ -1,7 +1,25 @@
 
 using System.Collections;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
+
+struct StatIncreaseBlock 
+{
+    public float hpIncrease{ get; private set;}
+    public float atkIncrease{ get; private set; }
+    public float defIncrease{ get; private set; }
+    public int needCost{ get; private set; }
+
+    public StatIncreaseBlock(float hpIncrease, float atkIncrease, float defIncrease, int needCost)
+    { 
+        this.hpIncrease = hpIncrease;
+        this.atkIncrease = atkIncrease;
+        this.defIncrease = defIncrease;
+        this.needCost = needCost;
+    }
+
+}
 
 public class CharacterCombatable : Combatable
 {
@@ -12,15 +30,22 @@ public class CharacterCombatable : Combatable
 
     Vector3 originPos;
 
+    ReactiveProperty<int> stageLevel = new ReactiveProperty<int>();
+    public ReadOnlyReactiveProperty<int> StageLevel;
+    StatIncreaseBlock[] levelIncreasement = new StatIncreaseBlock[4];
+    const int MAX_STAGE_LEVEL = 3;
+
     protected override void Awake()
     {
         base.Awake();
 
         originPos = transform.position;
         waveClearEvent.AddListener(BackToOriginPos);
+
+        StageLevel = stageLevel.ToReadOnlyReactiveProperty();
     }
 
-    public void InitCharacterData(BasicSkillButton basicSkillButton, SecondSkillButton secondSkillButton)
+    public void InitCharacterData(BasicSkillButton basicSkillButton, LevelupButton levelupButton, SecondSkillButton secondSkillButton)
     {
         if (characterData == null)
         {
@@ -46,12 +71,62 @@ public class CharacterCombatable : Combatable
             }
         });
 
+
         onDeadEvent.AddListener(basicSkillButton.OffSkillButton);
         onDeadEvent.AddListener(secondSkillButton.OffSkillButton);
 
         characterModel.transform.localRotation = Quaternion.Euler(new Vector3(-90, -90, -90));
-    }
 
+        stageLevel.Value = 1;
+
+        //레벨업 스텟 상승치 지정.
+        levelIncreasement[2] = new StatIncreaseBlock(maxHp.Value * 0.1f, attackPoint.Value * 0.1f, defense.Value * 0.1f, 1);
+        levelIncreasement[3] = new StatIncreaseBlock(maxHp.Value * 0.15f, attackPoint.Value * 0.15f, defense.Value * 0.15f, 2);
+
+        levelupButton.GetComponent<Button>().onClick.AddListener(() => {
+
+            if (!levelupButton.Interactable || !IsAlive) { Debug.Log("사용 불가"); return; }
+            if (stageLevel.Value >= MAX_STAGE_LEVEL) { Debug.Log("만랩"); return; }
+            if (levelIncreasement[stageLevel.Value + 1].needCost < StageManager.Instance.PartyCost)//비용이 충분한지 확인.
+            {
+                StageManager.Instance.UsePartyCost(levelIncreasement[stageLevel.Value + 1].needCost);
+                LevelUp();
+            }
+
+        });
+
+        onDeadEvent.AddListener(levelupButton.OffSkillButton);
+
+        stageLevel.Subscribe((x) => {
+
+            if (x >= MAX_STAGE_LEVEL)
+            {
+                basicSkillButton.SetLevel(x);
+                levelupButton.SetLevel(x);
+                levelupButton.SetLevelupCost(int.MaxValue);
+                secondSkillButton.ArrivedReqLevel();
+            }
+            else
+            {
+                basicSkillButton.SetLevel(x);
+                levelupButton.SetLevel(x);
+                levelupButton.SetLevelupCost(levelIncreasement[stageLevel.Value + 1].needCost);
+                Debug.Log("레벨업!" + x);
+            }
+
+        });
+
+
+        //=============HP 게이지 위치 조정==================
+
+        RectTransform hpBarRect = hpSlider.GetComponent<RectTransform>();
+        hpSlider.transform.SetParent(basicSkillButton.transform);
+        hpBarRect.anchoredPosition = new Vector3(0, -100, 5);
+        hpBarRect.sizeDelta = new Vector2(140, 60);
+        hpBarRect.rotation = Quaternion.identity;
+        hpBarRect.localScale = Vector3.one;
+
+    }
     public override void StartCombat(CombManager againstL)
     {
         state = curState.OTHERS;
@@ -93,6 +168,19 @@ public class CharacterCombatable : Combatable
         characterModel.transform.localRotation = Quaternion.Euler(new Vector3(-90, -90, -90));
 
         state = curState.WAITING;
+    }
+
+    public void LevelUp()
+    {
+        //만랩 이전이라면 레벨업시킴.
+        if(stageLevel.Value < MAX_STAGE_LEVEL)
+        {        
+            stageLevel.Value += 1;
+            maxHp.Value += levelIncreasement[stageLevel.Value].hpIncrease;
+            hp.Value += levelIncreasement[stageLevel.Value].hpIncrease;
+            attackPoint.Value += levelIncreasement[stageLevel.Value].atkIncrease;
+            defense.Value += levelIncreasement[stageLevel.Value].defIncrease;
+        }
     }
 
 }
