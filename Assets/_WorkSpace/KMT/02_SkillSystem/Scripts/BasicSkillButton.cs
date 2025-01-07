@@ -30,7 +30,7 @@ public class BasicSkillButton : MonoBehaviour
             skillCooldownCoroutine = null;
         }
 
-        skillButton.enabled = false;
+        skillButton.interactable = false;
         cooldownImg.fillAmount = 1;
     }
 
@@ -62,7 +62,7 @@ public class BasicSkillButton : MonoBehaviour
     public IEnumerator StartCoolDownCO(float coolTime)
     {
         waitedCooltime = 0;
-        skillButton.enabled = false;
+        skillButton.interactable = false;
         yield return null;
 
         while (waitedCooltime < coolTime)
@@ -75,7 +75,7 @@ public class BasicSkillButton : MonoBehaviour
 
         cooldownImg.fillAmount = 0;
 
-        skillButton.enabled = true;
+        skillButton.interactable = true;
         skillCooldownCoroutine = null;
     }
 

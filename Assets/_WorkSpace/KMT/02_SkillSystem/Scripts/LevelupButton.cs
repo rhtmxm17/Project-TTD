@@ -1,22 +1,21 @@
-using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SecondSkillButton : MonoBehaviour
+public class LevelupButton : MonoBehaviour
 {
-    [SerializeField]
-    Image cooldownImg;
+
     [SerializeField]
     Button skillButton;
 
     [SerializeField]
     TextMeshProUGUI costText;
 
-    Coroutine skillCostCoroutine = null;
+    int cost = int.MaxValue;
 
-    float cost = float.MaxValue;
+    Coroutine levelupCoroutine = null;
 
     public bool Interactable => skillButton.interactable;
 
@@ -27,35 +26,44 @@ public class SecondSkillButton : MonoBehaviour
 
     private void Start()
     {
-        skillCostCoroutine = StartCoroutine(SkillCostCO());
+        levelupCoroutine = StartCoroutine(LevelupCostCO());
     }
 
-    IEnumerator SkillCostCO()
+    IEnumerator LevelupCostCO()
     {
         while (true)
         {
-            cooldownImg.fillAmount = 1 - Math.Clamp(StageManager.Instance.PartyCost / cost, 0, 1);
-            if (cooldownImg.fillAmount <= 0.02f)
+            if (StageManager.Instance.PartyCost > cost)
+            {
                 skillButton.interactable = true;
+            }
             else
+            {
                 skillButton.interactable = false;
+            }
 
             yield return null;
         }
     }
 
-
-    public void SetSkillCost(float cost)
+    public void SetLevelupCost(int cost)
     {
         this.cost = cost;
-        costText.text = cost.ToString();
+        if (cost == int.MaxValue)
+        {
+            costText.text = "Max";
+        }
+        else
+        { 
+            costText.text = cost.ToString();
+        }
     }
+
 
     public void OffSkillButton(Combatable obj)
     {
-        StopCoroutine(skillCostCoroutine);
-        skillButton.enabled = false;
-        cooldownImg.fillAmount = 1;
+        StopCoroutine(levelupCoroutine);
+        skillButton.interactable = false;
     }
 
 }

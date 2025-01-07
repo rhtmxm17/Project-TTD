@@ -18,9 +18,20 @@ public class StageCharacterSetter : MonoBehaviour
     [SerializeField]
     SecondSkillButton secondSkillButtonPrefab;
 
+    [Header("Levelup Buttons")]
+    [SerializeField]
+    GameObject levelupButtonPanel; 
+    [SerializeField]
+    LevelupButton levelupButtonPrefab;
+    [SerializeField]
+    GameObject dummyButton;
+
+
     [Header("Second Skills")]
     [SerializeField]
     GameObject secondSkillPanel;
+    [SerializeField]
+    GameObject costSkillToggleButton;
 
     [SerializeField]
     List<Transform> spawnPositions;
@@ -60,15 +71,22 @@ public class StageCharacterSetter : MonoBehaviour
 
             charObj.Initialize(group, pair.Value);
 
+            LevelupButton levelupButton = Instantiate(levelupButtonPrefab, levelupButtonPanel.transform);
+            SecondSkillButton sndSkillButton = Instantiate(secondSkillButtonPrefab, secondSkillPanel.transform);
+
             charObj.InitCharacterData(
                             Instantiate(basicSkillButtonPrefab, skillPanel.transform),
-                            Instantiate(secondSkillButtonPrefab, secondSkillPanel.transform));
-
+                            levelupButton,
+                            sndSkillButton);
 
 
         }
 
         GetComponent<CombManager>().CharList = characters;
+
+
+        dummyButton.transform.SetAsLastSibling();
+        costSkillToggleButton.transform.SetAsLastSibling();
 
     }
 
