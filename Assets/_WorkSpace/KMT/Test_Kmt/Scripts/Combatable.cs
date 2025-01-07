@@ -18,7 +18,7 @@ public class Combatable : MonoBehaviour
     CombManager againistObjList;
 
     [SerializeField]
-    Slider hpSlider;
+    protected Slider hpSlider;
 
     [HideInInspector]
     public UnityEvent waveClearEvent = new UnityEvent();
@@ -28,7 +28,6 @@ public class Combatable : MonoBehaviour
     public UnityEvent<float> onDamagedEvent = new UnityEvent<float>();
 
     protected Coroutine curActionCoroutine = null;
-    protected SkillButton SkillButton;
 
     protected float range;
     Skill baseAttack;
@@ -159,6 +158,22 @@ public class Combatable : MonoBehaviour
 
     }
 
+    public void StatusBuffed(StatusBuffType type, float value)
+    {
+        switch (type)
+        {
+            case StatusBuffType.ATK_PERCENTAGE:
+                attackPoint.Value *= (1f + value * 0.01f);
+                break;
+            case StatusBuffType.DEF_PERCENTAGE:
+                defense.Value *= (1f + value * 0.01f);
+                break;
+            default:
+                Debug.LogWarning("잘못되었거나 정의되지 않은 버프 타입");
+                break;
+        }
+    }
+
     public void Damaged(float damage, float igDefRate)
     {
         if (!IsAlive)
@@ -248,6 +263,8 @@ public class Combatable : MonoBehaviour
     {
         yield return null;
 
+        Debug.Log(gameObject.name);
+        Debug.Log(baseAttack.TargetingLogic.GetTarget(this));
         Combatable target = baseAttack.TargetingLogic.GetTarget(this);
 
         float trackTime = 0.2f;
@@ -265,9 +282,14 @@ public class Combatable : MonoBehaviour
                 if (time > trackTime)
                 {
                     time = 0;
-                    agent.destination = target.transform.position;
-                    Look(target.transform);
-                    yield return new WaitWhile(() => agent.pathPending);
+
+                    target = baseAttack.TargetingLogic.GetTarget(this);
+                    if (target != null && target.IsAlive && againistObjList != null)
+                    {
+                        agent.destination = target.transform.position;
+                        Look(target.transform);
+                        yield return new WaitWhile(() => agent.pathPending);
+                    }
 
                 }
 
@@ -275,12 +297,15 @@ public class Combatable : MonoBehaviour
                 yield return null;
             }
 
-
-            if (!target.IsAlive)//이동중에 적이 쓰러진 경우.
+            if (target == null)//타깃 null 체크
             {
                 target = baseAttack.TargetingLogic.GetTarget(this);//새로운 대상 탐색
             }
-            else
+            else if (!target.IsAlive)//이동중에 적이 쓰러진 경우.
+            {
+                target = baseAttack.TargetingLogic.GetTarget(this);//새로운 대상 탐색
+            }
+            else//적이 살아있고 사거리에 도착했을 경우.
             {
                 StopCurActionCoroutine();
                 curActionCoroutine = StartCoroutine(CombatCO(target));

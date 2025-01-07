@@ -112,7 +112,6 @@ public class ShopItemData : ScriptableObject, ICsvMultiRowParseable
     public void ParseCsvMultiRow(string[] lines, ref int line)
     {
         bool isFirst = true;
-        List<ItemGain> products = null;
         while (lines.Length > line)
         {
             string[] cells = lines[line].Split(',');
@@ -153,13 +152,13 @@ public class ShopItemData : ScriptableObject, ICsvMultiRowParseable
                         Debug.LogError($"잘못된 데이터로 갱신 시도됨");
                         return;
                     }
-                }
 
-                // PRICE_NUMBER
-                if (false == int.TryParse(cells[(int)Column.PRICE_NUMBER], out price.gain))
-                {
-                    Debug.LogError($"잘못된 데이터로 갱신 시도됨");
-                    return;
+                    // PRICE_NUMBER
+                    if (false == int.TryParse(cells[(int)Column.PRICE_NUMBER], out price.gain))
+                    {
+                        Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+                        return;
+                    }
                 }
 
                 // IS_LIMITED: 테이블값이 T면 구매횟수 제한 존재

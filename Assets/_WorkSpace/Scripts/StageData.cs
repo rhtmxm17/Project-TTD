@@ -20,8 +20,16 @@ public class StageDataDataEditor : Editor
 }
 #endif
 
+public enum StatusBuffType : int
+{
+    ERROR,
+    ATK_PERCENTAGE,
+    DEF_PERCENTAGE,
+}
+
 public class StageData : ScriptableObject, ICsvMultiRowParseable
 {
+
     /// <summary>
     /// 각 스테이지의 고유 번호
     /// </summary>
@@ -43,9 +51,19 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
     public List<ItemGain> Reward => reward;
 
     /// <summary>
+    /// 편성 칸에 적용되는 버프 목록
+    /// </summary>
+    public List<BuffInfo> TileBuff => tileBuff;
+
+    /// <summary>
     /// (유저 데이터) 클리어 횟수
     /// </summary>
     public UserDataInt ClearCount { get; private set; }
+
+    /// <summary>
+    /// 스테이지 뒷배경 정보 프리팹
+    /// </summary>
+    public ScrollableBG BackgroundTypePrefab => backgroundTypePrefab;
 
     [SerializeField] int id;
 
@@ -57,6 +75,10 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
     [SerializeField] List<WaveInfo> waves;
 
     [SerializeField] List<ItemGain> reward;
+
+    [SerializeField] List<BuffInfo> tileBuff;
+
+    [SerializeField] ScrollableBG backgroundTypePrefab;
 
     private void OnEnable()
     {
@@ -88,6 +110,16 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
         public Vector2 pose;
     }
 
+
+
+    [System.Serializable]
+    public struct BuffInfo
+    {
+        public StatusBuffType type;
+        public float value;
+        public int tileIndex;
+    }
+
 #if UNITY_EDITOR
     private enum Column
     {
@@ -107,6 +139,14 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
 
         REWARD_NAME,
         REWARD_NUMBER,
+
+        DROPDOWN_BUFF_TYPE,
+        BUFF_TYPE,
+        BUFF_VALUE,
+        BUFF_TILE_INDEX,
+
+        TIME_LIMIT,
+        BACKGROUND_TYPE
 
     }
 
@@ -130,9 +170,14 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
 
                 waves = new List<WaveInfo>();
                 reward = new List<ItemGain>();
+                tileBuff = new List<BuffInfo>();
 
                 // NAME
                 stageName = cells[(int)Column.STAGE_NAME];
+
+                //Background Type
+                backgroundTypePrefab = AssetDatabase.LoadAssetAtPath<ScrollableBG>(
+                    $"{DataTableManager.PrefabsAssetFolder}/ScrollBackground/{cells[(int)Column.BACKGROUND_TYPE]}.prefab");
             }
             else
             {
@@ -192,6 +237,27 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
                 }
 
                 reward.Add(rewardInfo);
+            }
+
+            // 현재 행에 버프 정보가 있다면 추가
+            if (int.TryParse(cells[(int)Column.BUFF_TYPE], out int buffType))
+            {
+                BuffInfo buffInfo = new BuffInfo();
+                buffInfo.type = (StatusBuffType)buffType;
+
+                if (false == float.TryParse(cells[(int)Column.BUFF_VALUE], out buffInfo.value))
+                {
+                    Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+                    continue;
+                }
+
+                if (false == int.TryParse(cells[(int)Column.BUFF_TILE_INDEX], out buffInfo.tileIndex))
+                {
+                    Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+                    continue;
+                }
+
+                tileBuff.Add(buffInfo);
             }
 
             line++;

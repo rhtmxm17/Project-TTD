@@ -89,19 +89,11 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
         // Auth 초기화 대기
         yield return new WaitWhile(() => GameManager.Auth == null);
         
-        if (GameManager.Auth.CurrentUser != null)
-        {
-            GameManager.Auth.SignOut();
-        }
-        
-        if (BackendManager.CurrentUserDataRef != null) // 이미 더미 인증된 이력이 있을 경우 즉시 완료
-        {
-            onCompletedCallback?.Invoke();
-            yield break;
-        }
         GameManager.Instance.StartShortLoadingUI();
-
-        BackendManager.Instance.UseDummyUserDataRef(DummyNumber); // 테스트코드
+        if (BackendManager.CurrentUserDataRef == null) // CurrentUserDataRef가 비어있다면 더미로 등록
+        {
+            BackendManager.Instance.UseDummyUserDataRef(DummyNumber); // 테스트코드
+        }
 
         onLoadUserDataCompleted.AddListener(() => onCompletedCallback?.Invoke());
         onLoadUserDataCompleted.AddListener(GameManager.Instance.StopShortLoadingUI);
