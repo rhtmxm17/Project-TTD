@@ -551,6 +551,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 660750506}
   m_CullTransparentMesh: 1
+--- !u!114 &665412351 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5593584286021748733, guid: 27cabcba3394c1c4483ec41db54d4c7b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1463922941}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &668432300
 GameObject:
   m_ObjectHideFlags: 0
@@ -1484,6 +1496,26 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1426737807907721726, guid: 27cabcba3394c1c4483ec41db54d4c7b,
+        type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1426737807907721726, guid: 27cabcba3394c1c4483ec41db54d4c7b,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 0.95686275
+      objectReference: {fileID: 0}
+    - target: {fileID: 1426737807907721726, guid: 27cabcba3394c1c4483ec41db54d4c7b,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 0.95686275
+      objectReference: {fileID: 0}
+    - target: {fileID: 1426737807907721726, guid: 27cabcba3394c1c4483ec41db54d4c7b,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 0.95686275
+      objectReference: {fileID: 0}
     - target: {fileID: 1426737808675096488, guid: 27cabcba3394c1c4483ec41db54d4c7b,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -2101,6 +2133,8 @@ MonoBehaviour:
   monsterWaveQueue: []
   monsterWaveOffset: 20
   MaxPartyCost: 10
+  timeLimit: 90
+  leftTimeText: {fileID: 665412351}
   costText: {fileID: 1463922943}
   costSlider: {fileID: 1463922944}
   wavesText: {fileID: 1463922942}

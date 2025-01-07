@@ -10,6 +10,11 @@ public class SkillButtonGroup : MonoBehaviour
 {
     [SerializeField]
     Button toggleButton;
+    [SerializeField]
+    Color focusedColor;
+    Color defaultColor;
+
+    Image toggleButtonImg;
 
     bool isActive = false;
     public event Action hideAllGroups = null;
@@ -21,6 +26,9 @@ public class SkillButtonGroup : MonoBehaviour
         canvas = GetComponent<Canvas>();
         toggleButton.onClick.AddListener(OnClicked);
         canvas.sortingOrder = 0;
+
+        toggleButtonImg = toggleButton.GetComponent<Image>();
+        defaultColor = toggleButtonImg.color;
     }
 
     public void SetCanvasOrder(int orderCount)
@@ -32,12 +40,12 @@ public class SkillButtonGroup : MonoBehaviour
     {
         if (isActive)
         {
-            isActive = false;
-            canvas.sortingOrder = 0;
+            HideButtonGroup();
         }
         else 
         {
             hideAllGroups?.Invoke();
+            toggleButtonImg.color = focusedColor;
             isActive = true;
             canvas.sortingOrder = 2;
         }
@@ -47,6 +55,7 @@ public class SkillButtonGroup : MonoBehaviour
     {
         isActive = false;
         canvas.sortingOrder = 0;
+        toggleButtonImg.color = defaultColor;
     }
 
 }

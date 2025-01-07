@@ -17,6 +17,7 @@ public class SecondSkillButton : MonoBehaviour
     Coroutine skillCostCoroutine = null;
 
     float cost = float.MaxValue;
+    bool levelArrived = false;
 
     public bool Interactable => skillButton.interactable;
 
@@ -34,11 +35,19 @@ public class SecondSkillButton : MonoBehaviour
     {
         while (true)
         {
-            cooldownImg.fillAmount = 1 - Math.Clamp(StageManager.Instance.PartyCost / cost, 0, 1);
-            if (cooldownImg.fillAmount <= 0.02f)
-                skillButton.interactable = true;
-            else
+            if (!levelArrived)
+            {
                 skillButton.interactable = false;
+                cooldownImg.fillAmount = 1;
+            }
+            else
+            {
+                cooldownImg.fillAmount = 1 - Math.Clamp(StageManager.Instance.PartyCost / cost, 0, 1);
+                if (cooldownImg.fillAmount <= 0.02f)
+                    skillButton.interactable = true;
+                else
+                    skillButton.interactable = false;
+            }
 
             yield return null;
         }
@@ -49,6 +58,11 @@ public class SecondSkillButton : MonoBehaviour
     {
         this.cost = cost;
         costText.text = cost.ToString();
+    }
+
+    public void ArrivedReqLevel()
+    {
+        levelArrived = true;
     }
 
     public void OffSkillButton(Combatable obj)

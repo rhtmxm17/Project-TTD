@@ -107,6 +107,13 @@ public class CharacterCombatable : Combatable
             Debug.Log("레벨업!" + x);
         });
 
+        stageLevel.Subscribe((x) => {
+
+            if (x >= MAX_STAGE_LEVEL)
+                secondSkillButton.ArrivedReqLevel();
+
+        });
+
 
     }
     public override void StartCombat(CombManager againstL)

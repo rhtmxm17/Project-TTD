@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -9,8 +10,6 @@ public class GoldStageManager : StageManager, IDamageAddable
     [Header("Gold Stage Info")]
     [SerializeField]
     Slider leftTimeBar;
-    [SerializeField]
-    float timeLimit;
 
     [SerializeField]
     int clearRewardGold;
@@ -18,44 +17,46 @@ public class GoldStageManager : StageManager, IDamageAddable
     float maxTimeLimit;
     float gainGold;
 
-    bool isTimeOver;
-
-    bool isRewarded = false;
-
     protected override void StartGame()
     {
         base.StartGame();
 
         maxTimeLimit = timeLimit;
         gainGold = 0;
-        isTimeOver = false;
     }
 
-    protected override IEnumerator FirstWaveSetCO()
-    {
-        yield return base.FirstWaveSetCO();
-        StartCoroutine(StartTimerCO());
-    }
 
     public void IDamageAdd(float damage)
     {
-        if (isTimeOver)
+        if (isCombatEnd)
             return;
 
         gainGold += damage;
     }
-    
-    IEnumerator StartTimerCO()
+
+    protected override IEnumerator StartTimerCO()
     {
+        TimeSpan leftTimeSpan = TimeSpan.FromSeconds(timeLimit);
+        leftTimeText.text = $"{leftTimeSpan.Minutes:D2} : {leftTimeSpan.Seconds:D2}";
+
         while (timeLimit > 0)
         {
             leftTimeBar.value = timeLimit / maxTimeLimit;
-            timeLimit = Mathf.Clamp(timeLimit - Time.deltaTime, -0.01f, maxTimeLimit);
-            yield return null;
+
+            yield return new WaitForSeconds(1);
+            timeLimit -= 1;
+            leftTimeSpan = TimeSpan.FromSeconds(timeLimit);
+            leftTimeText.text = $"{leftTimeSpan.Minutes:D2} : {leftTimeSpan.Seconds:D2}";
         }
 
+        if (isCombatEnd)
+        {
+            Debug.Log("이미 전투가 종료됨");
+            yield break;
+        }
+
+        isCombatEnd = true;
         Debug.Log("타임 오버!");
-        isTimeOver = true;
 
         //초과데미지를 주었더라도 최대 보상보다는 적게 주도록 강제
         Rewarding(System.Math.Min(clearRewardGold, (int)gainGold));
@@ -65,13 +66,6 @@ public class GoldStageManager : StageManager, IDamageAddable
 
     void Rewarding(int rewardGold)
     {
-        if (isRewarded)
-        { 
-            Debug.Log("이미 보상처리가 들어감."); 
-            return; 
-        }
-
-        isRewarded = true;
 
         Debug.Log("클리어!");
 
@@ -105,6 +99,16 @@ public class GoldStageManager : StageManager, IDamageAddable
 
     protected override void OnClear()
     {
+        if (isCombatEnd)
+        {
+            Debug.Log("이미 전투가 종료됨");
+            return;
+        }
+
+        isCombatEnd = true;
+
+        Debug.Log("클리어!");
+
         Rewarding(clearRewardGold);
     }
 }
