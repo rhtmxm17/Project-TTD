@@ -28,7 +28,7 @@ public class GoldStageManager : StageManager, IDamageAddable
 
     public void IDamageAdd(float damage)
     {
-        if (isCombatEnd)
+        if (IsCombatEnd)
             return;
 
         gainGold += damage;
@@ -49,13 +49,13 @@ public class GoldStageManager : StageManager, IDamageAddable
             leftTimeText.text = $"{leftTimeSpan.Minutes:D2} : {leftTimeSpan.Seconds:D2}";
         }
 
-        if (isCombatEnd)
+        if (IsCombatEnd)
         {
             Debug.Log("이미 전투가 종료됨");
             yield break;
         }
 
-        isCombatEnd = true;
+        IsCombatEnd = true;
         Debug.Log("타임 오버!");
 
         //초과데미지를 주었더라도 최대 보상보다는 적게 주도록 강제
@@ -99,13 +99,13 @@ public class GoldStageManager : StageManager, IDamageAddable
 
     protected override void OnClear()
     {
-        if (isCombatEnd)
+        if (IsCombatEnd)
         {
             Debug.Log("이미 전투가 종료됨");
             return;
         }
 
-        isCombatEnd = true;
+        IsCombatEnd = true;
 
         Debug.Log("클리어!");
 
