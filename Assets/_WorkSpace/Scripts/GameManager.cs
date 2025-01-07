@@ -83,6 +83,20 @@ public class GameManager : SingletonBehaviour<GameManager>
     }
 
     /// <summary>
+    /// 빠른 이동 메뉴에서 이동 가능한 메뉴 목록
+    /// </summary>
+    public enum MenuType { CHARACTERS, ACHIEVEMENT, STORY, SHOP, MYROOM, ADVANTURE, }
+
+    /// <summary>
+    /// 지정된 메뉴로 이동
+    /// </summary>
+    /// <param name="menu"></param>
+    public void LoadMenuScene(MenuType menu)
+    {
+
+    }
+
+    /// <summary>
     /// 전투 스테이지 데이터와 전투씬 타입을 지정
     /// </summary>
     /// <param name="StageData">스테이지 데이터</param>

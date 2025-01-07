@@ -46,19 +46,19 @@ public class StageCharacterSetter : MonoBehaviour
         }
     }
 
-    public void InitCharacters(Dictionary<int, CharacterData> characterDatas)
+    public void InitCharacters(Dictionary<int, CharacterData> characterDatas, List<StageData.BuffInfo> tileBuff)
     {
         if (characterDatas.Count <= 0)
             return;
 
         GetComponent<CombManager>().ListClearedEvent.AddListener(() => { Debug.Log("전☆멸"); });
 
-        SpawnCharacterDataSet(characterDatas);
+        SpawnCharacterDataSet(characterDatas, tileBuff);
 
     }
 
 
-    private void SpawnCharacterDataSet(Dictionary<int, CharacterData> characterDataList)
+    private void SpawnCharacterDataSet(Dictionary<int, CharacterData> characterDataList, List<StageData.BuffInfo> tileBuff)
     {
         CombManager group = GetComponent<CombManager>();
         List<Combatable> characters = new List<Combatable>();
@@ -79,7 +79,14 @@ public class StageCharacterSetter : MonoBehaviour
                             levelupButton,
                             sndSkillButton);
 
-
+            foreach (StageData.BuffInfo buffInfo in tileBuff)
+            {
+                if (pair.Key == buffInfo.tileIndex)
+                {
+                    // 편성 위치가 버프 적용 대상 타일일 경우 버프 적용
+                    charObj.StatusBuffed(buffInfo.type, buffInfo.value);
+                }
+            }
         }
 
         GetComponent<CombManager>().CharList = characters;
