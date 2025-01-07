@@ -71,7 +71,15 @@ public class StageManager : MonoBehaviour
     int maxWave;
     string MAX_WAVE;
 
-    protected bool isCombatEnd;
+    private bool isCombatEnd;
+
+    public bool IsCombatEnd {
+        get { return isCombatEnd; }
+        protected set {
+            isCombatEnd = value; 
+            Time.timeScale = 1;
+        }
+    }
 
     private void Awake()
     {
@@ -245,13 +253,13 @@ public class StageManager : MonoBehaviour
 
     protected virtual void OnClear()
     {
-        if (isCombatEnd)
+        if (IsCombatEnd)
         {
             Debug.Log("이미 전투가 종료됨");
             return;
         }
 
-        isCombatEnd = true;
+        IsCombatEnd = true;
 
         Debug.Log("클리어!");
         var stream = GameManager.UserData.StartUpdateStream();
@@ -277,13 +285,13 @@ public class StageManager : MonoBehaviour
 
     protected virtual void OnDefeat()
     {
-        if (isCombatEnd)
+        if (IsCombatEnd)
         {
             Debug.Log("이미 전투가 종료됨");
             return;
         }
 
-        isCombatEnd = true;
+        IsCombatEnd = true;
 
         ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(null);
         popupInstance.Title.text = "패배...";
@@ -309,7 +317,7 @@ public class StageManager : MonoBehaviour
             return;
         }
 
-        isCombatEnd = false;
+        IsCombatEnd = false;
 
         //파티 공유 게이지 충전 시작.
         StartCoroutine(StartPartyCostCO());
