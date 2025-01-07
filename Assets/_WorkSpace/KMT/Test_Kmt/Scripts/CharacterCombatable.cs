@@ -97,23 +97,34 @@ public class CharacterCombatable : Combatable
 
         onDeadEvent.AddListener(levelupButton.OffSkillButton);
 
-
         stageLevel.Subscribe((x) => {
+
             if (x >= MAX_STAGE_LEVEL)
+            {
+                basicSkillButton.SetLevel(x);
+                levelupButton.SetLevel(x);
                 levelupButton.SetLevelupCost(int.MaxValue);
-            else
-                levelupButton.SetLevelupCost(levelIncreasement[stageLevel.Value + 1].needCost);
-
-            Debug.Log("레벨업!" + x);
-        });
-
-        stageLevel.Subscribe((x) => {
-
-            if (x >= MAX_STAGE_LEVEL)
                 secondSkillButton.ArrivedReqLevel();
+            }
+            else
+            {
+                basicSkillButton.SetLevel(x);
+                levelupButton.SetLevel(x);
+                levelupButton.SetLevelupCost(levelIncreasement[stageLevel.Value + 1].needCost);
+                Debug.Log("레벨업!" + x);
+            }
 
         });
 
+
+        //=============HP 게이지 위치 조정==================
+
+        RectTransform hpBarRect = hpSlider.GetComponent<RectTransform>();
+        hpSlider.transform.SetParent(basicSkillButton.transform);
+        hpBarRect.anchoredPosition = new Vector3(0, -100, 5);
+        hpBarRect.sizeDelta = new Vector2(140, 60);
+        hpBarRect.rotation = Quaternion.identity;
+        hpBarRect.localScale = Vector3.one;
 
     }
     public override void StartCombat(CombManager againstL)

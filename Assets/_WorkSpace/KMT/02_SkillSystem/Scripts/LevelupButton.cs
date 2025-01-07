@@ -13,7 +13,20 @@ public class LevelupButton : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI costText;
 
-    int cost = int.MaxValue;
+    [SerializeField]
+    Image levelBgPanel;
+    [SerializeField]
+    TextMeshProUGUI levelText;
+
+    [Header("Text BG Color")]
+    [SerializeField]
+    Color defaultColor;
+    [SerializeField]
+    Color ableColor;
+    [SerializeField]
+    Color disableColor;
+
+    int cost = 100;
 
     Coroutine levelupCoroutine = null;
 
@@ -33,17 +46,31 @@ public class LevelupButton : MonoBehaviour
     {
         while (true)
         {
+            if (cost == int.MaxValue)
+            {
+                skillButton.interactable = false;
+                levelBgPanel.color = defaultColor;
+                yield break;
+            }
+
             if (StageManager.Instance.PartyCost > cost)
             {
                 skillButton.interactable = true;
+                levelBgPanel.color = ableColor;
             }
             else
             {
                 skillButton.interactable = false;
+                levelBgPanel.color = disableColor;
             }
 
             yield return null;
         }
+    }
+
+    public void SetLevel(int level)
+    {
+        levelText.text = $"Lv{level.ToString()}";
     }
 
     public void SetLevelupCost(int cost)

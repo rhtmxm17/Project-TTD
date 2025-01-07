@@ -14,6 +14,11 @@ public class SecondSkillButton : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI costText;
 
+    [SerializeField]
+    GameObject yellowImg;
+    [SerializeField]
+    GameObject blackImg;
+
     Coroutine skillCostCoroutine = null;
 
     float cost = float.MaxValue;
@@ -24,6 +29,8 @@ public class SecondSkillButton : MonoBehaviour
     private void Awake()
     {
         skillButton.interactable = false;
+        blackImg.SetActive(true);
+        costText.text = "Lv3 필요";
     }
 
     private void Start()
@@ -44,9 +51,15 @@ public class SecondSkillButton : MonoBehaviour
             {
                 cooldownImg.fillAmount = 1 - Math.Clamp(StageManager.Instance.PartyCost / cost, 0, 1);
                 if (cooldownImg.fillAmount <= 0.02f)
+                {
                     skillButton.interactable = true;
+                    SetEdgeImg(true);
+                }
                 else
+                {
                     skillButton.interactable = false;
+                    SetEdgeImg(false);
+                }
             }
 
             yield return null;
@@ -54,15 +67,30 @@ public class SecondSkillButton : MonoBehaviour
     }
 
 
+    public void SetEdgeImg(bool isYellow)
+    {
+        if (isYellow)
+        {
+            yellowImg.SetActive(true);
+            blackImg.SetActive(false);
+        }
+        else
+        {
+            yellowImg.SetActive(false);
+            blackImg.SetActive(true);
+        }
+    }
+
+
     public void SetSkillCost(float cost)
     {
         this.cost = cost;
-        costText.text = cost.ToString();
     }
 
     public void ArrivedReqLevel()
     {
         levelArrived = true;
+        costText.text = cost.ToString();
     }
 
     public void OffSkillButton(Combatable obj)

@@ -13,6 +13,8 @@ public class BasicSkillButton : MonoBehaviour
 
     [SerializeField]
     TextMeshProUGUI nonTargetText;
+    [SerializeField]
+    TextMeshProUGUI levelText;
 
     Coroutine textCoroutine = null;
     WaitForSeconds displayTime = new WaitForSeconds(0.5f);
@@ -41,6 +43,11 @@ public class BasicSkillButton : MonoBehaviour
             StopCoroutine(textCoroutine);
         }
         textCoroutine = StartCoroutine(TextDisplayCO());
+    }
+
+    public void SetLevel(int level)
+    { 
+        levelText.text = $"Lv{level.ToString()}";
     }
 
     IEnumerator TextDisplayCO()

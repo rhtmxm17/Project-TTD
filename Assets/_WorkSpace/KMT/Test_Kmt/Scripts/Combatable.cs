@@ -18,7 +18,7 @@ public class Combatable : MonoBehaviour
     CombManager againistObjList;
 
     [SerializeField]
-    Slider hpSlider;
+    protected Slider hpSlider;
 
     [HideInInspector]
     public UnityEvent waveClearEvent = new UnityEvent();
