@@ -38,14 +38,7 @@ public class HYJ_SelectManager : MonoBehaviour
         enterStageButton.onClick.AddListener(LoadBattleScene);
         cancelButton.onClick.AddListener(CancelEnterStage);
         
-        for (int i = 0; i < buttonCnt; i++)
-        {
-            var obj = Instantiate(batchButtonPrefab, batchButtonsTransform);
-            buttonsTransformList.Add(obj.transform);
-            obj.InitDataPosBTN(i, CharacterSelectPanel, CantPosUI);
-            
-            obj.GetComponent<HYJ_PosBTN>().BuffInput(true,true,true);
-        }
+        
 
         GameManager.UserData.PlayData.BatchInfo.onValueChanged += (() =>
         {
@@ -63,7 +56,6 @@ public class HYJ_SelectManager : MonoBehaviour
         foreach (var pair in batchData)
         {
             battleInfo[int.Parse(pair.Key)] = (int)pair.Value;
-
         }
         
         if (battleInfo.Count > 5)
@@ -72,7 +64,16 @@ public class HYJ_SelectManager : MonoBehaviour
         }
         else if (battleInfo.Count > 0)
         {
-            SetBattleInfo(battleInfo);
+            //SetBattleInfo(battleInfo);
+        }
+        
+        for (int i = 0; i < buttonCnt; i++)
+        {
+            var obj = Instantiate(batchButtonPrefab, batchButtonsTransform);
+            buttonsTransformList.Add(obj.transform);
+            obj.InitDataPosBTN(i, CharacterSelectPanel, CantPosUI);
+            
+            //obj.GetComponent<HYJ_PosBTN>().BuffInput(true,true,true);
         }
     }
 
@@ -95,7 +96,7 @@ public class HYJ_SelectManager : MonoBehaviour
         });
     }
 
-    private void SaveBatch(UnityAction<bool> onCompleteCallback)
+    private void SaveBatch(UnityAction<bool> onCompleteCallback) // 배치 저장
     {
         Dictionary<string, long> updates = new Dictionary<string, long>();
         foreach (var pair in battleInfo)
@@ -107,7 +108,12 @@ public class HYJ_SelectManager : MonoBehaviour
             .SetDBDictionary(GameManager.UserData.PlayData.BatchInfo, updates)
             .Submit(onCompleteCallback);
     }
-
+    
+    /// <summary>
+    /// 캐릭터 이미지 생성 - AddBatch에 사용
+    /// </summary>
+    /// <param name="posIdx"></param> 이미지의 생성 위치
+    /// <param name="charIdx"></param> 생성할 캐릭터의 고유 번호
     public void SetCharacterImage(int posIdx, int charIdx)
     {
         var chImage = Instantiate(ChImagePrefab, buttonsTransformList[posIdx]);
@@ -118,17 +124,23 @@ public class HYJ_SelectManager : MonoBehaviour
         chImage.GetComponent<HYJ_CharacterImage>().unitIndex = charIdx;
     }
 
+    /// <summary>
+    /// 캐릭터 이미지 삭제 - RemoveBatch에 사용
+    /// </summary>
+    /// <param name="posIdx"></param> 삭제할 이미지의 위치
     public void RemoveCharacterImage(int posIdx)
     {
         Destroy(buttonsTransformList[posIdx].GetComponentInChildren<HYJ_CharacterImage>().gameObject);
     }
 
+    /// <summary>
+    /// 캐릭터 이미지 이동 - changeBatch에 사용
+    /// </summary>
+    /// <param name="fromIdx"></param> 이동할 위치 번호
+    /// <param name="destIdx"></param> 출발 번호
     public void ChangeImagePos(int fromIdx, int destIdx)
     {
-        if (buttonsTransformList[destIdx].GetComponentInChildren<HYJ_CharacterImage>() != null)
-        {
-            RemoveCharacterImage(destIdx);
-        }
+        RemoveCharacterImage(destIdx);
         buttonsTransformList[fromIdx].GetComponentInChildren<HYJ_CharacterImage>().transform.SetParent(buttonsTransformList[destIdx].transform);
 
         HYJ_CharacterImage[] transL = buttonsTransformList[destIdx].GetComponentsInChildren<HYJ_CharacterImage>();
@@ -136,19 +148,9 @@ public class HYJ_SelectManager : MonoBehaviour
         trans.anchoredPosition = Vector3.zero;
     }
 
-    public void TestLog()
-    {
-        // 간편 테스트용 / 파이어 베이스 연결x
-        Debug.Log("-------");
-        foreach (var (key, value) in battleInfo)
-        {
-            Debug.Log($"{key} : {value}");
-        }
-        Debug.Log("-------");
-    }
-
     public void LoadBattleScene()
     {
+        // 전투 시작
         if (battleInfo.Count < 1)
         {
             // TODO : 팝업창 만들어서 하나 이상의 캐릭터를 배치해야 시작할 수 있다고 알려주기
@@ -171,6 +173,7 @@ public class HYJ_SelectManager : MonoBehaviour
 
     public void CancelEnterStage()
     {
+        // 뒤로가기(배치 창 닫기)
         SaveBatch(result =>
         {
             if (false == result)
@@ -181,16 +184,5 @@ public class HYJ_SelectManager : MonoBehaviour
 
             GameManager.Instance.LoadMainScene();
         });
-    }
-
-    public void UpdateFormation()
-    {
-        if (battleInfo.Count > 0)
-        {
-            foreach (var index in battleInfo)
-            {
-                //SelectM.battleInfo
-            }
-        }
     }
 }
