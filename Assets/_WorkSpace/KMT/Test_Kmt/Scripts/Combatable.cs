@@ -43,6 +43,8 @@ public class Combatable : MonoBehaviour
 
     public bool IsAlive { get; private set; }
 
+    public float CharacterSizeRadius {  get; protected set; }
+
     public enum SearchLogic { NEAR_FIRST, FAR_FIRST }
 
     public CharacterData characterData { get; private set; }
@@ -134,6 +136,7 @@ public class Combatable : MonoBehaviour
         // 외형 생성
         characterModel = Instantiate(modelData, transform);
         characterModel.transform.rotation = Quaternion.Euler(90, 0, 0);
+        CharacterSizeRadius = characterModel.ModelSize;
         characterModel.name = "Model";
         if (false == characterModel.TryGetComponent(out Animator animator))
         {
@@ -282,7 +285,7 @@ public class Combatable : MonoBehaviour
 
         while (target != null && target.IsAlive && againistObjList != null)
         {
-            agent.stoppingDistance = range;//TODO : 개체별 크기가 다른 경우, 해당 로직에 추가 수정.
+            agent.stoppingDistance = range + target.CharacterSizeRadius;
             agent.destination = target.transform.position;
             Look(target.transform);
             yield return new WaitWhile(() => agent.pathPending);
@@ -353,7 +356,7 @@ public class Combatable : MonoBehaviour
     {
         yield return null;
 
-        while (target != null && target.IsAlive && range > Vector3.Distance(target.transform.position, transform.position))
+        while (target != null && target.IsAlive && range + target.CharacterSizeRadius > Vector3.Distance(target.transform.position, transform.position))
         {
             Look(target.transform);
             StartCoroutine(baseAttack.SkillRoutine(this, target, null));
