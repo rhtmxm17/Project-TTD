@@ -73,6 +73,8 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
 
     [SerializeField] List<BuffInfo> tileBuff;
 
+    [SerializeField] ScrollableBG backgroundTypePrefab;
+
     private void OnEnable()
     {
         ClearCount = new UserDataInt($"Stages/{id}/ClearCount");
@@ -138,6 +140,9 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
         BUFF_VALUE,
         BUFF_TILE_INDEX,
 
+        TIME_LIMIT,
+        BACKGROUND_TYPE
+
     }
 
     public void ParseCsvMultiRow(string[] lines, ref int line)
@@ -164,6 +169,10 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
 
                 // NAME
                 stageName = cells[(int)Column.STAGE_NAME];
+
+                //Background Type
+                backgroundTypePrefab = AssetDatabase.LoadAssetAtPath<ScrollableBG>(
+                    $"{DataTableManager.PrefabsAssetFolder}/ScrollBackground/{cells[(int)Column.BACKGROUND_TYPE]}.prefab");
             }
             else
             {
