@@ -127,6 +127,7 @@ public class PurchasingPanel : BaseUI
         {
             Debug.LogWarning("비용 부족");
             // TODO: 팝업UI
+            OpenWarning();      // 비용부족 경고 팝업.
             return;
         }
 
@@ -175,10 +176,11 @@ public class PurchasingPanel : BaseUI
         UpdateInfo(); // 갱신된 상품 정보(구매 횟수) 반영
         
         
-        ItemGain itemGain = shopItemData.Products[0];
-        itemGain.gain = currentNumber;
-        shopItemData.Products.Clear();
-        shopItemData.Products.Add(itemGain);
+       // ItemGain itemGain = shopItemData.Products[0];
+       // itemGain.gain = currentNumber;
+       // shopItemData.Products.Clear();
+       // shopItemData.Products.Add(itemGain);
+      
         ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(shopItemData.Products);
         popupInstance.Title.text = "구매 성공!";
         // this.shopItem.UpdateInfo(); // 이거 하면 창이 안닫힘
@@ -231,6 +233,10 @@ public class PurchasingPanel : BaseUI
         Debug.Log("갯수변경 이벤트");
         OnAmountChanged?.Invoke();
     }
-    
+    private void OpenWarning()
+    {
+        OverlayUIManager popupInstance = GameManager.OverlayUIManager;
+        popupInstance.OpenSimpleInfoPopup("소지하신 재료가 부족합니다.", "닫기", null);
+    }
     
 }
