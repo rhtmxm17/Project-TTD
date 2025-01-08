@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -16,6 +17,38 @@ public class BasicSkillButton : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI levelText;
 
+    Coroutine autoCoroutine = null;
+    WaitForSeconds autoDelay = new WaitForSeconds(0.1f);
+    Func<bool> isTargetExistFunc;
+
+    public bool IsInAuto { 
+        get { return isAuto; } 
+        set 
+        {
+            if (value == true)//오토를 켜는 경우
+            {
+                if (autoCoroutine != null)
+                {
+                    StopCoroutine(autoCoroutine);
+                    autoCoroutine = null;
+                }
+
+                autoCoroutine = StartCoroutine(AutoModeCO());
+
+            }
+            else//오토를 끄는 경우
+            {
+                if (autoCoroutine != null)
+                {
+                    StopCoroutine(autoCoroutine);
+                    autoCoroutine = null;
+                }
+            }
+            isAuto = value; 
+        } 
+    }
+    bool isAuto = false;
+
     Coroutine textCoroutine = null;
     WaitForSeconds displayTime = new WaitForSeconds(0.5f);
 
@@ -32,6 +65,12 @@ public class BasicSkillButton : MonoBehaviour
             skillCooldownCoroutine = null;
         }
 
+        if (autoCoroutine != null)
+        {
+            StopCoroutine(autoCoroutine);
+            autoCoroutine = null;
+        }
+
         skillButton.interactable = false;
         cooldownImg.fillAmount = 1;
     }
@@ -43,6 +82,11 @@ public class BasicSkillButton : MonoBehaviour
             StopCoroutine(textCoroutine);
         }
         textCoroutine = StartCoroutine(TextDisplayCO());
+    }
+
+    public void InitTargetingFunc(Func<bool> isTargetExistFunc)
+    {
+        this.isTargetExistFunc = isTargetExistFunc;
     }
 
     public void SetLevel(int level)
@@ -95,4 +139,24 @@ public class BasicSkillButton : MonoBehaviour
         }
 
     }
+
+    IEnumerator AutoModeCO()
+    {
+        yield return null;
+
+        while (true)
+        {
+            if (Interactable && isTargetExistFunc.Invoke())
+            {
+                skillButton.onClick.Invoke();
+            }
+            else
+            {
+                //Debug.Log("스킬 비활성화 상태 또는 타겟이 없는 상태");
+            }
+
+            yield return autoDelay;
+        }
+    }
+
 }

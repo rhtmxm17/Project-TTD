@@ -1665,6 +1665,31 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5274963555659929143, guid: 27cabcba3394c1c4483ec41db54d4c7b,
+        type: 3}
+      propertyPath: battleLogic
+      value: 
+      objectReference: {fileID: 2088122922}
+    - target: {fileID: 5274963555659929143, guid: 27cabcba3394c1c4483ec41db54d4c7b,
+        type: 3}
+      propertyPath: activeColor.b
+      value: 0.18431373
+      objectReference: {fileID: 0}
+    - target: {fileID: 5274963555659929143, guid: 27cabcba3394c1c4483ec41db54d4c7b,
+        type: 3}
+      propertyPath: activeColor.g
+      value: 0.88235295
+      objectReference: {fileID: 0}
+    - target: {fileID: 5274963555659929143, guid: 27cabcba3394c1c4483ec41db54d4c7b,
+        type: 3}
+      propertyPath: inactiveColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5274963555659929143, guid: 27cabcba3394c1c4483ec41db54d4c7b,
+        type: 3}
+      propertyPath: inactiveColor.g
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5592795995138730301, guid: 27cabcba3394c1c4483ec41db54d4c7b,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -1813,7 +1838,7 @@ PrefabInstance:
     - target: {fileID: 8959500561743407698, guid: 27cabcba3394c1c4483ec41db54d4c7b,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 100
+      value: -300
       objectReference: {fileID: 0}
     - target: {fileID: 8959500562086040225, guid: 27cabcba3394c1c4483ec41db54d4c7b,
         type: 3}
@@ -1983,21 +2008,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1463922945 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1426737808675096489, guid: 27cabcba3394c1c4483ec41db54d4c7b,
-    type: 3}
-  m_PrefabInstance: {fileID: 1463922941}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1463922946 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 76274589374005924, guid: 27cabcba3394c1c4483ec41db54d4c7b,
-    type: 3}
-  m_PrefabInstance: {fileID: 1463922941}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1463922947 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7968199684570079365, guid: 27cabcba3394c1c4483ec41db54d4c7b,
     type: 3}
   m_PrefabInstance: {fileID: 1463922941}
   m_PrefabAsset: {fileID: 0}
@@ -2908,6 +2921,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dc9f974dabce2343a990877beb1e2e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2088122922 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2346192511201470634, guid: fbb4197ad931a83478982ff704e1f31b,
+    type: 3}
+  m_PrefabInstance: {fileID: 7064329177659746150}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2088122918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8b0aa17aadf0f34f9515a8429214ec6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &7064329177659746150
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2984,7 +3009,7 @@ PrefabInstance:
         type: 3}
       propertyPath: dummyButton
       value: 
-      objectReference: {fileID: 1463922945}
+      objectReference: {fileID: 0}
     - target: {fileID: 7064329176246918479, guid: fbb4197ad931a83478982ff704e1f31b,
         type: 3}
       propertyPath: levelupToggle
@@ -3014,7 +3039,7 @@ PrefabInstance:
         type: 3}
       propertyPath: costSkillToggleButton
       value: 
-      objectReference: {fileID: 1463922947}
+      objectReference: {fileID: 0}
     - target: {fileID: 7064329176246918479, guid: fbb4197ad931a83478982ff704e1f31b,
         type: 3}
       propertyPath: blockerDummyButtonPrefab
