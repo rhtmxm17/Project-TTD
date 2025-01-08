@@ -165,7 +165,7 @@ public class CharacterSort : MonoBehaviour
             _sortCharacterInfos[i + ownedCount].SetListImage(_unOwnedCharacters[i].FaceIconSprite);
             _sortCharacterInfos[i + ownedCount].OwnedObject.SetActive(true);
         }
- 
+        
         ChangeSortButtonText();
         PlayerPrefs.SetInt("SortType", (int)_curSortType);
     }

@@ -102,12 +102,7 @@ public class CharacterInfoController : BaseUI
     { 
         UpdateCharacterList(); 
     }
-
-    private void OnDisable()
-    {
-        _infoUI.InfoPopupClose();
-    }
-
+    
     private void Init()
     {
         _infoPopup = GetUI("InfoPopup");
