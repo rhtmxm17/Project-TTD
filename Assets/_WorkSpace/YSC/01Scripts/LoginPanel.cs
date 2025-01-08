@@ -97,10 +97,10 @@ public class LoginPanel : BaseUI
                 if (task.IsCanceled)
                 {
                    //  Debug.LogWarning("SignInWithEmailAndPasswordAsync was canceled.");
-                    GetErrorMessage(task.Exception);
-                    Debug.LogError($"실패하였습니다, 사유: {task.Exception}");
+                    // GetErrorMessage(task.Exception);
+                    Debug.LogError($"취소되었습니다, 사유: {task.IsCanceled}");
                     warningPopup.SetActive(true);   
-                    warningText.text = $"{GetErrorMessage(task.Exception)}";
+                    warningText.text = $"취소되었습니다, 사유: {task.IsCanceled}";
                     
                     
                     return;
@@ -328,8 +328,202 @@ public class LoginPanel : BaseUI
             case AuthError.WebInternalError:
                 message = "요청을 처리하려고 시도하는 중에 Authentication 서버에 예기치 않은 오류가 발생했습니다. ";
                 break;
+                
+                
+            case AuthError.Unimplemented:
+                message = "-1";
+                break;
+            case AuthError.None:
+                message = "없음? 뭐임";
+                break;
+            case AuthError.Failure:
+                message = "이메일/비밀번호가 틀렸습니다."; // 1 실패: 이게 그냥 아이디 / 비밀번호? 잘못 입력되면 나온느거 같음 유니티상에 인풋필드에
+                break;
+            case AuthError.InvalidCustomToken:
+                message = "유효치않은 토큰";
+                break;
+            case AuthError.CustomTokenMismatch:
+                message = "불일치 커스텀 토큰.";
+                break;
+            case AuthError.InvalidCredential:
+                message = "유효치않은 인증정보";
+                break;
+            case AuthError.ProviderAlreadyLinked:
+                message = "15.";
+                break;
+            case AuthError.NoSuchProvider:
+                message = "16.";
+                break;
+            case AuthError.UserTokenExpired:
+                message = "만료된 유저 토큰입니다";
+                break;
+            case AuthError.NetworkRequestFailed:
+                message = "네트워크 요청실패.";
+                break;
+            case AuthError.InvalidApiKey:
+                message = "잘못된 API키";
+                break;
+            case AuthError.AppNotAuthorized:
+                message = "21.";
+                break;
+            case AuthError.UserMismatch:
+                message = "22 ";
+                break;
+            case AuthError.WeakPassword:
+                message = "23";
+                break;
+            case AuthError.NoSignedInUser:
+                message = "24";
+                break;
+            case AuthError.ExpiredActionCode:
+                message = "26.";
+                break;
+            case AuthError.InvalidActionCode:
+                message = "27";
+                break;
+            case AuthError.InvalidMessagePayload:
+                message = "28.";
+                break;
+            case AuthError.InvalidPhoneNumber:
+                message = "29.";
+                break;
+            case AuthError.MissingPhoneNumber:
+                message = "30.";
+                break;
+            case AuthError.InvalidRecipientEmail:
+                message = "31.";
+                break;
+            case AuthError.InvalidSender:
+                message = "32.";
+                break;
+            case AuthError.InvalidVerificationCode:
+                message = "33.";
+                break;
+            case AuthError.InvalidVerificationId:
+                message = "34.";
+                break;
+            case AuthError.MissingVerificationCode:
+                message = "35.";
+                break;
+            case AuthError.MissingVerificationId:
+                message = "36.";
+                break;
+            case AuthError.QuotaExceeded:
+                message = "39.";
+                break;
+            case AuthError.RetryPhoneAuth:
+                message = "40.";
+                break;
+            case AuthError.AppNotVerified:
+                message = "42. ";
+                break;
+            case AuthError.AppVerificationFailed:
+                message = "43.";
+                break;
+            case AuthError.CaptchaCheckFailed:
+                message = "44.";
+                break;
+            case AuthError.InvalidAppCredential:
+                message = "45";
+                break;
+            case AuthError.MissingAppCredential:
+                message = "46.";
+                break;
+            case AuthError.InvalidClientId:
+                message = "47";
+                break;
+            case AuthError.InvalidContinueUri:
+                message = "48.";
+                break;
+            case AuthError.MissingContinueUri:
+                message = "49 ";
+                break;
+            case AuthError.KeychainError:
+                message = "50";
+                break;
+            case AuthError.MissingAppToken:
+                message = "51";
+                break;
+            case AuthError.MissingIosBundleId:
+                message = "52.";
+                break;
+            case AuthError.NotificationNotForwarded:
+                message = "53";
+                break;
+            case AuthError.UnauthorizedDomain:
+                message = "54.";
+                break;
+            case AuthError.WebContextAlreadyPresented:
+                message = "55.";
+                break;
+            case AuthError.WebContextCancelled:
+                message = "56.";
+                break;
+            case AuthError.DynamicLinkNotActivated:
+                message = "57.";
+                break;
+            case AuthError.Cancelled:
+                message = "58.";
+                break;
+            case AuthError.InvalidProviderId:
+                message = "59.";
+                break;
+            case AuthError.WebStorateUnsupported:
+                message = "61.";
+                break;
+            case AuthError.TenantIdMismatch:
+                message = "62.";
+                break;
+            case AuthError.UnsupportedTenantOperation:
+                message = "63.";
+                break;
+            case AuthError.InvalidLinkDomain:
+                message = "64.";
+                break;
+            case AuthError.RejectedCredential:
+                message = "65.";
+                break;
+            case AuthError.PhoneNumberNotFound:
+                message = "66. ";
+                break;
 
-            
+            case AuthError.InvalidTenantId:
+                message = "67.";
+                break;
+            case AuthError.MissingClientIdentifier:
+                message = "68";
+                break;
+            case AuthError.MissingMultiFactorSession:
+                message = "69.";
+                break;
+            case AuthError.MissingMultiFactorInfo:
+                message = "70.";
+                break;
+            case AuthError.InvalidMultiFactorSession:
+                message = "71.";
+                break;
+            case AuthError.MultiFactorInfoNotFound:
+                message = "72";
+                break;
+            case AuthError.AdminRestrictedOperation:
+                message = "73.";
+                break;
+            case AuthError.UnverifiedEmail:
+                message = "74.";
+                break;
+            case AuthError.SecondFactorAlreadyEnrolled:
+                message = "75.";
+                break;
+            case AuthError.MaximumSecondFactorCountExceeded:
+                message = "76.";
+                break;
+            case AuthError.UnsupportedFirstFactor:
+                message = "77.";
+                break;
+            case AuthError.EmailChangeNeedsVerification:
+                message = "78.";
+                break;
+
         }
         return message;
     }
