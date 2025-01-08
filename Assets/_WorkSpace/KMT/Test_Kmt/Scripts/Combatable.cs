@@ -359,7 +359,7 @@ public class Combatable : MonoBehaviour
         while (target != null && target.IsAlive && range + target.CharacterSizeRadius > Vector3.Distance(target.transform.position, transform.position))
         {
             Look(target.transform);
-            StartCoroutine(baseAttack.SkillRoutine(this, target, null));
+            StartCoroutine(baseAttack.SkillRoutine(this, target, null));//이것도 액션으로 관리?
             yield return new WaitForSeconds(1);
         }
 

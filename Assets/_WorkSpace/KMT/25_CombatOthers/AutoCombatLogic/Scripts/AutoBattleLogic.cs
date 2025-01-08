@@ -32,12 +32,16 @@ public class AutoBattleLogic : MonoBehaviour
         secondSkillButtons.Add(secondSkillBtn);
     }
 
+    public void StartBasicSkill()
+    {
+        foreach (BasicSkillButton basicBtn in basicSkillButtons)
+        {
+            basicBtn.IsInAuto = true;
+        }
+    }
+
     public void OnAutoBattle()
     {
-        foreach (BasicSkillButton bsk in basicSkillButtons)
-        {
-            bsk.IsInAuto = true;
-        }
 
         if (levelAutoCoroutine != null)
         { 
@@ -46,18 +50,23 @@ public class AutoBattleLogic : MonoBehaviour
 
         levelAutoCoroutine = StartCoroutine(LevelAutoCO());
 
+        foreach (SecondSkillButton sndBtn in secondSkillButtons)
+        {
+            sndBtn.IsInAuto = true;
+        }
+
     }
     public void OffAutoBattle()
     {
-        foreach (BasicSkillButton bsk in basicSkillButtons)
-        {
-            bsk.IsInAuto = false;
-        }
-
         if (levelAutoCoroutine != null)
         {
             StopCoroutine(levelAutoCoroutine);
             levelAutoCoroutine = null;
+        }
+
+        foreach (SecondSkillButton sndBtn in secondSkillButtons)
+        {
+            sndBtn.IsInAuto = false;
         }
     }
 

@@ -60,16 +60,15 @@ public class CharacterCombatable : Combatable
             basicSkillButton.StartCoolDown(characterData.StatusTable.BasicSkillCooldown);//쿨타임을 매개변수로 전달.
         });
 
-        secondSkillButton.SetSkillCost(characterData.StatusTable.SecondSkillCost);
         secondSkillButton.transform.GetChild(0).GetComponent<Image>().sprite = characterData.SpecialSkillIcon;
+        secondSkillButton.InitTargetingFunc(() => { return characterData.SecondSkillDataSO.TargetingLogic.GetTarget(this) != null ? true : false; });
+        secondSkillButton.SetSkillCooltime(characterData.StatusTable.SecondSkillCooldown);
         secondSkillButton.GetComponent<Button>().onClick.AddListener(() => {
             if (!secondSkillButton.Interactable || !IsAlive) { Debug.Log("사용 불가"); return; }
             if (!OnSkillCommanded(characterData.SkillDataSO)) { Debug.Log("스킬 타깃이 없음. 사용 취소"); return; }
-            if (characterData.StatusTable.SecondSkillCost < StageManager.Instance.PartyCost)//비용이 충분한지 확인.
-            {
-                StageManager.Instance.UsePartyCost(characterData.StatusTable.SecondSkillCost);
-                OnSkillCommanded(characterData.SecondSkillDataSO);
-            }
+            if (!secondSkillButton.LevelArrived) { Debug.Log("만랩이 아님, 사용 불가"); return; }
+            if (!OnSkillCommanded(characterData.SecondSkillDataSO)) { Debug.Log("스킬 타깃이 없음. 사용 취소"); return; }
+                secondSkillButton.StartCoolDown();
         });
 
         characterModel.transform.localRotation = Quaternion.Euler(new Vector3(-90, -90, -90));
@@ -121,7 +120,7 @@ public class CharacterCombatable : Combatable
         //=============HP 게이지 위치 조정==================
 
         RectTransform hpBarRect = hpSlider.GetComponent<RectTransform>();
-        hpSlider.transform.SetParent(basicSkillButton.transform);
+        hpSlider.transform.SetParent(secondSkillButton.transform);
         hpBarRect.anchoredPosition = new Vector3(0, -100, 5);
         hpBarRect.sizeDelta = new Vector2(140, 60);
         hpBarRect.rotation = Quaternion.identity;

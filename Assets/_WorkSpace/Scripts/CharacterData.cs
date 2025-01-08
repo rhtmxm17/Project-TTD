@@ -76,7 +76,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     {
         public float Range;
         public float BasicSkillCooldown;
-        public float SecondSkillCost;
+        public float SecondSkillCooldown;
 
         /// <summary>
         /// 0레벨 공격력
@@ -257,7 +257,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         secondSkillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.SPECIAL_SKILL]}.asset");
 
         // SS_COST
-        if (false == float.TryParse(cells[(int)Column.SS_COST], out statusTable.SecondSkillCost))
+        if (false == float.TryParse(cells[(int)Column.SS_COST], out statusTable.SecondSkillCooldown))
         {
             Debug.LogError($"잘못된 데이터로 갱신 시도됨");
             return;
