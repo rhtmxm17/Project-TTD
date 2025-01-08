@@ -73,6 +73,7 @@ public class SignUpPanel : LoginPanel
             if (task.IsCanceled)
             {
                 Debug.LogError("회원가입이 취소되었습니다.");
+                Debug.LogError($"Failed because {task.Exception}");
                 GetErrorMessage(task.Exception);
                 messagePopup.gameObject.SetActive(true);   
                 messagePopup.Mesage.text = $"{GetErrorMessage(task.Exception)}";
@@ -80,8 +81,8 @@ public class SignUpPanel : LoginPanel
             }
             if (task.IsFaulted)
             {
-                
                 GetErrorMessage(task.Exception);
+                Debug.LogError($"Failed because {task.Exception}");
                 messagePopup.gameObject.SetActive(true);   
                 messagePopup.Mesage.text = $"{GetErrorMessage(task.Exception)}";
                 
@@ -148,6 +149,46 @@ public class SignUpPanel : LoginPanel
             case AuthError.EmailAlreadyInUse:
                 message = "이미 사용중인 이메일입니다.";
                 break;
+            case AuthError.MissingPassword:
+                message = "비밀번호를 입력하세요";
+                break;
+            case AuthError.SessionExpired:
+                message = "제공된 Firebase 세션 쿠키가 만료되었습니다.";
+                break;
+            case AuthError.UserDisabled:
+                message = "정지된 계정입니다.";
+                break;
+            case AuthError.AccountExistsWithDifferentCredentials:
+                message = "다른인증으로 이미 가입된 아이디입니다.";
+                break;
+            case AuthError.OperationNotAllowed:
+                message = "제공된 로그인 제공업체가 Firebase 프로젝트에서 사용 중지되었습니다.";
+                break;
+            case AuthError.RequiresRecentLogin:
+                message = "최근 로그인 기록이 필요합니다.";
+                break;
+            case AuthError.CredentialAlreadyInUse:
+                message = "이미 사용중인 인증방법입니다.";
+                break;
+            case AuthError.WrongPassword:
+                message = "잘못된 비밀번호 입니다.";
+                break;
+            case AuthError.TooManyRequests:
+                message = "요청 수가 최대 허용치를 초과합니다.";
+                break;
+            case AuthError.UserNotFound:
+                message = "제공된 식별자에 해당하는 기존 사용자 레코드가 없습니다.";
+                break;
+            case AuthError.InvalidUserToken:
+                message = "제공된 ID 토큰이 올바른 Firebase ID 토큰이 아닙니다.";
+                break;
+            case AuthError.ApiNotAvailable:
+                message = "불가능한 api입니다.";
+                break;
+            case AuthError.WebInternalError:
+                message = "요청을 처리하려고 시도하는 중에 Authentication 서버에 예기치 않은 오류가 발생했습니다. ";
+                break;
+            
         }
         return message;
     }

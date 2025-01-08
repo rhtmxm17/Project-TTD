@@ -124,9 +124,9 @@ public class PurchasingPanel : BaseUI
 
         ItemData itemPay = shopItemData.Price.item;
         if (null != itemPay && shopItemData.Price.item.Number.Value < shopItemData.Price.gain * currentNumber)
-        {
+        {   // 지불해야하는 아이템이고 비용이 부족하면
             Debug.LogWarning("비용 부족");
-            // TODO: 팝업UI
+            // 팝업UI
             OpenWarning();      // 비용부족 경고 팝업.
             return;
         }
@@ -140,8 +140,15 @@ public class PurchasingPanel : BaseUI
             Debug.Log($"골드 소지 개수:{itemPay.Number.Value}/비용:{shopItemData.Price.gain * currentNumber}");
             dbUpdateStream.AddDBValue(itemPay.Number, -shopItemData.Price.gain * currentNumber); // 요청에 요구 수량만큼'비용 지불' 등록
             Debug.Log($"지불 후 골드 :{(itemPay.Number.Value)}");   
-            // TODO: 구매 가능/불가 판별 => 불가능 팝업
+            // 지불할템 소지량 구매 가능/불가 판별 => 불가능 팝업
             // (소지금 < 가격 => 구매불가(팝업띄우기))
+            if (shopItemData.Price.item.Number.Value < shopItemData.Price.gain * currentNumber)
+            {
+                Debug.LogWarning("비용 부족");
+                OpenWarning();      // 비용부족 경고 팝업.
+                return;
+            }
+            
         }
         
         foreach (ItemGain product in shopItemData.Products)
