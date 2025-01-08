@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -477,6 +478,8 @@ public class CharacterFilter : MonoBehaviour
     /// </summary>
     private void AllFilterClear()
     {
+        if (CharacterController == null) return;
+        
         _buttonColors?.ForEach(x => x.color = Color.white);
         
         for (int i = 0; i < _elementInfosIndex.Count; i++)
