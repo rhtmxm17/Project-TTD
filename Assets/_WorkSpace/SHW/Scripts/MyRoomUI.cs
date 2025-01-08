@@ -1,19 +1,29 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MyRoomUI : BaseUI
 {
+    MyroomInitializer initializer;
+    
     [SerializeField] Sprite[] roomSprites;
     [SerializeField] Sprite[] charaSprites;      // 임시
     private int roomIndex;
     private int charaIndex;
     [SerializeField] OutskirtsUI outskirtsUI;
     
+    // 현재 위치 표시
+    [SerializeField] TMP_Text roomName;
+
     private void Start()
     {
+        roomName.text = "내방~ >.0";
+        initializer = GetComponent<MyroomInitializer>();
+        GetComponent<MyroomInitializer>().Initialize(this);
+        
         // FIXME : 여기에 기존 룸 체인지 팝업UI의 스프라이트 들을 가져오고 싶은데...
         GameManager.UserData.TryInitDummyUserAsync(28, () =>
         {
@@ -53,12 +63,17 @@ public class MyRoomUI : BaseUI
         GetUI<Button>("CloseChat").onClick.AddListener(()=> GetUI<OpenableWindow>("ChatCanvas").CloseWindow());
 
         GetUI<Button>("VisitButton").onClick.AddListener(
-            GetUI<OpenableWindow>("FriendTapCanvas").OpenWindow
+            () =>
+            {
+                OpenSetRoomPopup("FriendTapCanvas");
+                AddStack("FriendTapCanvas");
+            }
+            //GetUI<OpenableWindow>("FriendTapCanvas").OpenWindow
         );
-        GetUI<Button>("VisitButton").onClick.AddListener(() => AddStack("FriendTapCanvas"));
+        // GetUI<Button>("VisitButton").onClick.AddListener(() => AddStack("FriendTapCanvas"));
     }
 
-    private void LoadImage()
+    public void LoadImage()
     {
         roomIndex = GameManager.UserData.Profile.MyroomBgIdx.Value;
         GetUI<Image>("BackImage").sprite = roomSprites[roomIndex];
@@ -103,5 +118,19 @@ public class MyRoomUI : BaseUI
     {
         GameObject addStack = GetUI(_name).gameObject;
         outskirtsUI.UIStack.Push(addStack);
+    }
+    
+    // 내방으로 돌아오기(임시)
+    public void ReturnMyRoomUI()
+    {
+        LoadImage();
+        Debug.Log($"남은 스택수 : {outskirtsUI.UIStack.Count}");
+        GetUI("Dictionary").SetActive(true);
+        GetUI("VisitButton").SetActive(true);
+        GetUI("CharacterChangeButton").SetActive(true);
+        GetUI("RoomChangeButton").SetActive(true);
+        GetUI("TimerBox").SetActive(true);
+        GetUI("SpawnerButton").SetActive(true);
+        GetUI("ReturnMyRoomButton").SetActive(false);
     }
 }

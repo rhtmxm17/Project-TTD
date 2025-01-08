@@ -3,6 +3,7 @@ using Firebase.Extensions;
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class FriendList : MonoBehaviour
 {
@@ -13,8 +14,10 @@ public class FriendList : MonoBehaviour
     FriendBlock friendBlockPrefab;
     [SerializeField]
     Transform contentTransform;
+
     [SerializeField]
-    OpenableWindow friendPanel;
+    // OpenableWindow friendPanel;
+    private GameObject friendPanel;
 
     [SerializeField]
     MyroomInitializer initializer;
@@ -23,6 +26,13 @@ public class FriendList : MonoBehaviour
     TextMeshProUGUI friendCountText;
 
     DatabaseReference userRef;
+    
+    // SHW)놀러간 친구의 방 이름 표시
+    [SerializeField] private TMP_Text friendRoomText;
+    // 내방으로 돌아가기
+    [SerializeField] private GameObject returnRoomButton;
+    // 스택제거용
+    [SerializeField] OutskirtsUI outskirtsUI;
 
     private void Awake()
     {
@@ -112,6 +122,11 @@ public class FriendList : MonoBehaviour
                                   }
                                   else
                                   {
+                                      friendRoomText.text = $"{nickname}님의 방";
+                                      // 임시) 내방으로 돌아가기 버튼
+                                      returnRoomButton.SetActive(true);
+                                      // 쌓여있는 스택처리
+                                      outskirtsUI.UIStack.Pop();
                                       VisitFriend(str, $"{nickname}님의 방이에요! \n 오늘은 이제 구경만 하도록 하죠.", null);
                                   }
                               });
@@ -125,7 +140,7 @@ public class FriendList : MonoBehaviour
     void VisitFriend(in string uid, in string popupText, Action closeWindowCallback)
     {
         initializer.InitRoom(uid);
-        friendPanel.CloseWindow();
+        friendPanel.SetActive(false);       // SHW
         GameManager.OverlayUIManager.OpenSimpleInfoPopup(
               popupText,
               "....?",
