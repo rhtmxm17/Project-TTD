@@ -7,7 +7,7 @@ public class StoryUI : BaseUI
 {
     [Header("prefabs")]
     [SerializeField] StoryDirector directorPrefab;
-    [SerializeField] StageButton stageButtonPrefab;
+    [SerializeField] IndexedButton stageButtonPrefab;
 
     [Header("child")]
     [SerializeField] LayoutGroup stageButtonGroup;
@@ -21,7 +21,7 @@ public class StoryUI : BaseUI
 
         for (int i = 0; i < storys.Count; i++)
         {
-            StageButton instance = Instantiate(stageButtonPrefab, stageButtonGroup.transform);
+            IndexedButton instance = Instantiate(stageButtonPrefab, stageButtonGroup.transform);
             instance.Id = i;
             instance.Button.onClick.AddListener(() =>
             {
