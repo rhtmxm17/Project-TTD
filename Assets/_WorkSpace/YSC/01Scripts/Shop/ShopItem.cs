@@ -27,6 +27,10 @@ public class ShopItem : BaseUI
     [Header("구매버튼")]
     [SerializeField] Button buyButton;
 
+    [Header("구매재화 이미지")]
+    [SerializeField] Image materialImage;
+    
+    
     [SerializeField] private TMP_Text buyButtonText;    // 매진되면 매진나오는 텍스트
 
     // 구매확인창 (구매버튼 누르면 팝업)
@@ -45,6 +49,7 @@ public class ShopItem : BaseUI
         buyButtonText = GetUI<TMP_Text>("BuyButtonText");
         itemPriceText = GetUI<TMP_Text>("ItemPriceText");
         itemCountText = GetUI<TMP_Text>("ItemCountText");
+        materialImage = GetUI<Image>("MaterialImage");
 
         SetItem(shopItemData);
     }
@@ -55,21 +60,28 @@ public class ShopItem : BaseUI
         shopItemData = data;
         itemNameText.text = data.ShopItemName;
         ShopItemImage.sprite = data.Sprite;
+         
         int remain = shopItemData.LimitedCount - shopItemData.Bought.Value;
         itemCountText.text = $"구매 가능 횟수 {remain}/{shopItemData.LimitedCount}";
-
-        // 가격 표시
+        
+        
+        // 가격 표시 & 재화표시
         if (null == data.Price.item)
         {
             itemPriceText.text = "무료";
+            materialImage = GetUI<Image>("MaterialImage");
         }
         else
         {
             itemPriceText.text = $"{data.Price.item.ItemName} {data.Price.gain}개";
+            materialImage.sprite = data.Price.item.SpriteImage;
         }
 
         UpdateInfo();
     }
+    
+    
+    
 
     /// <summary>
     /// 아이템 관련 업데이트
@@ -176,14 +188,14 @@ public class ShopItem : BaseUI
         PurchasingPanel.OnAmountChanged += UpdateInfo;        
     }
     // 구매확인창 열기
-    private void OpenPurchasingPanel()
+    private void OpenPurchasingPanel() // 구매확인창(갯수변경) 창을 열며 눌른 아이템 세팅
     {
         PurchasingPanel popupInstance = Instantiate(purchasingPanel, GameManager.PopupCanvas);
         popupInstance.transform.SetAsFirstSibling();
         popupInstance.SetItem(shopItemData);
     }
 
-    private void OpenWarning()
+    private void OpenWarning() // 경고창 열기
     {
         OverlayUIManager popupInstance = GameManager.OverlayUIManager;
         popupInstance.OpenSimpleInfoPopup("소지하신 재료가 부족합니다.", "닫기", null);

@@ -41,7 +41,8 @@ public class PurchasingPanel : BaseUI
     [SerializeField] ShopItem shopItem;
     
     public ShopItemData shopItemData {get; private set;}
-    private int remainCount => shopItemData.LimitedCount - shopItemData.Bought.Value;
+    private int remainCount => shopItemData.LimitedCount - shopItemData.Bought.Value; // 남은 구매횟수
+                                         // 구매가능횟수 - 구매한 횟수
 
     void Start()
     {
@@ -93,14 +94,16 @@ public class PurchasingPanel : BaseUI
     /// 아이템 구매확인창에 나오는 아이템 세팅
     /// </summary>
     /// <param name="data"></param>
-    public void SetItem(ShopItemData data)
+    public void SetItem(ShopItemData data)      // 아이템 세팅 
     {
         shopItemData = data;
         itemNameText.text = data.ShopItemName;
         itemImage.sprite = data.Sprite;
         itemAmountText.text = $"아이템 수량: {remainCount}";     //  (8) 아이템수량
-        itemOwnText.text = $""; // (10) 보유량
-        // TODO: 유저데이터 가져와서 해당아이템의 보유 갯수 보여줘야함, 어떻게 할지 아직 구상이안됨
+        ItemData itemOwn = shopItemData.Price.item;
+        itemOwnText.text = $"$현재 보유량: {itemOwn.Number.Value}"; // (10) 보유량 //지금 친건 가격
+        // 캐릭터 정보창에서
+       
     }
 
     public void UpdateInfo()
@@ -168,9 +171,8 @@ public class PurchasingPanel : BaseUI
         // shopItem.SetItem(shopItemData);
     }
 
-    private void OnComplete(bool result)
+    private void OnComplete(bool result)  // 구매완료
     {
-        // TODO: 네트워크 로딩 닫기
 
         if (false == result)
         {
@@ -182,11 +184,12 @@ public class PurchasingPanel : BaseUI
         AmmountChanged();
         UpdateInfo(); // 갱신된 상품 정보(구매 횟수) 반영
         
-        
-       // ItemGain itemGain = shopItemData.Products[0];
-       // itemGain.gain = currentNumber;
-       // shopItemData.Products.Clear();
-       // shopItemData.Products.Add(itemGain);
+       // 구매성공 팝업에서 갯수를 보여주기
+       // 밑에방식은 그냥 구매갯수를 바꿔서 묶음상품의 구매갯수는 표기가 안됨
+        ItemGain itemGain = shopItemData.Products[0];
+        itemGain.gain *= currentNumber;
+        shopItemData.Products.Clear();
+        shopItemData.Products.Add(itemGain);
       
         ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(shopItemData.Products);
         popupInstance.Title.text = "구매 성공!";
