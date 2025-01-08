@@ -9,6 +9,8 @@ using UnityEngine.UI;
 
 public class StartGameScene : MonoBehaviour
 {
+    public bool UseLegacyMain { get; set; }
+
     [System.Serializable]
     private struct ChildUIField
     {
@@ -120,7 +122,10 @@ public class StartGameScene : MonoBehaviour
             }
             else
             {
-                GameManager.Instance.LoadMainScene();
+                if (UseLegacyMain)
+                    GameManager.Instance.LoadMainScene();
+                else
+                    GameManager.Instance.LoadLobbyScene();
             }
 
         });

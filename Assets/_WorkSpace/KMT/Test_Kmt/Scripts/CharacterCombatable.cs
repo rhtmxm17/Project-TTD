@@ -87,8 +87,10 @@ public class CharacterCombatable : Combatable
 
             if (!levelupButton.Interactable || !IsAlive) { Debug.Log("사용 불가"); return; }
             if (stageLevel.Value >= MAX_STAGE_LEVEL) { Debug.Log("만랩"); return; }
+            if(characterModel.NextEvolveModel == null) { Debug.Log("진화할 모델이 지정되지 않음"); return; }
             if (levelIncreasement[stageLevel.Value + 1].needCost < StageManager.Instance.PartyCost)//비용이 충분한지 확인.
             {
+                SetCharacterModel(characterModel.NextEvolveModel);
                 StageManager.Instance.UsePartyCost(levelIncreasement[stageLevel.Value + 1].needCost);
                 LevelUp();
             }
@@ -133,6 +135,12 @@ public class CharacterCombatable : Combatable
         base.StartCombat(againstL);
     }
 
+    protected override void SetCharacterModel(CharacterModel modelData)
+    {
+        base.SetCharacterModel(modelData);
+        characterModel.transform.rotation = Quaternion.Euler(-90, -90, -90);
+    }
+
     public bool IsWaiting()
     {
         return state == curState.WAITING;
@@ -158,6 +166,7 @@ public class CharacterCombatable : Combatable
 
         while (0.1f < agent.remainingDistance)
         {
+            Look(originPos);
             yield return null;
         }
 
@@ -165,7 +174,7 @@ public class CharacterCombatable : Combatable
 
         agent.stoppingDistance = range;//TODO : 개체별 크기가 다른 경우, 해당 로직에 추가 수정.
 
-        characterModel.transform.localRotation = Quaternion.Euler(new Vector3(-90, -90, -90));
+        characterModel.transform.localRotation = Quaternion.Euler(-90, -90, -90);
 
         state = curState.WAITING;
     }

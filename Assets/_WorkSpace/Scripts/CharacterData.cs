@@ -35,7 +35,7 @@ public class CharacterDataEditor : Editor
         rect.x += rect.width;
         if (characterData.ModelPrefab != null)
         {
-            Texture2D texture = AssetPreview.GetAssetPreview(characterData.ModelPrefab);
+            Texture2D texture = AssetPreview.GetAssetPreview(characterData.ModelPrefab.gameObject);
             GUI.DrawTexture(rect, texture);
         }
 
@@ -111,7 +111,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     
     public Sprite FaceIconSprite => faceIconSprite;
 
-    public GameObject ModelPrefab => modelPrefab;
+    public CharacterModel ModelPrefab => modelPrefab;
 
     public Status StatusTable => statusTable;
 
@@ -146,7 +146,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     [SerializeField] int id;
     [SerializeField] new string name;
     [SerializeField] Sprite faceIconSprite;
-    [SerializeField] GameObject modelPrefab;
+    [SerializeField] CharacterModel modelPrefab;
     [SerializeField] Status statusTable;
     [Header("Skill datas")]
     [SerializeField] Skill basicSkillDataSO;
@@ -171,7 +171,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
 
     private void OnEnable()
     {
-        Level = new UserDataInt($"Characters/{id}/Level");
+        Level = new UserDataInt($"Characters/{id}/Level", 1);
         Enhancement = new UserDataInt($"Characters/{id}/Enhancement");
         EnhanceMileagePerMill = new UserDataInt($"Characters/{id}/EnhanceMileagePerMill");
     }
@@ -230,7 +230,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
             faceIconSprite = DataTableManager.Instance.DummySprite;
 
         // SHAPE
-        modelPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{DataTableManager.PrefabsAssetFolder}/{cells[(int)Column.SHAPE]}.prefab");
+        modelPrefab = AssetDatabase.LoadAssetAtPath<CharacterModel>($"{DataTableManager.PrefabsAssetFolder}/{cells[(int)Column.SHAPE]}.prefab");
 
         // BASE_ATTACK
         basicSkillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.BASE_ATTACK]}.asset");

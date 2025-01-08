@@ -27,8 +27,9 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public Image _skillBIconImage;
     [HideInInspector] public Image _characterImage;
 
-    [HideInInspector] public Button _levelUpButton; 
-    
+    [HideInInspector] public Button _levelUpButton;
+
+    [HideInInspector] public GameObject _materialGroup;
     //EnhanceTab
     [HideInInspector] public TextMeshProUGUI _curEnhanceLevelText;
     [HideInInspector] public TextMeshProUGUI _beforeUpGradeText;
@@ -59,6 +60,7 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public Button _mileageUseButton;
     [HideInInspector] public Button _mileageUseConfirmButton;
     [HideInInspector] public GameObject _mileageUsePopup;
+
     private Button _mileageCancelButton;
     
     //EvolutionTab
@@ -187,6 +189,8 @@ public class CharacterInfoUI : BaseUI
         _characterImage = GetUI<Image>("CharacterImage");
         
         _levelUpButton = GetUI<Button>("LevelUpButton");
+
+        _materialGroup = GetUI("MaterialTextGroup");
     }
      
     private void ButtonAddListener()
@@ -215,6 +219,7 @@ public class CharacterInfoUI : BaseUI
     /// </summary>
     public void InfoPopupClose()
     {
+        //TODO: 
         _infoPopup.SetActive(false);
         _controller.StartListSort();
         _detailTabColor.color = Color.white;

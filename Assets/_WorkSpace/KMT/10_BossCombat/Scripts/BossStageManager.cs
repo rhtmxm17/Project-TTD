@@ -32,7 +32,7 @@ public class BossStageManager : StageManager, IDamageAddable
 
     public void IDamageAdd(float damage)
     {
-        if (isCombatEnd)
+        if (IsCombatEnd)
             return;
 
         score += damage;
@@ -54,13 +54,13 @@ public class BossStageManager : StageManager, IDamageAddable
             leftTimeText.text = $"{leftTimeSpan.Minutes:D2} : {leftTimeSpan.Seconds:D2}";
         }
 
-        if (isCombatEnd)
+        if (IsCombatEnd)
         {
             Debug.Log("이미 전투가 종료됨");
             yield break;
         }
 
-        isCombatEnd = true;
+        IsCombatEnd = true;
         Debug.Log("타임 오버!");
         
         RankApplier.ApplyRank("boss", UserData.myUid, GameManager.UserData.Profile.Name.Value, (long)(score + timeLimit), () =>
@@ -78,13 +78,13 @@ public class BossStageManager : StageManager, IDamageAddable
         // TODO: 보스 몬스터 처치 구현 필요시 여기서 결과 처리
         Debug.LogWarning("아직 정의되지 않은 동작");
 
-        if (isCombatEnd)
+        if (IsCombatEnd)
         {
             Debug.Log("이미 전투가 종료됨");
             return;
         }
 
-        isCombatEnd = true;
+        IsCombatEnd = true;
 
         RankApplier.ApplyRank("boss", UserData.myUid, GameManager.UserData.Profile.Name.Value, (long)(score + timeLimit), () =>
         {

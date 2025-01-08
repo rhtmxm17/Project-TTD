@@ -78,8 +78,8 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     public void LoadMainScene()
     {
-        Debug.Log($"씬 전환: {SceneManager.GetActiveScene().name} -> MainMenu");
-        SceneManager.LoadSceneAsync("MainMenu");
+        Debug.Log($"씬 전환: {SceneManager.GetActiveScene().name} -> LobbyScene");
+        SceneManager.LoadSceneAsync("LobbyScene");
     }
 
     /// <summary>
@@ -103,14 +103,20 @@ public class GameManager : SingletonBehaviour<GameManager>
         string sceneName;
         switch (menu)
         {
-            case MenuType.CHARACTERS:
             case MenuType.ACHIEVEMENT:
-            case MenuType.STORY:
-            case MenuType.MYROOM:
                 Debug.LogWarning("아직 씬이 준비되지 않음");
                 return;
+            case MenuType.CHARACTERS:
+                sceneName = "CharacterMenuScene";
+                break;
+            case MenuType.STORY:
+                sceneName = "StoryMenuScene";
+                break;
             case MenuType.SHOP:
                 sceneName = "ShopMenuScene";
+                break;
+            case MenuType.MYROOM:
+                sceneName = "MyRoomScene";
                 break;
             case MenuType.ADVANTURE:
                 sceneName = "AdvantureMenuScene";
