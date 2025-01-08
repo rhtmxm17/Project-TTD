@@ -50,7 +50,7 @@ public class OutskirtsUI : MonoBehaviour
         public Button homeButton;
         public Button quickMoveMenuButton;
         public LayoutGroup quickMoveLayout;
-        [EnumNamedArray(typeof(GameManager.MenuType))]
+        [EnumNamedArray(typeof(MenuType))]
         public List<Button> menuSceneButtons;
     }
     [SerializeField] ChildUIField childUIField;
@@ -72,7 +72,7 @@ public class OutskirtsUI : MonoBehaviour
         // 각 빠른이동 버튼에 해당 씬 전환 함수 등록
         for (int i = 0; i < childUIField.menuSceneButtons.Count; i++)
         {
-            GameManager.MenuType menu = (GameManager.MenuType)i;
+            MenuType menu = (MenuType)i;
             childUIField.menuSceneButtons[i].onClick.AddListener(() => GameManager.Instance.LoadMenuScene(menu));
         }
     }

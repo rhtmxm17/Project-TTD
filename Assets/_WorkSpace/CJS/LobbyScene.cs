@@ -9,7 +9,7 @@ public class LobbyScene : MonoBehaviour
     [System.Serializable]
     private struct ChildUIField
     {
-        [EnumNamedArray(typeof(GameManager.MenuType))]
+        [EnumNamedArray(typeof(MenuType))]
         public List<Button> menuSceneButtons;
     }
     [SerializeField] ChildUIField childUIField;
@@ -18,7 +18,7 @@ public class LobbyScene : MonoBehaviour
     {
         for (int i = 0; i < childUIField.menuSceneButtons.Count; i++)
         {
-            GameManager.MenuType menu = (GameManager.MenuType)i;
+            MenuType menu = (MenuType)i;
             childUIField.menuSceneButtons[i].onClick.AddListener(() => GameManager.Instance.LoadMenuScene(menu));
         }
     }

@@ -68,7 +68,7 @@ public class BossStageManager : StageManager, IDamageAddable
             // 클리어 팝업 + 확인 클릭시 메인 화면으로
             ItemGainPopup popupInstance = Instantiate(itemGainPopupPrefab, GameManager.PopupCanvas);
             popupInstance.Title.text = "보스전 종료!";
-            popupInstance.onPopupClosed += GameManager.Instance.LoadMainScene;
+            popupInstance.onPopupClosed += () => GameManager.Instance.LoadMenuScene(PrevScene);
 
         });
     }
@@ -91,7 +91,7 @@ public class BossStageManager : StageManager, IDamageAddable
             // 클리어 팝업 + 확인 클릭시 메인 화면으로
             ItemGainPopup popupInstance = Instantiate(itemGainPopupPrefab, GameManager.PopupCanvas);
             popupInstance.Title.text = "보스전 종료!";
-            popupInstance.onPopupClosed += GameManager.Instance.LoadMainScene;
+            popupInstance.onPopupClosed += () => GameManager.Instance.LoadMenuScene(PrevScene);
 
         });
     }

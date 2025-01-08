@@ -1,8 +1,16 @@
+using Spine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+
+public enum StageType { NORMAL, GOLD, BOSS, NONE }
+
+/// <summary>
+/// 빠른 이동 메뉴에서 이동 가능한 메뉴 목록
+/// </summary>
+public enum MenuType { CHARACTERS, ACHIEVEMENT, STORY, SHOP, MYROOM, ADVANTURE, NONE }
 
 public class GameManager : SingletonBehaviour<GameManager>
 {
@@ -71,21 +79,13 @@ public class GameManager : SingletonBehaviour<GameManager>
     /// <summary>
     /// 스테이지 로드 시점에서만 사용, 불러올 스테이지 데이터
     /// </summary>
-    private StageData stageData;
-    
-    public enum StageType { NORMAL, GOLD, BOSS, NONE}
-    public StageType stageType { get; private set; } = StageType.NONE;
+    private StageSceneChangeArgs sceneChangeArgs;
 
     public void LoadMainScene()
     {
         Debug.Log($"씬 전환: {SceneManager.GetActiveScene().name} -> LobbyScene");
         SceneManager.LoadSceneAsync("LobbyScene");
     }
-
-    /// <summary>
-    /// 빠른 이동 메뉴에서 이동 가능한 메뉴 목록
-    /// </summary>
-    public enum MenuType { CHARACTERS, ACHIEVEMENT, STORY, SHOP, MYROOM, ADVANTURE, }
 
     public void LoadLobbyScene()
     {
@@ -121,6 +121,10 @@ public class GameManager : SingletonBehaviour<GameManager>
             case MenuType.ADVANTURE:
                 sceneName = "AdvantureMenuScene";
                 break;
+            case MenuType.NONE:
+                Debug.LogWarning("메뉴 타입이 지정되지 않아 로비로 이동함");
+                sceneName = "LobbyScene";
+                break;
             default:
                 Debug.LogWarning($"잘못된 MenuType: {menu}");
                 return;
@@ -130,14 +134,13 @@ public class GameManager : SingletonBehaviour<GameManager>
     }
 
     /// <summary>
-    /// 전투 스테이지 데이터와 전투씬 타입을 지정
+    /// 스테이지 씬 로딩 데이터를 지정해 편성 씬 로딩
     /// </summary>
-    /// <param name="StageData">스테이지 데이터</param>
-    /// <param name="stageType">전투씬 타입</param>
-    public void SetLoadStageType(StageData StageData, StageType stageType)
+    /// <param name="args">스테이지 씬 전환 데이터 목록</param>
+    public void LoadBattleFormationScene(StageSceneChangeArgs args)
     {
-        this.stageType = stageType;
-        this.stageData = StageData;
+        this.sceneChangeArgs = args;
+        SceneManager.LoadSceneAsync("HYJ_BattleFormation");
     }
 
     /// <summary>
@@ -151,7 +154,7 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     void SwitchStageType()
     {
-        switch (stageType)
+        switch (sceneChangeArgs.stageType)
         { 
             case StageType.NORMAL:
                 SceneManager.sceneLoaded += OnStageSceneLoaded;
@@ -181,10 +184,32 @@ public class GameManager : SingletonBehaviour<GameManager>
     {
         GameObject.FindWithTag("GameController").TryGetComponent(out StageManager stageManager);
 
-        stageManager.Initialize(stageData);
+        stageManager.Initialize(sceneChangeArgs);
         stageManager.StartGameOnSceneLoaded();
         SceneManager.sceneLoaded -= OnStageSceneLoaded;
     }
 
     #endregion LoadScene
+}
+
+/// <summary>
+/// 스테이지 변경 및 초기화에 필요한 데이터 모음<br/>
+/// 스테이지에 따라서는 사용되지 않는 데이터도 포함되어있습니다
+/// </summary>
+public class StageSceneChangeArgs
+{
+    /// <summary>
+    /// 시트 기반 스테이지 데이터
+    /// </summary>
+    public StageData stageData = null;
+
+    /// <summary>
+    /// 스테이지 타입(기본값: NORMAL)
+    /// </summary>
+    public StageType stageType = StageType.NORMAL;
+
+    /// <summary>
+    /// 편성 씬으로 진입 이전 씬(기본값: ADVANTURE)
+    /// </summary>
+    public MenuType prevScene = MenuType.ADVANTURE;
 }
