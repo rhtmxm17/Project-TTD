@@ -214,7 +214,7 @@ public class StageSceneChangeArgs
     public MenuType prevScene = MenuType.ADVANTURE;
 
     /// <summary>
-    /// 스토리 모드에서 클리어 후 재생될 스토리
+    /// 스토리 모드에서 필요한 추가 정보
     /// </summary>
-    public StoryDirectingData postStory = null;
+    public StoryEpisodeData episodeData = null;
 }

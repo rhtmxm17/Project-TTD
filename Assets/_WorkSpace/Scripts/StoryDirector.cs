@@ -4,11 +4,18 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
+// URP 카메라 기능 사용
+using UnityEngine.Rendering.Universal;
+using UnityEngine.Events;
 
 // FIXME : 완성 후 전체적으로 리펙토링 및 수정 필요
 public class StoryDirector : BaseUI
 {
+    /// <summary>
+    /// 스토리 출력 완료 후 실행할 동작
+    /// </summary>
+    public event UnityAction onStoryCompleted;
+
     // 불러올 데이터가 있는 곳
     [SerializeField] StoryDirectingData storyData;
 
@@ -31,6 +38,8 @@ public class StoryDirector : BaseUI
     [SerializeField] RectTransform standingImageParent;
     [SerializeField] RawImage backGroundImage;
 
+    [Header("연출용 카메라")]
+    [SerializeField] Camera directingCamera;
     /// <summary>
     /// 현재 출력 진행중인 다이얼로그의 tweening<br/>
     /// null이면 출력 완료
@@ -72,6 +81,9 @@ public class StoryDirector : BaseUI
 
         }
 
+        // 메인 카메라에 스토리 출력용 카메라 덮어 씌우기
+        Camera.main.GetUniversalAdditionalCameraData().cameraStack.Add(this.directingCamera);
+
         StoryPrint(dialogueCounter);
     }
 
@@ -105,7 +117,7 @@ public class StoryDirector : BaseUI
         TextCount();
         if (dialogueCounter == maxDialogueCounter)
         {
-            StoryEnd();
+            StartCoroutine(StoryEndRoutine());
             return;
         }
         StoryPrint(dialogueCounter);
@@ -160,14 +172,20 @@ public class StoryDirector : BaseUI
     }
 
     // 마지막 스크립트 출력 후 터치시 호출됨
-    private void StoryEnd()
+    private IEnumerator StoryEndRoutine()
     {
-        // TODO : 스토리 끝난 이후 할 행동에 대한 구현
-        // 기획 의도에 따라 자동으로 다음 스토리로 넘어갈지, 혹은 전투씬에서 스토리를 부를 경우 창을 바로 없앨지 등에 고민
-        Debug.Log("스토리 출력 끝");
+        Debug.Log("스토리 출력 완료");
+        backGroundButton.onClick.RemoveListener(ClickAction_Started);
         GameManager.Sound.StopBGM();
 
-        // 3초 후 창을 닫음
-        Destroy(this.gameObject, 3f);
+        yield return new WaitForSeconds(2f);
+
+        // 스택된 카메라 제거
+        Camera.main.GetUniversalAdditionalCameraData().cameraStack.Remove(this.directingCamera);
+
+        // 등록된 스토리 종료시 호출될 액션 실행
+        onStoryCompleted?.Invoke();
+
+        Destroy(this.gameObject);
     }
 }
