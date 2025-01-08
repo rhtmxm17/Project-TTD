@@ -44,31 +44,6 @@ public class CharacterDataEditor : Editor
 }
 #endif
 
-/// <summary>
-/// 캐릭터의 속성입니다
-/// </summary>
-public enum CharacterType
-{
-    // 0: 불, 1: 물, 2: 풀, 3: 땅, 4: 전기
-    _0, 
-    _1, 
-    _2, 
-    _3, 
-    _4, 
-}
-
-public enum CharacterRoleType
-{
-    // 0: 방어형, 1: 공격형, 2: 지원형
-    _0, _1, _2
-}
-
-public enum CharacterDragonVeinType
-{
-    // 0: 단일 공격, 1: 범위 공격
-    _0, _1
-}
-
 public class CharacterData : ScriptableObject, ICsvRowParseable
 {
     [System.Serializable]
@@ -92,9 +67,9 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         public float defensePointBase;
         public float defensePointGrouth;
         public float defenseCon;
-        public CharacterType type;
-        public CharacterRoleType roleType;
-        public CharacterDragonVeinType dragonVeinType;
+        public ElementType type;
+        public RoleType roleType;
+        public DragonVeinType dragonVeinType;
     }
 
     public int Id => id;
@@ -205,8 +180,11 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         HP_BASE,
         HP_GROWTH,
         DEFCON,
+        DROPDOWN_CHAR_TYPE,
         CHAR_TYPE,
+        DROPDOWN_ROLE_TYPE,
         ROLE_TYPE,
+        DROPDOWN_DRAGONVEIN_TYPE,
         DRAGONVEIN_TYPE,
         GET_CHARACTER_ITEM,
         ENHANCE_ITEM,
@@ -238,38 +216,44 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         // NORMAL_SKILL
         skillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.NORMAL_SKILL]}.asset");
 
-        // NS_COOLDOWN
-        if (false == float.TryParse(cells[(int)Column.NS_COOLDOWN], out statusTable.BasicSkillCooldown))
+        if (skillDataSO != null) // 일반 스킬이 기재되어 있다면
         {
-            Debug.LogError($"잘못된 데이터로 갱신 시도됨");
-            return;
+            // NS_COOLDOWN
+            if (false == float.TryParse(cells[(int)Column.NS_COOLDOWN], out statusTable.BasicSkillCooldown))
+            {
+                Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+                return;
+            }
+
+            // NS_ICON
+            normalSkillIcon = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.NS_ICON]}.asset");
+            if (normalSkillIcon == null)
+                normalSkillIcon = DataTableManager.Instance.DummySprite;
+
+            // NS_TOOLTIP
+            normalSkillToolTip = cells[(int)Column.NS_TOOLTIP];
         }
-
-        // NS_ICON
-        normalSkillIcon = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.NS_ICON]}.asset");
-        if (normalSkillIcon == null)
-            normalSkillIcon = DataTableManager.Instance.DummySprite;
-
-        // NS_TOOLTIP
-        normalSkillToolTip = cells[(int)Column.NS_TOOLTIP];
 
         // SPECIAL_SKILL
         secondSkillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.SPECIAL_SKILL]}.asset");
 
-        // SS_COST
-        if (false == float.TryParse(cells[(int)Column.SS_COST], out statusTable.SecondSkillCost))
+        if (secondSkillDataSO != null) // 특수 스킬이 기재되어 있다면
         {
-            Debug.LogError($"잘못된 데이터로 갱신 시도됨");
-            return;
+            // SS_COST
+            if (false == float.TryParse(cells[(int)Column.SS_COST], out statusTable.SecondSkillCost))
+            {
+                Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+                return;
+            }
+
+            //Special_Skill_Icon
+            specialSkillIcon = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.SS_ICON]}.asset");
+            if (specialSkillIcon == null)
+                specialSkillIcon = DataTableManager.Instance.DummySprite;
+
+            // SS_TOOLTIP
+            specialSkillToolTip = cells[(int)Column.SS_TOOLTIP];
         }
-
-        //Special_Skill_Icon
-        specialSkillIcon = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.SS_ICON]}.asset");
-        if (specialSkillIcon == null)
-            specialSkillIcon = DataTableManager.Instance.DummySprite;
-
-        // SS_TOOLTIP
-        specialSkillToolTip = cells[(int)Column.SS_TOOLTIP];
 
         // RANGE
         if (false == float.TryParse(cells[(int)Column.RANGE], out statusTable.Range))
@@ -333,7 +317,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
             Debug.LogError($"잘못된 데이터로 갱신 시도됨");
             return;
         }
-        statusTable.type = (CharacterType)type;
+        statusTable.type = (ElementType)type;
 
         // CHAR_ROLE_TYPE
         if (false == int.TryParse(cells[(int)Column.ROLE_TYPE], out int roleType))
@@ -341,7 +325,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
             Debug.LogError($"잘못된 데이터로 갱신 시도됨");
             return;
         }
-        statusTable.roleType = (CharacterRoleType)roleType;
+        statusTable.roleType = (RoleType)roleType;
 
         // CHAR_DRAGON_TYPE
         if (false == int.TryParse(cells[(int)Column.DRAGONVEIN_TYPE], out int dragonType))
@@ -349,7 +333,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
             Debug.LogError($"잘못된 데이터로 갱신 시도됨");
             return;
         }
-        statusTable.dragonVeinType = (CharacterDragonVeinType)dragonType;
+        statusTable.dragonVeinType = (DragonVeinType)dragonType;
 
         // GET_CHARACTER_ITEM
         if (int.TryParse(cells[(int)Column.GET_CHARACTER_ITEM], out getCharacterItemId))
