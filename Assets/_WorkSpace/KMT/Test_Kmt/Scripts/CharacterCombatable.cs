@@ -56,7 +56,7 @@ public class CharacterCombatable : Combatable
         basicSkillButton.InitTargetingFunc(() => { return characterData.SkillDataSO.TargetingLogic.GetTarget(this) != null ? true : false; });
         basicSkillButton.GetComponent<Button>().onClick.AddListener(() => {
             if (!basicSkillButton.Interactable || !IsAlive) { Debug.Log("사용 불가");  return; }
-            if (!OnSkillCommanded(characterData.SkillDataSO)) { Debug.Log("스킬 타깃이 없음. 사용 취소"); basicSkillButton.DisplayNonTargetText(); return; }
+            if (!OnSkillCommanded(characterData.SkillDataSO, 1)) { Debug.Log("스킬 타깃이 없음.  또는 더 큰 우선순위의 행동중  사용 취소"); basicSkillButton.DisplayNonTargetText(); return; }
             basicSkillButton.StartCoolDown(characterData.StatusTable.BasicSkillCooldown);//쿨타임을 매개변수로 전달.
         });
 
@@ -65,9 +65,8 @@ public class CharacterCombatable : Combatable
         secondSkillButton.SetSkillCooltime(characterData.StatusTable.SecondSkillCooldown);
         secondSkillButton.GetComponent<Button>().onClick.AddListener(() => {
             if (!secondSkillButton.Interactable || !IsAlive) { Debug.Log("사용 불가"); return; }
-            if (!OnSkillCommanded(characterData.SkillDataSO)) { Debug.Log("스킬 타깃이 없음. 사용 취소"); return; }
             if (!secondSkillButton.LevelArrived) { Debug.Log("만랩이 아님, 사용 불가"); return; }
-            if (!OnSkillCommanded(characterData.SecondSkillDataSO)) { Debug.Log("스킬 타깃이 없음. 사용 취소"); return; }
+            if (!OnSkillCommanded(characterData.SkillDataSO, 3)) { Debug.Log("스킬 타깃이 없음. 또는 더 큰 우선순위의 행동중 사용 취소"); return; }
                 secondSkillButton.StartCoolDown();
         });
 
@@ -84,11 +83,17 @@ public class CharacterCombatable : Combatable
             if (!levelupButton.Interactable || !IsAlive) { Debug.Log("사용 불가"); return; }
             if (stageLevel.Value >= MAX_STAGE_LEVEL) { Debug.Log("만랩"); return; }
             if(characterModel.NextEvolveModel == null) { Debug.Log("진화할 모델이 지정되지 않음"); return; }
+            if(curActionPriority > 2) { Debug.Log("더 큰 우선순위의 행동중"); return; }
             if (levelIncreasement[stageLevel.Value + 1].needCost < StageManager.Instance.PartyCost)//비용이 충분한지 확인.
             {
+                curActionPriority = 2;
                 SetCharacterModel(characterModel.NextEvolveModel);
                 StageManager.Instance.UsePartyCost(levelIncreasement[stageLevel.Value + 1].needCost);
                 LevelUp();
+
+                //TODO : 인터럽트 방지 우선순위가 필요하다면 우선순위를 돌려놓는 콜백을 추가하여 적용시킬 것.
+                //애니메이션이나 쿨타임등의 행동 뒤에 돌려놓을것.
+                curActionPriority = 0;
             }
 
         });
