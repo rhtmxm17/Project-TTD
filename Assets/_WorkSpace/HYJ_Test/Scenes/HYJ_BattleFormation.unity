@@ -361,7 +361,6 @@ GameObject:
   - component: {fileID: 142910866}
   - component: {fileID: 142910865}
   - component: {fileID: 142910864}
-  - component: {fileID: 142910868}
   m_Layer: 5
   m_Name: ReleseBTN
   m_TagString: Untagged
@@ -465,9 +464,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 142910868}
-        m_TargetAssemblyTypeName: HYJ_CharacterSelect, Assembly-CSharp
-        m_MethodName: ReleaseUnit
+      - m_Target: {fileID: 1706617406}
+        m_TargetAssemblyTypeName: HYJ_SelectManager, Assembly-CSharp
+        m_MethodName: ResetPosBtnImage
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -523,29 +522,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 142910862}
   m_CullTransparentMesh: 0
---- !u!114 &142910868
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 142910862}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f9fda36a8117e741a49201065e120f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CharacterSelectPanel: {fileID: 0}
-  posNum: 0
-  SelectM: {fileID: 1706617406}
-  posBTNImage: {fileID: 0}
-  unitIndex: 0
-  characterImage: {fileID: 0}
-  levelText: {fileID: 0}
-  raceText: {fileID: 0}
-  classText: {fileID: 0}
-  attacktypeText: {fileID: 0}
-  UnitChangeUI: {fileID: 0}
 --- !u!1 &215502078
 GameObject:
   m_ObjectHideFlags: 0
@@ -4031,7 +4007,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.048117634, y: 0.16555558}
   m_AnchorMax: {x: 0.3981217, y: 0.8522222}
-  m_AnchoredPosition: {x: 2.6800232, y: -5.151001}
+  m_AnchoredPosition: {x: 2.6805115, y: -5.151001}
   m_SizeDelta: {x: 0.99194336, y: 6.303009}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1530770391
@@ -5166,6 +5142,7 @@ MonoBehaviour:
   buttonCnt: 12
   CharacterSelectPanel: {fileID: 920842153}
   CantPosUI: {fileID: 1522314746}
+  UnitChangeUI: {fileID: 285940558}
 --- !u!114 &1706617407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5848,7 +5825,6 @@ GameObject:
   - component: {fileID: 1957041198}
   - component: {fileID: 1957041197}
   - component: {fileID: 1957041196}
-  - component: {fileID: 1957041201}
   m_Layer: 5
   m_Name: ChangeBTN
   m_TagString: Untagged
@@ -5952,9 +5928,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1957041201}
-        m_TargetAssemblyTypeName: HYJ_CharacterSelect, Assembly-CSharp
-        m_MethodName: ChangeUnit
+      - m_Target: {fileID: 1706617406}
+        m_TargetAssemblyTypeName: HYJ_SelectManager, Assembly-CSharp
+        m_MethodName: ChangePosBtnImage
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6068,29 +6044,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1957041194}
   m_CullTransparentMesh: 0
---- !u!114 &1957041201
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1957041194}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f9fda36a8117e741a49201065e120f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CharacterSelectPanel: {fileID: 920842153}
-  posNum: 0
-  SelectM: {fileID: 1706617406}
-  posBTNImage: {fileID: 0}
-  unitIndex: 0
-  characterImage: {fileID: 0}
-  levelText: {fileID: 0}
-  raceText: {fileID: 0}
-  classText: {fileID: 0}
-  attacktypeText: {fileID: 0}
-  UnitChangeUI: {fileID: 285940558}
 --- !u!1 &2016240928
 GameObject:
   m_ObjectHideFlags: 0
