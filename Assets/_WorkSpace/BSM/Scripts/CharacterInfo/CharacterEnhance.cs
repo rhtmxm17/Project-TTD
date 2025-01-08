@@ -235,7 +235,7 @@ public class CharacterEnhance : MonoBehaviour
     /// <param name="value"></param>
     private void MileageValueChange(float value)
     {
-        _characterInfoController._infoUI._mileageValueText.text = $"강화 마일리지 {value * 100f}%";
+        _characterInfoController._infoUI._mileageValueText.text = $"강화 마일리지 {Mathf.Floor(value * 100f)}%";
     }
 
     private void UseMileage()

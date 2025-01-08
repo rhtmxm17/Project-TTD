@@ -203,14 +203,21 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void PreviousCharacter()
     {
-        if (CurIndex == 0)
+        while (true)
         {
-            CurIndex = _characterInfos.Count - 1;
+            if (CurIndex == 0)
+            {
+                CurIndex = _characterInfos.Count - 1;
+            }
+            else
+            {
+                CurIndex--;
+            }
+
+            if (_characterInfos[CurIndex].gameObject.activeSelf) break;
         }
-        else
-        {
-            CurIndex--;
-        }
+        
+
         
         CurCharacterInfo = _characterInfos[CurIndex];
         CurCharacterInfo.UpdateInfo();
@@ -221,14 +228,22 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void NextCharacter()
     {
-        if (CurIndex == _characterInfos.Count - 1)
+        while (true)
         {
-            CurIndex = 0;
+            if (CurIndex == _characterInfos.Count - 1)
+            {
+                CurIndex = 0;
+            }
+            else
+            {
+                CurIndex++;
+            }
+            
+            if (_characterInfos[CurIndex].gameObject.activeSelf) break;
+            
         }
-        else
-        {
-            CurIndex++;
-        }
+        
+
         
         CurCharacterInfo = _characterInfos[CurIndex];
         CurCharacterInfo.UpdateInfo();

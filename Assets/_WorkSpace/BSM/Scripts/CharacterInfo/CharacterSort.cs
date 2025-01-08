@@ -153,7 +153,7 @@ public class CharacterSort : MonoBehaviour
             _sortCharacterInfos[i].PowerLevel = (int)_ownedCharacters[i].PowerLevel;
             _sortCharacterInfos[i].SetListTypeText((ElementType)_ownedCharacters[i].StatusTable.type);
             _sortCharacterInfos[i].SetListImage(_ownedCharacters[i].FaceIconSprite);
-            _sortCharacterInfos[i].transform.GetChild(0).GetComponent<Image>().color = new Color(1f, 1f, 1f);
+            _sortCharacterInfos[i].OwnedObject.SetActive(false);
         }
     
         for (int i = 0; i < unOwnedCount; i++)
@@ -163,7 +163,7 @@ public class CharacterSort : MonoBehaviour
             _sortCharacterInfos[i + ownedCount].PowerLevel = (int)_unOwnedCharacters[i].PowerLevel;
             _sortCharacterInfos[i + ownedCount].SetListTypeText((ElementType)_unOwnedCharacters[i].StatusTable.type);
             _sortCharacterInfos[i + ownedCount].SetListImage(_unOwnedCharacters[i].FaceIconSprite);
-            _sortCharacterInfos[i+ ownedCount].transform.GetChild(0).GetComponent<Image>().color = new Color(0.4f, 0.4f, 0.4f);
+            _sortCharacterInfos[i + ownedCount].OwnedObject.SetActive(true);
         }
  
         ChangeSortButtonText();

@@ -17,7 +17,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private TextMeshProUGUI _characterTypeText;
     private TextMeshProUGUI _characterListNameText;
     private Image _characterListImage;
-
+    public GameObject OwnedObject;
+    
     private bool _isSubscribe;
     private int _characterLevel = 1;
 
@@ -329,5 +330,6 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterListImage = transform.GetChild(0).GetComponent<Image>();
         _characterListNameText = transform.GetChild(1).GetComponent<TextMeshProUGUI>();
         _characterTypeText = transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+        OwnedObject = transform.GetChild(3).gameObject;
     }
 }
