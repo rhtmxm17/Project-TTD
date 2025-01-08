@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -27,6 +28,11 @@ public class LevelupButton : MonoBehaviour
     Color disableColor;
 
     int cost = 100;
+    public bool IsMaxLevel { get; private set; } = false;
+    public bool IsAlive { get; private set; } = true;
+    public int CurLevel { get; private set; } = -1;
+
+    public Button LvButton { get { return skillButton; } private set { } }
 
     Coroutine levelupCoroutine = null;
 
@@ -46,7 +52,7 @@ public class LevelupButton : MonoBehaviour
     {
         while (true)
         {
-            if (cost == int.MaxValue)
+            if (IsMaxLevel)
             {
                 skillButton.interactable = false;
                 levelBgPanel.color = defaultColor;
@@ -70,6 +76,7 @@ public class LevelupButton : MonoBehaviour
 
     public void SetLevel(int level)
     {
+        CurLevel = level;
         levelText.text = $"Lv{level.ToString()}";
     }
 
@@ -78,6 +85,7 @@ public class LevelupButton : MonoBehaviour
         this.cost = cost;
         if (cost == int.MaxValue)
         {
+            IsMaxLevel = true;
             costText.text = "Max";
         }
         else
@@ -87,10 +95,11 @@ public class LevelupButton : MonoBehaviour
     }
 
 
-    public void OffSkillButton(Combatable obj)
+    public void OffSkillButtonOnDead(Combatable obj)
     {
         StopCoroutine(levelupCoroutine);
         skillButton.interactable = false;
+        IsAlive = false;
     }
 
 }

@@ -53,6 +53,7 @@ public class CharacterCombatable : Combatable
         }
 
         basicSkillButton.transform.GetChild(0).GetComponent<Image>().sprite = characterData.NormalSkillIcon;
+        basicSkillButton.InitTargetingFunc(() => { return characterData.SkillDataSO.TargetingLogic.GetTarget(this) != null ? true : false; });
         basicSkillButton.GetComponent<Button>().onClick.AddListener(() => {
             if (!basicSkillButton.Interactable || !IsAlive) { Debug.Log("사용 불가");  return; }
             if (!OnSkillCommanded(characterData.SkillDataSO)) { Debug.Log("스킬 타깃이 없음. 사용 취소"); basicSkillButton.DisplayNonTargetText(); return; }
@@ -70,10 +71,6 @@ public class CharacterCombatable : Combatable
                 OnSkillCommanded(characterData.SecondSkillDataSO);
             }
         });
-
-
-        onDeadEvent.AddListener(basicSkillButton.OffSkillButton);
-        onDeadEvent.AddListener(secondSkillButton.OffSkillButton);
 
         characterModel.transform.localRotation = Quaternion.Euler(new Vector3(-90, -90, -90));
 
@@ -97,7 +94,9 @@ public class CharacterCombatable : Combatable
 
         });
 
-        onDeadEvent.AddListener(levelupButton.OffSkillButton);
+        onDeadEvent.AddListener(basicSkillButton.OffSkillButton);
+        onDeadEvent.AddListener(secondSkillButton.OffSkillButton);
+        onDeadEvent.AddListener(levelupButton.OffSkillButtonOnDead);
 
         stageLevel.Subscribe((x) => {
 

@@ -63,6 +63,9 @@ public class StageCharacterSetter : MonoBehaviour
 
     private void SpawnCharacterDataSet(Dictionary<int, CharacterData> characterDataList, List<StageData.BuffInfo> tileBuff)
     {
+        AutoBattleLogic battleLogic = GetComponent<AutoBattleLogic>();
+        battleLogic.InitLogicCount(characterDataList.Count);
+
         CombManager group = GetComponent<CombManager>();
         List<Combatable> characters = new List<Combatable>();
 
@@ -74,13 +77,16 @@ public class StageCharacterSetter : MonoBehaviour
 
             charObj.Initialize(group, pair.Value);
 
+            BasicSkillButton basicSkillButton = Instantiate(basicSkillButtonPrefab, skillPanel.transform);
             LevelupButton levelupButton = Instantiate(levelupButtonPrefab, levelupButtonPanel.transform);
             SecondSkillButton sndSkillButton = Instantiate(secondSkillButtonPrefab, secondSkillPanel.transform);
 
             charObj.InitCharacterData(
-                            Instantiate(basicSkillButtonPrefab, skillPanel.transform),
+                            basicSkillButton,
                             levelupButton,
                             sndSkillButton);
+
+            battleLogic.AddSkillButtons(basicSkillButton, levelupButton, sndSkillButton);
 
             foreach (StageData.BuffInfo buffInfo in tileBuff)
             {

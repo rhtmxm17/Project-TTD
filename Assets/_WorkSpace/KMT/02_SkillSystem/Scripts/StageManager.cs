@@ -222,7 +222,7 @@ public class StageManager : MonoBehaviour
         Debug.Log("다음 웨이브로 이동중...");
 
         scroller.StartScroll();
-        yield return StartCoroutine(combatCamera.StartFocusCO());
+        yield return StartCoroutine(combatCamera.StartFocusCO());//줌인
 
         StartCoroutine(combatCamera.ReleaseFocusCO());//줌아웃과 동시에 다음 웨이브 활성화
         monsterWaveQueue[0].gameObject.SetActive(true);
