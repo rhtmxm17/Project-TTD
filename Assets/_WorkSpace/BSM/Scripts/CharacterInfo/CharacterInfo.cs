@@ -90,6 +90,12 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private void Start()
     {
         ButtonOnClickEvent();
+
+        if (!GameManager.UserData.HasCharacter(_characterData.Id))
+        {
+            transform.GetChild(0).GetComponent<Image>().color = new Color(0.4f, 0.4f, 0.4f);
+        }
+        
     }
 
     public void OnPointerClick(PointerEventData eventData)
