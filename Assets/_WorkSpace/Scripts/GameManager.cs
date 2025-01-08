@@ -212,4 +212,9 @@ public class StageSceneChangeArgs
     /// 편성 씬으로 진입 이전 씬(기본값: ADVANTURE)
     /// </summary>
     public MenuType prevScene = MenuType.ADVANTURE;
+
+    /// <summary>
+    /// 스토리 모드에서 클리어 후 재생될 스토리
+    /// </summary>
+    public StoryDirectingData postStory = null;
 }
