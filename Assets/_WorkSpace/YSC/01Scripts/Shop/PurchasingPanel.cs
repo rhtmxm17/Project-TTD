@@ -183,23 +183,17 @@ public class PurchasingPanel : BaseUI
 
         AmmountChanged();
         UpdateInfo(); // 갱신된 상품 정보(구매 횟수) 반영
-        
-       // foreach (ItemGain product in shopItemData.Products)
-       // {
-       //     product.gain *= currentNumber;
-       //     shopItemData.Products.Clear();
-       //     shopItemData.Products.Add(product);
-       // }
 
+        // 팝업 UI용 구입 완료한 아이템 목록 생성
+        List<ItemGain> bought = new List<ItemGain>(shopItemData.Products.Count);
         for (int i = 0; i < shopItemData.Products.Count; i++)
         {
-            ItemGain product = shopItemData.Products[i];
-            product.gain *= currentNumber;
-            shopItemData.Products.Clear();
-            shopItemData.Products.Add(product);
+            bought.Add(new ItemGain()
+            {
+                item = shopItemData.Products[i].item,
+                gain = shopItemData.Products[i].gain * currentNumber, // 구매 완료된 개수
+            });
         }
-        
-        
         
        // 구매성공 팝업에서 갯수를 보여주기
        // ItemGain itemGain = shopItemData.Products[0];
@@ -207,7 +201,7 @@ public class PurchasingPanel : BaseUI
        // shopItemData.Products.Clear();
        // shopItemData.Products.Add(itemGain);
       
-        ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(shopItemData.Products);
+        ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(bought);
         popupInstance.Title.text = "구매 성공!";
         // this.shopItem.UpdateInfo(); // 이거 하면 창이 안닫힘
         ClosePopup();
