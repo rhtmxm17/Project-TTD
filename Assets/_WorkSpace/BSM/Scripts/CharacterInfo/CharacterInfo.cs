@@ -199,13 +199,34 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController._infoUI._skillBDescText.text = _characterData.SpecialSkillToolTip;
         
         //TODO: 임시 텍스트 -> 속성 이미지로 변경 필요
-        int tempElementType = (int)_characterData.StatusTable.type;
-        int tempRoleType = (int)_characterData.StatusTable.roleType;
-        int tempDragonVeinType = (int)_characterData.StatusTable.dragonVeinType;
-        
-        _characterInfoController._infoUI._tempElemetTypeText.text = ((ElementType)tempElementType).ToString();
-        _characterInfoController._infoUI._tempRoleTypeText.text = ((RoleType)tempRoleType).ToString();
-        _characterInfoController._infoUI._tempDragonVeinTypeText.text = ((DragonVeinType)tempDragonVeinType).ToString();
+        ElementType tempElementType = (ElementType)_characterData.StatusTable.type;
+        RoleType tempRoleType = (RoleType)_characterData.StatusTable.roleType;
+        DragonVeinType tempDragonVeinType = (DragonVeinType)_characterData.StatusTable.dragonVeinType;
+
+        _characterInfoController._infoUI._tempElemetTypeText.text = tempElementType switch
+        {
+            ElementType.FIRE => "화룡",
+            ElementType.WATER => "수룡",
+            ElementType.WOOD => "정룡",
+            ElementType.EARTH => "토룡",
+            ElementType.METAL => "진룡",
+            _ => throw new AggregateException("잘못됨")
+        };
+
+        _characterInfoController._infoUI._tempRoleTypeText.text = tempRoleType switch
+        {
+            RoleType.ATTACKER => "공격형",
+            RoleType.DEFENDER => "방어형",
+            RoleType.SUPPORTER => "지원형",
+            _ => throw new AggregateException("잘못")
+        };
+
+        _characterInfoController._infoUI._tempDragonVeinTypeText.text = tempDragonVeinType switch
+        {
+            DragonVeinType.SINGLE => "단일",
+            DragonVeinType.MULTI => "범위",
+            _ => throw new AggregateException("잘못")
+        }; 
     }
   
     /// <summary>
