@@ -19,7 +19,7 @@ public class CharacterInteract : MonoBehaviour
         if(talkCoroutine != null) return;
         
         // 주어진 대사에서 랜덤하게 대사 출력
-        talkText.text = talkdialogue[Random.Range(0,talkdialogue.Length-2)];
+        talkText.text = talkdialogue[Random.Range(0,talkdialogue.Length-1)];
         // 랜덤 대사 스택이 다 쌓이면
         if (repeatNum == 5)
         {

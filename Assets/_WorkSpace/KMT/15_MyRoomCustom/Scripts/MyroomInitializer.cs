@@ -26,7 +26,6 @@ public class MyroomInitializer : MonoBehaviour
         ownButtonList.Add(myroomUI.GetUI<Transform>("Dictionary").gameObject);
 
         dialogueUI = myroomUI.GetUI<DialogueUI>("ChatPopup");
-        ;
     }
 
     [ContextMenu("InitTest")]
