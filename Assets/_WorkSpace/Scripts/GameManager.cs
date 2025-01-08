@@ -78,8 +78,8 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     public void LoadMainScene()
     {
-        Debug.Log($"씬 전환: {SceneManager.GetActiveScene().name} -> MainMenu");
-        SceneManager.LoadSceneAsync("MainMenu");
+        Debug.Log($"씬 전환: {SceneManager.GetActiveScene().name} -> LobbyScene");
+        SceneManager.LoadSceneAsync("LobbyScene");
     }
 
     /// <summary>
