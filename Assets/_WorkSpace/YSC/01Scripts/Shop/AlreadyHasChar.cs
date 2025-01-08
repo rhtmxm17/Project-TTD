@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -17,6 +18,25 @@ public class AlreadyHasChar : BaseUI
     [SerializeField] Button purchaseButton;
     // 경고메세지
     [SerializeField] TMP_Text warningText;
+
+
+    #region  소유아이템
+    [NonSerialized] List<int> haveItemIdxList = new List<int>();
+
+    public bool HasItem(int itemIndex)
+    {
+        return haveItemIdxList.Contains(itemIndex);
+    }
+
+    public void ApplyItem(int itemIndex)
+    {
+        ItemData itemData = GameManager.TableData.GetItemData(itemIndex);
+    }
+
+    
+
+    #endregion
+    
     
     
     void OnEnable()

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -104,9 +105,8 @@ public class ShopItem : BaseUI
         }
         else
         {
-            buyButtonText.text = "매!\t진!";
-            buyButton.onClick.RemoveListener(Buy); //구매버튼 비활성화
-            ShopItemImage.color = new Color(.3f, .3f, .3f, 1f); // 어둡게 
+            SoldOut();
+          
         }
         Debug.Log("아이템정보를 갱신합니다!!!!!!!!!!");
        
@@ -114,6 +114,7 @@ public class ShopItem : BaseUI
 
     private void Buy()
     {
+
         int charItemData = shopItemData.Id;
         charItemData -= 200; // 상점캐릭터나열이 201...부터되있으니 200빼면 캐릭터ID랑 동일
         Debug.Log($"{charItemData}");
@@ -124,8 +125,8 @@ public class ShopItem : BaseUI
            OpenCharWarning();
            return;
         }
-            
-        
+
+       
         
         // TODO: 갯수제한없는 아이템 골드량만큼 한꺼번에 살 수 있도록 하기 (구매확인창 에서) 
         int remain = shopItemData.LimitedCount - shopItemData.Bought.Value;
@@ -186,6 +187,20 @@ public class ShopItem : BaseUI
         popupInstance.Title.text = "구매 성공!";
     }
 
+    public void CheckCharID()
+    {
+        int charItemData = shopItemData.Id;
+        charItemData -= 200; // 상점캐릭터나열이 201...부터되있으니 200빼면 캐릭터ID랑 동일
+        Debug.Log($"{charItemData}");
+        // CheckCharacter(charItemData);
+        if (GameManager.UserData.HasCharacter(charItemData))
+        {
+            Debug.Log("소유중인 캐릭터입니당");
+            OpenCharWarning();
+        }
+         
+    }
+
     public void SoldOut()
     {
         
@@ -221,9 +236,14 @@ public class ShopItem : BaseUI
         popupInstance.OpenSimpleInfoPopup("소지하신 재료가 부족합니다.", "닫기", null);
     }
 
-    private void CheckCharacter(int charIndex)
+    private void CheckItemIndexAndCompare()
     {
-        GameManager.UserData.HasCharacter(charIndex);
+        // ShopItemData에서 id랑 아이템데이터에서 id 확인하던 코드
+        int itemIndex = shopItemData.Id;
+        var clickedItem = GameManager.TableData.GetItemData(itemIndex);
+        Debug.Log($"상점에서 클릭한 아이템 index 아이템데이터에서 이름: {clickedItem.ItemName} || ShopitemID: {itemIndex}");
+
+
     }
     
 }

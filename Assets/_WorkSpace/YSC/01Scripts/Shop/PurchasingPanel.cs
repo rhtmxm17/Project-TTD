@@ -100,10 +100,13 @@ public class PurchasingPanel : BaseUI
         itemNameText.text = data.ShopItemName;
         itemImage.sprite = data.Sprite;
         itemAmountText.text = $"아이템 수량: {remainCount}";     //  (8) 아이템수량
-        ItemData itemOwn = shopItemData.Price.item;
-        itemOwnText.text = $"$현재 보유량: {itemOwn.Number.Value}"; // (10) 보유량 //지금 친건 가격
+       // ItemData itemOwn = shopItemData.Price.item;
+       // itemOwnText.text = $"$현재 보유량: {itemOwn.Number.Value}"; // (10) 보유량 //지금 친건 가격
+        
+        
         // 캐릭터 정보창에서
-       
+        itemOwnText.text = $"현재 보유량: {shopItemData.Products[0].item.Number.Value}"; // (10) 보유량 //지금 친건 가격
+
     }
 
     public void UpdateInfo()
