@@ -32,21 +32,33 @@ public enum InfoTabType
     DETAIL, ENHANCE, EVOLUTION, NONE
 }
 
+/// <summary>
+/// 캐릭터의 속성 enum입니다<br/>
+/// 데이터 파싱에 사용되고 있으니 변경 필요시 보고해주세요
+/// </summary>
 [System.Serializable]
 public enum ElementType
 {
-    //0: 화룡, 1: 수룡, 2:정룡 ? 3: 토룡, 4: 진룡
-    FIRE, WATER, WOOD, EARTH, METAL, NONE
+    //0: 무속성/미정의, 1: 화룡, 2: 수룡, 3:정룡 ? 4: 토룡, 5: 진룡
+    NONE, FIRE, WATER, WOOD, EARTH, METAL, 
 }
 
+/// <summary>
+/// 캐릭터의 용맥 타입 enum입니다<br/>
+/// 데이터 파싱에 사용되고 있으니 변경 필요시 보고해주세요
+/// </summary>
 [System.Serializable]
 public enum DragonVeinType
 {
-    SINGLE, MULTI, NONE
+    NONE, SINGLE, MULTI,
 }
 
+/// <summary>
+/// 캐릭터의 역할군 enum입니다<br/>
+/// 데이터 파싱에 사용되고 있으니 변경 필요시 보고해주세요
+/// </summary>
 [System.Serializable]
 public enum RoleType
 {
-    DEFENDER, ATTACKER, SUPPORTER, NONE
+    NONE, ATTACKER, DEFENDER, SUPPORTER, 
 }
