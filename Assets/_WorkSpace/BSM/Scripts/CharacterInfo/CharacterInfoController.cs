@@ -24,7 +24,7 @@ public class CharacterInfoController : BaseUI
     
     private List<int> _holdingCharactersIndex = new List<int>();
     
-    private GameObject _characterUISet;
+    private GameObject _characterUIPanel;
     private CharacterSort _characterSort;
     private CharacterFilter _characterFilter;
      
@@ -111,7 +111,7 @@ public class CharacterInfoController : BaseUI
     private void Init()
     {
         _infoPopup = GetUI("InfoPopup");
-        _characterUISet = GetUI("CharacterUISet");
+        _characterUIPanel = GetUI("CharacterUIPanel");
 
         //Sort, Filter GetBind
         _characterFilter = GetUI<CharacterFilter>("FilterUI");
@@ -137,6 +137,7 @@ public class CharacterInfoController : BaseUI
         _detailTab = GetUI("DetailTab");
         _enhanceTab = GetUI("EnhanceTab");
         _evolutionTab = GetUI("EvolutionTab");
+        
     }
 
     /// <summary>
@@ -145,7 +146,9 @@ public class CharacterInfoController : BaseUI
     private void GetUserMaterials()
     {
         UserGoldData = GameManager.TableData.GetItemData(1).Number;
+        
         UserLevelMaterialData = GameManager.TableData.GetItemData(2).Number;
+        
         UserEnhanceMaterialData = GameManager.TableData.GetItemData(3).Number;
 
         _userGold = UserGoldData.Value;
@@ -217,7 +220,10 @@ public class CharacterInfoController : BaseUI
             if (_characterInfos[CurIndex].gameObject.activeSelf) break;
         }
         
-
+        if (_infoUI._enhanceResultPopup.activeSelf)
+        {
+            _infoUI._enhanceResultPopup.SetActive(false);
+        }
         
         CurCharacterInfo = _characterInfos[CurIndex];
         CurCharacterInfo.UpdateInfo();
@@ -243,7 +249,10 @@ public class CharacterInfoController : BaseUI
             
         }
         
-
+        if (_infoUI._enhanceResultPopup.activeSelf)
+        {
+            _infoUI._enhanceResultPopup.SetActive(false);
+        }
         
         CurCharacterInfo = _characterInfos[CurIndex];
         CurCharacterInfo.UpdateInfo();
@@ -254,7 +263,14 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void TabSwitch()
     {
-        _characterUISet.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL) || _curInfoTabType.Equals(InfoTabType.ENHANCE));
+        if (_infoUI._enhanceResultPopup.activeSelf)
+        {
+            _infoUI._enhanceResultPopup.SetActive(false);
+        }
+        
+        _nextButton.gameObject.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
+        _prevButton.gameObject.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
+        _characterUIPanel.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL) || _curInfoTabType.Equals(InfoTabType.ENHANCE));
         _detailTab.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
         _enhanceTab.SetActive(_curInfoTabType.Equals(InfoTabType.ENHANCE));
         _evolutionTab.SetActive(_curInfoTabType.Equals(InfoTabType.EVOLUTION));

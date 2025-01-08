@@ -12,7 +12,7 @@ using UnityEngine.UI;
 public class CharacterSort : MonoBehaviour
 {
     [HideInInspector] public CharacterInfoController CharacterInfoController;
-    public List<CharacterInfo> _sortCharacterInfos;
+    [HideInInspector] public List<CharacterInfo> _sortCharacterInfos;
     [HideInInspector] public TextMeshProUGUI SortingText;
    
     private List<CharacterData> _ownedCharacters;

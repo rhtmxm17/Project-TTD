@@ -47,7 +47,8 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _afterMaxDefText;
     [HideInInspector] public TextMeshProUGUI _enhanceCoinText;
     [HideInInspector] public TextMeshProUGUI _enhanceMaterialText;
-    
+    [HideInInspector] public TextMeshProUGUI _beforeNameText;
+    [HideInInspector] public TextMeshProUGUI _beforeEnhanceLevelText;
     
     [HideInInspector] public Slider _mileageSlider;
     [HideInInspector] public GameObject _beforeMax;
@@ -68,14 +69,14 @@ public class CharacterInfoUI : BaseUI
 
     private CharacterInfoController _controller;
     
-    private Button _detailTabButton;
-    private Button _enhanceTabButton;
+    //Common UI
+    [HideInInspector] public Button _enhanceTabButton;
+    private Button _detailTabButton; 
     private Button _evolutionTabButton;
     private Image _detailTabColor;
     private Image _enhanceTabColor;
     private Image _evolutionTabColor;
-    
-    
+     
     private Button _exitButton;
     private GameObject _infoPopup;
    
@@ -156,6 +157,9 @@ public class CharacterInfoUI : BaseUI
         _afterMaxDefText = GetUI<TextMeshProUGUI>("AfterMaxDefText");
         _enhanceCoinText = GetUI<TextMeshProUGUI>("EnhanceCoinText");
         _enhanceMaterialText = GetUI<TextMeshProUGUI>("EnhanceMaterialText");
+        _beforeNameText = GetUI<TextMeshProUGUI>("BeforeNameText");
+        _beforeEnhanceLevelText = GetUI<TextMeshProUGUI>("BeforeEnhanceText");
+        
         
         _mileageSlider = GetUI<Slider>("MileageSlider");
         _enhanceButton = GetUI<Button>("EnhanceButton"); 
@@ -201,7 +205,7 @@ public class CharacterInfoUI : BaseUI
         _evolutionTabButton.onClick.AddListener(() => TabButtonClick(InfoTabType.EVOLUTION));
         
         _enhanceResultConfirm.onClick.AddListener(()=> _enhanceResultPopup.SetActive(false));
-        _mileageUseButton.onClick.AddListener(() => _mileageUsePopup.SetActive(true));
+        _mileageUseButton.onClick.AddListener(MileageUsePopupException);
         _mileageCancelButton.onClick.AddListener(() => _mileageUsePopup.SetActive(false));
     }
 
@@ -213,7 +217,18 @@ public class CharacterInfoUI : BaseUI
         _evolutionTabColor.color = _controller.CurInfoTabType == InfoTabType.EVOLUTION ? Color.cyan : Color.white;
         
     }
-    
+
+    private void MileageUsePopupException()
+    {
+        if (_enhanceResultPopup.activeSelf)
+        {
+            _enhanceResultPopup.SetActive(false);
+            return;
+        }
+
+        _mileageUsePopup.SetActive(true);
+    }
+
     /// <summary>
     /// 상세 팝업 종료 후 탭 타입 변경
     /// </summary>
@@ -222,7 +237,7 @@ public class CharacterInfoUI : BaseUI
         //TODO: 
         _infoPopup.SetActive(false);
         _controller.StartListSort();
-        _detailTabColor.color = Color.white;
+        _detailTabColor.color = Color.cyan;
         _enhanceTabColor.color = Color.white;
         _evolutionTabColor.color = Color.white;
         _controller.CurInfoTabType = InfoTabType.DETAIL;
