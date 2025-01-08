@@ -63,11 +63,43 @@ public class Combatable : MonoBehaviour
     }
 
     /// <summary>
-    /// 전투 씬에서 캐릭터를 초기화
+    /// 전투 씬에서 유저 데이터의 레벨 등 상태에 기반해 캐릭터를 초기화
     /// </summary>
     /// <param name="Group">캐릭터가 속한 그룹(플레이어측 혹은 적 웨이브)</param>
     /// <param name="data">캐릭터 데이터</param>
-    public void Initialize(CombManager Group, CharacterData data) => InitializeWithLevel(Group, data, data.Level.Value);
+    public void InitializeWithUserData(CombManager Group, CharacterData data)
+    {
+        if (characterData != null)
+        {
+            Debug.LogWarning("캐릭터 초기화 함수가 두 번 실행됨");
+        }
+        characterData = data;
+        gameObject.name = data.Name;
+        SetCharacterModel(data.ModelPrefab);
+        // 그룹 지정
+        this.Group = Group;
+        IsAlive = true;
+        CharacterData.Status table = data.StatusTable;
+
+        // ============= 능력치 셋팅 ==============
+        attackPoint.Value = data.AttackPointLeveled;
+        maxHp.Value = data.HpPointLeveled;
+        hp.Value = MaxHp.Value;
+        defense.Value = data.DefensePointLeveled;
+
+        defConst = table.defenseCon;
+        agent.stoppingDistance = table.Range;
+        range = table.Range;//사거리
+
+        //TODO : 이동속도가 다른경우 파라미터 추가하기.
+
+        baseAttack = data.BasicSkillDataSO;
+
+        hp.Subscribe(x =>
+        {
+            hpSlider.value = x / MaxHp.Value;
+        });
+    }
 
     /// <summary>
     /// 전투 씬에서 레벨을 지정해서 캐릭터를 초기화
@@ -82,35 +114,23 @@ public class Combatable : MonoBehaviour
             Debug.LogWarning("캐릭터 초기화 함수가 두 번 실행됨");
         }
         characterData = data;
-
         gameObject.name = data.Name;
-
         SetCharacterModel(data.ModelPrefab);
-
         // 그룹 지정
         this.Group = Group;
-
         IsAlive = true;
-
-        // 레벨이 지정되지 않았을 경우 유저 데이터의 레벨 사용
-        if (level < 0)
-            level = data.Level.Value;
-
         CharacterData.Status table = data.StatusTable;
 
+        // ============= 능력치 셋팅 ==============
         attackPoint.Value = table.attackPointBase
                           + table.attackPointGrowth * level;
-
         maxHp.Value = table.healthPointBase
                     + table.healthPointGrouth * level;
-
         hp.Value = MaxHp.Value;
-
         defense.Value = table.defensePointBase
                       + table.defensePointGrouth * level;
 
         defConst = table.defenseCon;
-
         agent.stoppingDistance = table.Range;
         range = table.Range;//사거리
 
@@ -120,9 +140,7 @@ public class Combatable : MonoBehaviour
 
         hp.Subscribe(x =>
         {
-
             hpSlider.value = x / MaxHp.Value;
-
         });
     }
 

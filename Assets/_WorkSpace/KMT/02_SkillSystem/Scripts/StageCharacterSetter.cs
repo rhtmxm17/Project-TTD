@@ -72,7 +72,7 @@ public class StageCharacterSetter : MonoBehaviour
             CharacterCombatable charObj = Instantiate(characterPrefab, position[pair.Key], Quaternion.identity, transform);
             characters.Add(charObj);
 
-            charObj.Initialize(group, pair.Value);
+            charObj.InitializeWithUserData(group, pair.Value);
 
             BasicSkillButton basicSkillButton = Instantiate(basicSkillButtonPrefab, skillPanel.transform);
             LevelupButton levelupButton = Instantiate(levelupButtonPrefab, levelupButtonPanel.transform);

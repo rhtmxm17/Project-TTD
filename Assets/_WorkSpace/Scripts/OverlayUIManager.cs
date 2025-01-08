@@ -17,7 +17,7 @@ public class OverlayUIManager : SingletonBehaviour<OverlayUIManager>
 
     public ItemGainPopup PopupItemGain(List<ItemGain> gain = null)
     {
-        ItemGainPopup popupInstance = Instantiate(itemGainPopupPrefab, this.transform);
+        ItemGainPopup popupInstance = Instantiate(itemGainPopupPrefab, GameManager.PopupCanvas.transform);
         if (gain != null)
         {
             popupInstance.AddItemGainCell(gain);

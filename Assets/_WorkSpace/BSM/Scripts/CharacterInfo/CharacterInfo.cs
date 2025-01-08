@@ -17,7 +17,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private TextMeshProUGUI _characterTypeText;
     private TextMeshProUGUI _characterListNameText;
     private Image _characterListImage;
-
+    public GameObject OwnedObject;
+    
     private bool _isSubscribe;
     private int _characterLevel = 1;
 
@@ -167,15 +168,19 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             
             _characterInfoController._infoUI._levelUpCoinText.text = _characterLevelUpGoldCost.ToString();
             _characterInfoController._infoUI._levelUpMaterialText.text = _characterLevelUpMaterialCost.ToString();
-            
             _characterInfoController._infoUI._materialGroup.SetActive(true);
             _characterInfoController._infoUI._levelUpButton.gameObject.SetActive(true);
+            _characterInfoController._infoUI._enhanceTabButton.interactable = true;
         }
         else
         {
             _characterInfoController._infoUI._materialGroup.SetActive(false);
             _characterInfoController._infoUI._levelUpButton.gameObject.SetActive(false);
+            _characterInfoController._infoUI._enhanceTabButton.interactable = false;
         }
+        
+        _characterInfoController._infoUI._beforeNameText.text = _characterData.Name;
+        _characterInfoController._infoUI._beforeEnhanceLevelText.text =$"+{_characterData.Enhancement.Value.ToString()}";
         
         _characterInfoController._infoUI._nameText.text = _characterData.Name;
         _characterInfoController._infoUI._characterImage.sprite = _characterData.FaceIconSprite;
@@ -193,13 +198,34 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController._infoUI._skillBDescText.text = _characterData.SpecialSkillToolTip;
         
         //TODO: 임시 텍스트 -> 속성 이미지로 변경 필요
-        int tempElementType = (int)_characterData.StatusTable.type;
-        int tempRoleType = (int)_characterData.StatusTable.roleType;
-        int tempDragonVeinType = (int)_characterData.StatusTable.dragonVeinType;
-        
-        _characterInfoController._infoUI._tempElemetTypeText.text = ((ElementType)tempElementType).ToString();
-        _characterInfoController._infoUI._tempRoleTypeText.text = ((RoleType)tempRoleType).ToString();
-        _characterInfoController._infoUI._tempDragonVeinTypeText.text = ((DragonVeinType)tempDragonVeinType).ToString();
+        ElementType tempElementType = (ElementType)_characterData.StatusTable.type;
+        RoleType tempRoleType = (RoleType)_characterData.StatusTable.roleType;
+        DragonVeinType tempDragonVeinType = (DragonVeinType)_characterData.StatusTable.dragonVeinType;
+
+        _characterInfoController._infoUI._tempElemetTypeText.text = tempElementType switch
+        {
+            ElementType.FIRE => "화룡",
+            ElementType.WATER => "수룡",
+            ElementType.WOOD => "정룡",
+            ElementType.EARTH => "토룡",
+            ElementType.METAL => "진룡",
+            _ => throw new AggregateException("잘못됨")
+        };
+
+        _characterInfoController._infoUI._tempRoleTypeText.text = tempRoleType switch
+        {
+            RoleType.ATTACKER => "공격형",
+            RoleType.DEFENDER => "방어형",
+            RoleType.SUPPORTER => "지원형",
+            _ => throw new AggregateException("잘못")
+        };
+
+        _characterInfoController._infoUI._tempDragonVeinTypeText.text = tempDragonVeinType switch
+        {
+            DragonVeinType.SINGLE => "단일",
+            DragonVeinType.MULTI => "범위",
+            _ => throw new AggregateException("잘못")
+        }; 
     }
   
     /// <summary>
@@ -302,5 +328,6 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterListImage = transform.GetChild(0).GetComponent<Image>();
         _characterListNameText = transform.GetChild(1).GetComponent<TextMeshProUGUI>();
         _characterTypeText = transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+        OwnedObject = transform.GetChild(3).gameObject;
     }
 }

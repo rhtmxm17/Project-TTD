@@ -14,6 +14,7 @@ public class StageManager : MonoBehaviour
 
     [SerializeField] StageData stageData;
     private StageData stageDataOnLoad;
+    public MenuType PrevScene { get; protected set; } = MenuType.NONE;
 
     [Header("Camera Effecter")]
     [SerializeField]
@@ -93,10 +94,16 @@ public class StageManager : MonoBehaviour
     {
 
         if (stageDataOnLoad == null)
-            Initialize(stageData);
+            InitializeStageData(stageData);
     }
 
-    public void Initialize(StageData _stageData)
+    public virtual void Initialize(StageSceneChangeArgs sceneChangeArgs)
+    {
+        PrevScene = sceneChangeArgs.prevScene;
+        InitializeStageData(sceneChangeArgs.stageData);
+    }
+
+    public void InitializeStageData(StageData _stageData)
     {
         if (null == _stageData)
             return;
@@ -279,7 +286,7 @@ public class StageManager : MonoBehaviour
             // 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
             ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(stageDataOnLoad.Reward);
             popupInstance.Title.text = "스테이지 클리어!";
-            popupInstance.onPopupClosed += GameManager.Instance.LoadMainScene;
+            popupInstance.onPopupClosed += LoadPreviousScene;
         });
     }
 
@@ -295,8 +302,10 @@ public class StageManager : MonoBehaviour
 
         ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(null);
         popupInstance.Title.text = "패배...";
-        popupInstance.onPopupClosed += GameManager.Instance.LoadMainScene;
+        popupInstance.onPopupClosed += LoadPreviousScene;
     }
+
+    protected void LoadPreviousScene() => GameManager.Instance.LoadMenuScene(PrevScene);
 
     bool CheckCharactersWait()
     {
