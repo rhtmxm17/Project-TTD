@@ -163,12 +163,7 @@ public class PurchasingPanel : BaseUI
         
         dbUpdateStream.Submit(OnComplete);
 
-        /* TODO: 상점에 아이템도 업데이트(매진이된다던가)
-                 이벤트 제공하고, ShopItem?Panel? 에서 구독해서 숫자 변경되면 변경하기.
-        */
-        // 하려하는데 잘 안됨
-        // shopItem.UpdateInfo();
-        // shopItem.SetItem(shopItemData);
+
     }
 
     private void OnComplete(bool result)  // 구매완료
@@ -194,13 +189,7 @@ public class PurchasingPanel : BaseUI
                 gain = shopItemData.Products[i].gain * currentNumber, // 구매 완료된 개수
             });
         }
-        
-       // 구매성공 팝업에서 갯수를 보여주기
-       // ItemGain itemGain = shopItemData.Products[0];
-       // itemGain.gain *= currentNumber;
-       // shopItemData.Products.Clear();
-       // shopItemData.Products.Add(itemGain);
-      
+
         ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(bought);
         popupInstance.Title.text = "구매 성공!";
         // this.shopItem.UpdateInfo(); // 이거 하면 창이 안닫힘

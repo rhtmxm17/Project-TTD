@@ -29,7 +29,9 @@ public class ShopItem : BaseUI
 
     [Header("구매재화 이미지")]
     [SerializeField] Image materialImage;
-    
+
+    [Header("보유중인 캐릭터 경고")] 
+    [SerializeField] AlreadyHasChar charWarningPopup;
     
     [SerializeField] private TMP_Text buyButtonText;    // 매진되면 매진나오는 텍스트
 
@@ -112,9 +114,20 @@ public class ShopItem : BaseUI
 
     private void Buy()
     {
-
-        // TODO: 구매확인창 UI && 기능
-        // 구매갯수 > 1 || 무제한 => 구매확인창열기 
+        int charItemData = shopItemData.Id;
+        charItemData -= 200; // 상점캐릭터나열이 201...부터되있으니 200빼면 캐릭터ID랑 동일
+        Debug.Log($"{charItemData}");
+        // CheckCharacter(charItemData);
+        if (GameManager.UserData.HasCharacter(charItemData))
+        {
+           Debug.Log("소유중인 캐릭터입니당");
+           OpenCharWarning();
+           return;
+        }
+            
+        
+        
+        // TODO: 갯수제한없는 아이템 골드량만큼 한꺼번에 살 수 있도록 하기 (구매확인창 에서) 
         int remain = shopItemData.LimitedCount - shopItemData.Bought.Value;
         if (remain > 0)
         {
@@ -195,9 +208,22 @@ public class ShopItem : BaseUI
         popupInstance.SetItem(shopItemData);
     }
 
+    private void OpenCharWarning()
+    {
+        AlreadyHasChar popupInstance = Instantiate(charWarningPopup, GameManager.PopupCanvas);
+        popupInstance.transform.SetAsFirstSibling();
+        // popupInstance.SetItem(shopItemData); 일단 비활성화 근데 어차피 그 아이템 사야하니까 정보불러올필요는 있어서 뭔가해야할듯함.
+    }
+
     private void OpenWarning() // 경고창 열기
     {
         OverlayUIManager popupInstance = GameManager.OverlayUIManager;
         popupInstance.OpenSimpleInfoPopup("소지하신 재료가 부족합니다.", "닫기", null);
     }
+
+    private void CheckCharacter(int charIndex)
+    {
+        GameManager.UserData.HasCharacter(charIndex);
+    }
+    
 }
