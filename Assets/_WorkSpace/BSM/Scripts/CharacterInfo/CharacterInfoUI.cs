@@ -47,7 +47,8 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _afterMaxDefText;
     [HideInInspector] public TextMeshProUGUI _enhanceCoinText;
     [HideInInspector] public TextMeshProUGUI _enhanceMaterialText;
-    
+    [HideInInspector] public TextMeshProUGUI _beforeNameText;
+    [HideInInspector] public TextMeshProUGUI _beforeEnhanceLevelText;
     
     [HideInInspector] public Slider _mileageSlider;
     [HideInInspector] public GameObject _beforeMax;
@@ -68,18 +69,17 @@ public class CharacterInfoUI : BaseUI
 
     private CharacterInfoController _controller;
     
-    private Button _detailTabButton;
-    private Button _enhanceTabButton;
+    //Common UI
+    [HideInInspector] public Button _enhanceTabButton;
+    [HideInInspector] public Image _detailTabColor;
+    [HideInInspector] public Image _enhanceTabColor;
+    [HideInInspector] public Image _evolutionTabColor;
+    
+    private Button _detailTabButton; 
     private Button _evolutionTabButton;
-    private Image _detailTabColor;
-    private Image _enhanceTabColor;
-    private Image _evolutionTabColor;
     
-    
-    private Button _exitButton;
     private GameObject _infoPopup;
-   
-    
+
     public TextMeshProUGUI _tempElemetTypeText;
     public TextMeshProUGUI _tempRoleTypeText;
     public TextMeshProUGUI _tempDragonVeinTypeText;
@@ -91,7 +91,17 @@ public class CharacterInfoUI : BaseUI
         UIBind();
         ButtonAddListener(); 
     }
-    
+
+    private void Start()
+    {
+        InvokeRepeating(nameof(InfoPopupClose), 0f, 0.5f);
+    }
+
+    private void OnDisable()
+    {
+        CancelInvoke(nameof(InfoPopupClose));
+    }
+
     private void Init()
     {
         _controller = transform.GetComponentInParent<CharacterInfoController>();
@@ -118,7 +128,6 @@ public class CharacterInfoUI : BaseUI
     {
         _infoPopup = GetUI("InfoPopup");  
         _enhanceText = GetUI<TextMeshProUGUI>("EnhanceText"); 
-        _exitButton = GetUI<Button>("ExitButton");
          
         //좌측 Tab 버튼 바인딩
         _detailTabButton = GetUI<Button>("DetailTabButton");
@@ -156,6 +165,9 @@ public class CharacterInfoUI : BaseUI
         _afterMaxDefText = GetUI<TextMeshProUGUI>("AfterMaxDefText");
         _enhanceCoinText = GetUI<TextMeshProUGUI>("EnhanceCoinText");
         _enhanceMaterialText = GetUI<TextMeshProUGUI>("EnhanceMaterialText");
+        _beforeNameText = GetUI<TextMeshProUGUI>("BeforeNameText");
+        _beforeEnhanceLevelText = GetUI<TextMeshProUGUI>("BeforeEnhanceText");
+        
         
         _mileageSlider = GetUI<Slider>("MileageSlider");
         _enhanceButton = GetUI<Button>("EnhanceButton"); 
@@ -195,13 +207,12 @@ public class CharacterInfoUI : BaseUI
      
     private void ButtonAddListener()
     {
-        _exitButton.onClick.AddListener(InfoPopupClose);
         _detailTabButton.onClick.AddListener(() => TabButtonClick(InfoTabType.DETAIL));
         _enhanceTabButton.onClick.AddListener(() => TabButtonClick(InfoTabType.ENHANCE));
         _evolutionTabButton.onClick.AddListener(() => TabButtonClick(InfoTabType.EVOLUTION));
         
         _enhanceResultConfirm.onClick.AddListener(()=> _enhanceResultPopup.SetActive(false));
-        _mileageUseButton.onClick.AddListener(() => _mileageUsePopup.SetActive(true));
+        _mileageUseButton.onClick.AddListener(MileageUsePopupException);
         _mileageCancelButton.onClick.AddListener(() => _mileageUsePopup.SetActive(false));
     }
 
@@ -213,16 +224,28 @@ public class CharacterInfoUI : BaseUI
         _evolutionTabColor.color = _controller.CurInfoTabType == InfoTabType.EVOLUTION ? Color.cyan : Color.white;
         
     }
-    
+
+    private void MileageUsePopupException()
+    {
+        if (_enhanceResultPopup.activeSelf)
+        {
+            _enhanceResultPopup.SetActive(false);
+            return;
+        }
+
+        _mileageUsePopup.SetActive(true);
+    }
+
     /// <summary>
     /// 상세 팝업 종료 후 탭 타입 변경
     /// </summary>
-    public void InfoPopupClose()
+    private void InfoPopupClose()
     {
-        //TODO: 
+        if (_infoPopup.activeSelf) return;
+        
         _infoPopup.SetActive(false);
         _controller.StartListSort();
-        _detailTabColor.color = Color.white;
+        _detailTabColor.color = Color.cyan;
         _enhanceTabColor.color = Color.white;
         _evolutionTabColor.color = Color.white;
         _controller.CurInfoTabType = InfoTabType.DETAIL;
