@@ -8,9 +8,17 @@ using UnityEngine.SceneManagement;
 public enum StageType { NORMAL, GOLD, BOSS, STORY, NONE }
 
 /// <summary>
-/// 빠른 이동 메뉴에서 이동 가능한 메뉴 목록
+/// 메뉴 목록
 /// </summary>
-public enum MenuType { CHARACTERS, ACHIEVEMENT, STORY, SHOP, MYROOM, ADVANTURE, NONE }
+public enum MenuType 
+{
+    // 주요 메뉴 (빠른 이동 메뉴에서 이동 가능)
+    CHARACTERS, ACHIEVEMENT, STORY, SHOP, MYROOM, ADVANTURE, 
+    // 기타 메뉴
+    PROFILE,
+    // 미정의
+    NONE,
+}
 
 public class GameManager : SingletonBehaviour<GameManager>
 {
@@ -50,6 +58,7 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     public void StartShortLoadingUI()
     {
+        Debug.Log("로딩시작했다");
         shortLoadingPanel.gameObject.SetActive(true);
 
         //if (loadingCounter == 0)
@@ -60,6 +69,7 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     public void StopShortLoadingUI()
     {
+        Debug.Log("로딩끝났다");
         shortLoadingPanel.gameObject.SetActive(false);
 
 //        loadingCounter--;
@@ -120,6 +130,9 @@ public class GameManager : SingletonBehaviour<GameManager>
                 break;
             case MenuType.ADVANTURE:
                 sceneName = "AdvantureMenuScene";
+                break;
+            case MenuType.PROFILE:
+                sceneName = "ProfileScene";
                 break;
             case MenuType.NONE:
                 Debug.LogWarning("메뉴 타입이 지정되지 않아 로비로 이동함");
