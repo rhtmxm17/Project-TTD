@@ -98,6 +98,11 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
     /// </summary>
     public UserDataInt ClearCount { get; private set; }
 
+    /// <summary>
+    /// 해당 스테이지가 해금되었는지의 여부
+    /// </summary>
+    public bool IsOpened { get { return isOpened; } }
+
     // ================== 직렬화 ==================
 
     [SerializeField] int id;
@@ -110,6 +115,8 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
     [SerializeField, TextArea] string description;
     [SerializeField] StoryDirectingData preStory = null;
     [SerializeField] StoryDirectingData postStory = null;
+
+    [SerializeField] bool isOpened;
 
     private void OnEnable()
     {
