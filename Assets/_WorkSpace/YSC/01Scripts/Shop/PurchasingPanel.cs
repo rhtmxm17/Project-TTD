@@ -41,9 +41,10 @@ public class PurchasingPanel : BaseUI
     [SerializeField] ShopItem shopItem;
     
     public ShopItemData shopItemData {get; private set;}
-    private int remainCount => shopItemData.LimitedCount - shopItemData.Bought.Value;
+    private int remainCount => shopItemData.LimitedCount - shopItemData.Bought.Value; // 남은 구매횟수
+                                         // 구매가능횟수 - 구매한 횟수
 
-    void Start()
+    void OnEnable()
     {
         Init();
     }
@@ -93,14 +94,14 @@ public class PurchasingPanel : BaseUI
     /// 아이템 구매확인창에 나오는 아이템 세팅
     /// </summary>
     /// <param name="data"></param>
-    public void SetItem(ShopItemData data)
+    public void SetItem(ShopItemData data)      // 아이템 세팅 
     {
         shopItemData = data;
         itemNameText.text = data.ShopItemName;
         itemImage.sprite = data.Sprite;
         itemAmountText.text = $"아이템 수량: {remainCount}";     //  (8) 아이템수량
-        itemOwnText.text = $""; // (10) 보유량
-        // TODO: 유저데이터 가져와서 해당아이템의 보유 갯수 보여줘야함, 어떻게 할지 아직 구상이안됨
+        itemOwnText.text = $"현재 보유량: {shopItemData.Products[0].item.Number.Value}"; // (10) 보유량 //지금 친건 가격
+
     }
 
     public void UpdateInfo()
@@ -124,13 +125,12 @@ public class PurchasingPanel : BaseUI
 
         ItemData itemPay = shopItemData.Price.item;
         if (null != itemPay && shopItemData.Price.item.Number.Value < shopItemData.Price.gain * currentNumber)
-        {
+        {   // 지불해야하는 아이템이고 비용이 부족하면
             Debug.LogWarning("비용 부족");
-            // TODO: 팝업UI
+            // 팝업UI
             OpenWarning();      // 비용부족 경고 팝업.
             return;
         }
-
 
         var dbUpdateStream = GameManager.UserData.StartUpdateStream() // DB에 갱신 요청 시작
             .AddDBValue(shopItemData.Bought, currentNumber);  // 요청에 '구매 횟수만큼 증가' 등록 // 이게 들어가버림
@@ -140,8 +140,14 @@ public class PurchasingPanel : BaseUI
             Debug.Log($"골드 소지 개수:{itemPay.Number.Value}/비용:{shopItemData.Price.gain * currentNumber}");
             dbUpdateStream.AddDBValue(itemPay.Number, -shopItemData.Price.gain * currentNumber); // 요청에 요구 수량만큼'비용 지불' 등록
             Debug.Log($"지불 후 골드 :{(itemPay.Number.Value)}");   
-            // TODO: 구매 가능/불가 판별 => 불가능 팝업
+            // 지불할템 소지량 구매 가능/불가 판별 => 불가능 팝업
             // (소지금 < 가격 => 구매불가(팝업띄우기))
+            if (shopItemData.Price.item.Number.Value < shopItemData.Price.gain * currentNumber)
+            {
+                Debug.LogWarning("비용 부족");
+                OpenWarning();      // 비용부족 경고 팝업.
+                return;
+            }
         }
         
         foreach (ItemGain product in shopItemData.Products)
@@ -149,21 +155,13 @@ public class PurchasingPanel : BaseUI
             UserDataInt itemGet = product.item.Number;
             dbUpdateStream.AddDBValue(itemGet, product.gain * currentNumber); // 요청에 갯수만큼 '상품 획득' 등록
         }
-        
-        
+
         dbUpdateStream.Submit(OnComplete);
 
-        /* TODO: 상점에 아이템도 업데이트(매진이된다던가)
-                 이벤트 제공하고, ShopItem?Panel? 에서 구독해서 숫자 변경되면 변경하기.
-        */
-        // 하려하는데 잘 안됨
-        // shopItem.UpdateInfo();
-        // shopItem.SetItem(shopItemData);
     }
 
-    private void OnComplete(bool result)
+    private void OnComplete(bool result)  // 구매완료
     {
-        // TODO: 네트워크 로딩 닫기
 
         if (false == result)
         {
@@ -174,14 +172,19 @@ public class PurchasingPanel : BaseUI
 
         AmmountChanged();
         UpdateInfo(); // 갱신된 상품 정보(구매 횟수) 반영
-        
-        
-       // ItemGain itemGain = shopItemData.Products[0];
-       // itemGain.gain = currentNumber;
-       // shopItemData.Products.Clear();
-       // shopItemData.Products.Add(itemGain);
-      
-        ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(shopItemData.Products);
+
+        // 팝업 UI용 구입 완료한 아이템 목록 생성
+        List<ItemGain> bought = new List<ItemGain>(shopItemData.Products.Count);
+        for (int i = 0; i < shopItemData.Products.Count; i++)
+        {
+            bought.Add(new ItemGain()
+            {
+                item = shopItemData.Products[i].item,
+                gain = shopItemData.Products[i].gain * currentNumber, // 구매 완료된 개수
+            });
+        }
+
+        ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(bought);
         popupInstance.Title.text = "구매 성공!";
         // this.shopItem.UpdateInfo(); // 이거 하면 창이 안닫힘
         ClosePopup();

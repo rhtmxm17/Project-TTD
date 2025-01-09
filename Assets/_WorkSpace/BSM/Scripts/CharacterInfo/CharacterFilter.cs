@@ -16,11 +16,11 @@ public class CharacterFilter : MonoBehaviour
     [HideInInspector] public List<RoleType> _roleFiterTypes = new List<RoleType>();
     [HideInInspector] public List<DragonVeinType> _dragonVeinFilterTypes = new List<DragonVeinType>();
     [HideInInspector] public List<Image> _buttonColors = new List<Image>();
-
+    [HideInInspector] public CharacterInfoController CharacterController;
     private List<Enum> _filterTypes = new List<Enum>();
 
     private CharacterFilterUI _characterFilterUI; 
-    public CharacterInfoController CharacterController;
+   
     
     private int _elementCount = 0;
     private int _roleCount = 0;

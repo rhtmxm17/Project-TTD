@@ -48,4 +48,16 @@ public class ItemGainPopup : MonoBehaviour
             cell.SetItem(info.item, info.gain);
          }
     }
+    
+    /// <summary>
+    /// 캐릭터풀강시 대체지급만을 위한 획득창 / 아니면 단일아이템
+    /// </summary>
+    /// <param name="item"></param>
+    public void AddItemGainCell(ItemData item)
+    {
+
+            ItemGainCell cell = Instantiate(itemGainCellPrefab, layoutGroup.transform);
+            // 정보 출력칸 초기화
+            cell.SetItem(item, 10);
+    }
 }

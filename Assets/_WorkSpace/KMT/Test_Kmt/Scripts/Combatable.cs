@@ -31,6 +31,8 @@ public class Combatable : MonoBehaviour
     protected float range;
     Skill baseAttack;
 
+    protected int curActionPriority = 0;
+
     protected NavMeshAgent agent;
     protected CharacterModel characterModel;
 
@@ -186,7 +188,13 @@ public class Combatable : MonoBehaviour
             return;
         }
 
+        float healAmount = hp.Value;
+
         float afterHp = MathF.Min(MaxHp.Value, hp.Value + amount);
+
+        healAmount = afterHp - healAmount;
+        StageManager.Instance.DamageDisplayer.PlayTextDisplay(healAmount, false, transform.position + Vector3.forward * CharacterSizeRadius * 3);
+
         hp.Value = afterHp;
 
     }
@@ -220,6 +228,7 @@ public class Combatable : MonoBehaviour
         //View의 setvalue등을 연결하기.
         hp.Value -= damage;
         onDamagedEvent?.Invoke(damage);
+        StageManager.Instance.DamageDisplayer.PlayTextDisplay(damage, true, transform.position + Vector3.forward * CharacterSizeRadius * 3);
 
         if (hp.Value < 0)
         {
@@ -245,15 +254,23 @@ public class Combatable : MonoBehaviour
     /// 스킬의 타겟팅 로직을 실행해본 뒤, 타겟이 있다면 스킬을 실행.
     /// </summary>
     /// <param name="skillData">실행할 스킬 데이터</param>
-    /// <returns>타겟 대상이 있는경우 스킬을 실행하고 true 반환, 없을경우 단순 false 반환.</returns>
-    public bool OnSkillCommanded(Skill skillData)
+    /// <param name="priority">실행할 스킬의 행동 우선순위</param>
+    /// <returns>타겟 대상이 있는경우 스킬을 실행하고 true 반환, 없거나 다른 우선순위의 스킬을 시전중인 경우 단순 false 반환.</returns>
+    public bool OnSkillCommanded(Skill skillData, int priority)
     {
+        if (curActionPriority > priority)
+        {
+            Debug.Log("더 우선순위가 큰 행동중.");
+            return false;
+        }
+
         Combatable skillTarget = skillData.TargetingLogic.GetTarget(this);
         if (skillTarget == null)
             return false;
 
         StopCurActionCoroutine();
         Look(skillTarget.transform);
+        curActionPriority = priority;
         curActionCoroutine = StartCoroutine(skillData.SkillRoutine(this, skillTarget, OnSkillCompleted));
         agent.ResetPath();
         return true;
@@ -262,6 +279,7 @@ public class Combatable : MonoBehaviour
     private void OnSkillCompleted()
     {
         StopCurActionCoroutine();
+        curActionPriority = 0;
         curActionCoroutine = StartCoroutine(TrackingCo());
     }
 
@@ -377,7 +395,7 @@ public class Combatable : MonoBehaviour
         while (target != null && target.IsAlive && range + target.CharacterSizeRadius > Vector3.Distance(target.transform.position, transform.position))
         {
             Look(target.transform);
-            StartCoroutine(baseAttack.SkillRoutine(this, target, null));
+            StartCoroutine(baseAttack.SkillRoutine(this, target, null));//이것도 액션으로 관리?
             yield return new WaitForSeconds(1);
         }
 

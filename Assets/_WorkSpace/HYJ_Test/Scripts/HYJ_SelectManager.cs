@@ -1,9 +1,8 @@
 using Firebase.Database;
 using System.Collections.Generic;
-using TMPro;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class HYJ_SelectManager : MonoBehaviour
@@ -29,7 +28,8 @@ public class HYJ_SelectManager : MonoBehaviour
     int buttonCnt;
     [SerializeField] public GameObject CharacterSelectPanel; // 캐릭터 선택 창 
     [SerializeField] public GameObject CantPosUI; // 선택 불가 팝업 -> 5개 유닛이 이미 다 배치 되었을 때의 팝업
-
+    [SerializeField] GameObject UnitChangeUI; // 유닛 변경 확인 팝업 -> 변경하시겠습니까?
+    
     // 키 값은 위치 / 밸류 값은 유닛 고유번호;
     public Dictionary<int, int> battleInfo = new Dictionary<int, int>();
 
@@ -74,15 +74,6 @@ public class HYJ_SelectManager : MonoBehaviour
             obj.InitDataPosBTN(i, CharacterSelectPanel, CantPosUI);
             
             //obj.GetComponent<HYJ_PosBTN>().BuffInput(true,true,true);
-        }
-    }
-
-    public void SetBattleInfo(Dictionary<int, int> battleInfo)
-    {
-        // 불러온 유저 정보를 배치하기
-        foreach (KeyValuePair<int, int> entry in battleInfo)
-        {
-            SetCharacterImage(entry.Key, entry.Value);
         }
     }
 
@@ -184,5 +175,30 @@ public class HYJ_SelectManager : MonoBehaviour
 
             GameManager.Instance.LoadMainScene();
         });
+    }
+
+    public void AddPosBtnImage()
+    {
+        buttonsTransformList[curPos].GetComponent<HYJ_CharacterSelect>().AddBatch(curPos,curUnitIndex);
+    }
+    
+    public void ResetPosBtnImage()
+    {
+        buttonsTransformList[curPos].GetComponent<HYJ_CharacterSelect>().RemoveBatch(curPos);
+    }
+
+    public void ChangePosBtnImage()
+    {
+        if (battleInfo.ContainsKey(curPos))
+        {
+            ResetPosBtnImage();
+        }
+        
+        int curUnitIndexsPos = battleInfo.FirstOrDefault(x => x.Value == curUnitIndex).Key;
+        buttonsTransformList[curUnitIndexsPos].GetComponent<HYJ_CharacterSelect>().RemoveBatch(curUnitIndexsPos);
+        buttonsTransformList[curPos].GetComponent<HYJ_CharacterSelect>().AddBatch(curPos, curUnitIndex);
+        
+        UnitChangeUI.SetActive(false);
+        CharacterSelectPanel.SetActive(false);
     }
 }

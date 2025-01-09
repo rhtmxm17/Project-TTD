@@ -17,7 +17,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private TextMeshProUGUI _characterTypeText;
     private TextMeshProUGUI _characterListNameText;
     private Image _characterListImage;
-
+    public GameObject OwnedObject;
+    
     private bool _isSubscribe;
     private int _characterLevel = 1;
 
@@ -90,12 +91,6 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private void Start()
     {
         ButtonOnClickEvent();
-
-        if (!GameManager.UserData.HasCharacter(_characterData.Id))
-        {
-            transform.GetChild(0).GetComponent<Image>().color = new Color(0.4f, 0.4f, 0.4f);
-        }
-        
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -173,15 +168,19 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             
             _characterInfoController._infoUI._levelUpCoinText.text = _characterLevelUpGoldCost.ToString();
             _characterInfoController._infoUI._levelUpMaterialText.text = _characterLevelUpMaterialCost.ToString();
-            
             _characterInfoController._infoUI._materialGroup.SetActive(true);
             _characterInfoController._infoUI._levelUpButton.gameObject.SetActive(true);
+            _characterInfoController._infoUI._enhanceTabButton.interactable = true;
         }
         else
         {
             _characterInfoController._infoUI._materialGroup.SetActive(false);
             _characterInfoController._infoUI._levelUpButton.gameObject.SetActive(false);
+            _characterInfoController._infoUI._enhanceTabButton.interactable = false;
         }
+        
+        _characterInfoController._infoUI._beforeNameText.text = _characterData.Name;
+        _characterInfoController._infoUI._beforeEnhanceLevelText.text =$"+{_characterData.Enhancement.Value.ToString()}";
         
         _characterInfoController._infoUI._nameText.text = _characterData.Name;
         _characterInfoController._infoUI._characterImage.sprite = _characterData.FaceIconSprite;
@@ -329,5 +328,6 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterListImage = transform.GetChild(0).GetComponent<Image>();
         _characterListNameText = transform.GetChild(1).GetComponent<TextMeshProUGUI>();
         _characterTypeText = transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+        OwnedObject = transform.GetChild(3).gameObject;
     }
 }

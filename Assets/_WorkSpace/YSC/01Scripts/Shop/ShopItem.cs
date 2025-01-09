@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -27,6 +28,12 @@ public class ShopItem : BaseUI
     [Header("구매버튼")]
     [SerializeField] Button buyButton;
 
+    [Header("구매재화 이미지")]
+    [SerializeField] Image materialImage;
+
+    [Header("보유중인 캐릭터 경고")] 
+    [SerializeField] AlreadyHasChar charWarningPopup;
+    
     [SerializeField] private TMP_Text buyButtonText;    // 매진되면 매진나오는 텍스트
 
     // 구매확인창 (구매버튼 누르면 팝업)
@@ -45,6 +52,7 @@ public class ShopItem : BaseUI
         buyButtonText = GetUI<TMP_Text>("BuyButtonText");
         itemPriceText = GetUI<TMP_Text>("ItemPriceText");
         itemCountText = GetUI<TMP_Text>("ItemCountText");
+        materialImage = GetUI<Image>("MaterialImage");
 
         SetItem(shopItemData);
     }
@@ -55,21 +63,28 @@ public class ShopItem : BaseUI
         shopItemData = data;
         itemNameText.text = data.ShopItemName;
         ShopItemImage.sprite = data.Sprite;
+         
         int remain = shopItemData.LimitedCount - shopItemData.Bought.Value;
         itemCountText.text = $"구매 가능 횟수 {remain}/{shopItemData.LimitedCount}";
-
-        // 가격 표시
+        
+        
+        // 가격 표시 & 재화표시
         if (null == data.Price.item)
         {
             itemPriceText.text = "무료";
+            materialImage = GetUI<Image>("MaterialImage");
         }
         else
         {
             itemPriceText.text = $"{data.Price.item.ItemName} {data.Price.gain}개";
+            materialImage.sprite = data.Price.item.SpriteImage;
         }
 
         UpdateInfo();
     }
+    
+    
+    
 
     /// <summary>
     /// 아이템 관련 업데이트
@@ -90,9 +105,8 @@ public class ShopItem : BaseUI
         }
         else
         {
-            buyButtonText.text = "매!\t진!";
-            buyButton.onClick.RemoveListener(Buy); //구매버튼 비활성화
-            ShopItemImage.color = new Color(.3f, .3f, .3f, 1f); // 어둡게 
+            SoldOut();
+          
         }
         Debug.Log("아이템정보를 갱신합니다!!!!!!!!!!");
        
@@ -101,8 +115,20 @@ public class ShopItem : BaseUI
     private void Buy()
     {
 
-        // TODO: 구매확인창 UI && 기능
-        // 구매갯수 > 1 || 무제한 => 구매확인창열기 
+        int charItemData = shopItemData.Id;
+        charItemData -= 200; // 상점캐릭터나열이 201...부터되있으니 200빼면 캐릭터ID랑 동일
+        Debug.Log($"{charItemData}");
+        // CheckCharacter(charItemData);
+        if (GameManager.UserData.HasCharacter(charItemData))
+        {
+           Debug.Log("소유중인 캐릭터입니당");
+           OpenCharWarning();
+           return;
+        }
+
+       
+        
+        // TODO: 갯수제한없는 아이템 골드량만큼 한꺼번에 살 수 있도록 하기 (구매확인창 에서) 
         int remain = shopItemData.LimitedCount - shopItemData.Bought.Value;
         if (remain > 0)
         {
@@ -161,12 +187,28 @@ public class ShopItem : BaseUI
         popupInstance.Title.text = "구매 성공!";
     }
 
+    public void CheckCharID()
+    {
+        int charItemData = shopItemData.Id;
+        charItemData -= 200; // 상점캐릭터나열이 201...부터되있으니 200빼면 캐릭터ID랑 동일
+        Debug.Log($"{charItemData}");
+        // CheckCharacter(charItemData);
+        if (GameManager.UserData.HasCharacter(charItemData))
+        {
+            Debug.Log("소유중인 캐릭터입니당");
+            OpenCharWarning();
+        }
+         
+    }
+
     public void SoldOut()
     {
         
-        buyButtonText.text = "매!\t진!";
+        buyButtonText.text = "SOLD\nOUT";
+        buyButtonText.color = new Color(1f, .1f, .2f, 1f);
+        GetUI<Image>("BuyButton").color = new Color(.3f, .3f, .3f, .75f); // 아이템창 어둡게
         buyButton.onClick.RemoveListener(Buy); //구매버튼 비활성화
-        ShopItemImage.color = new Color(.3f, .3f, .3f, 1f); // 어둡게 
+        ShopItemImage.color = new Color(.3f, .3f, .3f, 1f); // 아이템 어둡게 
         
     }
 
@@ -176,16 +218,37 @@ public class ShopItem : BaseUI
         PurchasingPanel.OnAmountChanged += UpdateInfo;        
     }
     // 구매확인창 열기
-    private void OpenPurchasingPanel()
+    private void OpenPurchasingPanel() // 구매확인창(갯수변경) 창을 열며 눌른 아이템 세팅
     {
         PurchasingPanel popupInstance = Instantiate(purchasingPanel, GameManager.PopupCanvas);
         popupInstance.transform.SetAsFirstSibling();
         popupInstance.SetItem(shopItemData);
     }
 
-    private void OpenWarning()
+    private void OpenCharWarning()
+    {
+        AlreadyHasChar popupInstance = Instantiate(charWarningPopup, GameManager.PopupCanvas);
+        popupInstance.transform.SetAsFirstSibling();
+        popupInstance.SetItem(this.shopItemData);
+        popupInstance.CheckMaxEnhance();
+        // popupInstance.SetItem(shopItemData); 일단 비활성화 근데 어차피 그 아이템 사야하니까 정보불러올필요는 있어서 뭔가해야할듯함.
+    }
+
+    private void OpenWarning() // 경고창 열기
     {
         OverlayUIManager popupInstance = GameManager.OverlayUIManager;
         popupInstance.OpenSimpleInfoPopup("소지하신 재료가 부족합니다.", "닫기", null);
+        
     }
+
+    private void CheckItemIndexAndCompare()
+    {
+        // ShopItemData에서 id랑 아이템데이터에서 id 확인하던 코드
+        int itemIndex = shopItemData.Id;
+        var clickedItem = GameManager.TableData.GetItemData(itemIndex);
+        Debug.Log($"상점에서 클릭한 아이템 index 아이템데이터에서 이름: {clickedItem.ItemName} || ShopitemID: {itemIndex}");
+
+
+    }
+    
 }

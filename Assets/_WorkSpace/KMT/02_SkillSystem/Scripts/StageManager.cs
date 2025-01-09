@@ -11,9 +11,10 @@ public class StageManager : MonoBehaviour
     public static StageManager Instance = null;
 
     public float PartyCost { get; private set; } = 0;
+    public DamageDisplayer DamageDisplayer { get; private set; }
 
     [SerializeField] StageData stageData;
-    private StageData stageDataOnLoad;
+    public StageData stageDataOnLoad { get; protected set; }
     public MenuType PrevScene { get; protected set; } = MenuType.NONE;
 
     [Header("Camera Effecter")]
@@ -29,14 +30,6 @@ public class StageManager : MonoBehaviour
     [Header("Scroller")]
     [SerializeField]
     BGScroller scroller;
-
-    //데이터 테스트용 임시 구조체
-/*    [System.Serializable]
-    struct monsterData
-    {
-        [SerializeField] public List<CharacterData> monsters;
-
-    }*/
 
     [Header("Monsters")]
     [SerializeField] Transform monsterWaveParent;
@@ -85,7 +78,10 @@ public class StageManager : MonoBehaviour
     private void Awake()
     {
         if (Instance == null)
+        {
             Instance = this;
+            DamageDisplayer = GetComponent<DamageDisplayer>();
+        }
         else
             Destroy(gameObject);
     }
@@ -229,7 +225,7 @@ public class StageManager : MonoBehaviour
         Debug.Log("다음 웨이브로 이동중...");
 
         scroller.StartScroll();
-        yield return StartCoroutine(combatCamera.StartFocusCO());
+        yield return StartCoroutine(combatCamera.StartFocusCO());//줌인
 
         StartCoroutine(combatCamera.ReleaseFocusCO());//줌아웃과 동시에 다음 웨이브 활성화
         monsterWaveQueue[0].gameObject.SetActive(true);

@@ -51,7 +51,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     {
         public float Range;
         public float BasicSkillCooldown;
-        public float SecondSkillCost;
+        public float SecondSkillCooldown;
 
         /// <summary>
         /// 0레벨 공격력
@@ -240,7 +240,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         if (secondSkillDataSO != null) // 특수 스킬이 기재되어 있다면
         {
             // SS_COST
-            if (false == float.TryParse(cells[(int)Column.SS_COST], out statusTable.SecondSkillCost))
+            if (false == float.TryParse(cells[(int)Column.SS_COST], out statusTable.SecondSkillCooldown))
             {
                 Debug.LogError($"잘못된 데이터로 갱신 시도됨");
                 return;

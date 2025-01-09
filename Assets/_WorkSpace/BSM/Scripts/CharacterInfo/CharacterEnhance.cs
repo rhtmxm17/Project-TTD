@@ -93,7 +93,7 @@ public class CharacterEnhance : MonoBehaviour
 
         _characterInfoController._infoUI._beforeUpGradeText.text = $"현재 등급 {_beforeEnhanceLevel}";
         _characterInfoController._infoUI._beforeHpText.text = $"체력 {_beforeHp}";
-        _characterInfoController._infoUI._beforeAtkText.text = $"공겨력 {_beforeAtk}";
+        _characterInfoController._infoUI._beforeAtkText.text = $"공격력 {_beforeAtk}";
         _characterInfoController._infoUI._beforeDefText.text = $"방어력 {_beforeDef}";
     }
 
@@ -138,6 +138,18 @@ public class CharacterEnhance : MonoBehaviour
     {
         if (_characterInfoController.CurCharacterEnhance != this) return;
 
+        if (_characterInfoController._infoUI._enhanceResultPopup.activeSelf)
+        {
+            _characterInfoController._infoUI._enhanceResultPopup.SetActive(false);
+            return;
+        }
+        
+        if (_characterInfoController._infoUI._mileageUsePopup.activeSelf)
+        {
+            _characterInfoController._infoUI._mileageUsePopup.SetActive(false);
+            return;
+        }
+        
         //기본 강화 확률 + 추가 재료 강화 확률 > Probability 보다 크면 성공
         //아니면 실패
         //TODO: 프로토타입 이후 확률 수정 필요 
@@ -235,7 +247,7 @@ public class CharacterEnhance : MonoBehaviour
     /// <param name="value"></param>
     private void MileageValueChange(float value)
     {
-        _characterInfoController._infoUI._mileageValueText.text = $"강화 마일리지 {value * 100f}%";
+        _characterInfoController._infoUI._mileageValueText.text = $"강화 마일리지 {Mathf.Floor(value * 100f)}%";
     }
 
     private void UseMileage()
@@ -292,7 +304,7 @@ public class CharacterEnhance : MonoBehaviour
     /// </summary>
     private void SetEnhanceCost()
     {
-        _enhanceMaterialCost = 0 * (_beforeEnhanceLevel + 1);
+        _enhanceMaterialCost = 200 * (_beforeEnhanceLevel + 1);
         _enhanceGoldCost = 100 * (_beforeEnhanceLevel + 1);
         _characterInfoController._infoUI._enhanceCoinText.text = _enhanceGoldCost.ToString();
         _characterInfoController._infoUI._enhanceMaterialText.text = _enhanceMaterialCost.ToString();

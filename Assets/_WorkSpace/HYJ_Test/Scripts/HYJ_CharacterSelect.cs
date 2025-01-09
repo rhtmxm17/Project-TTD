@@ -7,7 +7,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
 {
     // 캐릭터 (9종)
     // 캐릭터 데이터 구조 : index(ID)
-    [SerializeField] GameObject CharacterSelectPanel; // 캐릭터 선택 창 
+    [SerializeField] GameObject characterSelectPanel; // 캐릭터 선택 창 
     GameObject CantPosUI; // 선택 불가 팝업 -> 5개 유닛이 이미 다 배치 되었을 때의 팝업
     public int posNum; // 위치 번호
 
@@ -31,14 +31,14 @@ public class HYJ_CharacterSelect : MonoBehaviour
     public void InitDataPosBTN(int PosIdx, GameObject CharacterSelectPanel, GameObject CantPosUI)
     {
         SelectM = gameObject.GetComponentInParent<Transform>().GetComponentInParent<HYJ_SelectManager>();
-        this.CharacterSelectPanel = CharacterSelectPanel;
+        this.characterSelectPanel = CharacterSelectPanel;
         this.CantPosUI = CantPosUI;
 
         posNum = PosIdx;
         transform.GetComponentInChildren<TextMeshProUGUI>().text = PosIdx.ToString();
         if (CheckPos(posNum))
         {
-            SetBTNChImage(true, SelectM.battleInfo[posNum]);
+            SetBtnChImage(true, SelectM.battleInfo[posNum]);
         }
     }
 
@@ -67,22 +67,11 @@ public class HYJ_CharacterSelect : MonoBehaviour
         {
             CantPosUI.SetActive(true);
         }
-        //else if (CheckPos(posNum)) // 위치 리스트가 5개 초과 & 이미 선택한 위치일 경우 
-        //{
-        //    SelectM.curPos = posNum;
-        //    CharacterSelectPanel.SetActive(true);
-        //}
-//
-        //else if (SelectM.battleInfo.Count < 5 && !CheckPos(posNum)) // 위치 리스트가 5개 보다 적고
-        //{
-        //    SelectM.curPos = posNum;
-        //    CharacterSelectPanel.SetActive(true);
-        //}
 
         else
         {
             SelectM.curPos = posNum;
-            CharacterSelectPanel.SetActive(true);
+            characterSelectPanel.SetActive(true);
         }
     }
 
@@ -105,7 +94,6 @@ public class HYJ_CharacterSelect : MonoBehaviour
             {
                 // 아무동작 x
                 Debug.Log("이미 이 위치에 해당 유닛이 배치되어 있습니다.");
-                return;
             }
             else // 선택한 위치에 선택한 유닛이 다른 위치에 배치되어 있는 경우
             {
@@ -120,29 +108,19 @@ public class HYJ_CharacterSelect : MonoBehaviour
             }
             else // 선택한 유닛이 어느 위치에도 배치되지 않은 경우
             {
-                AddBatch(SelectM.curPos, SelectM.curUnitIndex);
+                SelectM.GetComponent<HYJ_SelectManager>().AddPosBtnImage();
                 SelectM.CharacterSelectPanel.SetActive(false);
             }
         }
     }
 
-    public void ChangeUnit() // 유닛변경 확인 버튼
-    {
-        if (CheckPos(SelectM.curPos)) // 선택된 위치에 유닛이 배치되어 있을 경우
-        {
-            RemoveBatch(SelectM.curPos);
-        }
-        
-        
-        int unitPos = SelectM.battleInfo.FirstOrDefault(x => x.Value == SelectM.curUnitIndex).Key; // 딕셔너리 밸류값(유닛 고유번호)를 갖고 있는 키 값을 찾기
-        ChangeBatch(unitPos, SelectM.curPos, SelectM.curUnitIndex); //
-        UnitChangeUI.SetActive(false);
-        CharacterSelectPanel.SetActive(false);
-    }
-
+    /// <summary>
+    /// 선택한 유닛이 이미 배치되어 있는지 판별
+    /// </summary>
+    /// <param name="unitIndex">배치되어 있는지 판별할 유닛의 고유 번호</param> 
+    /// <returns>true:배치되어 있음, false:배치되어 있지않음</returns>
     public bool CheckUnit(int unitIndex)
     {
-        // 선택한 유닛이 이미 배치되어 있는지 검색
         if (SelectM.battleInfo.ContainsValue(unitIndex))
         {
             return true;
@@ -164,60 +142,46 @@ public class HYJ_CharacterSelect : MonoBehaviour
         return false;
     }
 
-    public void ReleaseUnit()
-    {
-        // 배치된 유닛을 해제하기
-        if (CheckPos(SelectM.curPos))
-        {
-            // 선택한 키 값이 이미 등록되어 있을 때
-            RemoveBatch(SelectM.curPos);
-        }
-    }
-
-    void AddBatch(int key, int value)
+    public void AddBatch(int key, int value)
     {
         SelectM.battleInfo.Add(key, value);     // 현재 키 / 밸류 딕셔너리에 추가
         
         //SelectM.SetCharacterImage(key, value);  // 스프라이트 생성
-        SetBTNChImage(true,value);
+        SetBtnChImage(true,value);
     }
 
-    void RemoveBatch(int key)
+    public void RemoveBatch(int key)
     {
         SelectM.battleInfo.Remove(key);     // 현재 유닛 고유번호를 갖고 있는 키와 밸류 삭제
         
         //SelectM.RemoveCharacterImage(key); // 스프라이트 제거
-        SetBTNChImage(false,unitIndex);
+        SetBtnChImage(false,unitIndex);
     }
 
-    void ChangeBatch(int victimKey, int newKey, int newValue)
-    {
-        SelectM.battleInfo.Remove(victimKey);   // 현재 유닛 고유번호를 갖고 있는 키와 밸류 삭제
-        SelectM.battleInfo[newKey] = newValue;  // 현재 키값의 밸류 값을 추가하기
-        
-        //SelectM.ChangeImagePos(victimKey, newKey);    // 스프라이트 위치 변경
-        //이걸 어케해야할까...
-    }
-    
     /// <summary>
     /// 음.. 이미지를 생성 삭제하는게 아니라 위치 버튼에 유닛용 이미지가 있어서 그걸 바꾸는 방식
     ///     1. 이미지를 바꾼다.
     ///     2. 이미지를 원래대로 만든다.
     /// </summary>
-    /// <param name="isOn"></param>true면 캐릭터 이미지로 변경, false면 초기화
-    public void SetBTNChImage(bool isOn,int unitIdx)
-    {
-        Color color = new Color32(255, 255, 255, 0);
+    /// <param name="isOn">true면 캐릭터 이미지로 변경, false면 초기화</param>
+    /// <param name="unitIdx">변경할 캐릭터 이미지의 캐릭터 고유 번호</param>
+    public void SetBtnChImage(bool isOn,int unitIdx)
+    { 
+        Debug.Log("ddddd"+unitIdx);
+        Debug.Log(posBTNImage);
+        Debug.Log("eeeee"+posBTNImage.name);
+        Color color = posBTNImage.GetComponent<Image>().color;
         if (isOn)
         {
             CharacterData chData = GameManager.TableData.GetCharacterData(unitIdx);
-            color = new Color(255,255,255,255);
-            posBTNImage.GetComponent<Image>().color = color;
             posBTNImage.GetComponent<Image>().sprite = chData.FaceIconSprite;
+            color.a = 1f;
+            posBTNImage.GetComponent<Image>().color = color;
         }
         else
         {
-            color = new Color32(255, 255, 255, 0);
+            posBTNImage.GetComponent<Image>().sprite = null;
+            color.a = 0f;
             posBTNImage.GetComponent<Image>().color = color;
         }
     }
