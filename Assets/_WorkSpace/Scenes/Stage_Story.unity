@@ -1833,6 +1833,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: UILayoutCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 8959500562086040226, guid: 27cabcba3394c1c4483ec41db54d4c7b,
+        type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 7623180830476524828}
     - target: {fileID: 8959500562086040237, guid: 27cabcba3394c1c4483ec41db54d4c7b,
         type: 3}
       propertyPath: m_Pivot.x
@@ -2339,6 +2344,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1944650724}
   - component: {fileID: 1944650727}
+  - component: {fileID: 1944650728}
   - component: {fileID: 1944650726}
   m_Layer: 0
   m_Name: StageManager
@@ -2404,6 +2410,20 @@ MonoBehaviour:
   costSlider: {fileID: 1463922945}
   wavesText: {fileID: 1463922943}
   storyDirectorPrefab: {fileID: 2523161014101112153, guid: 7bb638107f6b6a14f841c377917140c5,
+    type: 3}
+--- !u!114 &1944650728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1944650723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c381939df563a074f8fdf2a147848446, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageTextObjPrefab: {fileID: 966145130294016968, guid: 2d2397208ac98fe479cea9ab643eb20c,
     type: 3}
 --- !u!1 &1949323062
 GameObject:
@@ -3051,7 +3071,7 @@ PrefabInstance:
     - target: {fileID: 7064329177751392570, guid: fbb4197ad931a83478982ff704e1f31b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -8.5
       objectReference: {fileID: 0}
     - target: {fileID: 7064329177751392570, guid: fbb4197ad931a83478982ff704e1f31b,
         type: 3}
@@ -3134,3 +3154,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fbf0c21d11aa9c24e8b5647e4a01490a, type: 3}
+--- !u!20 &7623180830476524828 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 2941965130403141153, guid: fbf0c21d11aa9c24e8b5647e4a01490a,
+    type: 3}
+  m_PrefabInstance: {fileID: 7623180830476524827}
+  m_PrefabAsset: {fileID: 0}
