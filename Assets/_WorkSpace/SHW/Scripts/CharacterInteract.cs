@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
-using UnityEngine.Events;
 
 public class CharacterInteract : MonoBehaviour
 {
@@ -14,23 +13,18 @@ public class CharacterInteract : MonoBehaviour
      private string[] talkdialogue;     // 대사들 모음
     [SerializeField] private int repeatNum;             // 반복 대사 스텍
     
-    [SerializeField] MyRoomCData[] roomCData;
+    [SerializeField] private MyRoomCData[] roomCData;
     private int characterIndex;
-
-    public UnityEvent OnIndexChanged;
     
     private Coroutine talkCoroutine;
-
-    private void Start()
-    {
-        characterIndex = GameManager.UserData.Profile.MyroomCharaIdx.Value -1;
-        talkdialogue = roomCData[characterIndex].CharacterDialogue; 
-    }
-
+    
     // 대화 활성화
     public void ClickCharacter()
     {
         if(talkCoroutine != null) return;
+        
+        characterIndex = GameManager.UserData.Profile.MyroomCharaIdx.Value -1;
+        talkdialogue = roomCData[characterIndex].CharacterDialogue; 
         
         // 주어진 대사에서 랜덤하게 대사 출력
         talkText.text = talkdialogue[Random.Range(0,talkdialogue.Length-1)];
