@@ -12,11 +12,11 @@ using UnityEngine.UI;
 public class CharacterSort : MonoBehaviour
 {
     [HideInInspector] public CharacterInfoController CharacterInfoController;
-    [HideInInspector] public List<CharacterInfo> _sortCharacterInfos;
+     public List<CharacterInfo> _sortCharacterInfos;
     [HideInInspector] public TextMeshProUGUI SortingText;
    
-    private List<CharacterData> _ownedCharacters;
-    private List<CharacterData> _unOwnedCharacters;
+    public List<CharacterData> _ownedCharacters;
+    public List<CharacterData> _unOwnedCharacters;
     private List<int> _sortList;
     private CharacterSortUI _characterSortUI;
     
@@ -129,8 +129,8 @@ public class CharacterSort : MonoBehaviour
        }
           
        
-        _ownedCharacters = _sortCharacterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)).Select(x => x._CharacterData).ToList();
-        _unOwnedCharacters = _sortCharacterInfos.Where(x => !GameManager.UserData.HasCharacter(x._CharacterData.Id)).Select(x => x._CharacterData).ToList();
+        _ownedCharacters = _sortCharacterInfos.Where(x=>GameManager.UserData.HasCharacter(x._CharacterData.Id)).Select(x => x._CharacterData).ToList();
+        _unOwnedCharacters = _sortCharacterInfos.Where(x =>!GameManager.UserData.HasCharacter(x._CharacterData.Id)).Select(x => x._CharacterData).ToList();
         
         int ownedCount = _ownedCharacters.Count;
         int unOwnedCount = _unOwnedCharacters.Count;
@@ -147,7 +147,7 @@ public class CharacterSort : MonoBehaviour
         }
         
         for (int i = 0; i < ownedCount; i++)
-        {
+        { 
             _sortCharacterInfos[i]._CharacterData = _ownedCharacters[i];
             _sortCharacterInfos[i].SetListNameText(_ownedCharacters[i].Name);
             _sortCharacterInfos[i].PowerLevel = (int)_ownedCharacters[i].PowerLevel;
