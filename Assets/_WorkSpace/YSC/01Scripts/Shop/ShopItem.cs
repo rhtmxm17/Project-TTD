@@ -44,6 +44,8 @@ public class ShopItem : BaseUI
 
     [SerializeField] private ShopPopupController shopPopup;
     
+    // TODO: bool is여러개살수있음
+    
     /* DailyBonus.cs 스크립트에 하루 5회 구매할 수 있는거 관련 코드들 있음.
      * DailyChecker.cs
      * 
@@ -140,10 +142,19 @@ public class ShopItem : BaseUI
        
         
         // TODO: 갯수제한없는 아이템 골드량만큼 한꺼번에 살 수 있도록 하기 (구매확인창 에서) 
+        // TODO: 복수구매 가능한거
+        bool isBulk = shopItemData.IsMany;
         int remain = shopItemData.LimitedCount - shopItemData.Bought.Value;
         if (remain > 0)
         {
             Debug.Log("구매확인창 열기");
+            OpenPurchasingPanel(); // 확인 팝업띄우는
+            return;
+        }
+
+        if (isBulk)
+        {
+            Debug.Log("복수구매를 위한 구매확인창 열기");
             OpenPurchasingPanel(); // 확인 팝업띄우는
             return;
         }
