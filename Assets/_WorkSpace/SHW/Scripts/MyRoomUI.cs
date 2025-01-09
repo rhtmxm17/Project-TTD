@@ -10,7 +10,7 @@ public class MyRoomUI : BaseUI
     MyroomInitializer initializer;
     
     [SerializeField] Sprite[] roomSprites;
-    [SerializeField] Sprite[] charaSprites;      // 임시
+    [SerializeField] MyRoomCData[] roomCData;
     private int roomIndex;
     private int charaIndex;
     [SerializeField] OutskirtsUI outskirtsUI;
@@ -77,10 +77,8 @@ public class MyRoomUI : BaseUI
     {
         roomIndex = GameManager.UserData.Profile.MyroomBgIdx.Value;
         GetUI<Image>("BackImage").sprite = roomSprites[roomIndex];
-        // 임시적으로 이미 가지고 있는 캐릭터의 id를 받아서 적용 하는 방식
-        // 하이어라키 컨텐츠의 임의 캐릭터 이미지로 변경
-        charaIndex = GameManager.UserData.Profile.MyroomCharaIdx.Value;
-        GetUI<Image>("MyRoomCharacter").sprite = charaSprites[charaIndex];
+        charaIndex = GameManager.UserData.Profile.MyroomCharaIdx.Value-1;
+        GetUI<Image>("MyRoomCharacter").sprite = roomCData[charaIndex].image;
     }
     
     private void OpenSetRoomPopup(string _name)
@@ -95,12 +93,12 @@ public class MyRoomUI : BaseUI
 
     public void ChangeCharacter(int _index)
     {
-        if (_index < 0 || charaSprites.Length <= _index)
+        if (_index < 0 || roomCData.Length <= _index)
         {
             Debug.LogError("마이룸 캐릭터 커스텀 번호가 잘못됨");
             return;
         }
-        GetUI<Image>("MyRoomCharacter").sprite = charaSprites[_index];
+        GetUI<Image>("MyRoomCharacter").sprite = roomCData[_index].image;
     }
 
     public void ChangeBackground(int _index)
