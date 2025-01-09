@@ -19,8 +19,11 @@ public class ShopItem : BaseUI
     [Header("아이템 가격")]
     [SerializeField] TMP_Text itemPriceText;    // UI에 표기되는 가격표
     
-    [Header("아이템 갯수")]
+    [Header("구매 가능 횟수")]
     [SerializeField] TMP_Text itemCountText;    // UI에 표기되는 갯수
+    
+    [Header("판매 세트 갯수")]
+    [SerializeField] TMP_Text itemGainText;    // UI에 표기되는 갯수
     
     [Header("아이템 이미지")]
     [SerializeField] public Image ShopItemImage;
@@ -52,6 +55,7 @@ public class ShopItem : BaseUI
         buyButtonText = GetUI<TMP_Text>("BuyButtonText");
         itemPriceText = GetUI<TMP_Text>("ItemPriceText");
         itemCountText = GetUI<TMP_Text>("ItemCountText");
+        itemGainText = GetUI<TMP_Text>("ItemGainText");
         materialImage = GetUI<Image>("MaterialImage");
 
         SetItem(shopItemData);
@@ -66,8 +70,8 @@ public class ShopItem : BaseUI
          
         int remain = shopItemData.LimitedCount - shopItemData.Bought.Value;
         itemCountText.text = $"구매 가능 횟수 {remain}/{shopItemData.LimitedCount}";
-        
-        
+        itemGainText.text = data.Products[0].gain.ToString();
+       
         // 가격 표시 & 재화표시
         if (null == data.Price.item)
         {
