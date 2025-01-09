@@ -48,7 +48,7 @@ public class DailyBonus : MonoBehaviour
                 if (result)
                 {
                     Debug.Log("일일보상처리 완료");
-                    SceneManager.LoadSceneAsync("MainMenu");
+                    GameManager.Instance.LoadLobbyScene();
                 }
                 else 
                 {

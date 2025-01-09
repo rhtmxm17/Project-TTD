@@ -167,8 +167,7 @@ public class GameManager : SingletonBehaviour<GameManager>
                 destScene = "Stage_Boss";
                 break;
             case StageType.STORY:
-                Debug.Log("임시로 일반 전투 씬으로 이동");
-                destScene = "StageDefault";
+                destScene = "Stage_Story";
                 break;
             case StageType.NONE:
                 Debug.Log("지정된 스테이지 타입이 없어 기본 전투 씬으로 이동함");

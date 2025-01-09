@@ -13,7 +13,7 @@ public class StageManager : MonoBehaviour
     public float PartyCost { get; private set; } = 0;
 
     [SerializeField] StageData stageData;
-    private StageData stageDataOnLoad;
+    public StageData stageDataOnLoad { get; protected set; }
     public MenuType PrevScene { get; protected set; } = MenuType.NONE;
 
     [Header("Camera Effecter")]
