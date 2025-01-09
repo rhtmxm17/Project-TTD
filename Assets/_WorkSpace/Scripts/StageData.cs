@@ -331,19 +331,19 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
                 if (false == int.TryParse(cells[(int)Column.MONSTER_LEVEL], out monsterInfo.level))
                 {
                     Debug.LogError($"잘못된 데이터로 갱신 시도됨");
-                    continue;
+                    return;
                 }
 
                 if (false == float.TryParse(cells[(int)Column.MONSTER_POS_X], out monsterInfo.pose.x))
                 {
                     Debug.LogError($"잘못된 데이터로 갱신 시도됨");
-                    continue;
+                    return;
                 }
 
                 if (false == float.TryParse(cells[(int)Column.MONSTER_POS_Y], out monsterInfo.pose.y))
                 {
                     Debug.LogError($"잘못된 데이터로 갱신 시도됨");
-                    continue;
+                    return;
                 }
                 currentWave.Add(monsterInfo);
             }
@@ -357,7 +357,7 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
                 if (false == int.TryParse(cells[(int)Column.REWARD_NUMBER], out rewardInfo.gain))
                 {
                     Debug.LogError($"잘못된 데이터로 갱신 시도됨");
-                    continue;
+                    return;
                 }
 
                 reward.Add(rewardInfo);
@@ -372,13 +372,13 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
                 if (false == float.TryParse(cells[(int)Column.BUFF_VALUE], out buffInfo.value))
                 {
                     Debug.LogError($"잘못된 데이터로 갱신 시도됨");
-                    continue;
+                    return;
                 }
 
                 if (false == int.TryParse(cells[(int)Column.BUFF_TILE_INDEX], out buffInfo.tileIndex))
                 {
                     Debug.LogError($"잘못된 데이터로 갱신 시도됨");
-                    continue;
+                    return;
                 }
 
                 tileBuff.Add(buffInfo);
