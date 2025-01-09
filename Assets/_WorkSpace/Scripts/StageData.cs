@@ -105,7 +105,36 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
     /// <summary>
     /// 해당 스테이지가 해금되었는지의 여부
     /// </summary>
-    public bool IsOpened { get { return isOpened; } }
+    public bool IsOpened
+    {
+        get
+        {
+            foreach (int stageId in lockConditionStageIDs)
+            {
+                // 지정된 Id를 갖는 스테이지의 클리어 이력이 없으면 잠김 상태
+                StageData prevStage = GameManager.TableData.GetStageData(stageId);
+                if (prevStage != null && prevStage.ClearCount.Value == 0)
+                {
+                    return false;
+                }
+            }
+
+            if (lockConditionStageIDs.Count == 0)
+            {
+                // 리스트가 비어있다면 기본값(이전 id의 스테이지) 조회
+                StageData prevStage = GameManager.TableData.GetStageData(id - 1);
+                
+                // 이전 id가 비어있다면 (prevStage == null) 조건 없이 개방
+                if (prevStage != null && prevStage.ClearCount.Value == 0)
+                {
+                    return false;
+                }
+            }
+
+            // 모든 검사를 통과하면 해금 상태
+            return true;
+        }
+    }
 
     // ================== 직렬화 ==================
 
@@ -120,8 +149,7 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
     [SerializeField, TextArea] string description;
     [SerializeField] StoryDirectingData preStory = null;
     [SerializeField] StoryDirectingData postStory = null;
-
-    [SerializeField] bool isOpened;
+    [SerializeField] List<int> lockConditionStageIDs; // 개방 조건에 해당하는 선행 스테이지 목록
 
     private void OnEnable()
     {
@@ -221,6 +249,8 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
 
         PRE_STORY,
         POST_STORY,
+
+        LOCK_CONDITON_ID,
     }
 
     public void ParseCsvMultiRow(string[] lines, ref int line)
@@ -244,6 +274,7 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
                 waves = new List<WaveInfo>();
                 reward = new List<ItemGain>();
                 tileBuff = new List<BuffInfo>();
+                lockConditionStageIDs = new List<int>();
 
                 // NAME
                 stageName = cells[(int)Column.STAGE_NAME];
@@ -351,6 +382,12 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
                 }
 
                 tileBuff.Add(buffInfo);
+            }
+
+            // 현재 행에 선행 스테이지 정보가 있다면 추가
+            if (int.TryParse(cells[(int)Column.LOCK_CONDITON_ID], out int lockId))
+            {
+                lockConditionStageIDs.Add(lockId);
             }
 
             line++;
