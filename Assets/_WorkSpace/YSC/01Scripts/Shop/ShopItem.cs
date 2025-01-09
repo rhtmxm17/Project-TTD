@@ -230,6 +230,7 @@ public class ShopItem : BaseUI
         AlreadyHasChar popupInstance = Instantiate(charWarningPopup, GameManager.PopupCanvas);
         popupInstance.transform.SetAsFirstSibling();
         popupInstance.SetItem(this.shopItemData);
+        popupInstance.CheckMaxEnhance();
         // popupInstance.SetItem(shopItemData); 일단 비활성화 근데 어차피 그 아이템 사야하니까 정보불러올필요는 있어서 뭔가해야할듯함.
     }
 
