@@ -20,7 +20,6 @@ public class MyRoomUI : BaseUI
 
     private void Start()
     {
-        roomName.text = "내방~ >.0";
         initializer = GetComponent<MyroomInitializer>();
         GetComponent<MyroomInitializer>().Initialize(this);
         
@@ -122,7 +121,8 @@ public class MyRoomUI : BaseUI
     public void ReturnMyRoomUI()
     {
         LoadImage();
-        Debug.Log($"남은 스택수 : {outskirtsUI.UIStack.Count}");
+        roomName.text = "나만의 공간";
+        outskirtsUI.UIStack.Pop();
         GetUI("Dictionary").SetActive(true);
         GetUI("VisitButton").SetActive(true);
         GetUI("CharacterChangeButton").SetActive(true);
