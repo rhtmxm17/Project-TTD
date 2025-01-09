@@ -27,8 +27,18 @@ public class CombatCamera : MonoBehaviour
 
     private void Awake()
     {
+        float focusViewSizeDelta = Camera.main.orthographicSize - focusViewSize;
+
         originPos = transform.position;
+
+        Camera.main.orthographicSize = ( Mathf.Max(((2.166666666666667f - (Screen.width / (float)Screen.height)) + 2.166666666666667f) / 2.166666666666667f, 1)) * 10;
         originViewSize = Camera.main.orthographicSize;
+        focusViewSize = originViewSize - focusViewSizeDelta;
+
+        Debug.Log(Screen.width);
+        Debug.Log(Screen.height);
+        Debug.Log(Screen.width / (float)Screen.height);
+
     }
 
     public void Shake()
