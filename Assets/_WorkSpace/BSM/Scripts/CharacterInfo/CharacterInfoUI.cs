@@ -92,16 +92,6 @@ public class CharacterInfoUI : BaseUI
         ButtonAddListener(); 
     }
 
-    private void Start()
-    {
-        InvokeRepeating(nameof(InfoPopupClose), 0f, 0.5f);
-    }
-
-    private void OnDisable()
-    {
-        CancelInvoke(nameof(InfoPopupClose));
-    }
-
     private void Init()
     {
         _controller = transform.GetComponentInParent<CharacterInfoController>();

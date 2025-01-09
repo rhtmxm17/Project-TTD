@@ -1,12 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using DG.DemiLib;
-using TMPro;
-using Unity.VisualScripting;
-using UnityEngine;
-using UnityEngine.Serialization;
+using System.Linq; 
+using TMPro; 
+using UnityEngine; 
 using UnityEngine.UI;
 
 public class CharacterInfoController : BaseUI
@@ -26,7 +23,7 @@ public class CharacterInfoController : BaseUI
     
     private GameObject _characterUIPanel;
     private CharacterSort _characterSort;
-    private CharacterFilter _characterFilter;
+    [HideInInspector] public CharacterFilter _characterFilter;
      
     private TextMeshProUGUI _sortingText; 
     private Button _prevButton;
@@ -161,7 +158,7 @@ public class CharacterInfoController : BaseUI
         _elementFilterButton.onClick.AddListener(() => _characterFilter.transform.GetChild(0).gameObject.SetActive(true));
         _roleFilterButton.onClick.AddListener(() => _characterFilter.transform.GetChild(1).gameObject.SetActive(true));
         _dragonVeinFilterButton.onClick.AddListener(() =>_characterFilter.transform.GetChild(2).gameObject.SetActive(true));
-        
+
     }
 
     /// <summary>
