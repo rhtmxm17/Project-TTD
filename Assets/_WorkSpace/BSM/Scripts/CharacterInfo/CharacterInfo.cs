@@ -1,15 +1,12 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using System; 
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
-using Random = UnityEngine.Random;
+using UnityEngine.EventSystems; 
 
 public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 {
+    [HideInInspector] public GameObject OwnedObject;
     [SerializeField] private CharacterData _characterData;
 
     private CharacterInfoController _characterInfoController;
@@ -17,7 +14,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private TextMeshProUGUI _characterTypeText;
     private TextMeshProUGUI _characterListNameText;
     private Image _characterListImage;
-    public GameObject OwnedObject;
+    
     
     private bool _isSubscribe;
     private int _characterLevel = 1;

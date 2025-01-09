@@ -1,12 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using DG.DemiLib;
-using TMPro;
-using Unity.VisualScripting;
-using UnityEngine;
-using UnityEngine.Serialization;
+using System.Linq; 
+using TMPro; 
+using UnityEngine; 
 using UnityEngine.UI;
 
 public class CharacterInfoController : BaseUI
@@ -21,14 +18,22 @@ public class CharacterInfoController : BaseUI
     [HideInInspector] public TextMeshProUGUI ElementFilterText;
     [HideInInspector] public TextMeshProUGUI RoleFilterText;
     [HideInInspector] public TextMeshProUGUI DragonVeinFilterText;
+    [HideInInspector] public CharacterFilter _characterFilter;
+    
+    [HideInInspector] public UserDataInt UserGoldData;
+    [HideInInspector] public UserDataInt UserLevelMaterialData;
+    [HideInInspector] public UserDataInt UserEnhanceMaterialData;
     
     private List<int> _holdingCharactersIndex = new List<int>();
-    
-    private GameObject _characterUIPanel;
+
     private CharacterSort _characterSort;
-    private CharacterFilter _characterFilter;
-     
-    private TextMeshProUGUI _sortingText; 
+
+    private TextMeshProUGUI _evolutionText;
+    private TextMeshProUGUI _sortingText;
+    private Image _evolutionImage;
+    
+    private Button _leftEvolutionButton;
+    private Button _rightEvolutionButton;
     private Button _prevButton;
     private Button _nextButton;
     private Button _sortButton;
@@ -36,7 +41,8 @@ public class CharacterInfoController : BaseUI
     private Button _elementFilterButton;
     private Button _roleFilterButton;
     private Button _dragonVeinFilterButton;
-     
+    
+    private GameObject _characterUIPanel;
     private GameObject _detailTab;
     private GameObject _enhanceTab;
     private GameObject _evolutionTab;
@@ -83,13 +89,10 @@ public class CharacterInfoController : BaseUI
             _userEnhanceMaterial = value;
         }
     }
+
+    private int _evolutionIndex = 0;
     
-    
-    public UserDataInt UserGoldData;
-    public UserDataInt UserLevelMaterialData;
-    public UserDataInt UserEnhanceMaterialData;
-    
-    
+ 
     protected override void Awake()
     {
         base.Awake(); 
@@ -105,33 +108,36 @@ public class CharacterInfoController : BaseUI
     
     private void Init()
     {
+        _detailTab = GetUI("DetailTab");
+        _enhanceTab = GetUI("EnhanceTab");
+        _evolutionTab = GetUI("EvolutionTab");
         _infoPopup = GetUI("InfoPopup");
         _characterUIPanel = GetUI("CharacterUIPanel");
 
         //Sort, Filter GetBind
         _characterFilter = GetUI<CharacterFilter>("FilterUI");
         _characterSort = GetUI<CharacterSort>("SortUI"); 
-        
         _infoUI = GetUI<CharacterInfoUI>("InfoUI");
+
+        _evolutionImage = GetUI<Image>("EvolutionImage");
         
         _prevButton = GetUI<Button>("PreviousButton");
         _nextButton = GetUI<Button>("NextButton");
-
         _sortButton = GetUI<Button>("SortButton");
-        SortButtonText = _sortButton.GetComponentInChildren<TextMeshProUGUI>();
-        _sortingButton = GetUI<Button>("SortingButton");
-        _sortingText = GetUI<TextMeshProUGUI>("SortingButtonText");
-        
         _elementFilterButton = GetUI<Button>("ElementFilterButton");
         _roleFilterButton = GetUI<Button>("RoleFilterButton");
         _dragonVeinFilterButton = GetUI<Button>("DragonVeinFilterButton");
+        _sortingButton = GetUI<Button>("SortingButton");
+        _leftEvolutionButton = GetUI<Button>("LeftEvolutionButton");
+        _rightEvolutionButton = GetUI<Button>("RightEvolutionButton");
+        
+        SortButtonText = _sortButton.GetComponentInChildren<TextMeshProUGUI>();
+
+        _evolutionText = GetUI<TextMeshProUGUI>("EvolutionText");
+        _sortingText = GetUI<TextMeshProUGUI>("SortingButtonText");
         ElementFilterText = GetUI<TextMeshProUGUI>("ElementFilterText"); 
         RoleFilterText = GetUI<TextMeshProUGUI>("RoleFilterText");
         DragonVeinFilterText = GetUI<TextMeshProUGUI>("DragonVeinFilterText");
-        
-        _detailTab = GetUI("DetailTab");
-        _enhanceTab = GetUI("EnhanceTab");
-        _evolutionTab = GetUI("EvolutionTab");
         
     }
 
@@ -153,15 +159,17 @@ public class CharacterInfoController : BaseUI
     
     private void ButtonOnClickEvent()
     {
-        _prevButton.onClick.AddListener(PreviousCharacter);
-        _nextButton.onClick.AddListener(NextCharacter);
+        _leftEvolutionButton.onClick.AddListener(EvolutionPrevCharacter);
+        _rightEvolutionButton.onClick.AddListener(EvolutionNextCharacter);
+        _prevButton.onClick.AddListener(DetailPreviousCharacter);
+        _nextButton.onClick.AddListener(DetailNextCharacter);
         _sortButton.onClick.AddListener(() => _characterSort.transform.GetChild(0).gameObject.SetActive(true));
         _sortingButton.onClick.AddListener(()=> _characterSort.SortingLayerEvent());
         
         _elementFilterButton.onClick.AddListener(() => _characterFilter.transform.GetChild(0).gameObject.SetActive(true));
         _roleFilterButton.onClick.AddListener(() => _characterFilter.transform.GetChild(1).gameObject.SetActive(true));
         _dragonVeinFilterButton.onClick.AddListener(() =>_characterFilter.transform.GetChild(2).gameObject.SetActive(true));
-        
+
     }
 
     /// <summary>
@@ -197,9 +205,9 @@ public class CharacterInfoController : BaseUI
     }
 
     /// <summary>
-    /// 이전 캐릭터 정보로 변경
+    /// 상세 탭 : 이전 캐릭터 정보로 변경
     /// </summary>
-    private void PreviousCharacter()
+    private void DetailPreviousCharacter()
     {
         while (true)
         {
@@ -225,9 +233,9 @@ public class CharacterInfoController : BaseUI
     }
 
     /// <summary>
-    /// 다음 캐릭터 정보로 변경
+    /// 상세 탭 : 다음 캐릭터 정보로 변경
     /// </summary>
-    private void NextCharacter()
+    private void DetailNextCharacter()
     {
         while (true)
         {
@@ -262,6 +270,9 @@ public class CharacterInfoController : BaseUI
         {
             _infoUI._enhanceResultPopup.SetActive(false);
         }
+
+        _evolutionIndex = 0;
+        _leftEvolutionButton.gameObject.SetActive(_evolutionIndex != 0);
         
         _nextButton.gameObject.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
         _prevButton.gameObject.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
@@ -270,4 +281,42 @@ public class CharacterInfoController : BaseUI
         _enhanceTab.SetActive(_curInfoTabType.Equals(InfoTabType.ENHANCE));
         _evolutionTab.SetActive(_curInfoTabType.Equals(InfoTabType.EVOLUTION));
     }
+
+    /// <summary>
+    /// 진화 탭 : 이전 레벨 진화 캐릭터
+    /// </summary>
+    private void EvolutionPrevCharacter()
+    {
+        if (_evolutionIndex > 0)
+        {
+            _evolutionIndex--;
+        }
+
+        EvolutionCharacterUI();
+    }
+
+    /// <summary>
+    /// 진화 탭 : 다음 레벨 진화 캐릭터
+    /// </summary>
+    private void EvolutionNextCharacter()
+    {
+        if (_evolutionIndex < 2)
+        {
+            _evolutionIndex++;
+        }
+
+        EvolutionCharacterUI();
+    }
+
+    private void EvolutionCharacterUI()
+    {
+        _leftEvolutionButton.gameObject.SetActive(_evolutionIndex != 0);
+        _rightEvolutionButton.gameObject.SetActive(_evolutionIndex != 2);
+        //TODO: 캐릭터 데이터에 진화 이미지 들어오면 풀것
+        //_evolutionImage = CurCharacterInfo._CharacterData.EvolutionImage[_evolutionIndex];
+        
+        _evolutionImage.color = new Color(1f, _evolutionIndex * 0.3f, 1f);
+        _evolutionText.text = $"진화 Lv.{_evolutionIndex + 1}";
+    }
+    
 }
