@@ -13,7 +13,7 @@ public class StageManager : MonoBehaviour
     public float PartyCost { get; private set; } = 0;
     public DamageDisplayer DamageDisplayer { get; private set; }
 
-    [SerializeField] StageData stageData;
+    [SerializeField] protected StageData stageData;
     public StageData stageDataOnLoad { get; protected set; }
     public MenuType PrevScene { get; protected set; } = MenuType.NONE;
 

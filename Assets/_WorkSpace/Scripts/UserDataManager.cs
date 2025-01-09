@@ -535,6 +535,14 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             return this;
         }
 
+        /// <summary>
+        /// 딕셔너리 타입의 내부 요소 일부를 수정하기 위한 함수
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="property">갱신할 대상 딕셔너리</param>
+        /// <param name="keyValue">갱신할 딕셔너리의 키</param>
+        /// <param name="value">갱신할 값</param>
+        /// <returns></returns>
         public UpdateDbChain SetDBDictionaryInnerValue<T>(DictionaryAdapter<T> property, in string keyValue, T value)
         {
 #if DEBUG

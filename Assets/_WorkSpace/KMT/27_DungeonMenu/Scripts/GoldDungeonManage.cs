@@ -38,6 +38,7 @@ public class GoldDungeonManage : MonoBehaviour
                     stageData = stageDatas[stageLevelIdx],
                     stageType = StageType.GOLD,
                     prevScene = MenuType.ADVANTURE,
+                    dungeonLevel = stageLevelIdx,
                 });
             }
             else
