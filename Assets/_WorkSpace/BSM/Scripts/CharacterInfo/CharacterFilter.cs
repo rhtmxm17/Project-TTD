@@ -54,8 +54,8 @@ public class CharacterFilter : MonoBehaviour
         _characterFilterUI._multiFilterButton.onClick.AddListener(() => FilterEventFunc(DragonVeinType.MULTI, _characterFilterUI._multiFilterButton));
 
         _characterFilterUI._elementAllFilterButton.onClick.AddListener(() => AllFilterClear(ElementType.NONE));
-        _characterFilterUI._roleAllFilterButton.onClick.AddListener(AllFilterClear);
-        _characterFilterUI._dragonAllFilterButton.onClick.AddListener(AllFilterClear);
+        _characterFilterUI._roleAllFilterButton.onClick.AddListener(() => AllFilterClear(RoleType.NONE));
+        _characterFilterUI._dragonAllFilterButton.onClick.AddListener(() => AllFilterClear(DragonVeinType.NONE));
         
     }
 
@@ -496,13 +496,16 @@ public class CharacterFilter : MonoBehaviour
         _dragonVeinFilterTypes.Clear();
         ChangeFilterText(); 
     }
-
+    
+    /// <summary>
+    /// 전체 버튼으로 해당 필터 모두 해제
+    /// </summary>
+    /// <param name="type"></param>
     private void AllFilterClear(Enum type)
     {
         
         if (type is ElementType)
         {
-            Debug.Log("들어왔음");
             _elementFilterTypes.Clear(); 
             
             if (_roleFiterTypes.Count > 0 && _dragonVeinFilterTypes.Count > 0)
@@ -514,6 +517,7 @@ public class CharacterFilter : MonoBehaviour
                     {
                         _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(true);
                         _elementInfosIndex.RemoveAt(i);
+                        i--;
                     } 
                 } 
             }
@@ -526,14 +530,33 @@ public class CharacterFilter : MonoBehaviour
                     {
                         _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(true);
                         _elementInfosIndex.RemoveAt(i);
+                        i--;
                     } 
                 }  
             }
+            else
+            {
+                for (int i = 0; i < _elementInfosIndex.Count; i++)
+                { 
+                    _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(true);
+                    _elementInfosIndex.RemoveAt(i); 
+                    i--;
+                }  
+            }
 
-            Image buttonBlock = _characterFilterUI._fireFilterButton.GetComponent<Image>();
-            buttonBlock.color = Color.white;
+            _filterTypes.Remove(ElementType.FIRE);
+            _filterTypes.Remove(ElementType.WATER);
+            _filterTypes.Remove(ElementType.WOOD);
+            _filterTypes.Remove(ElementType.METAL);
+            _filterTypes.Remove(ElementType.EARTH);
+            
+            _characterFilterUI._fireFilterButton.GetComponent<Image>().color = Color.white;
+            _characterFilterUI._waterFilterButton.GetComponent<Image>().color = Color.white;
+            _characterFilterUI._grassFilterButton.GetComponent<Image>().color = Color.white;
+            _characterFilterUI._electricFilterButton.GetComponent<Image>().color = Color.white;
+            _characterFilterUI._groundFilterButton.GetComponent<Image>().color = Color.white;
              
-            _buttonColors.Remove(buttonBlock);
+            _buttonColors.Remove(_characterFilterUI._fireFilterButton.GetComponent<Image>());
             _buttonColors.Remove(_characterFilterUI._waterFilterButton.GetComponent<Image>());
             _buttonColors.Remove(_characterFilterUI._grassFilterButton.GetComponent<Image>());
             _buttonColors.Remove(_characterFilterUI._electricFilterButton.GetComponent<Image>());
@@ -541,14 +564,107 @@ public class CharacterFilter : MonoBehaviour
         }
         else if (type is RoleType role)
         {
-             
+            _roleFiterTypes.Clear();
+        
+            if (_elementFilterTypes.Count > 0 && _dragonVeinFilterTypes.Count > 0)
+            {
+                for (int i = 0; i < _elementInfosIndex.Count; i++)
+                {
+                    if (_elementFilterTypes.Contains(_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.type)
+                        && _dragonVeinFilterTypes.Contains(_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.dragonVeinType))
+                    {
+                        _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(true);
+                        _elementInfosIndex.RemoveAt(i);
+                        i--;
+                    } 
+                } 
+            }
+            else if (_elementFilterTypes.Count > 0 || _dragonVeinFilterTypes.Count > 0)
+            {
+                for (int i = 0; i < _elementInfosIndex.Count; i++)
+                {
+                    if (_elementFilterTypes.Contains(_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.type)
+                        || _dragonVeinFilterTypes.Contains(_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.dragonVeinType))
+                    {
+                        _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(true);
+                        _elementInfosIndex.RemoveAt(i);
+                        i--;
+                    } 
+                }  
+            }
+            else
+            {
+                for (int i = 0; i < _elementInfosIndex.Count; i++)
+                {
+
+                    _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(true);
+                    _elementInfosIndex.RemoveAt(i); 
+                    i--;
+                }  
+            }
+            _filterTypes.Remove(RoleType.ATTACKER);
+            _filterTypes.Remove(RoleType.DEFENDER);
+            _filterTypes.Remove(RoleType.SUPPORTER);
+            
+            _characterFilterUI._attackFilterButton.GetComponent<Image>().color = Color.white;
+            _characterFilterUI._deffenseFilterButton.GetComponent<Image>().color = Color.white;
+            _characterFilterUI._supportFilterButton.GetComponent<Image>().color = Color.white;
+
+            _buttonColors.Remove(_characterFilterUI._attackFilterButton.GetComponent<Image>());
+            _buttonColors.Remove(_characterFilterUI._deffenseFilterButton.GetComponent<Image>());
+            _buttonColors.Remove(_characterFilterUI._supportFilterButton.GetComponent<Image>());
         }
         else if (type is DragonVeinType dragonVein)
         {
+            _dragonVeinFilterTypes.Clear();
+        
+            if (_elementFilterTypes.Count > 0 && _roleFiterTypes.Count > 0)
+            {
+                for (int i = 0; i < _elementInfosIndex.Count; i++)
+                {
+                    if (_elementFilterTypes.Contains(_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.type)
+                        && _roleFiterTypes.Contains(_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.roleType))
+                    {
+                        _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(true);
+                        _elementInfosIndex.RemoveAt(i);
+                        i--;
+                    } 
+                } 
+            }
+            else if (_elementFilterTypes.Count > 0 || _roleFiterTypes.Count > 0)
+            {
+                for (int i = 0; i < _elementInfosIndex.Count; i++)
+                {
+                    if (_elementFilterTypes.Contains(_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.type)
+                        || _roleFiterTypes.Contains(_filterCharacterInfos[_elementInfosIndex[i]]._CharacterData.StatusTable.roleType))
+                    {
+                        _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(true);
+                        _elementInfosIndex.RemoveAt(i);
+                        i--;
+                    } 
+                }   
+            }
+            else
+            {
+                for (int i = 0; i < _elementInfosIndex.Count; i++)
+                {
+
+                    _filterCharacterInfos[_elementInfosIndex[i]].gameObject.SetActive(true);
+                    _elementInfosIndex.RemoveAt(i); 
+                    i--;
+                }  
+            }
+            _filterTypes.Remove(DragonVeinType.SINGLE);
+            _filterTypes.Remove(DragonVeinType.MULTI);
             
-        }
+            _characterFilterUI._singleFilterButton.GetComponent<Image>().color = Color.white;
+            _characterFilterUI._multiFilterButton.GetComponent<Image>().color = Color.white;
+            
+            _buttonColors.Remove(_characterFilterUI._singleFilterButton.GetComponent<Image>());
+            _buttonColors.Remove(_characterFilterUI._multiFilterButton.GetComponent<Image>()); 
+        } 
         
-        
+        ChangeFilterText();
         
     }
     
