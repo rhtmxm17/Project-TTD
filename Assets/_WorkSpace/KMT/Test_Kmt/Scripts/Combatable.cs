@@ -31,6 +31,8 @@ public class Combatable : MonoBehaviour
     protected float range;
     Skill baseAttack;
 
+    protected int curActionPriority = 0;
+
     protected NavMeshAgent agent;
     protected CharacterModel characterModel;
 
@@ -61,11 +63,43 @@ public class Combatable : MonoBehaviour
     }
 
     /// <summary>
-    /// 전투 씬에서 캐릭터를 초기화
+    /// 전투 씬에서 유저 데이터의 레벨 등 상태에 기반해 캐릭터를 초기화
     /// </summary>
     /// <param name="Group">캐릭터가 속한 그룹(플레이어측 혹은 적 웨이브)</param>
     /// <param name="data">캐릭터 데이터</param>
-    public void Initialize(CombManager Group, CharacterData data) => InitializeWithLevel(Group, data, data.Level.Value);
+    public void InitializeWithUserData(CombManager Group, CharacterData data)
+    {
+        if (characterData != null)
+        {
+            Debug.LogWarning("캐릭터 초기화 함수가 두 번 실행됨");
+        }
+        characterData = data;
+        gameObject.name = data.Name;
+        SetCharacterModel(data.ModelPrefab);
+        // 그룹 지정
+        this.Group = Group;
+        IsAlive = true;
+        CharacterData.Status table = data.StatusTable;
+
+        // ============= 능력치 셋팅 ==============
+        attackPoint.Value = data.AttackPointLeveled;
+        maxHp.Value = data.HpPointLeveled;
+        hp.Value = MaxHp.Value;
+        defense.Value = data.DefensePointLeveled;
+
+        defConst = table.defenseCon;
+        agent.stoppingDistance = table.Range;
+        range = table.Range;//사거리
+
+        //TODO : 이동속도가 다른경우 파라미터 추가하기.
+
+        baseAttack = data.BasicSkillDataSO;
+
+        hp.Subscribe(x =>
+        {
+            hpSlider.value = x / MaxHp.Value;
+        });
+    }
 
     /// <summary>
     /// 전투 씬에서 레벨을 지정해서 캐릭터를 초기화
@@ -80,35 +114,23 @@ public class Combatable : MonoBehaviour
             Debug.LogWarning("캐릭터 초기화 함수가 두 번 실행됨");
         }
         characterData = data;
-
         gameObject.name = data.Name;
-
         SetCharacterModel(data.ModelPrefab);
-
         // 그룹 지정
         this.Group = Group;
-
         IsAlive = true;
-
-        // 레벨이 지정되지 않았을 경우 유저 데이터의 레벨 사용
-        if (level < 0)
-            level = data.Level.Value;
-
         CharacterData.Status table = data.StatusTable;
 
+        // ============= 능력치 셋팅 ==============
         attackPoint.Value = table.attackPointBase
                           + table.attackPointGrowth * level;
-
         maxHp.Value = table.healthPointBase
                     + table.healthPointGrouth * level;
-
         hp.Value = MaxHp.Value;
-
         defense.Value = table.defensePointBase
                       + table.defensePointGrouth * level;
 
         defConst = table.defenseCon;
-
         agent.stoppingDistance = table.Range;
         range = table.Range;//사거리
 
@@ -118,9 +140,7 @@ public class Combatable : MonoBehaviour
 
         hp.Subscribe(x =>
         {
-
             hpSlider.value = x / MaxHp.Value;
-
         });
     }
 
@@ -168,7 +188,13 @@ public class Combatable : MonoBehaviour
             return;
         }
 
+        float healAmount = hp.Value;
+
         float afterHp = MathF.Min(MaxHp.Value, hp.Value + amount);
+
+        healAmount = afterHp - healAmount;
+        StageManager.Instance.DamageDisplayer.PlayTextDisplay(healAmount, false, transform.position + Vector3.forward * CharacterSizeRadius * 3);
+
         hp.Value = afterHp;
 
     }
@@ -202,6 +228,7 @@ public class Combatable : MonoBehaviour
         //View의 setvalue등을 연결하기.
         hp.Value -= damage;
         onDamagedEvent?.Invoke(damage);
+        StageManager.Instance.DamageDisplayer.PlayTextDisplay(damage, true, transform.position + Vector3.forward * CharacterSizeRadius * 3);
 
         if (hp.Value < 0)
         {
@@ -227,15 +254,23 @@ public class Combatable : MonoBehaviour
     /// 스킬의 타겟팅 로직을 실행해본 뒤, 타겟이 있다면 스킬을 실행.
     /// </summary>
     /// <param name="skillData">실행할 스킬 데이터</param>
-    /// <returns>타겟 대상이 있는경우 스킬을 실행하고 true 반환, 없을경우 단순 false 반환.</returns>
-    public bool OnSkillCommanded(Skill skillData)
+    /// <param name="priority">실행할 스킬의 행동 우선순위</param>
+    /// <returns>타겟 대상이 있는경우 스킬을 실행하고 true 반환, 없거나 다른 우선순위의 스킬을 시전중인 경우 단순 false 반환.</returns>
+    public bool OnSkillCommanded(Skill skillData, int priority)
     {
+        if (curActionPriority > priority)
+        {
+            Debug.Log("더 우선순위가 큰 행동중.");
+            return false;
+        }
+
         Combatable skillTarget = skillData.TargetingLogic.GetTarget(this);
         if (skillTarget == null)
             return false;
 
         StopCurActionCoroutine();
         Look(skillTarget.transform);
+        curActionPriority = priority;
         curActionCoroutine = StartCoroutine(skillData.SkillRoutine(this, skillTarget, OnSkillCompleted));
         agent.ResetPath();
         return true;
@@ -244,6 +279,7 @@ public class Combatable : MonoBehaviour
     private void OnSkillCompleted()
     {
         StopCurActionCoroutine();
+        curActionPriority = 0;
         curActionCoroutine = StartCoroutine(TrackingCo());
     }
 
@@ -359,7 +395,7 @@ public class Combatable : MonoBehaviour
         while (target != null && target.IsAlive && range + target.CharacterSizeRadius > Vector3.Distance(target.transform.position, transform.position))
         {
             Look(target.transform);
-            StartCoroutine(baseAttack.SkillRoutine(this, target, null));
+            StartCoroutine(baseAttack.SkillRoutine(this, target, null));//이것도 액션으로 관리?
             yield return new WaitForSeconds(1);
         }
 

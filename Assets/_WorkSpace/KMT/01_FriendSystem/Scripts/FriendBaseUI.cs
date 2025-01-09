@@ -19,7 +19,7 @@ public class FriendBaseUI : BaseUI
         GetUI<Button>("RequestedTab").onClick.AddListener(() => SelectTab(Tabs.REQUESTED));
         GetUI<Button>("RecievedTab").onClick.AddListener(() => SelectTab(Tabs.RECIEVED));
 
-        GetUI<Button>("BackgroundPadder").onClick.AddListener(() => GetComponent<OpenableWindow>().CloseWindow());
+        // GetUI<Button>("BackgroundPadder").onClick.AddListener(() => GetComponent<OpenableWindow>().CloseWindow());
 
         tabDictionary.Add(Tabs.FRIENDS, (GetUI<FocusableTab>("FriendTab"), GetUI<OpenableWindow>("FriendWindow")));
         tabDictionary.Add(Tabs.SEARCH, (GetUI<FocusableTab>("SearchTab"), GetUI<OpenableWindow>("SearchWindow")));

@@ -23,16 +23,13 @@ public class StageCharacterSetter : MonoBehaviour
     GameObject levelupButtonPanel; 
     [SerializeField]
     LevelupButton levelupButtonPrefab;
-    [SerializeField]
-    GameObject dummyButton;
 
 
     [Header("Second Skills")]
     [SerializeField]
     GameObject secondSkillPanel;
-    [SerializeField]
-    GameObject costSkillToggleButton;
 
+    [Header("spacing in skillButtonGroup")]
     [SerializeField]
     GameObject blockerDummyButtonPrefab;
 
@@ -63,6 +60,9 @@ public class StageCharacterSetter : MonoBehaviour
 
     private void SpawnCharacterDataSet(Dictionary<int, CharacterData> characterDataList, List<StageData.BuffInfo> tileBuff)
     {
+        AutoBattleLogic battleLogic = GetComponent<AutoBattleLogic>();
+        battleLogic.InitLogicCount(characterDataList.Count);
+
         CombManager group = GetComponent<CombManager>();
         List<Combatable> characters = new List<Combatable>();
 
@@ -72,15 +72,18 @@ public class StageCharacterSetter : MonoBehaviour
             CharacterCombatable charObj = Instantiate(characterPrefab, position[pair.Key], Quaternion.identity, transform);
             characters.Add(charObj);
 
-            charObj.Initialize(group, pair.Value);
+            charObj.InitializeWithUserData(group, pair.Value);
 
+            BasicSkillButton basicSkillButton = Instantiate(basicSkillButtonPrefab, skillPanel.transform);
             LevelupButton levelupButton = Instantiate(levelupButtonPrefab, levelupButtonPanel.transform);
             SecondSkillButton sndSkillButton = Instantiate(secondSkillButtonPrefab, secondSkillPanel.transform);
 
             charObj.InitCharacterData(
-                            Instantiate(basicSkillButtonPrefab, skillPanel.transform),
+                            basicSkillButton,
                             levelupButton,
                             sndSkillButton);
+
+            battleLogic.AddSkillButtons(basicSkillButton, levelupButton, sndSkillButton);
 
             foreach (StageData.BuffInfo buffInfo in tileBuff)
             {
@@ -92,7 +95,7 @@ public class StageCharacterSetter : MonoBehaviour
             }
         }
 
-        //5칸까지 캐릭터를 추가.
+        //비어있다면 5칸까지 방벽 더미 버튼을 추가.
         for (int i = 0; i < 5 - characterDataList.Count; i++)
         {
             Instantiate(blockerDummyButtonPrefab, skillPanel.transform);
@@ -102,9 +105,7 @@ public class StageCharacterSetter : MonoBehaviour
 
         GetComponent<CombManager>().CharList = characters;
 
-
-        dummyButton.transform.SetAsLastSibling();
-        costSkillToggleButton.transform.SetAsLastSibling();
+        battleLogic.StartBasicSkill();
 
     }
 

@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 public class StartGameScene : MonoBehaviour
 {
-    public bool UseLegacyMain { get; set; }
+    public bool UseLegacyMain { get; set; } = false;
 
     [System.Serializable]
     private struct ChildUIField

@@ -17,7 +17,7 @@ public class AdventureUI : BaseUI
 
     [Header("combat Scene Type")]
     [SerializeField]
-    GameManager.StageType stageType;
+    StageType stageType;
 
     private List<StageData> stagesData;
     private List<GameObject> stageButtons = new List<GameObject>();
@@ -44,6 +44,16 @@ public class AdventureUI : BaseUI
             rt.anchoredPosition = new Vector2(0f, isOdd ? -verticalSpacing : verticalSpacing);
 
             instance.Id = i;
+
+            if (this.stagesData[instance.Id].IsOpened)
+            {
+                instance.GetComponent<Button>().interactable = true;
+            }
+            else
+            {
+                instance.GetComponent<Button>().interactable = false;
+            }
+
             instance.Button.onClick.AddListener(() =>
             {
                 Debug.Log(instance.Id);
@@ -61,9 +71,16 @@ public class AdventureUI : BaseUI
         SimpleInfoPopup instance = Instantiate(popupPrefab, GameManager.PopupCanvas);
         instance.Title.text = data.StageName;
 
-        instance.SubmitButton.onClick.AddListener(() => {
-            GameManager.Instance.SetLoadStageType(data, stageType);
-            SceneManager.LoadSceneAsync("HYJ_BattleFormation");
+        StageSceneChangeArgs sceneChangeArgs = new StageSceneChangeArgs()
+        {
+            stageData = data,
+            stageType = stageType,
+            prevScene = MenuType.ADVANTURE,
+        };
+
+        instance.SubmitButton.onClick.AddListener(() =>
+        {
+            GameManager.Instance.LoadBattleFormationScene(sceneChangeArgs);
         });
     }
 }

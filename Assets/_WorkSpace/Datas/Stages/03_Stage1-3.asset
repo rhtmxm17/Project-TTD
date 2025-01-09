@@ -13,20 +13,43 @@ MonoBehaviour:
   m_Name: 03_Stage1-3
   m_EditorClassIdentifier: 
   id: 3
-  stageName: "\uB450\uBC88\uC9F8 \uCE90\uB9AD\uD130 \uD68D\uB4DD"
+  stageName: "1-3 \uB2ED\uC774 \uB6F0\uB178\uB294 \uC2323"
   waves:
   - monsters:
     - character: {fileID: 11400000, guid: d56b5c688c7c7204b91212abd9a36a3d, type: 2}
       level: 1
-      pose: {x: 5.5, y: 4}
+      pose: {x: 5, y: 0}
     - character: {fileID: 11400000, guid: 5e6e3ac5931e8cf408b9ed39bdadacd8, type: 2}
       level: 1
-      pose: {x: 5.5, y: 4}
+      pose: {x: 5, y: 2.5}
+  - monsters:
+    - character: {fileID: 11400000, guid: 1ed0847cc5391e344aa6b5bc625d08e9, type: 2}
+      level: 2
+      pose: {x: 5, y: 0}
+    - character: {fileID: 11400000, guid: b4f2cdaefa3cbe844905e2530e014fae, type: 2}
+      level: 2
+      pose: {x: 5, y: 2.5}
+  - monsters:
+    - character: {fileID: 11400000, guid: d56b5c688c7c7204b91212abd9a36a3d, type: 2}
+      level: 1
+      pose: {x: 5, y: 0}
+    - character: {fileID: 11400000, guid: 1ed0847cc5391e344aa6b5bc625d08e9, type: 2}
+      level: 2
+      pose: {x: 15, y: -3}
+    - character: {fileID: 11400000, guid: b4f2cdaefa3cbe844905e2530e014fae, type: 2}
+      level: 2
+      pose: {x: 15, y: 0}
   reward:
   - item: {fileID: 11400000, guid: f1bbabe0235b76f4a89b0f533d2ee88e, type: 2}
     gain: 1
   - item: {fileID: 11400000, guid: a95395e108683d54698ec30e7819a691, type: 2}
     gain: 100
   tileBuff: []
+  timeLimit: 0
   backgroundTypePrefab: {fileID: -7751941713409088105, guid: 198844de908c1994c8c3ecf2ad478f22,
     type: 3}
+  spriteImage: {fileID: 0}
+  description: 
+  preStory: {fileID: 0}
+  postStory: {fileID: 0}
+  isOpened: 0

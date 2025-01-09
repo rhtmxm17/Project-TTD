@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -15,11 +16,11 @@ public class CharacterFilter : MonoBehaviour
     [HideInInspector] public List<RoleType> _roleFiterTypes = new List<RoleType>();
     [HideInInspector] public List<DragonVeinType> _dragonVeinFilterTypes = new List<DragonVeinType>();
     [HideInInspector] public List<Image> _buttonColors = new List<Image>();
-
+    [HideInInspector] public CharacterInfoController CharacterController;
     private List<Enum> _filterTypes = new List<Enum>();
 
     private CharacterFilterUI _characterFilterUI; 
-    public CharacterInfoController CharacterController;
+   
     
     private int _elementCount = 0;
     private int _roleCount = 0;
@@ -477,6 +478,8 @@ public class CharacterFilter : MonoBehaviour
     /// </summary>
     private void AllFilterClear()
     {
+        if (CharacterController == null) return;
+        
         _buttonColors?.ForEach(x => x.color = Color.white);
         
         for (int i = 0; i < _elementInfosIndex.Count; i++)

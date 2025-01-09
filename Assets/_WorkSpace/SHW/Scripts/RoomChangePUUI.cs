@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.HID;
@@ -24,6 +23,12 @@ public class RoomChangePUUI : BaseUI
     {
         Init();
         LoadRoomData();
+    }
+
+    private void OnEnable()
+    {
+        // 혹시나 UI가 꺼진 상태에서 닫을 경우 대비
+        MarkUI();
     }
 
     private void Init()
@@ -157,13 +162,10 @@ public class RoomChangePUUI : BaseUI
     // UI숨기기 버튼
     private void HideUI()
     {
-        GetUI("CloseChangeRoomPopup").SetActive(false);
         GetUI("Title").SetActive(false);
         GetUI("NextButton").SetActive(false);
         GetUI("BeforeButton").SetActive(false);
         GetUI("ExplainPopup").SetActive(false);
-        GetUI("HomeButton").SetActive(false);
-        GetUI("MenuButton").SetActive(false);
         GetUI("HideUIButton").SetActive(false);
         GetUI("MarkUIButton").SetActive(true);
     }
@@ -171,13 +173,10 @@ public class RoomChangePUUI : BaseUI
     // UI 다시 나타내기 버튼
     private void MarkUI()
     {
-        GetUI("CloseChangeRoomPopup").SetActive(true);
         GetUI("Title").SetActive(true);
         GetUI("NextButton").SetActive(true);
         GetUI("BeforeButton").SetActive(true);
         GetUI("ExplainPopup").SetActive(true);
-        GetUI("HomeButton").SetActive(true);
-        GetUI("MenuButton").SetActive(true);
         GetUI("HideUIButton").SetActive(true);
         GetUI("MarkUIButton").SetActive(false);
     }
