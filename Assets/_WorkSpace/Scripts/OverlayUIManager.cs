@@ -15,6 +15,12 @@ public class OverlayUIManager : SingletonBehaviour<OverlayUIManager>
         RegisterSingleton(this);
     }
 
+    /// <summary>
+    /// 아이템 획득 팝업 생성 함수<br/>
+    /// 반환된 ItemGainPopup 참조를 통해 추가로 타이틀 등을 변경할 수 있음
+    /// </summary>
+    /// <param name="gain">획득한 아이템 종류와 개수 정보</param>
+    /// <returns>생성된 팝업을 반환</returns>
     public ItemGainPopup PopupItemGain(List<ItemGain> gain = null)
     {
         ItemGainPopup popupInstance = Instantiate(itemGainPopupPrefab, GameManager.PopupCanvas.transform);

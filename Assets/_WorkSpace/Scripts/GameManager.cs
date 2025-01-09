@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
-public enum StageType { NORMAL, GOLD, BOSS, NONE }
+public enum StageType { NORMAL, GOLD, BOSS, STORY, NONE }
 
 /// <summary>
 /// 빠른 이동 메뉴에서 이동 가능한 메뉴 목록
@@ -154,27 +154,32 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     void SwitchStageType()
     {
+        string destScene; // 이동할 씬 이름
         switch (sceneChangeArgs.stageType)
         { 
             case StageType.NORMAL:
-                SceneManager.sceneLoaded += OnStageSceneLoaded;
-                SceneManager.LoadSceneAsync("StageDefault");
+                destScene = "StageDefault";
                 break;
             case StageType.GOLD:
-                SceneManager.sceneLoaded += OnStageSceneLoaded;
-                SceneManager.LoadSceneAsync("Stage_Coin");
+                destScene = "Stage_Coin";
                 break;
             case StageType.BOSS:
-                SceneManager.sceneLoaded += OnStageSceneLoaded;
-                SceneManager.LoadSceneAsync("Stage_Boss");
+                destScene = "Stage_Boss";
+                break;
+            case StageType.STORY:
+                Debug.Log("임시로 일반 전투 씬으로 이동");
+                destScene = "StageDefault";
                 break;
             case StageType.NONE:
-                Debug.Log("지정된 스테이지 타입이 없음");
+                Debug.Log("지정된 스테이지 타입이 없어 기본 전투 씬으로 이동함");
+                destScene = "StageDefault";
                 break;
             default:
-                Debug.Log("예외상황");
-                break;
+                Debug.Log($"잘못된 StageType: {sceneChangeArgs.stageType}");
+                return;
         }
+        SceneManager.sceneLoaded += OnStageSceneLoaded;
+        SceneManager.LoadSceneAsync(destScene);
     }
 
     /// <summary>
@@ -213,8 +218,4 @@ public class StageSceneChangeArgs
     /// </summary>
     public MenuType prevScene = MenuType.ADVANTURE;
 
-    /// <summary>
-    /// 스토리 모드에서 필요한 추가 정보
-    /// </summary>
-    public StoryEpisodeData episodeData = null;
 }
