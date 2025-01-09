@@ -188,7 +188,13 @@ public class Combatable : MonoBehaviour
             return;
         }
 
+        float healAmount = hp.Value;
+
         float afterHp = MathF.Min(MaxHp.Value, hp.Value + amount);
+
+        healAmount = afterHp - healAmount;
+        StageManager.Instance.DamageDisplayer.PlayTextDisplay(healAmount, false, transform.position + Vector3.forward * CharacterSizeRadius * 3);
+
         hp.Value = afterHp;
 
     }
@@ -222,6 +228,7 @@ public class Combatable : MonoBehaviour
         //View의 setvalue등을 연결하기.
         hp.Value -= damage;
         onDamagedEvent?.Invoke(damage);
+        StageManager.Instance.DamageDisplayer.PlayTextDisplay(damage, true, transform.position + Vector3.forward * CharacterSizeRadius * 3);
 
         if (hp.Value < 0)
         {

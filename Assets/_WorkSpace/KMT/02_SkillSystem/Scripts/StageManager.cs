@@ -11,6 +11,7 @@ public class StageManager : MonoBehaviour
     public static StageManager Instance = null;
 
     public float PartyCost { get; private set; } = 0;
+    public DamageDisplayer DamageDisplayer { get; private set; }
 
     [SerializeField] StageData stageData;
     private StageData stageDataOnLoad;
@@ -29,14 +30,6 @@ public class StageManager : MonoBehaviour
     [Header("Scroller")]
     [SerializeField]
     BGScroller scroller;
-
-    //데이터 테스트용 임시 구조체
-/*    [System.Serializable]
-    struct monsterData
-    {
-        [SerializeField] public List<CharacterData> monsters;
-
-    }*/
 
     [Header("Monsters")]
     [SerializeField] Transform monsterWaveParent;
@@ -85,7 +78,10 @@ public class StageManager : MonoBehaviour
     private void Awake()
     {
         if (Instance == null)
+        {
             Instance = this;
+            DamageDisplayer = GetComponent<DamageDisplayer>();
+        }
         else
             Destroy(gameObject);
     }
