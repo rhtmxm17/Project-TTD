@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-
 #if UNITY_EDITOR
 using UnityEditor;
 
@@ -75,6 +74,11 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
     public List<BuffInfo> TileBuff => tileBuff;
 
     /// <summary>
+    /// 스테이지 제한 시간(초 단위)
+    /// </summary>
+    public int TimeLimit => TimeLimit;
+
+    /// <summary>
     /// 스테이지 뒷배경 정보 프리팹
     /// </summary>
     public ScrollableBG BackgroundTypePrefab => backgroundTypePrefab;
@@ -110,6 +114,7 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
     [SerializeField] List<WaveInfo> waves;
     [SerializeField] List<ItemGain> reward;
     [SerializeField] List<BuffInfo> tileBuff;
+    [SerializeField] int timeLimit;
     [SerializeField] ScrollableBG backgroundTypePrefab;
     [SerializeField] Sprite spriteImage;
     [SerializeField, TextArea] string description;
@@ -243,9 +248,29 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
                 // NAME
                 stageName = cells[(int)Column.STAGE_NAME];
 
-                //Background Type
+                // TIME_LIMIT
+                if (false == int.TryParse(cells[(int)Column.TIME_LIMIT], out timeLimit))
+                {
+                    timeLimit = 0;
+                }
+
+                /////// null을 허용하는 데이터들
+
+                // BACKGROUND_TYPE
                 backgroundTypePrefab = AssetDatabase.LoadAssetAtPath<ScrollableBG>(
                     $"{DataTableManager.PrefabsAssetFolder}/ScrollBackground/{cells[(int)Column.BACKGROUND_TYPE]}.prefab");
+
+                // SPRITE_IMAGE
+                spriteImage = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.SPRITE_IMAGE]}.asset");
+
+                // PRE_STORY
+                preStory = AssetDatabase.LoadAssetAtPath<StoryDirectingData>($"{DataTableManager.StoryAssetFolder}/{cells[(int)Column.PRE_STORY]}.asset");
+
+                // NAME
+                description = cells[(int)Column.DESCRIPTION];
+
+                // POST_STORY
+                postStory = AssetDatabase.LoadAssetAtPath<StoryDirectingData>($"{DataTableManager.StoryAssetFolder}/{cells[(int)Column.POST_STORY]}.asset");
             }
             else
             {
