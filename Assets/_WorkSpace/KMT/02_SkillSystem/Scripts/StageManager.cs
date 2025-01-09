@@ -14,7 +14,7 @@ public class StageManager : MonoBehaviour
     public DamageDisplayer DamageDisplayer { get; private set; }
 
     [SerializeField] StageData stageData;
-    private StageData stageDataOnLoad;
+    public StageData stageDataOnLoad { get; protected set; }
     public MenuType PrevScene { get; protected set; } = MenuType.NONE;
 
     [Header("Camera Effecter")]
