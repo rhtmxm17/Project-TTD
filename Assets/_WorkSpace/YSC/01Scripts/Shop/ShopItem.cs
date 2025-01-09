@@ -43,6 +43,13 @@ public class ShopItem : BaseUI
     [SerializeField] PurchasingPanel purchasingPanel;
 
     [SerializeField] private ShopPopupController shopPopup;
+    
+    /* DailyBonus.cs 스크립트에 하루 5회 구매할 수 있는거 관련 코드들 있음.
+     * DailyChecker.cs
+     * 
+     */
+    
+    
     private void Start()
     {
         Init();
@@ -234,7 +241,7 @@ public class ShopItem : BaseUI
         AlreadyHasChar popupInstance = Instantiate(charWarningPopup, GameManager.PopupCanvas);
         popupInstance.transform.SetAsFirstSibling();
         popupInstance.SetItem(this.shopItemData);
-        popupInstance.CheckMaxEnhance();
+        popupInstance.CheckMaxEnhance(); // 강화 최대치인지 확인하기
         // popupInstance.SetItem(shopItemData); 일단 비활성화 근데 어차피 그 아이템 사야하니까 정보불러올필요는 있어서 뭔가해야할듯함.
     }
 
