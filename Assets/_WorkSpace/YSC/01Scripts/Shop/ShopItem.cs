@@ -204,9 +204,11 @@ public class ShopItem : BaseUI
     public void SoldOut()
     {
         
-        buyButtonText.text = "매!\t진!";
+        buyButtonText.text = "SOLD\nOUT";
+        buyButtonText.color = new Color(1f, .1f, .2f, 1f);
+        GetUI<Image>("BuyButton").color = new Color(.3f, .3f, .3f, .75f); // 아이템창 어둡게
         buyButton.onClick.RemoveListener(Buy); //구매버튼 비활성화
-        ShopItemImage.color = new Color(.3f, .3f, .3f, 1f); // 어둡게 
+        ShopItemImage.color = new Color(.3f, .3f, .3f, 1f); // 아이템 어둡게 
         
     }
 
@@ -227,6 +229,7 @@ public class ShopItem : BaseUI
     {
         AlreadyHasChar popupInstance = Instantiate(charWarningPopup, GameManager.PopupCanvas);
         popupInstance.transform.SetAsFirstSibling();
+        popupInstance.SetItem(this.shopItemData);
         // popupInstance.SetItem(shopItemData); 일단 비활성화 근데 어차피 그 아이템 사야하니까 정보불러올필요는 있어서 뭔가해야할듯함.
     }
 
@@ -234,6 +237,7 @@ public class ShopItem : BaseUI
     {
         OverlayUIManager popupInstance = GameManager.OverlayUIManager;
         popupInstance.OpenSimpleInfoPopup("소지하신 재료가 부족합니다.", "닫기", null);
+        
     }
 
     private void CheckItemIndexAndCompare()
