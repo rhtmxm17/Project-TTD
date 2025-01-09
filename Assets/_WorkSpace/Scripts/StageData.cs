@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -29,11 +30,14 @@ public enum StatusBuffType : int
 
 public class StageData : ScriptableObject, ICsvMultiRowParseable
 {
+    // ================== 테이블 데이터 속성 ==================
 
     /// <summary>
     /// 각 스테이지의 고유 번호
     /// </summary>
     public int Id => id;
+
+    // === UI 관련 데이터 ===
 
     /// <summary>
     /// 스테이지를 대표하는 이름
@@ -41,7 +45,21 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
     public string StageName => stageName;
 
     /// <summary>
-    /// 스테이지의 적 구성
+    /// 대표 이미지(null일 수 있음, 이미지를 사용하는 팝업창 등에 기본값을 준비할것)
+    /// </summary>
+    public Sprite SpriteImage => spriteImage;
+
+    /// <summary>
+    /// 해설 텍스트
+    /// </summary>
+    public string Description => description;
+
+
+    // === 인게임 데이터 ===
+
+    /// <summary>
+    /// 스테이지의 적 구성<br/>
+    /// Waves[웨이브 번호].monsters[몬스터 번호]
     /// </summary>
     public List<WaveInfo> Waves => waves;
 
@@ -56,29 +74,82 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
     public List<BuffInfo> TileBuff => tileBuff;
 
     /// <summary>
-    /// (유저 데이터) 클리어 횟수
+    /// 스테이지 제한 시간(초 단위)
     /// </summary>
-    public UserDataInt ClearCount { get; private set; }
+    public int TimeLimit => TimeLimit;
 
     /// <summary>
     /// 스테이지 뒷배경 정보 프리팹
     /// </summary>
     public ScrollableBG BackgroundTypePrefab => backgroundTypePrefab;
 
-    [SerializeField] int id;
-
-    [SerializeField] string stageName;
+    // === 특수 데이터 ===
 
     /// <summary>
-    /// waves[웨이브 번호].monsters[몬스터 번호]
+    /// (스토리 재생 가능하다면) 에피소드 진입시 바로 재생될 스토리
     /// </summary>
+    public StoryDirectingData PreStory => preStory;
+
+    /// <summary>
+    /// (존재한다면) 전투 이후 재생될 스토리
+    /// </summary>
+    public StoryDirectingData PostStory => postStory;
+
+    // ================== 유저 데이터 속성 ==================
+
+    /// <summary>
+    /// (유저 데이터) 클리어 횟수
+    /// </summary>
+    public UserDataInt ClearCount { get; private set; }
+
+    /// <summary>
+    /// 해당 스테이지가 해금되었는지의 여부
+    /// </summary>
+    public bool IsOpened
+    {
+        get
+        {
+            foreach (int stageId in lockConditionStageIDs)
+            {
+                // 지정된 Id를 갖는 스테이지의 클리어 이력이 없으면 잠김 상태
+                StageData prevStage = GameManager.TableData.GetStageData(stageId);
+                if (prevStage != null && prevStage.ClearCount.Value == 0)
+                {
+                    return false;
+                }
+            }
+
+            if (lockConditionStageIDs.Count == 0)
+            {
+                // 리스트가 비어있다면 기본값(이전 id의 스테이지) 조회
+                StageData prevStage = GameManager.TableData.GetStageData(id - 1);
+                
+                // 이전 id가 비어있다면 (prevStage == null) 조건 없이 개방
+                if (prevStage != null && prevStage.ClearCount.Value == 0)
+                {
+                    return false;
+                }
+            }
+
+            // 모든 검사를 통과하면 해금 상태
+            return true;
+        }
+    }
+
+    // ================== 직렬화 ==================
+
+    [SerializeField] int id;
+    [SerializeField] string stageName;
     [SerializeField] List<WaveInfo> waves;
-
     [SerializeField] List<ItemGain> reward;
-
     [SerializeField] List<BuffInfo> tileBuff;
-
+    [SerializeField] int timeLimit;
     [SerializeField] ScrollableBG backgroundTypePrefab;
+    [SerializeField] Sprite spriteImage;
+    [SerializeField, TextArea] string description;
+    [SerializeField] StoryDirectingData preStory = null;
+    [SerializeField] StoryDirectingData postStory = null;
+    [SerializeField] List<int> lockConditionStageIDs; // 개방 조건에 해당하는 선행 스테이지 목록
 
     private void OnEnable()
     {
@@ -120,7 +191,32 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
         public int tileIndex;
     }
 
+    /// <summary>
+    /// 클리어 횟수를 증가시키고 플레이어가 클리어 이력이 없었다면 보상을 획득<br/>
+    /// 콜백값은 보상 획득 여부와 무관함에 주의
+    /// </summary>
+    /// <param name="onCompleteCallback">완료시 콜백, 반환값은 DB 접속 성공 여부</param>
+    public void UserGetRewardOnceAsync(UnityAction<bool> onCompleteCallback)
+    {
+        var stream = GameManager.UserData.StartUpdateStream();
+
+        // 클리어 기록이 없다면 보상 획득을 스트림에 등록
+        if (this.ClearCount.Value == 0)
+        {
+            foreach (var item in this.Reward)
+            {
+                stream.AddDBValue(item.item.Number, item.gain);
+            }
+        }
+        
+        // 클리어 횟수 갱신을 스트림에 둥록
+        stream.AddDBValue(this.ClearCount, 1);
+
+        stream.Submit(onCompleteCallback);
+    }
+
 #if UNITY_EDITOR
+    #region 데이터 파싱
     private enum Column
     {
         ID,
@@ -146,8 +242,15 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
         BUFF_TILE_INDEX,
 
         TIME_LIMIT,
-        BACKGROUND_TYPE
+        BACKGROUND_TYPE,
 
+        SPRITE_IMAGE,
+        DESCRIPTION,
+
+        PRE_STORY,
+        POST_STORY,
+
+        LOCK_CONDITON_ID,
     }
 
     public void ParseCsvMultiRow(string[] lines, ref int line)
@@ -171,13 +274,34 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
                 waves = new List<WaveInfo>();
                 reward = new List<ItemGain>();
                 tileBuff = new List<BuffInfo>();
+                lockConditionStageIDs = new List<int>();
 
                 // NAME
                 stageName = cells[(int)Column.STAGE_NAME];
 
-                //Background Type
+                // TIME_LIMIT
+                if (false == int.TryParse(cells[(int)Column.TIME_LIMIT], out timeLimit))
+                {
+                    timeLimit = 0;
+                }
+
+                /////// null을 허용하는 데이터들
+
+                // BACKGROUND_TYPE
                 backgroundTypePrefab = AssetDatabase.LoadAssetAtPath<ScrollableBG>(
                     $"{DataTableManager.PrefabsAssetFolder}/ScrollBackground/{cells[(int)Column.BACKGROUND_TYPE]}.prefab");
+
+                // SPRITE_IMAGE
+                spriteImage = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.SPRITE_IMAGE]}.asset");
+
+                // PRE_STORY
+                preStory = AssetDatabase.LoadAssetAtPath<StoryDirectingData>($"{DataTableManager.StoryAssetFolder}/{cells[(int)Column.PRE_STORY]}.asset");
+
+                // NAME
+                description = cells[(int)Column.DESCRIPTION];
+
+                // POST_STORY
+                postStory = AssetDatabase.LoadAssetAtPath<StoryDirectingData>($"{DataTableManager.StoryAssetFolder}/{cells[(int)Column.POST_STORY]}.asset");
             }
             else
             {
@@ -260,8 +384,15 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
                 tileBuff.Add(buffInfo);
             }
 
+            // 현재 행에 선행 스테이지 정보가 있다면 추가
+            if (int.TryParse(cells[(int)Column.LOCK_CONDITON_ID], out int lockId))
+            {
+                lockConditionStageIDs.Add(lockId);
+            }
+
             line++;
         }
     }
-#endif
+    #endregion 데이터 파싱
+#endif // UNITY_EDITOR
 }

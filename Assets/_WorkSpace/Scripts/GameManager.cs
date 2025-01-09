@@ -5,12 +5,20 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
-public enum StageType { NORMAL, GOLD, BOSS, NONE }
+public enum StageType { NORMAL, GOLD, BOSS, STORY, NONE }
 
 /// <summary>
-/// 빠른 이동 메뉴에서 이동 가능한 메뉴 목록
+/// 메뉴 목록
 /// </summary>
-public enum MenuType { CHARACTERS, ACHIEVEMENT, STORY, SHOP, MYROOM, ADVANTURE, NONE }
+public enum MenuType 
+{
+    // 주요 메뉴 (빠른 이동 메뉴에서 이동 가능)
+    CHARACTERS, ACHIEVEMENT, STORY, SHOP, MYROOM, ADVANTURE, 
+    // 기타 메뉴
+    PROFILE,
+    // 미정의
+    NONE,
+}
 
 public class GameManager : SingletonBehaviour<GameManager>
 {
@@ -50,6 +58,7 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     public void StartShortLoadingUI()
     {
+        Debug.Log("로딩시작했다");
         shortLoadingPanel.gameObject.SetActive(true);
 
         //if (loadingCounter == 0)
@@ -60,6 +69,7 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     public void StopShortLoadingUI()
     {
+        Debug.Log("로딩끝났다");
         shortLoadingPanel.gameObject.SetActive(false);
 
 //        loadingCounter--;
@@ -121,6 +131,9 @@ public class GameManager : SingletonBehaviour<GameManager>
             case MenuType.ADVANTURE:
                 sceneName = "AdvantureMenuScene";
                 break;
+            case MenuType.PROFILE:
+                sceneName = "ProfileScene";
+                break;
             case MenuType.NONE:
                 Debug.LogWarning("메뉴 타입이 지정되지 않아 로비로 이동함");
                 sceneName = "LobbyScene";
@@ -154,27 +167,31 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     void SwitchStageType()
     {
+        string destScene; // 이동할 씬 이름
         switch (sceneChangeArgs.stageType)
         { 
             case StageType.NORMAL:
-                SceneManager.sceneLoaded += OnStageSceneLoaded;
-                SceneManager.LoadSceneAsync("StageDefault");
+                destScene = "StageDefault";
                 break;
             case StageType.GOLD:
-                SceneManager.sceneLoaded += OnStageSceneLoaded;
-                SceneManager.LoadSceneAsync("Stage_Coin");
+                destScene = "Stage_Coin";
                 break;
             case StageType.BOSS:
-                SceneManager.sceneLoaded += OnStageSceneLoaded;
-                SceneManager.LoadSceneAsync("Stage_Boss");
+                destScene = "Stage_Boss";
+                break;
+            case StageType.STORY:
+                destScene = "Stage_Story";
                 break;
             case StageType.NONE:
-                Debug.Log("지정된 스테이지 타입이 없음");
+                Debug.Log("지정된 스테이지 타입이 없어 기본 전투 씬으로 이동함");
+                destScene = "StageDefault";
                 break;
             default:
-                Debug.Log("예외상황");
-                break;
+                Debug.Log($"잘못된 StageType: {sceneChangeArgs.stageType}");
+                return;
         }
+        SceneManager.sceneLoaded += OnStageSceneLoaded;
+        SceneManager.LoadSceneAsync(destScene);
     }
 
     /// <summary>
@@ -213,8 +230,4 @@ public class StageSceneChangeArgs
     /// </summary>
     public MenuType prevScene = MenuType.ADVANTURE;
 
-    /// <summary>
-    /// 스토리 모드에서 필요한 추가 정보
-    /// </summary>
-    public StoryEpisodeData episodeData = null;
 }

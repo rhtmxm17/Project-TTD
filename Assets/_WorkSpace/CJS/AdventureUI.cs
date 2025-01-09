@@ -44,6 +44,16 @@ public class AdventureUI : BaseUI
             rt.anchoredPosition = new Vector2(0f, isOdd ? -verticalSpacing : verticalSpacing);
 
             instance.Id = i;
+
+            if (this.stagesData[instance.Id].IsOpened)
+            {
+                instance.GetComponent<Button>().interactable = true;
+            }
+            else
+            {
+                instance.GetComponent<Button>().interactable = false;
+            }
+
             instance.Button.onClick.AddListener(() =>
             {
                 Debug.Log(instance.Id);
