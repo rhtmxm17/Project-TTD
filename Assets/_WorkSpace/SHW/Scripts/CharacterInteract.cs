@@ -1,15 +1,20 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class CharacterInteract : MonoBehaviour
 {
     [SerializeField] private GameObject talkBox;
     // 후에는 SO로 데이터 받아서 하는 방식으로의 전환 필요
     [SerializeField] TMP_Text talkText;                 // 출력할 대화창
-    [SerializeField] private string[] talkdialogue;     // 대사들 모음
+     private string[] talkdialogue;     // 대사들 모음
     [SerializeField] private int repeatNum;             // 반복 대사 스텍
+    
+    [SerializeField] private MyRoomCData[] roomCData;
+    private int characterIndex;
     
     private Coroutine talkCoroutine;
     
@@ -17,6 +22,9 @@ public class CharacterInteract : MonoBehaviour
     public void ClickCharacter()
     {
         if(talkCoroutine != null) return;
+        
+        characterIndex = GameManager.UserData.Profile.MyroomCharaIdx.Value -1;
+        talkdialogue = roomCData[characterIndex].CharacterDialogue; 
         
         // 주어진 대사에서 랜덤하게 대사 출력
         talkText.text = talkdialogue[Random.Range(0,talkdialogue.Length-1)];
@@ -40,4 +48,5 @@ public class CharacterInteract : MonoBehaviour
         repeatNum += 1;
         talkCoroutine = null;
     }
+    
 }
