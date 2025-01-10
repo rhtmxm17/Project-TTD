@@ -43,6 +43,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
 
     [SerializeField] List<StageData> stageDataList;
     private Dictionary<int, StageData> stageDataIdDic; // id 기반 검색용
+    public ReadOnlyCollection<StageData> StageDataList => stageDataList.AsReadOnly();
 
     [SerializeField] List<StoryDirectingData> storyDirectingDataList;
     private Dictionary<int, StoryDirectingData> storyDirectingDataIdDic; // id 기반 검색용

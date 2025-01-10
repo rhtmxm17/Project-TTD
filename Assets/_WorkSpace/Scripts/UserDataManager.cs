@@ -106,9 +106,12 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
         {
             BackendManager.Instance.UseDummyUserDataRef(DummyNumber); // 테스트코드
         }
-
-        onLoadUserDataCompleted.AddListener(() => onCompletedCallback?.Invoke());
-        onLoadUserDataCompleted.AddListener(GameManager.Instance.StopShortLoadingUI);
+        
+        onLoadUserDataCompleted.AddListener(() =>
+        {
+            GameManager.Instance.StopShortLoadingUI();
+            onCompletedCallback?.Invoke();
+        });
         LoadUserData();
     }
 

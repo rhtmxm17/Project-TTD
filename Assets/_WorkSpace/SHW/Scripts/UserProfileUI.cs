@@ -9,6 +9,8 @@ using UnityEngine.Events;
 
 public class UserProfileUI : BaseUI
 {
+    [SerializeField] OutskirtsUI outskirtsUI;
+
     // 가져오고 써야할 데이터들
    private string nickName; // 닉네임
    private int iconIndex;   // 아이콘 인덱스
@@ -55,8 +57,6 @@ public class UserProfileUI : BaseUI
     /// </summary>
     private void Init()
     {
-        // 프로필 닫기
-        GetUI<Button>("Back").onClick.AddListener(() => ClosePopup("UserProfile"));
         // 소개 변경 창 열기
         // GetUI<Button>("ChangeIntroduction").onClick.AddListener(() => OpenPopup("ChangeIntroPopup"));
         // 소개 변경 창 닫기 & 변경확인
@@ -159,7 +159,9 @@ public class UserProfileUI : BaseUI
     // 창열기
     private void OpenPopup(string _name)
     {
-        GetUI(_name).SetActive(true);
+        GameObject popup = GetUI(_name);
+        popup.SetActive(true);
+        outskirtsUI.UIStack.Push(popup);
     }
 
     // 창닫기

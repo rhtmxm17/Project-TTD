@@ -9,20 +9,19 @@ using UnityEngine.UI;
 
 public class RoomChangePUUI : BaseUI
 {
-    [SerializeField] RoomData[] rooms;  
+    [SerializeField] RoomData[] rooms;
+    private UserDataInt hasRoom;
+    private bool hasRoomBool;
     
     // 바꿀 배경 이미지
     [SerializeField] Image backImage;
     
     int spriteIndex = 0;
-    // 방의 소유 여부
-    // TODO: DB로 보내는 작업 해야함..ㅠㅠㅠ 
-    bool hasRoom = false;
 
     private void Start()
     {
-        Init();
         LoadRoomData();
+        Init();
     }
 
     private void OnEnable()
@@ -38,7 +37,6 @@ public class RoomChangePUUI : BaseUI
         // 이전으로 넘기는 버튼 (좌버튼)
         GetUI<Button>("BeforeButton").onClick.AddListener(()=>BeforeImage());
         
-        GetUI("BuyRoomButton").SetActive(false);    // 초기 1번 방은 무조건 열어둘거라 false로 설정
         // UI숨기기 버튼
         GetUI<Button>("HideUIButton").onClick.AddListener(()=>HideUI());
         GetUI<Button>("MarkUIButton").onClick.AddListener(()=>MarkUI());
@@ -59,7 +57,15 @@ public class RoomChangePUUI : BaseUI
         GetUI<Image>("RoomPreview").sprite = rooms[spriteIndex].RoomSprite;
         GetUI<TMP_Text>("RoomNameText").text = rooms[spriteIndex].RoomName;
         GetUI<TMP_Text>("ExplainText").text = rooms[spriteIndex].RoomDescription;
-        hasRoom = rooms[spriteIndex].isHas;
+        GetRoom(spriteIndex);
+        if (hasRoomBool == false)
+        {
+            GetUI("BuyRoomButton").SetActive(true);
+        }
+        else
+        {
+            GetUI("BuyRoomButton").SetActive(false);
+        }
     }
     
     // 방 이미지 변경
@@ -91,12 +97,10 @@ public class RoomChangePUUI : BaseUI
         }
         
         // 구매
-        // TODO: DB생기면 바꿀 곳
-        rooms[spriteIndex].isHas = true;
-        hasRoom = rooms[spriteIndex].isHas;
-        // TODO: 구매한 방의 bool 값 DB에 저장
+        GetRoom(spriteIndex);
         GameManager.UserData.StartUpdateStream()
             .SetDBValue(gold, gold.Value -price)
+            .SetDBValue(hasRoom,1)
             .Submit(result =>
             {
                 if (false == result)
@@ -122,10 +126,11 @@ public class RoomChangePUUI : BaseUI
         GetUI<Image>("RoomPreview").sprite = rooms[spriteIndex].RoomSprite;
         GetUI<TMP_Text>("RoomNameText").text = rooms[spriteIndex].RoomName;
         GetUI<TMP_Text>("ExplainText").text = rooms[spriteIndex].RoomDescription;
-        // TODO: DB생기면 바꿀 곳
-        hasRoom = rooms[spriteIndex].isHas;
+        GetUI<TMP_Text>("BuyButtonText").text = rooms[spriteIndex].roomPrice.ToString();
+        
+        GetRoom(spriteIndex);
         // 방 소유하지 않았으면 구매버튼 활성화
-        if (hasRoom == false)
+        if (hasRoomBool == false)
         {
             GetUI("BuyRoomButton").SetActive(true);
         }
@@ -146,10 +151,11 @@ public class RoomChangePUUI : BaseUI
         GetUI<Image>("RoomPreview").sprite = rooms[spriteIndex].RoomSprite;
         GetUI<TMP_Text>("RoomNameText").text = rooms[spriteIndex].RoomName;
         GetUI<TMP_Text>("ExplainText").text = rooms[spriteIndex].RoomDescription;
-        // TODO: DB생기면 바꿀 곳
-        hasRoom = rooms[spriteIndex].isHas;
+        GetUI<TMP_Text>("BuyButtonText").text = rooms[spriteIndex].roomPrice.ToString();
+        
+        GetRoom(spriteIndex);
         // 방 소유하지 않았으면 구매버튼 활성화
-        if (hasRoom == false)
+        if (hasRoomBool == false)
         {
             GetUI("BuyRoomButton").SetActive(true);
         }
@@ -157,6 +163,13 @@ public class RoomChangePUUI : BaseUI
         {
             GetUI("BuyRoomButton").SetActive(false);
         }
+    }
+    
+    // DB 정보 불러오기
+    private void GetRoom(int i)
+    {
+        hasRoom = GameManager.UserData.PlayData.HasRoom[i];
+        hasRoomBool = hasRoom.Value > 0;
     }
     
     // UI숨기기 버튼
