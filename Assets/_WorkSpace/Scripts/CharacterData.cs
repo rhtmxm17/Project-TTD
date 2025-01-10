@@ -134,22 +134,10 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     [SerializeField] int getCharacterItemId;
     [SerializeField] int enhanceItemId;
 
-    #region 유저 데이터
-    /// <summary>
-    /// 유저 데이터. DataManager의 LoadUserData()가 호출된 적이 있어야 정상적인 값을 갖는다<br/>
-    /// 주의: 에디터의 Enter Play Mode Settings에서 도메인 리로드가 비활성화 되어있을 경우 이전 실행시의 값이 남아있을 수 있음<br/>
-    /// 주의2: 로그아웃을 구현해야 한다면 마찬가지로 이전 유저의 값이 남아있으므로 인증 정보 변경시 정리하는 메서드 추가할것
-    /// </summary>
-    public UserDataInt Level { get; private set; }
-    public UserDataInt Enhancement { get; private set; }
-    public UserDataInt EnhanceMileagePerMill { get; private set; } // 0 ~ 1000
-
-    private void OnEnable()
-    {
-        Level = new UserDataInt($"Characters/{id}/Level", 1);
-        Enhancement = new UserDataInt($"Characters/{id}/Enhancement");
-        EnhanceMileagePerMill = new UserDataInt($"Characters/{id}/EnhanceMileagePerMill");
-    }
+    #region 유저 데이터 참조
+    public UserDataInt Level => GameManager.UserData.GetCharacterLevel(id);
+    public UserDataInt Enhancement => GameManager.UserData.GetCharacterEnhancement(id);
+    public UserDataInt EnhanceMileagePerMill => GameManager.UserData.GetCharacterEnhancement(id);
     #endregion
 
 #if UNITY_EDITOR

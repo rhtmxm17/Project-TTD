@@ -20,6 +20,9 @@ public class ShopItemDataEditor : Editor
 }
 #endif
 
+/// <summary>
+/// 상점 판매 품목 정보
+/// </summary>
 [CreateAssetMenu(menuName = "ScriptableObjects/ShopItemData")]
 public class ShopItemData : ScriptableObject, ICsvMultiRowParseable
 {
@@ -87,12 +90,8 @@ public class ShopItemData : ScriptableObject, ICsvMultiRowParseable
     /// <summary>
     /// 구매한 횟수
     /// </summary>
-    public UserDataInt Bought { get; private set; }
+    public UserDataInt Bought => GameManager.UserData.GetPackageBought(id);
 
-    private void OnEnable()
-    {
-        Bought = new UserDataInt($"ShopItems/{id}/Bought");
-    }
     #endregion
 
 #if UNITY_EDITOR

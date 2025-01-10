@@ -51,9 +51,10 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
 
     public GamePlayData PlayData { get; private set; } = new GamePlayData();
 
-    private Dictionary<int, UserDataInt> itemNumberDict = new Dictionary<int, UserDataInt>();
-    private Dictionary<int, UserDataInt> stageClearCountDict = new Dictionary<int, UserDataInt>();
+    #region SO 연계형 유저 데이터
+    
 
+    private Dictionary<int, UserDataInt> itemNumberDict = new Dictionary<int, UserDataInt>();
     public UserDataInt GetItemNumber(int id)
     {
         if (itemNumberDict.ContainsKey(id))
@@ -62,12 +63,13 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
         {
             UserDataInt udInt = new UserDataInt($"Items/{id}");
             itemNumberDict.Add(id, udInt);
+            // 아이템은 SO의 이벤트를 발생시킴
             udInt.onValueChanged += GameManager.TableData.GetItemData(id).InvokeNumberChanged;
             return udInt;
         }
     }
 
-
+    private Dictionary<int, UserDataInt> stageClearCountDict = new Dictionary<int, UserDataInt>();
     public UserDataInt GetStageClearCount(int id)
     {
         if (stageClearCountDict.ContainsKey(id))
@@ -79,6 +81,60 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
             return udInt;
         }
     }
+
+    private Dictionary<int, UserDataInt> characterLevelDict = new Dictionary<int, UserDataInt>();
+    public UserDataInt GetCharacterLevel(int id)
+    {
+        if (characterLevelDict.ContainsKey(id))
+            return characterLevelDict[id];
+        else
+        {
+            UserDataInt udInt = new UserDataInt($"Characters/{id}/Level");
+            characterLevelDict.Add(id, udInt);
+            return udInt;
+        }
+    }
+
+    private Dictionary<int, UserDataInt> characterEnhancementDict = new Dictionary<int, UserDataInt>();
+    public UserDataInt GetCharacterEnhancement(int id)
+    {
+        if (characterEnhancementDict.ContainsKey(id))
+            return characterEnhancementDict[id];
+        else
+        {
+            UserDataInt udInt = new UserDataInt($"Characters/{id}/Enhancement");
+            characterEnhancementDict.Add(id, udInt);
+            return udInt;
+        }
+    }
+
+    private Dictionary<int, UserDataInt> characterMileageDict = new Dictionary<int, UserDataInt>();
+    public UserDataInt GetCharacterMileage(int id)
+    {
+        if (characterMileageDict.ContainsKey(id))
+            return characterMileageDict[id];
+        else
+        {
+            UserDataInt udInt = new UserDataInt($"Characters/{id}/EnhanceMileagePerMill");
+            characterMileageDict.Add(id, udInt);
+            return udInt;
+        }
+    }
+
+    private Dictionary<int, UserDataInt> packageBoughtDict = new Dictionary<int, UserDataInt>();
+    public UserDataInt GetPackageBought(int id)
+    {
+        if (packageBoughtDict.ContainsKey(id))
+            return packageBoughtDict[id];
+        else
+        {
+            UserDataInt udInt = new UserDataInt($"ShopItems/{id}/Bought");
+            packageBoughtDict.Add(id, udInt);
+            return udInt;
+        }
+    }
+
+    #endregion SO 연계형 유저 데이터
 
     public class UserProfile
     {
@@ -237,12 +293,9 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
 
                     CharacterData characterData = GameManager.TableData.GetCharacterData(id);
 
-                    //kmt - 보유 캐릭터 목록 초기화
-                    haveCharacterIdxList.Add(id);
-
-                    characterData.Level.SetValueWithDataSnapshot(userData);
-                    characterData.Enhancement.SetValueWithDataSnapshot(userData);
-                    characterData.EnhanceMileagePerMill.SetValueWithDataSnapshot(userData);
+                    GetCharacterLevel(id).SetValueWithDataSnapshot(userData);
+                    GetCharacterEnhancement(id).SetValueWithDataSnapshot(userData);
+                    GetCharacterMileage(id).SetValueWithDataSnapshot(userData);
                 }
 
             }
@@ -301,9 +354,7 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
                         continue;
                     }
 
-                    ShopItemData shopItemData = GameManager.TableData.GetShopItemData(id);
-
-                    shopItemData.Bought.SetValueWithDataSnapshot(userData);
+                    GetPackageBought(id).SetValueWithDataSnapshot(userData);
                 }
             }
 
