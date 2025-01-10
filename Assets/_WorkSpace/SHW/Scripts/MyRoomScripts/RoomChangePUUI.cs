@@ -11,7 +11,7 @@ public class RoomChangePUUI : BaseUI
 {
     [SerializeField] RoomData[] rooms;
     private UserDataInt hasRoom;
-    private bool hasRoomBool;
+    private bool hasRoomBool=false;
     
     // 바꿀 배경 이미지
     [SerializeField] Image backImage;
@@ -41,7 +41,7 @@ public class RoomChangePUUI : BaseUI
         GetUI<Button>("HideUIButton").onClick.AddListener(()=>HideUI());
         GetUI<Button>("MarkUIButton").onClick.AddListener(()=>MarkUI());
         // 배경 이미지 구매
-        GetUI<Button>("BuyRoomButton").onClick.AddListener(()=>BuyRoom());
+         GetUI<Button>("Buybutton").onClick.AddListener(()=>BuyRoom());
         
         // 배경 이미지 바꾸기 결정
         GetUI<Button>("SetImageButton").onClick.AddListener(()=>
@@ -84,7 +84,7 @@ public class RoomChangePUUI : BaseUI
     }
     
     // 방 구매
-    private void BuyRoom()
+    public void BuyRoom()
     {
         // 소유 골드 가져오기
         UserDataInt gold = GameManager.TableData.GetItemData(1).Number;

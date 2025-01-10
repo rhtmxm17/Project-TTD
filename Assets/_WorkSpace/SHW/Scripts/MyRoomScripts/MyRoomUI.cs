@@ -50,7 +50,11 @@ public class MyRoomUI : BaseUI
             AddStack("CharacterChange");
         });
         // 캐릭터 바꾸기 팝업 닫기
-        GetUI<Button>("CloseChangeCharacter").onClick.AddListener(()=>CloseSetRoomPopup("CharacterChange"));
+        GetUI<Button>("CloseChangeCharacter").onClick.AddListener(()=>
+        {
+            CloseSetRoomPopup("CharacterChange");
+            outskirtsUI.UIStack.Pop();
+        });
 
         // 채팅 열기 버튼
         GetUI<Button>("ChatButton").onClick.AddListener(()=>
@@ -70,6 +74,8 @@ public class MyRoomUI : BaseUI
             //GetUI<OpenableWindow>("FriendTapCanvas").OpenWindow
         );
         // GetUI<Button>("VisitButton").onClick.AddListener(() => AddStack("FriendTapCanvas"));
+        
+        // TODO: 도감완료 시 추가할 것 
     }
 
     public void LoadImage()
@@ -123,6 +129,7 @@ public class MyRoomUI : BaseUI
         LoadImage();
         roomName.text = "나만의 공간";
         outskirtsUI.UIStack.Pop();
+        GetUI<Button>("MyRoomCharacter").enabled = true;
         GetUI("Dictionary").SetActive(true);
         GetUI("VisitButton").SetActive(true);
         GetUI("CharacterChangeButton").SetActive(true);
