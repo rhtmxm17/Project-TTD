@@ -265,13 +265,12 @@ public class StageManager : MonoBehaviour
         IsCombatEnd = true;
 
         Debug.Log("클리어!");
-        var stream = GameManager.UserData.StartUpdateStream();
-        foreach (var item in stageDataOnLoad.Reward)
-        {
-            stream.AddDBValue(item.item.Number, item.gain);
-        }
 
-        stream.Submit(result =>
+        // 보상 획득 후 종료
+        bool isFirst = (stageDataOnLoad.ClearCount.Value == 0);
+
+        // 클리어 횟수 증가 및 첫클리어시 보상 획득
+        stageDataOnLoad.UserGetRewardOnceAsync(result =>
         {
             if (false == result)
             {
@@ -279,9 +278,16 @@ public class StageManager : MonoBehaviour
                 return;
             }
 
+            // 첫 클리어라면 보상 목록에 반영, 아니라면 비어있음
+            List<ItemGain> gainList = null;
+            if (isFirst)
+            {
+                gainList = stageDataOnLoad.Reward;
+            }
+
             // 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
-            ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(stageDataOnLoad.Reward);
-            popupInstance.Title.text = "스테이지 클리어!";
+            ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(gainList);
+            popupInstance.Title.text = "에피소드 클리어!";
             popupInstance.onPopupClosed += LoadPreviousScene;
         });
     }

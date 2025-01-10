@@ -29,7 +29,7 @@ public class StagePanel : MonoBehaviour
 
     private void OpenChapterPanel(List<StageData> stageDatas)
     {
-        // TODO: 챕터 창 열 때 스테이지 정보 등록
+        // 챕터 창 열 때 스테이지 정보 등록
         chapterPanel.SetChapterData(stageDatas);
         chapterPanel.gameObject.SetActive(true);
         outskirts.UIStack.Push(chapterPanel.gameObject);

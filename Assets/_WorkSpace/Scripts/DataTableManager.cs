@@ -43,6 +43,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
 
     [SerializeField] List<StageData> stageDataList;
     private Dictionary<int, StageData> stageDataIdDic; // id 기반 검색용
+    public ReadOnlyCollection<StageData> StageDataList => stageDataList.AsReadOnly();
 
     [SerializeField] List<StoryDirectingData> storyDirectingDataList;
     private Dictionary<int, StoryDirectingData> storyDirectingDataIdDic; // id 기반 검색용
@@ -73,11 +74,15 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
         return itemDataIdDic[id];
     }
 
+    /// <summary>
+    /// 해당 id를 갖는 스테이지를 반환합니다. id가 존재하지 않으면 null이 반환됩니다
+    /// </summary>
+    /// <param name="id">스테이지의 id</param>
+    /// <returns>스테이지(null 가능)</returns>
     public StageData GetStageData(int id)
     {
         if (false == stageDataIdDic.ContainsKey(id))
         {
-            Debug.LogWarning($"존재하지 않는 스테이지 ID({id})가 요청됨");
             return null;
         }
 
@@ -117,6 +122,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     public const string CharacterAssetFolder = "Assets/_WorkSpace/Datas/Character";
     public const string ItemAssetFolder = "Assets/_WorkSpace/Datas/Items";
     public const string PackageAssetFolder = "Assets/_WorkSpace/Datas/Packages";
+    public const string StoryAssetFolder = "Assets/_WorkSpace/Datas/StoryDirectings";
 
     [SerializeField] Sprite dummySprite;
     public Sprite DummySprite => dummySprite;

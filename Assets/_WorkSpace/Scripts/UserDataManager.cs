@@ -65,15 +65,27 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
 
     public class GamePlayData
     {
+        public const int MaxRoomIndex = 5;
+
         public UserDataDateTime EggGainTimestamp { get; private set; } = new UserDataDateTime("PlayData/EggGainTimestamp");
         public UserDataDateTime IdleRewardTimestamp { get; private set; } = new UserDataDateTime("PlayData/IdleRewardTimestamp");
+
 
         public UserDataDictionaryLong BatchInfo { get; private set; } = new UserDataDictionaryLong("PlayData/BatchInfo");
         public UserDataDictionaryLong GoldDungeonClearRate { get; private set; } = new UserDataDictionaryLong("PlayData/GoldDungeonClearRate");
 
 
+        public List<UserDataInt> HasRoom = new List<UserDataInt>(MaxRoomIndex);
 
+        public GamePlayData()
+        {
+            for (int i = 0; i < MaxRoomIndex; i++)
+            {
+                HasRoom.Add(new UserDataInt($"PlayData/HasRoom/{i}"));
+            }
+        }
     }
+
 
     /// <summary>
     /// 테스트용 가인증 코드입니다
@@ -98,9 +110,12 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
         {
             BackendManager.Instance.UseDummyUserDataRef(DummyNumber); // 테스트코드
         }
-
-        onLoadUserDataCompleted.AddListener(() => onCompletedCallback?.Invoke());
-        onLoadUserDataCompleted.AddListener(GameManager.Instance.StopShortLoadingUI);
+        
+        onLoadUserDataCompleted.AddListener(() =>
+        {
+            GameManager.Instance.StopShortLoadingUI();
+            onCompletedCallback?.Invoke();
+        });
         LoadUserData();
     }
 
@@ -166,6 +181,11 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             this.PlayData.IdleRewardTimestamp.SetValueWithDataSnapshot(userData);
             this.PlayData.BatchInfo.SetValueWithDataSnapshot(userData);
             this.PlayData.GoldDungeonClearRate.SetValueWithDataSnapshot(userData);
+
+            foreach (var hasroom in this.PlayData.HasRoom)
+            {
+                hasroom.SetValueWithDataSnapshot(userData);
+            }
 
             // 캐릭터 데이터 로딩
             if (userData.HasChild("Characters"))

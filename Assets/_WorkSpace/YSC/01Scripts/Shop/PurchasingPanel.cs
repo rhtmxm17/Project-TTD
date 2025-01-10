@@ -100,10 +100,8 @@ public class PurchasingPanel : BaseUI
         itemNameText.text = data.ShopItemName;
         itemImage.sprite = data.Sprite;
         itemAmountText.text = $"아이템 수량: {remainCount}";     //  (8) 아이템수량
-        ItemData itemOwn = shopItemData.Price.item;
-        itemOwnText.text = $"$현재 보유량: {itemOwn.Number.Value}"; // (10) 보유량 //지금 친건 가격
-        // 캐릭터 정보창에서
-       
+        itemOwnText.text = $"현재 보유량: {shopItemData.Products[0].item.Number.Value}"; // (10) 보유량 //지금 친건 가격
+
     }
 
     public void UpdateInfo()
@@ -134,7 +132,6 @@ public class PurchasingPanel : BaseUI
             return;
         }
 
-
         var dbUpdateStream = GameManager.UserData.StartUpdateStream() // DB에 갱신 요청 시작
             .AddDBValue(shopItemData.Bought, currentNumber);  // 요청에 '구매 횟수만큼 증가' 등록 // 이게 들어가버림
         
@@ -151,7 +148,6 @@ public class PurchasingPanel : BaseUI
                 OpenWarning();      // 비용부족 경고 팝업.
                 return;
             }
-            
         }
         
         foreach (ItemGain product in shopItemData.Products)
@@ -159,10 +155,8 @@ public class PurchasingPanel : BaseUI
             UserDataInt itemGet = product.item.Number;
             dbUpdateStream.AddDBValue(itemGet, product.gain * currentNumber); // 요청에 갯수만큼 '상품 획득' 등록
         }
-        
-        
-        dbUpdateStream.Submit(OnComplete);
 
+        dbUpdateStream.Submit(OnComplete);
 
     }
 

@@ -47,11 +47,11 @@ public class AdventureUI : BaseUI
 
             if (this.stagesData[instance.Id].IsOpened)
             {
-                instance.GetComponent<Button>().interactable = true;
+                instance.Button.interactable = true;
             }
             else
             {
-                instance.GetComponent<Button>().interactable = false;
+                instance.Button.interactable = false;
             }
 
             instance.Button.onClick.AddListener(() =>
@@ -63,6 +63,15 @@ public class AdventureUI : BaseUI
 
             stageButtons.Add(buttonHolder);
             isOdd = !isOdd;
+        }
+    }
+
+    public void ForceOpen()
+    {
+        Debug.LogWarning("테스트 모드 전용 메서드 호출됨");
+        foreach (GameObject stageButton in stageButtons)
+        {
+            stageButton.GetComponentInChildren<IndexedButton>().Button.interactable = true;
         }
     }
 

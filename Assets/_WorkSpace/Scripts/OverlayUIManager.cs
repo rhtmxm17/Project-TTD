@@ -31,6 +31,20 @@ public class OverlayUIManager : SingletonBehaviour<OverlayUIManager>
 
         return popupInstance;
     }
+    
+    /// <summary>
+    /// ItemGainPopup에 사용을 위한 함수
+    /// </summary>
+    /// <param name="item"></param>
+    public ItemGainPopup PopupItemGainForMax(ItemData gain = null)
+    {
+        ItemGainPopup popupInstance = Instantiate(itemGainPopupPrefab, GameManager.PopupCanvas.transform);
+        if (gain != null)
+        {
+            popupInstance.AddItemGainCell(gain);
+        }
+        return popupInstance;
+    }
 
     /// <summary>
     /// 단순 정보 표기와 닫기버튼만 존재하는 팝업 생성
