@@ -244,7 +244,6 @@ public class CharacterInfoController : BaseUI
             }
             
             if (_characterInfos[CurIndex].gameObject.activeSelf) break;
-            
         }
         
         if (_infoUI._enhanceResultPopup.activeSelf)
@@ -265,9 +264,10 @@ public class CharacterInfoController : BaseUI
         {
             _infoUI._enhanceResultPopup.SetActive(false);
         }
-
+        
+        CurCharacterInfo.CharacterModels[_characterInfoPopupCs.ListIndex].gameObject.SetActive(_curInfoTabType.Equals(InfoTabType.EVOLUTION));
         _evolutionIndex = 0;
-        _characterInfoPopupCs.ListIndex = _evolutionIndex;
+        _characterInfoPopupCs.ListIndex = _evolutionIndex; 
         _leftEvolutionButton.gameObject.SetActive(_evolutionIndex != 0);
         _rightEvolutionButton.gameObject.SetActive(_evolutionIndex != CurCharacterInfo.CharacterModels.Count - 1);
         

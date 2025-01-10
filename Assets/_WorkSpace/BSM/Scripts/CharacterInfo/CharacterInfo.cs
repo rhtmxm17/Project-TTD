@@ -99,6 +99,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private void Start()
     {
         ButtonOnClickEvent();
+        CharacterModel();
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -156,8 +157,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController.CurCharacterEnhance = _characterEnhance; 
         _characterInfoController.CurIndex = _characterInfoController._characterInfos.IndexOf(this);
         _characterInfoController._infoPopup.SetActive(true);
- 
-        CharacterModel();
+        
         UpdateInfo();
     }
  
@@ -166,26 +166,23 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// </summary>
     private void CharacterModel()
     {
-        if (_characterInfoController.CurCharacterInfo == this)
+        if (_characterData.ModelPrefab != null && CharacterModels.Count == 0)
         {
-            if (_characterData.ModelPrefab != null && CharacterModels.Count == 0)
-            {
-                levelOne = CreateModelPrefab(_characterData.ModelPrefab, modelPos, levelOneScale, true);
+            levelOne = CreateModelPrefab(_characterData.ModelPrefab, modelPos, levelOneScale, false);
 
-                if (levelOne.NextEvolveModel != null)
-                {
-                    levelTwo = CreateModelPrefab(levelOne.NextEvolveModel, modelPos, levelTwoScale, false);
-                }
-
-                if (levelTwo != null && levelTwo.NextEvolveModel != null)
-                {
-                    levelThree = CreateModelPrefab(levelTwo.NextEvolveModel, modelPos, levelThreeScale, false);
-                }
-            }
-            else if (CharacterModels != null && !CharacterModels[0].gameObject.activeSelf)
+            if (levelOne.NextEvolveModel != null)
             {
-                CharacterModels[0].gameObject.SetActive(true);
+                levelTwo = CreateModelPrefab(levelOne.NextEvolveModel, modelPos, levelTwoScale, false);
             }
+
+            if (levelTwo != null && levelTwo.NextEvolveModel != null)
+            {
+                levelThree = CreateModelPrefab(levelTwo.NextEvolveModel, modelPos, levelThreeScale, false);
+            }
+        }
+        else if (CharacterModels != null && !CharacterModels[0].gameObject.activeSelf)
+        {
+            CharacterModels[0].gameObject.SetActive(true);
         }
     }
     
