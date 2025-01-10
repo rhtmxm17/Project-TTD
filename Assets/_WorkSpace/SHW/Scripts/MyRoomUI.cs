@@ -50,7 +50,11 @@ public class MyRoomUI : BaseUI
             AddStack("CharacterChange");
         });
         // 캐릭터 바꾸기 팝업 닫기
-        GetUI<Button>("CloseChangeCharacter").onClick.AddListener(()=>CloseSetRoomPopup("CharacterChange"));
+        GetUI<Button>("CloseChangeCharacter").onClick.AddListener(()=>
+        {
+            CloseSetRoomPopup("CharacterChange");
+            outskirtsUI.UIStack.Pop();
+        });
 
         // 채팅 열기 버튼
         GetUI<Button>("ChatButton").onClick.AddListener(()=>

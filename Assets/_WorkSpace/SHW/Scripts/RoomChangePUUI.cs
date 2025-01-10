@@ -11,7 +11,7 @@ public class RoomChangePUUI : BaseUI
 {
     [SerializeField] RoomData[] rooms;
     private UserDataInt hasRoom;
-    private bool hasRoomBool;
+    private bool hasRoomBool=false;
     
     // 바꿀 배경 이미지
     [SerializeField] Image backImage;
