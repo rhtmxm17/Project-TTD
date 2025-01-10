@@ -41,9 +41,11 @@ public class PurchasingPanel : BaseUI
     [SerializeField] ShopItem shopItem;
     
     public ShopItemData shopItemData {get; private set;}
-    private int remainCount => shopItemData.LimitedCount - shopItemData.Bought.Value; // 남은 구매횟수
-                                         // 구매가능횟수 - 구매한 횟수
-
+    
+    bool isBulk => shopItemData.IsMany;
+    // private int remainCount => shopItemData.LimitedCount - shopItemData.Bought.Value; // 남은 구매횟수
+    // 위에람다식은 재활용못해서 변경          구매가능횟수 - 구매한 횟수
+    private int remainCount;
     void OnEnable()
     {
         Init();
@@ -87,6 +89,8 @@ public class PurchasingPanel : BaseUI
         // 현재 아이템 갯수 세팅
         currentNumber = 1;
         currentNumberText.text = currentNumber.ToString();
+        
+        // remainCount = shopItemData.LimitedCount - shopItemData.Bought.Value;
 
     }
 
@@ -101,7 +105,12 @@ public class PurchasingPanel : BaseUI
         itemImage.sprite = data.Sprite;
         itemAmountText.text = $"아이템 수량: {remainCount}";     //  (8) 아이템수량
         itemOwnText.text = $"현재 보유량: {shopItemData.Products[0].item.Number.Value}"; // (10) 보유량 //지금 친건 가격
-
+        remainCount = shopItemData.LimitedCount - shopItemData.Bought.Value;
+        // 복수구매면 구매가능횟수 바꾸기 (소지중인 지불하는 아이템 총갯수 / 지불해야되는 아이템 가격 => 반내림)
+        if(isBulk)
+        {
+            remainCount = Mathf.FloorToInt((shopItemData.Price.item.Number.Value) / (shopItemData.Price.gain));
+        }  //구매 한도 => 갖고있는 지불할 아이템 총량 / 아이템 가격 => 반내림
     }
 
     public void UpdateInfo()

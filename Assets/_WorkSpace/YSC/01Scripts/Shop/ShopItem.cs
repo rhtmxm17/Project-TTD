@@ -145,19 +145,21 @@ public class ShopItem : BaseUI
         // TODO: 복수구매 가능한거
         bool isBulk = shopItemData.IsMany;
         int remain = shopItemData.LimitedCount - shopItemData.Bought.Value;
-        if (remain > 0)
+        if (isBulk ||remain > 0 )
         {
             Debug.Log("구매확인창 열기");
             OpenPurchasingPanel(); // 확인 팝업띄우는
             return;
         }
-
-        if (isBulk)
-        {
-            Debug.Log("복수구매를 위한 구매확인창 열기");
-            OpenPurchasingPanel(); // 확인 팝업띄우는
-            return;
-        }
+        // TODO: 최대 갯수 변수 세팅해주기
+       // if (isBulk)
+       // {
+       //    // remain = Mathf.FloorToInt((shopItemData.Price.item.Number.Value) / (shopItemData.Price.gain));
+       //    // TODO: 패널창에서 바꿔서 여기서 필요없음, 일단 혹시몰라서 주석처리, 추후 문제없으면 삭제
+       //     Debug.Log("복수구매를 위한 구매확인창 열기");
+       //     OpenPurchasingPanel(); // 확인 팝업띄우는
+       //     return;
+       // }
 
         ItemData itemGive = shopItemData.Price.item;
         if (null != itemGive && shopItemData.Price.item.Number.Value < shopItemData.Price.gain)
@@ -260,7 +262,6 @@ public class ShopItem : BaseUI
     {
         OverlayUIManager popupInstance = GameManager.OverlayUIManager;
         popupInstance.OpenSimpleInfoPopup("소지하신 재료가 부족합니다.", "닫기", null);
-        
     }
 
     private void CheckItemIndexAndCompare()
