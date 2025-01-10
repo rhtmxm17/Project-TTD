@@ -2,8 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq; 
-using TMPro; 
-using UnityEngine; 
+using TMPro;
+using Unity.Mathematics;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class CharacterInfoController : BaseUI
@@ -292,7 +295,7 @@ public class CharacterInfoController : BaseUI
             _evolutionIndex--;
         }
 
-        EvolutionCharacterUI();
+        EvolutionCharacterUI(CurCharacterInfo._CharacterData.ModelPrefab.NextEvolveModel);
     }
 
     /// <summary>
@@ -305,17 +308,26 @@ public class CharacterInfoController : BaseUI
             _evolutionIndex++;
         }
 
-        EvolutionCharacterUI();
+        EvolutionCharacterUI(CurCharacterInfo._CharacterData.ModelPrefab.NextEvolveModel);
     }
 
-    private void EvolutionCharacterUI()
+    public void EvolutionCharacterUI(CharacterModel model)
     {
         _leftEvolutionButton.gameObject.SetActive(_evolutionIndex != 0);
         _rightEvolutionButton.gameObject.SetActive(_evolutionIndex != 2);
         //TODO: 캐릭터 데이터에 진화 이미지 들어오면 풀것
         //_evolutionImage = CurCharacterInfo._CharacterData.EvolutionImage[_evolutionIndex];
-        
-        _evolutionImage.color = new Color(1f, _evolutionIndex * 0.3f, 1f);
+    
+        //TODO: 작업 필요
+        if (model != null)
+        {
+            _evolutionImage.color = new Color(0, 0, 0, 0);
+        }
+        else
+        {
+            _evolutionImage.color = new Color(1f, _evolutionIndex * 0.3f, 1f);
+        }
+
         _evolutionText.text = $"진화 Lv.{_evolutionIndex + 1}";
     }
     

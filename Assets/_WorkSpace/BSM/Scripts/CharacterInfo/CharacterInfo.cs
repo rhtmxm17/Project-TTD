@@ -10,7 +10,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     [SerializeField] private CharacterData _characterData;
 
     private CharacterInfoController _characterInfoController;
-
+    private CharacterModel _characterModel;
+    
     private TextMeshProUGUI _characterTypeText;
     private TextMeshProUGUI _characterListNameText;
     private Image _characterListImage;
@@ -145,6 +146,17 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController.CurCharacterEnhance = _characterEnhance; 
         _characterInfoController.CurIndex = _characterInfoController._characterInfos.IndexOf(this);
         _characterInfoController._infoPopup.SetActive(true);
+
+        if (_characterInfoController.CurCharacterInfo == this)
+        {
+            if (_characterData.ModelPrefab != null && _characterModel == null)
+            {
+                _characterModel = Instantiate(_characterData.ModelPrefab, Vector3.zero, Quaternion.identity, this.transform);
+                _characterModel.transform.localScale = new Vector3(500f, 500f, 1); 
+                _characterInfoController.EvolutionCharacterUI(_characterModel);
+            } 
+        }
+        
         UpdateInfo();
     }
     
