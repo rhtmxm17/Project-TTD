@@ -19,8 +19,11 @@ public class ShopItem : BaseUI
     [Header("아이템 가격")]
     [SerializeField] TMP_Text itemPriceText;    // UI에 표기되는 가격표
     
-    [Header("아이템 갯수")]
+    [Header("구매 가능 횟수")]
     [SerializeField] TMP_Text itemCountText;    // UI에 표기되는 갯수
+    
+    [Header("판매 세트 갯수")]
+    [SerializeField] TMP_Text itemGainText;    // UI에 표기되는 갯수
     
     [Header("아이템 이미지")]
     [SerializeField] public Image ShopItemImage;
@@ -40,6 +43,15 @@ public class ShopItem : BaseUI
     [SerializeField] PurchasingPanel purchasingPanel;
 
     [SerializeField] private ShopPopupController shopPopup;
+    
+    // TODO: bool is여러개살수있음
+    
+    /* DailyBonus.cs 스크립트에 하루 5회 구매할 수 있는거 관련 코드들 있음.
+     * DailyChecker.cs
+     * 
+     */
+    
+    
     private void Start()
     {
         Init();
@@ -48,10 +60,11 @@ public class ShopItem : BaseUI
     private void Init()
     {
         itemNameText = GetUI<TMP_Text>("ItemInfoText"); 
-        buyButton.GetComponentInChildren<Button>().onClick.AddListener(Buy);
+        buyButton.GetComponentInChildren<Button>().onClick.AddListener(OpenDoubleWarning);
         buyButtonText = GetUI<TMP_Text>("BuyButtonText");
         itemPriceText = GetUI<TMP_Text>("ItemPriceText");
         itemCountText = GetUI<TMP_Text>("ItemCountText");
+        itemGainText = GetUI<TMP_Text>("ItemGainText");
         materialImage = GetUI<Image>("MaterialImage");
 
         SetItem(shopItemData);
@@ -66,8 +79,8 @@ public class ShopItem : BaseUI
          
         int remain = shopItemData.LimitedCount - shopItemData.Bought.Value;
         itemCountText.text = $"구매 가능 횟수 {remain}/{shopItemData.LimitedCount}";
-        
-        
+        itemGainText.text = data.Products[0].gain.ToString();
+       
         // 가격 표시 & 재화표시
         if (null == data.Price.item)
         {
@@ -119,6 +132,9 @@ public class ShopItem : BaseUI
         charItemData -= 200; // 상점캐릭터나열이 201...부터되있으니 200빼면 캐릭터ID랑 동일
         Debug.Log($"{charItemData}");
         // CheckCharacter(charItemData);
+        
+        
+        
         if (GameManager.UserData.HasCharacter(charItemData))
         {
            Debug.Log("소유중인 캐릭터입니당");
@@ -129,13 +145,16 @@ public class ShopItem : BaseUI
        
         
         // TODO: 갯수제한없는 아이템 골드량만큼 한꺼번에 살 수 있도록 하기 (구매확인창 에서) 
+        // TODO: 복수구매 가능한거
+        bool isBulk = shopItemData.IsMany;
         int remain = shopItemData.LimitedCount - shopItemData.Bought.Value;
-        if (remain > 0)
+        if (isBulk ||remain > 0 )
         {
             Debug.Log("구매확인창 열기");
             OpenPurchasingPanel(); // 확인 팝업띄우는
             return;
         }
+
 
         ItemData itemGive = shopItemData.Price.item;
         if (null != itemGive && shopItemData.Price.item.Number.Value < shopItemData.Price.gain)
@@ -207,7 +226,7 @@ public class ShopItem : BaseUI
         buyButtonText.text = "SOLD\nOUT";
         buyButtonText.color = new Color(1f, .1f, .2f, 1f);
         GetUI<Image>("BuyButton").color = new Color(.3f, .3f, .3f, .75f); // 아이템창 어둡게
-        buyButton.onClick.RemoveListener(Buy); //구매버튼 비활성화
+        buyButton.onClick.RemoveListener(OpenDoubleWarning); //구매버튼 비활성화
         ShopItemImage.color = new Color(.3f, .3f, .3f, 1f); // 아이템 어둡게 
         
     }
@@ -230,7 +249,7 @@ public class ShopItem : BaseUI
         AlreadyHasChar popupInstance = Instantiate(charWarningPopup, GameManager.PopupCanvas);
         popupInstance.transform.SetAsFirstSibling();
         popupInstance.SetItem(this.shopItemData);
-        popupInstance.CheckMaxEnhance();
+        popupInstance.CheckMaxEnhance(); // 강화 최대치인지 확인하기
         // popupInstance.SetItem(shopItemData); 일단 비활성화 근데 어차피 그 아이템 사야하니까 정보불러올필요는 있어서 뭔가해야할듯함.
     }
 
@@ -238,7 +257,13 @@ public class ShopItem : BaseUI
     {
         OverlayUIManager popupInstance = GameManager.OverlayUIManager;
         popupInstance.OpenSimpleInfoPopup("소지하신 재료가 부족합니다.", "닫기", null);
-        
+    }
+
+    private void OpenDoubleWarning()
+    {
+        OverlayUIManager popupInstance = GameManager.OverlayUIManager;
+        popupInstance.OpenDoubleInfoPopup("해당 아이템을 정말 구매하시겠습니까?", "취소",
+            "확인",null, Buy);
     }
 
     private void CheckItemIndexAndCompare()

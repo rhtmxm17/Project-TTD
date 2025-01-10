@@ -77,6 +77,12 @@ public class ShopItemData : ScriptableObject, ICsvMultiRowParseable
     public int LimitedCount => limitedCount;
     [SerializeField] int limitedCount;
 
+    /// <summary>
+    ///  복수구매여부 T면 구매확인창으로 여러개 구매
+    /// </summary>
+    public bool IsMany => isMany;
+    [SerializeField] bool isMany;
+
     #region 유저 데이터
     /// <summary>
     /// 구매한 횟수
@@ -107,6 +113,7 @@ public class ShopItemData : ScriptableObject, ICsvMultiRowParseable
 
         IS_LIMITED,
         LIMITED_COUNT,
+        IS_MANY,
     }
 
     public void ParseCsvMultiRow(string[] lines, ref int line)
@@ -170,6 +177,12 @@ public class ShopItemData : ScriptableObject, ICsvMultiRowParseable
                     Debug.Log($"구매 가능 횟수 데이터에 기본값(0) 적용됨");
                     limitedCount = 0;
                 }
+                
+                // IS_MANY: 테이블값이 T면 복수구매창(구매확인창) 을 엶, F면 그냥 limitedCount로
+                isMany = ("T" == cells[(int)Column.IS_MANY]);
+                if (string.IsNullOrEmpty(cells[(int)Column.IS_MANY]))
+                    isMany = false;
+                
             }
             else
             {
