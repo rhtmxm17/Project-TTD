@@ -60,7 +60,7 @@ public class ShopItem : BaseUI
     private void Init()
     {
         itemNameText = GetUI<TMP_Text>("ItemInfoText"); 
-        buyButton.GetComponentInChildren<Button>().onClick.AddListener(Buy);
+        buyButton.GetComponentInChildren<Button>().onClick.AddListener(OpenDoubleWarning);
         buyButtonText = GetUI<TMP_Text>("BuyButtonText");
         itemPriceText = GetUI<TMP_Text>("ItemPriceText");
         itemCountText = GetUI<TMP_Text>("ItemCountText");
