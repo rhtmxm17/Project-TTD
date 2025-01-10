@@ -110,6 +110,7 @@ public class StageManager : MonoBehaviour
         }
 
         stageDataOnLoad = _stageData;
+        stageData = _stageData;
 
         monsterWaveQueue.Clear();
         for (int i = monsterWaveParent.childCount - 1; i >= 0; i--)

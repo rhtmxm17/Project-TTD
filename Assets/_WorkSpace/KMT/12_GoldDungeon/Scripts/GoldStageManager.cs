@@ -75,18 +75,28 @@ public class GoldStageManager : StageManager, IDamageAddable, IProgressable
         Debug.Log("타임 오버!");
 
         //초과데미지를 주었더라도 최대 보상보다는 적게 주도록 강제
-        Rewarding(gaveDamage);
+        Rewarding(gaveDamage, false);
 
     }
 
 
-    void Rewarding(float socre)
+    void Rewarding(float socre, bool isClear)
     {
 
         float resultRate = Mathf.Clamp01(socre / bossCharacters.MaxHp.Value);//0~1 사이로 고정시키기
         long resultLong = (long)(resultRate * 100);
 
-        int rewardGold = (int)(stageData.Reward[0].gain * resultRate);
+        if (isClear)//클리어인경우, 클리어률을 100으로 지정.
+        {
+            resultLong = 100;
+            resultRate = 1;
+        }
+        else//클리어가 아닌 경우라면 99%로 명시.
+        {
+            resultLong = Math.Min(resultLong, 99);
+        }
+
+        int rewardGold = (int)(stageDataOnLoad.Reward[0].gain * resultRate);
 
         Debug.Log("클리어!");
 
@@ -143,7 +153,7 @@ public class GoldStageManager : StageManager, IDamageAddable, IProgressable
 
         Debug.Log("클리어!");
 
-        Rewarding(float.MaxValue - 10);
+        Rewarding(float.MaxValue - 10, true);
     }
 
 }
