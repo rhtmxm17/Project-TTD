@@ -6,7 +6,7 @@ using UnityEngine.Events;
 using Firebase.Database;
 using System;
 
-public class UserDataManager : SingletonScriptable<UserDataManager>
+public class UserDataManager : SingletonBehaviour<UserDataManager>
 {
     /// <summary>
     /// 24. 12. 27 김민태 캐릭터 소유 목록 추가
@@ -45,11 +45,40 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
 
     #endregion
 
-    public UnityEvent onLoadUserDataCompleted;
+    public UnityEvent onLoadUserDataCompleted { get; private set; } = new UnityEvent();
 
     public UserProfile Profile { get; private set; } = new UserProfile();
 
     public GamePlayData PlayData { get; private set; } = new GamePlayData();
+
+    private Dictionary<int, UserDataInt> itemNumberDict = new Dictionary<int, UserDataInt>();
+    private Dictionary<int, UserDataInt> stageClearCountDict = new Dictionary<int, UserDataInt>();
+
+    public UserDataInt GetItemNumber(int id)
+    {
+        if (itemNumberDict.ContainsKey(id))
+            return itemNumberDict[id];
+        else
+        {
+            UserDataInt udInt = new UserDataInt($"Items/{id}");
+            itemNumberDict.Add(id, udInt);
+            udInt.onValueChanged += GameManager.TableData.GetItemData(id).InvokeNumberChanged;
+            return udInt;
+        }
+    }
+
+
+    public UserDataInt GetStageClearCount(int id)
+    {
+        if (stageClearCountDict.ContainsKey(id))
+            return stageClearCountDict[id];
+        else
+        {
+            UserDataInt udInt = new UserDataInt($"Stages/{id}/ClearCount");
+            stageClearCountDict.Add(id, udInt);
+            return udInt;
+        }
+    }
 
     public class UserProfile
     {
@@ -86,6 +115,10 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
         }
     }
 
+    private void Awake()
+    {
+        RegisterSingleton(this);
+    }
 
     /// <summary>
     /// 테스트용 가인증 코드입니다
@@ -230,9 +263,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                         continue;
                     }
 
-                    ItemData itemData = GameManager.TableData.GetItemData(id);
-
-                    itemData.Number.SetValueWithDataSnapshot(userData);
+                    GetItemNumber(id).SetValueWithDataSnapshot(userData);
                 }
             }
 
@@ -251,9 +282,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                         continue;
                     }
 
-                    StageData stageData = GameManager.TableData.GetStageData(id);
-
-                    stageData.ClearCount.SetValueWithDataSnapshot(userData);
+                    GetStageClearCount(id).SetValueWithDataSnapshot(userData);
                 }
             }
 

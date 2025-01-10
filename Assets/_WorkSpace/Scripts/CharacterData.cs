@@ -348,12 +348,12 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
                 /// 아이템 획득 이벤트에 그 개수를 검사해 캐릭터 또는 전용 강화재료를 획득하는 메서드를 추가한다
 
                 // 직렬화된 UnityEvent 제거 (한 아이템 획득이 여러 메서드를 갖는 경우를 고려하지 않음)
-                while (0 < itemdata.onNumberChanged.GetPersistentEventCount())
+                while (0 < itemdata.OnNumberChanged.GetPersistentEventCount())
                 {
-                    UnityEditor.Events.UnityEventTools.RemovePersistentListener(itemdata.onNumberChanged, 0);
+                    UnityEditor.Events.UnityEventTools.RemovePersistentListener(itemdata.OnNumberChanged, 0);
                 }
                 // 직렬화되는 UnityEvent 등록
-                UnityEditor.Events.UnityEventTools.AddPersistentListener(itemdata.onNumberChanged, AcquireCharacter);
+                UnityEditor.Events.UnityEventTools.AddPersistentListener(itemdata.OnNumberChanged, AcquireCharacter);
                 EditorUtility.SetDirty(itemdata);
             }
         }
