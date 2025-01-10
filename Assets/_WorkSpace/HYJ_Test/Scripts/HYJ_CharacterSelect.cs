@@ -28,7 +28,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
     [SerializeField] GameObject UnitChangeUI; // 유닛 변경 확인 팝업 -> 변경하시겠습니까?
 
 
-    public void InitDataPosBTN(int PosIdx, GameObject CharacterSelectPanel, GameObject CantPosUI)
+    public void InitDataPosBtn(int PosIdx, GameObject CharacterSelectPanel, GameObject CantPosUI)
     {
         SelectM = gameObject.GetComponentInParent<Transform>().GetComponentInParent<HYJ_SelectManager>();
         this.characterSelectPanel = CharacterSelectPanel;
@@ -42,19 +42,18 @@ public class HYJ_CharacterSelect : MonoBehaviour
         }
     }
 
-    public void InitDataUnitBTN(HYJ_SelectManager manager, int unitIdx, GameObject unitChangeUI)
+    public void InitDataUnitBtn(HYJ_SelectManager manager, int unitIdx, GameObject unitChangeUI)
     {
         SelectM = manager;
 
         CharacterData chData = GameManager.TableData.GetCharacterData(unitIdx);
-        //chType.FaceIconSprite.texture;
-        // Text. ~~~ chType.Level.Value.ToString();
         GetComponentInChildren<TextMeshProUGUI>().text = $"{unitIdx.ToString()}번 유닛";
         unitIndex = unitIdx;
         UnitChangeUI = unitChangeUI;
 
         characterImage.GetComponent<Image>().sprite = chData.FaceIconSprite;
         levelText.text = chData.Level.Value.ToString();
+        raceText.text = chData.PowerLevel.ToString();
         //raceText.text = chData.
         //classText.text = chData.
         //attacktypeText.text = chData.
