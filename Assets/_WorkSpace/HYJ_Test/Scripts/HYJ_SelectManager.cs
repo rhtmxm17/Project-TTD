@@ -31,7 +31,7 @@ public class HYJ_SelectManager : MonoBehaviour
     private void Start()
     {
         enterStageButton.onClick.AddListener(LoadBattleScene);
-        cancelButton.onClick.AddListener(CancelEnterStage);
+        // cancelButton.onClick.AddListener(CancelEnterStage);
 
         GameManager.UserData.PlayData.BatchInfo.onValueChanged += (() =>
         {
