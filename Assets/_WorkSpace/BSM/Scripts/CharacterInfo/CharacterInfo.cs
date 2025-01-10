@@ -11,6 +11,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 
     private CharacterInfoController _characterInfoController;
     private CharacterModel _characterModel;
+    public CharacterModel CharacterModel => _characterModel;
     
     private TextMeshProUGUI _characterTypeText;
     private TextMeshProUGUI _characterListNameText;
@@ -154,7 +155,11 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
                 _characterModel = Instantiate(_characterData.ModelPrefab, Vector3.zero, Quaternion.identity, this.transform);
                 _characterModel.transform.localScale = new Vector3(500f, 500f, 1); 
                 _characterInfoController.EvolutionCharacterUI(_characterModel);
-            } 
+            }
+            else if (_characterModel != null && !_characterModel.gameObject.activeSelf)
+            {
+                _characterModel.gameObject.SetActive(true);
+            }
         }
         
         UpdateInfo();

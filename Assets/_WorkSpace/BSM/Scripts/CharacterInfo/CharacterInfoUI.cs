@@ -225,20 +225,4 @@ public class CharacterInfoUI : BaseUI
 
         _mileageUsePopup.SetActive(true);
     }
-
-    /// <summary>
-    /// 상세 팝업 종료 후 탭 타입 변경
-    /// </summary>
-    private void InfoPopupClose()
-    {
-        if (_infoPopup.activeSelf) return;
-        
-        _infoPopup.SetActive(false);
-        _controller.StartListSort();
-        _detailTabColor.color = Color.cyan;
-        _enhanceTabColor.color = Color.white;
-        _evolutionTabColor.color = Color.white;
-        _controller.CurInfoTabType = InfoTabType.DETAIL;
-    }
-    
 }
