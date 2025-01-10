@@ -70,7 +70,10 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
         public UserDataDateTime EggGainTimestamp { get; private set; } = new UserDataDateTime("PlayData/EggGainTimestamp");
         public UserDataDateTime IdleRewardTimestamp { get; private set; } = new UserDataDateTime("PlayData/IdleRewardTimestamp");
 
-        public UserDataDictionaryLong BatchInfo { get; private set; } = new UserDataDictionaryLong("PlayData/BatchInfo"); // 통채로 교체
+
+        public UserDataDictionaryLong BatchInfo { get; private set; } = new UserDataDictionaryLong("PlayData/BatchInfo");
+        public UserDataDictionaryLong GoldDungeonClearRate { get; private set; } = new UserDataDictionaryLong("PlayData/GoldDungeonClearRate");
+
 
         public List<UserDataInt> HasRoom = new List<UserDataInt>(MaxRoomIndex);
 
@@ -102,6 +105,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
         yield return new WaitWhile(() => GameManager.Auth == null);
         
         GameManager.Instance.StartShortLoadingUI();
+
         if (BackendManager.CurrentUserDataRef == null) // CurrentUserDataRef가 비어있다면 더미로 등록
         {
             BackendManager.Instance.UseDummyUserDataRef(DummyNumber); // 테스트코드
@@ -176,6 +180,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             this.PlayData.EggGainTimestamp.SetValueWithDataSnapshot(userData);
             this.PlayData.IdleRewardTimestamp.SetValueWithDataSnapshot(userData);
             this.PlayData.BatchInfo.SetValueWithDataSnapshot(userData);
+            this.PlayData.GoldDungeonClearRate.SetValueWithDataSnapshot(userData);
 
             foreach (var hasroom in this.PlayData.HasRoom)
             {
@@ -434,15 +439,30 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             public void SetValueWithDataSnapshot(DataSnapshot userDataSnapshot)
             {
                 object value = userDataSnapshot.Child(Key).Value;
-                Dictionary<string, object> tempDict = value as Dictionary<string, object>;
-                if (tempDict != null)
+                //Dictionary<string, object> tempDict = value as Dictionary<string, object>;
+
+                DataSnapshot tempDict = userDataSnapshot.Child(Key);
+
+                if (tempDict != null) 
+                {
+
+                    Value = new Dictionary<string, T>((int)tempDict.ChildrenCount << 1);
+
+                    foreach (var data in tempDict.Children)
+                    {
+                        Value[data.Key] = (T)data.Value;
+                    }
+                }
+            
+
+/*                if (tempDict != null)
                 {
                     this.Value = new Dictionary<string, T>(tempDict.Count << 1);
                     foreach (var pair in tempDict)
                     {
                         this.Value[pair.Key] = (T)pair.Value;
                     }
-                }
+                }*/
             }
 
             /// <summary>
@@ -458,6 +478,22 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                 {
                     Value = value;
                     onValueChanged?.Invoke();
+                };
+            }
+
+            /// <summary>
+            /// UpdateDbChain.SetDBValue()에서 갱신 대상 등록을 위한 메서드<br/>
+            /// 다른 용도의 사용을 상정하지 않음
+            /// </summary>
+            /// <param name="updateDbChain"></param>
+            /// <param name="value"></param>
+            public void RegisterToDBValueChain(UpdateDbChain updateDbChain, string childKeyValue, T value)
+            {
+                updateDbChain.updates[$"{Key}/{childKeyValue}"] = value;
+                updateDbChain.propertyCallbackOnSubmit += () =>
+                {
+                    Value[childKeyValue] = value;
+                    //onValueChanged?.Invoke();//호출 안함 [ 임시조치 ]
                 };
             }
         }
@@ -515,6 +551,27 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             }
 #endif //DEBUG
             property.RegisterToChain(this, value);
+
+            return this;
+        }
+
+        /// <summary>
+        /// 딕셔너리 타입의 내부 요소 일부를 수정하기 위한 함수
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="property">갱신할 대상 딕셔너리</param>
+        /// <param name="keyValue">갱신할 딕셔너리의 키</param>
+        /// <param name="value">갱신할 값</param>
+        /// <returns></returns>
+        public UpdateDbChain SetDBDictionaryInnerValue<T>(DictionaryAdapter<T> property, in string keyValue, T value)
+        {
+#if DEBUG
+            if (updates.ContainsKey($"{property.Key}/{keyValue}"))
+            {
+                Debug.LogWarning("한 스트림에 데이터를 두번 갱신하고 있음");
+            }
+#endif //DEBUG
+            property.RegisterToDBValueChain(this, keyValue, value);
 
             return this;
         }
