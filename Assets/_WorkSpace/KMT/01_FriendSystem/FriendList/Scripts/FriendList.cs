@@ -104,6 +104,11 @@ public class FriendList : MonoBehaviour
 
                                             if (result)
                                             {
+                                                friendRoomText.text = $"{nickname}님의 방";
+                                                // 임시) 내방으로 돌아가기 버튼
+                                                returnRoomButton.SetActive(true);
+                                                // 쌓여있는 스택처리
+                                                outskirtsUI.UIStack.Pop();
                                                  VisitFriend(str, $"{nickname}님의 방이에요! \n 비싼 물건을 찾아보죠!", 
                                                      () => {
                                                          GameManager.OverlayUIManager.OpenSimpleInfoPopup(
