@@ -113,7 +113,7 @@ public class PurchasingPanel : BaseUI
 
     public void UpdateInfo()
     {
-        if (remainCount > 0)
+        if (remainCount >= 0)
         {
             itemAmountText.text = $"아이템 수량: {remainCount}";
            // itemAmountText.text = $"아이템 수량: {remain}/{shopItemData.LimitedCount}";
