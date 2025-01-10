@@ -66,23 +66,12 @@ public class BossStageManager : StageManager, IDamageAddable
         
         RankApplier.ApplyRank("boss", UserData.myUid, GameManager.UserData.Profile.Name.Value, (long)(score + timeLimit), () =>
         {
-            // 클리어 팝업 + 확인 클릭시 메인 화면으로
-/*            ItemGainPopup popupInstance = Instantiate(itemGainPopupPrefab, GameManager.PopupCanvas);
-            popupInstance.Title.text = "보스전 종료!";
-            popupInstance.onPopupClosed += () => GameManager.Instance.LoadMenuScene(PrevScene);*/
-
-            GameManager.OverlayUIManager.OpenAdvencedSingleGainItemPopup(
-                "보스전 종료!",
-                null,
-                "맵으로 돌아가기", LoadPreviousScene,
-                false
-            );
 
             // 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
             List<CharacterData> chDataL = new List<CharacterData>(batchDictionary.Values);
             int randIdx = UnityEngine.Random.Range(0, chDataL.Count);
 
-            resultPopupWindow.OpenDoubleButtonWithResult(
+            resultPopupWindow.OpenDoubleButtonWithResult(//todo : 순위?
                 stageDataOnLoad.StageName,
                 null,
                 "확인", LoadPreviousScene,
