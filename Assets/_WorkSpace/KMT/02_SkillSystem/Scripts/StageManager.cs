@@ -287,9 +287,17 @@ public class StageManager : MonoBehaviour
             }
 
             // 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
-            ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(gainList);
+            GameManager.OverlayUIManager.OpenAdvencedDoubleGainItemPopup(
+                "에피소드 클리어!",
+                gainList,
+                "맵으로 돌아가기", LoadPreviousScene,
+                "다음 스테이지로",null,
+                true, false
+            );
+
+/*            ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(gainList);
             popupInstance.Title.text = "에피소드 클리어!";
-            popupInstance.onPopupClosed += LoadPreviousScene;
+            popupInstance.onPopupClosed += LoadPreviousScene;*/
         });
     }
 
@@ -303,6 +311,7 @@ public class StageManager : MonoBehaviour
 
         IsCombatEnd = true;
 
+        //TODO : 팝업으로 교체
         ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(null);
         popupInstance.Title.text = "패배...";
         popupInstance.onPopupClosed += LoadPreviousScene;

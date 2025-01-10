@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
+using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
 
 public class BossStageManager : StageManager, IDamageAddable
 {
@@ -66,9 +67,16 @@ public class BossStageManager : StageManager, IDamageAddable
         RankApplier.ApplyRank("boss", UserData.myUid, GameManager.UserData.Profile.Name.Value, (long)(score + timeLimit), () =>
         {
             // 클리어 팝업 + 확인 클릭시 메인 화면으로
-            ItemGainPopup popupInstance = Instantiate(itemGainPopupPrefab, GameManager.PopupCanvas);
+/*            ItemGainPopup popupInstance = Instantiate(itemGainPopupPrefab, GameManager.PopupCanvas);
             popupInstance.Title.text = "보스전 종료!";
-            popupInstance.onPopupClosed += () => GameManager.Instance.LoadMenuScene(PrevScene);
+            popupInstance.onPopupClosed += () => GameManager.Instance.LoadMenuScene(PrevScene);*/
+
+            GameManager.OverlayUIManager.OpenAdvencedSingleGainItemPopup(
+                "보스전 종료!",
+                null,
+                "맵으로 돌아가기", LoadPreviousScene,
+                false
+            );
 
         });
     }

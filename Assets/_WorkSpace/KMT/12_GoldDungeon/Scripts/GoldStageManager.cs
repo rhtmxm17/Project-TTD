@@ -133,6 +133,13 @@ public class GoldStageManager : StageManager, IDamageAddable, IProgressable
 
                 Debug.Log("와! 골드!");
 
+                GameManager.OverlayUIManager.OpenAdvencedSingleGainItemPopup(
+                    "와! 골드!",
+                    new List<ItemGain>() { reward },
+                    "맵으로 돌아가기", LoadPreviousScene,
+                    false
+                );
+
                 // 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
                 ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(new List<ItemGain>() { reward });
                 popupInstance.Title.text = "와! 골드!";
