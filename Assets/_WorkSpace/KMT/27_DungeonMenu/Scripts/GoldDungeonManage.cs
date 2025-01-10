@@ -16,7 +16,6 @@ public class GoldDungeonManage : MonoBehaviour
     List<StageData> stageDatas;
 
     ItemData goldTicketSO;
-    StageSceneChangeArgs sceneChangeArgs = null;
     int stageLevelIdx = 0;
 
     private void Awake()
