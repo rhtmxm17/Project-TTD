@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
+using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
@@ -13,9 +16,11 @@ public class StageManager : MonoBehaviour
     public float PartyCost { get; private set; } = 0;
     public DamageDisplayer DamageDisplayer { get; private set; }
 
-    [SerializeField] StageData stageData;
+    [SerializeField] protected StageData stageData;
     public StageData stageDataOnLoad { get; protected set; }
     public MenuType PrevScene { get; protected set; } = MenuType.NONE;
+
+    protected Dictionary<int, CharacterData> batchDictionary;
 
     [Header("Camera Effecter")]
     [SerializeField]
@@ -51,6 +56,10 @@ public class StageManager : MonoBehaviour
     protected TextMeshProUGUI leftTimeText;
 
     protected bool isTimeOver;
+
+    [Header("Result Popup Window")]
+    [SerializeField]
+    protected AdvencedPopupInCombatResult resultPopupWindow;
 
     [Header("Debug")]
     [Space(20)]
@@ -110,6 +119,7 @@ public class StageManager : MonoBehaviour
         }
 
         stageDataOnLoad = _stageData;
+        stageData = _stageData;
 
         monsterWaveQueue.Clear();
         for (int i = monsterWaveParent.childCount - 1; i >= 0; i--)
@@ -124,7 +134,7 @@ public class StageManager : MonoBehaviour
 
         //키 : 배치정보, 값 : 캐릭터 고유 번호(ID)
         Dictionary<string, long> batchData = GameManager.UserData.PlayData.BatchInfo.Value;
-        Dictionary<int, CharacterData> batchDictionary = new Dictionary<int, CharacterData>(batchData.Count);
+        batchDictionary = new Dictionary<int, CharacterData>(batchData.Count);
 
         foreach (var pair in batchData)
         {
@@ -286,9 +296,19 @@ public class StageManager : MonoBehaviour
             }
 
             // 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
-            ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(gainList);
-            popupInstance.Title.text = "에피소드 클리어!";
-            popupInstance.onPopupClosed += LoadPreviousScene;
+            List<CharacterData> chDataL = new List<CharacterData>(batchDictionary.Values);
+            int randIdx = UnityEngine.Random.Range(0, chDataL.Count);
+
+                resultPopupWindow.OpenDoubleButtonWithResult(
+                    stageDataOnLoad.StageName,
+                    gainList,
+                    "확인", LoadPreviousScene,
+                    "다음 스테이지로", null,//TODO : 다음스테이지로 가는 로직 만들기.
+                    true, true,
+                    "승리!", chDataL[randIdx].FaceIconSprite,
+                    AdvencedPopupInCombatResult.ColorType.VICTORY
+                );
+
         });
     }
 
@@ -302,9 +322,19 @@ public class StageManager : MonoBehaviour
 
         IsCombatEnd = true;
 
-        ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(null);
-        popupInstance.Title.text = "패배...";
-        popupInstance.onPopupClosed += LoadPreviousScene;
+        //패배
+        List<CharacterData> chDataL = new List<CharacterData>(batchDictionary.Values);
+        int randIdx = UnityEngine.Random.Range(0, chDataL.Count);
+
+        resultPopupWindow.OpenDoubleButtonWithResult(
+            stageDataOnLoad.StageName,
+            null,
+            "확인", LoadPreviousScene,
+            "다음 스테이지로", null,//TODO : 다음스테이지로 가는 로직 만들기.
+            true, true,
+            "패배..", chDataL[randIdx].FaceIconSprite,
+            AdvencedPopupInCombatResult.ColorType.DEFEAT
+        );
     }
 
     protected void LoadPreviousScene() => GameManager.Instance.LoadMenuScene(PrevScene);

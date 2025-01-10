@@ -7,25 +7,20 @@ using UnityEngine.UI;
 
 public class HYJ_SelectManager : MonoBehaviour
 {
-    [SerializeField] public int curPos;
-    [SerializeField] public int curUnitIndex;
+    [Header("현재 선택한 위치&유닛 정보")]
+    [SerializeField] public int curPos; //현재 선택한 위치
+    [SerializeField] public int curUnitIndex; //현재 선택한 유닛의 고유번호
 
-    [Header("buttonList")]
-    [SerializeField]
-    List<Transform> buttonsTransformList;
-
-    [SerializeField] Button enterStageButton;
-    [SerializeField] Button cancelButton;
-
-    [Header("이미지 프리팹")]
-    [SerializeField] public GameObject ChImagePrefab;
-
-    [SerializeField]
-    HYJ_CharacterSelect batchButtonPrefab;
-    [SerializeField]
-    Transform batchButtonsTransform;
-    [SerializeField]
-    int buttonCnt;
+    [Header("버튼 리스트")]
+    [SerializeField] List<Transform> buttonsTransformList;
+    
+    [Header("필수 설정 사항")]
+    [SerializeField] Button UnitPosResetButton; // 
+    [SerializeField] Button enterStageButton; //스테이지 진입 버튼
+    [SerializeField] Button cancelButton; //뒤돌아가기 버튼
+    [SerializeField] HYJ_CharacterSelect batchButtonPrefab; //배치버튼 프리팹
+    [SerializeField] Transform batchWindow; //배치버튼 윈도우
+    [SerializeField] int buttonCnt; //버튼 생성 수
     [SerializeField] public GameObject CharacterSelectPanel; // 캐릭터 선택 창 
     [SerializeField] public GameObject CantPosUI; // 선택 불가 팝업 -> 5개 유닛이 이미 다 배치 되었을 때의 팝업
     [SerializeField] GameObject UnitChangeUI; // 유닛 변경 확인 팝업 -> 변경하시겠습니까?
@@ -36,9 +31,7 @@ public class HYJ_SelectManager : MonoBehaviour
     private void Start()
     {
         enterStageButton.onClick.AddListener(LoadBattleScene);
-        cancelButton.onClick.AddListener(CancelEnterStage);
-        
-        
+        // cancelButton.onClick.AddListener(CancelEnterStage);
 
         GameManager.UserData.PlayData.BatchInfo.onValueChanged += (() =>
         {
@@ -62,18 +55,14 @@ public class HYJ_SelectManager : MonoBehaviour
         {
             Debug.LogError("불러온 유저 배치 정보 오류(5개 보다 많은 배치)");
         }
-        else if (battleInfo.Count > 0)
-        {
-            //SetBattleInfo(battleInfo);
-        }
         
         for (int i = 0; i < buttonCnt; i++)
         {
-            var obj = Instantiate(batchButtonPrefab, batchButtonsTransform);
+            var obj = Instantiate(batchButtonPrefab, batchWindow);
             buttonsTransformList.Add(obj.transform);
-            obj.InitDataPosBTN(i, CharacterSelectPanel, CantPosUI);
+            obj.InitDataPosBtn(i, CharacterSelectPanel, CantPosUI);
             
-            //obj.GetComponent<HYJ_PosBTN>().BuffInput(true,true,true);
+            obj.GetComponent<HYJ_PosBTN>().BuffInput(true,true,true);
         }
     }
 
@@ -98,45 +87,6 @@ public class HYJ_SelectManager : MonoBehaviour
         GameManager.UserData.StartUpdateStream()
             .SetDBDictionary(GameManager.UserData.PlayData.BatchInfo, updates)
             .Submit(onCompleteCallback);
-    }
-    
-    /// <summary>
-    /// 캐릭터 이미지 생성 - AddBatch에 사용
-    /// </summary>
-    /// <param name="posIdx"></param> 이미지의 생성 위치
-    /// <param name="charIdx"></param> 생성할 캐릭터의 고유 번호
-    public void SetCharacterImage(int posIdx, int charIdx)
-    {
-        var chImage = Instantiate(ChImagePrefab, buttonsTransformList[posIdx]);
-        CharacterData chData = GameManager.TableData.GetCharacterData(charIdx);
-        chImage.transform.localPosition = Vector3.zero;
-        chImage.GetComponent<Image>().sprite = chData.FaceIconSprite;
-        chImage.GetComponent<HYJ_CharacterImage>().curPos = posIdx;
-        chImage.GetComponent<HYJ_CharacterImage>().unitIndex = charIdx;
-    }
-
-    /// <summary>
-    /// 캐릭터 이미지 삭제 - RemoveBatch에 사용
-    /// </summary>
-    /// <param name="posIdx"></param> 삭제할 이미지의 위치
-    public void RemoveCharacterImage(int posIdx)
-    {
-        Destroy(buttonsTransformList[posIdx].GetComponentInChildren<HYJ_CharacterImage>().gameObject);
-    }
-
-    /// <summary>
-    /// 캐릭터 이미지 이동 - changeBatch에 사용
-    /// </summary>
-    /// <param name="fromIdx"></param> 이동할 위치 번호
-    /// <param name="destIdx"></param> 출발 번호
-    public void ChangeImagePos(int fromIdx, int destIdx)
-    {
-        RemoveCharacterImage(destIdx);
-        buttonsTransformList[fromIdx].GetComponentInChildren<HYJ_CharacterImage>().transform.SetParent(buttonsTransformList[destIdx].transform);
-
-        HYJ_CharacterImage[] transL = buttonsTransformList[destIdx].GetComponentsInChildren<HYJ_CharacterImage>();
-        RectTransform trans = transL[transL.Length - 1].GetComponent<RectTransform>();
-        trans.anchoredPosition = Vector3.zero;
     }
 
     public void LoadBattleScene()
@@ -200,5 +150,10 @@ public class HYJ_SelectManager : MonoBehaviour
         
         UnitChangeUI.SetActive(false);
         CharacterSelectPanel.SetActive(false);
+    }
+
+    public void ArrayCharacterList()
+    {
+        
     }
 }

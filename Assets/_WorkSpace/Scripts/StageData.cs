@@ -100,7 +100,7 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
     /// <summary>
     /// (유저 데이터) 클리어 횟수
     /// </summary>
-    public UserDataInt ClearCount { get; private set; }
+    public UserDataInt ClearCount => GameManager.UserData.GetStageClearCount(id);
 
     /// <summary>
     /// 해당 스테이지가 해금되었는지의 여부
@@ -150,11 +150,6 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
     [SerializeField] StoryDirectingData preStory = null;
     [SerializeField] StoryDirectingData postStory = null;
     [SerializeField] List<int> lockConditionStageIDs; // 개방 조건에 해당하는 선행 스테이지 목록
-
-    private void OnEnable()
-    {
-        ClearCount = new UserDataInt($"Stages/{id}/ClearCount");
-    }
 
     [System.Serializable]
     public struct WaveInfo
