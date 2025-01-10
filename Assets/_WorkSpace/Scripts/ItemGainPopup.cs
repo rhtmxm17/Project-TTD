@@ -52,7 +52,8 @@ public class ItemGainPopup : MonoBehaviour
 
         }
     }
-    
+
+
     /// <summary>
     /// 캐릭터풀강시 대체지급만을 위한 획득창 / 아니면 단일아이템
     /// </summary>

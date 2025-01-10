@@ -133,17 +133,19 @@ public class GoldStageManager : StageManager, IDamageAddable, IProgressable
 
                 Debug.Log("와! 골드!");
 
-                GameManager.OverlayUIManager.OpenAdvencedSingleGainItemPopup(
-                    "와! 골드!",
+                List<CharacterData> chDataL = new List<CharacterData>(batchDictionary.Values);
+                int randIdx = UnityEngine.Random.Range(0, chDataL.Count);
+
+                resultPopupWindow.OpenDoubleButtonWithResult(
+                    stageDataOnLoad.StageName,
                     new List<ItemGain>() { reward },
-                    "맵으로 돌아가기", LoadPreviousScene,
-                    false
+                    "확인", LoadPreviousScene,
+                    "다음 스테이지로", null,//TODO : 다음스테이지로 가는 로직 만들기.
+                    true, true,
+                    "승리!", chDataL[randIdx].FaceIconSprite,
+                    AdvencedPopupInCombatResult.ColorType.VICTORY
                 );
 
-                // 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
-                ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(new List<ItemGain>() { reward });
-                popupInstance.Title.text = "와! 골드!";
-                popupInstance.onPopupClosed += GameManager.Instance.LoadMainScene;
             });
 
     }
