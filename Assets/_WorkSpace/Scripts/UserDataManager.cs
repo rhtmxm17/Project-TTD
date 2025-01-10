@@ -6,7 +6,7 @@ using UnityEngine.Events;
 using Firebase.Database;
 using System;
 
-public class UserDataManager : SingletonScriptable<UserDataManager>
+public class UserDataManager : SingletonBehaviour<UserDataManager>
 {
     /// <summary>
     /// 24. 12. 27 김민태 캐릭터 소유 목록 추가
@@ -45,11 +45,96 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
 
     #endregion
 
-    public UnityEvent onLoadUserDataCompleted;
+    public UnityEvent onLoadUserDataCompleted { get; private set; } = new UnityEvent();
 
     public UserProfile Profile { get; private set; } = new UserProfile();
 
     public GamePlayData PlayData { get; private set; } = new GamePlayData();
+
+    #region SO 연계형 유저 데이터
+    
+
+    private Dictionary<int, UserDataInt> itemNumberDict = new Dictionary<int, UserDataInt>();
+    public UserDataInt GetItemNumber(int id)
+    {
+        if (itemNumberDict.ContainsKey(id))
+            return itemNumberDict[id];
+        else
+        {
+            UserDataInt udInt = new UserDataInt($"Items/{id}");
+            itemNumberDict.Add(id, udInt);
+            // 아이템은 SO의 이벤트를 발생시킴
+            udInt.onValueChanged += GameManager.TableData.GetItemData(id).InvokeNumberChanged;
+            return udInt;
+        }
+    }
+
+    private Dictionary<int, UserDataInt> stageClearCountDict = new Dictionary<int, UserDataInt>();
+    public UserDataInt GetStageClearCount(int id)
+    {
+        if (stageClearCountDict.ContainsKey(id))
+            return stageClearCountDict[id];
+        else
+        {
+            UserDataInt udInt = new UserDataInt($"Stages/{id}/ClearCount");
+            stageClearCountDict.Add(id, udInt);
+            return udInt;
+        }
+    }
+
+    private Dictionary<int, UserDataInt> characterLevelDict = new Dictionary<int, UserDataInt>();
+    public UserDataInt GetCharacterLevel(int id)
+    {
+        if (characterLevelDict.ContainsKey(id))
+            return characterLevelDict[id];
+        else
+        {
+            UserDataInt udInt = new UserDataInt($"Characters/{id}/Level");
+            characterLevelDict.Add(id, udInt);
+            return udInt;
+        }
+    }
+
+    private Dictionary<int, UserDataInt> characterEnhancementDict = new Dictionary<int, UserDataInt>();
+    public UserDataInt GetCharacterEnhancement(int id)
+    {
+        if (characterEnhancementDict.ContainsKey(id))
+            return characterEnhancementDict[id];
+        else
+        {
+            UserDataInt udInt = new UserDataInt($"Characters/{id}/Enhancement");
+            characterEnhancementDict.Add(id, udInt);
+            return udInt;
+        }
+    }
+
+    private Dictionary<int, UserDataInt> characterMileageDict = new Dictionary<int, UserDataInt>();
+    public UserDataInt GetCharacterMileage(int id)
+    {
+        if (characterMileageDict.ContainsKey(id))
+            return characterMileageDict[id];
+        else
+        {
+            UserDataInt udInt = new UserDataInt($"Characters/{id}/EnhanceMileagePerMill");
+            characterMileageDict.Add(id, udInt);
+            return udInt;
+        }
+    }
+
+    private Dictionary<int, UserDataInt> packageBoughtDict = new Dictionary<int, UserDataInt>();
+    public UserDataInt GetPackageBought(int id)
+    {
+        if (packageBoughtDict.ContainsKey(id))
+            return packageBoughtDict[id];
+        else
+        {
+            UserDataInt udInt = new UserDataInt($"ShopItems/{id}/Bought");
+            packageBoughtDict.Add(id, udInt);
+            return udInt;
+        }
+    }
+
+    #endregion SO 연계형 유저 데이터
 
     public class UserProfile
     {
@@ -86,6 +171,10 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
         }
     }
 
+    private void Awake()
+    {
+        RegisterSingleton(this);
+    }
 
     /// <summary>
     /// 테스트용 가인증 코드입니다
@@ -204,12 +293,9 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
 
                     CharacterData characterData = GameManager.TableData.GetCharacterData(id);
 
-                    //kmt - 보유 캐릭터 목록 초기화
-                    haveCharacterIdxList.Add(id);
-
-                    characterData.Level.SetValueWithDataSnapshot(userData);
-                    characterData.Enhancement.SetValueWithDataSnapshot(userData);
-                    characterData.EnhanceMileagePerMill.SetValueWithDataSnapshot(userData);
+                    GetCharacterLevel(id).SetValueWithDataSnapshot(userData);
+                    GetCharacterEnhancement(id).SetValueWithDataSnapshot(userData);
+                    GetCharacterMileage(id).SetValueWithDataSnapshot(userData);
                 }
 
             }
@@ -230,9 +316,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                         continue;
                     }
 
-                    ItemData itemData = GameManager.TableData.GetItemData(id);
-
-                    itemData.Number.SetValueWithDataSnapshot(userData);
+                    GetItemNumber(id).SetValueWithDataSnapshot(userData);
                 }
             }
 
@@ -251,9 +335,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                         continue;
                     }
 
-                    StageData stageData = GameManager.TableData.GetStageData(id);
-
-                    stageData.ClearCount.SetValueWithDataSnapshot(userData);
+                    GetStageClearCount(id).SetValueWithDataSnapshot(userData);
                 }
             }
 
@@ -272,9 +354,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                         continue;
                     }
 
-                    ShopItemData shopItemData = GameManager.TableData.GetShopItemData(id);
-
-                    shopItemData.Bought.SetValueWithDataSnapshot(userData);
+                    GetPackageBought(id).SetValueWithDataSnapshot(userData);
                 }
             }
 
