@@ -95,6 +95,12 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
     /// </summary>
     public StoryDirectingData PostStory => postStory;
 
+
+    /// <summary>
+    /// 다음 스테이지의 ID (없는경우 -1)
+    /// </summary>
+    public int NextStageId => nextStageId;
+
     // ================== 유저 데이터 속성 ==================
 
     /// <summary>
@@ -150,6 +156,7 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
     [SerializeField] StoryDirectingData preStory = null;
     [SerializeField] StoryDirectingData postStory = null;
     [SerializeField] List<int> lockConditionStageIDs; // 개방 조건에 해당하는 선행 스테이지 목록
+    [SerializeField] int nextStageId = -1;
 
     [System.Serializable]
     public struct WaveInfo
@@ -246,6 +253,7 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
         POST_STORY,
 
         LOCK_CONDITON_ID,
+        NEXT_STAGE_ID,
     }
 
     public void ParseCsvMultiRow(string[] lines, ref int line)
@@ -297,6 +305,12 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
 
                 // POST_STORY
                 postStory = AssetDatabase.LoadAssetAtPath<StoryDirectingData>($"{DataTableManager.StoryAssetFolder}/{cells[(int)Column.POST_STORY]}.asset");
+
+                // NEXT_STAGE_ID
+                if (false == int.TryParse(cells[(int)Column.NEXT_STAGE_ID], out nextStageId))
+                {
+                    nextStageId = -1;
+                }
             }
             else
             {

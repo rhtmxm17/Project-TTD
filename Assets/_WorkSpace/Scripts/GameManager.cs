@@ -234,7 +234,7 @@ public class StageSceneChangeArgs
     public MenuType prevScene = MenuType.ADVANTURE;
 
     /// <summary>
-    /// 던전 클리어율 기록을 위한 던전 레벨 인덱스.
+    /// 던전 클리어율 기록을 위한 던전 레벨 인덱스.[골드던전용]
     /// </summary>
     public int dungeonLevel = 0;
 
