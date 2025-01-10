@@ -16,8 +16,10 @@ public class StoryDirector : BaseUI
     /// </summary>
     public event UnityAction onStoryCompleted;
 
+    [SerializeField] StoryDirectingData testData;
+
     // 불러올 데이터가 있는 곳
-    [SerializeField] StoryDirectingData storyData;
+    private StoryDirectingData storyData;
 
     [SerializeField] Image standingImagePrefab;
 
@@ -60,9 +62,20 @@ public class StoryDirector : BaseUI
     {
         base.Awake();
         backGroundButton.onClick.AddListener(ClickAction_Started);
+
+        // 스탠딩 이미지 영역 설정
+        standingImageParent.offsetMin = new Vector2(-standingImageParent.rect.height, 0f); 
+    }
+
+    private void Update()
+    {
+        Debug.Log($"{standingImageParent.rect} / {standingImageParent.offsetMin}");
     }
 
     private void OnDestroy() => ClearActors();
+
+    [ContextMenu("테스트 데이터로 재생")]
+    public void TestStart() => SetDirectionData(testData);
 
     public void SetDirectionData(StoryDirectingData storyData)
     {
@@ -156,9 +169,10 @@ public class StoryDirector : BaseUI
             actor.gameObject.SetActive(transition.Active);
 
             actor.transform.localScale = transition.Flip ? new Vector3(-1, 1, 1) : new Vector3(1, 1, 1);
+            actor.transform.localPosition = transition.Position;
+
             actor.color = new Color(transition.ColorMultiply, transition.ColorMultiply, transition.ColorMultiply);
 
-            actor.rectTransform.anchorMin = actor.rectTransform.anchorMax = transition.Position;
         }
     }
 

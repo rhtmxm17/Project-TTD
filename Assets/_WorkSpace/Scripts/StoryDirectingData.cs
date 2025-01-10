@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using System.Linq;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -32,6 +34,7 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
     [System.Serializable]
     public struct Dialogue
     {
+        public string Loaction;
         public string Speaker;
         [TextArea] public string Script;
 
@@ -41,6 +44,8 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
         public AudioClip Sfx;
         public Sprite BackgroundSprite;
         public List<TransitionInfo> Transitions; // 스탠딩 이미지 갱신사항
+        public Vector2 CameraPosition;
+        public float CameraSize;
     }
 
     [System.Serializable]
@@ -69,9 +74,12 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
 #if UNITY_EDITOR
     private enum Column
     {
-        ID,         // 다이얼로그
+        ID, // 구분자
+
+        LOCATION,   // 다이얼로그
         SPEAKER,    // 다이얼로그
         SCRIPT,     // 다이얼로그
+
         STANDING_IMAGE_ID,  // 스탠딩 이미지
         LEAVE,              // 스탠딩 이미지
         FLIP,               // 스탠딩 이미지
@@ -79,9 +87,14 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
         POS_X,              // 스탠딩 이미지
         POS_Y,              // 스탠딩 이미지
         TRANSITION,         // 스탠딩 이미지
-        BGM,        // 다이얼로그
-        SFX,        // 다이얼로그
-        BG_IMG,     // 다이얼로그
+
+        FOCUS_X,    // 카메라
+        FOCUS_Y,    // 카메라
+        ZOOM,       // 카메라
+
+        BGM,        // 기타 연출
+        SFX,        // 기타 연출
+        BG_IMG,     // 기타 연출
     }
 
     public void ParseCsvSheet(int sheetId, string title, string csv)
@@ -108,6 +121,9 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
                 Dialogue parsed = new Dialogue();
                 parsed.Transitions = new List<TransitionInfo>();
 
+                // LOCATION
+                parsed.Loaction = cells[(int)Column.LOCATION];
+
                 // SPEAKER
                 parsed.Speaker = cells[(int)Column.SPEAKER];
 
@@ -133,6 +149,48 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
                 if (false == string.IsNullOrEmpty(cells[(int)Column.BG_IMG]))
                 {
                     parsed.BackgroundSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.BG_IMG]}.asset");
+                }
+
+                // FOCUS_X
+                if (string.IsNullOrEmpty(cells[(int)Column.FOCUS_X]))
+                {
+                    // 비어있을 경우 좌표 유지
+                    if (tempDialogues.Count == 0)
+                        parsed.CameraPosition.x = 0;
+                    else
+                        parsed.CameraPosition.x = tempDialogues[^1].CameraPosition.x;
+                }
+                else if (false == float.TryParse(cells[(int)Column.FOCUS_X], out parsed.CameraPosition.x))
+                {
+                    Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.FOCUS_X]}");
+                }
+
+                // FOCUS_X
+                if (string.IsNullOrEmpty(cells[(int)Column.FOCUS_Y]))
+                {
+                    // 비어있을 경우 좌표 유지
+                    if (tempDialogues.Count == 0)
+                        parsed.CameraPosition.y = 0;
+                    else
+                        parsed.CameraPosition.y = tempDialogues[^1].CameraPosition.y;
+                }
+                else if (false == float.TryParse(cells[(int)Column.FOCUS_Y], out parsed.CameraPosition.y))
+                {
+                    Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.FOCUS_Y]}");
+                }
+
+                // ZOOM
+                if (string.IsNullOrEmpty(cells[(int)Column.ZOOM]))
+                {
+                    // 비어있을 경우 카메라 사이즈 유지
+                    if (tempDialogues.Count == 0)
+                        parsed.CameraSize = 10f;
+                    else
+                        parsed.CameraSize = tempDialogues[^1].CameraSize;
+                }
+                else if (false == float.TryParse(cells[(int)Column.ZOOM], out parsed.CameraSize))
+                {
+                    Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.ZOOM]}");
                 }
 
                 tempDialogues.Add(parsed);
