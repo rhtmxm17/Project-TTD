@@ -162,6 +162,8 @@ public class PurchasingPanel : BaseUI
             UserDataInt itemGet = product.item.Number;
             dbUpdateStream.AddDBValue(itemGet, product.gain * currentNumber); // 요청에 갯수만큼 '상품 획득' 등록
         }
+        
+        ClosePopup();
 
         dbUpdateStream.Submit(OnComplete);
 
@@ -194,7 +196,7 @@ public class PurchasingPanel : BaseUI
         ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(bought);
         popupInstance.Title.text = "구매 성공!";
         // this.shopItem.UpdateInfo(); // 이거 하면 창이 안닫힘
-        ClosePopup();
+        // ClosePopup();
     }
 
     private void ClosePopup()
