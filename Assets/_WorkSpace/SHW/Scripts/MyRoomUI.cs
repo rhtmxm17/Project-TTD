@@ -123,6 +123,7 @@ public class MyRoomUI : BaseUI
         LoadImage();
         roomName.text = "나만의 공간";
         outskirtsUI.UIStack.Pop();
+        GetUI<Button>("MyRoomCharacter").enabled = true;
         GetUI("Dictionary").SetActive(true);
         GetUI("VisitButton").SetActive(true);
         GetUI("CharacterChangeButton").SetActive(true);

@@ -4,6 +4,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class FriendList : MonoBehaviour
 {
@@ -33,6 +34,8 @@ public class FriendList : MonoBehaviour
     [SerializeField] private GameObject returnRoomButton;
     // 스택제거용
     [SerializeField] OutskirtsUI outskirtsUI;
+    // 캐릭터 상호작용 비활성용
+    [SerializeField] private Button canInteract;
 
     private void Awake()
     {
@@ -109,6 +112,8 @@ public class FriendList : MonoBehaviour
                                                 returnRoomButton.SetActive(true);
                                                 // 쌓여있는 스택처리
                                                 outskirtsUI.UIStack.Pop();
+                                                // 캐릭터 상호작용 비활성
+                                                canInteract.enabled = false;
                                                  VisitFriend(str, $"{nickname}님의 방이에요! \n 비싼 물건을 찾아보죠!", 
                                                      () => {
                                                          GameManager.OverlayUIManager.OpenSimpleInfoPopup(
@@ -132,6 +137,8 @@ public class FriendList : MonoBehaviour
                                       returnRoomButton.SetActive(true);
                                       // 쌓여있는 스택처리
                                       outskirtsUI.UIStack.Pop();
+                                      // 캐릭터 상호작용 비활성
+                                      canInteract.enabled = false;
                                       VisitFriend(str, $"{nickname}님의 방이에요! \n 오늘은 이제 구경만 하도록 하죠.", null);
                                   }
                               });
