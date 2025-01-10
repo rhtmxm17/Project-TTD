@@ -16,11 +16,6 @@ public class CharacterFilter : MonoBehaviour
     private List<Enum> _filterTypes = new List<Enum>();
 
     private CharacterFilterUI _characterFilterUI; 
-   
-    
-    private int _elementCount = 0;
-    private int _roleCount = 0;
-    private int _dragonVeinCount = 0;
 
     private void Awake()
     {

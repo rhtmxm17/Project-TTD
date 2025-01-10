@@ -1,12 +1,7 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq; 
 using TMPro;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class CharacterInfoController : BaseUI
@@ -17,7 +12,6 @@ public class CharacterInfoController : BaseUI
     [HideInInspector] public CharacterEnhance CurCharacterEnhance;
     [HideInInspector] public TextMeshProUGUI SortButtonText;
     [HideInInspector] public GameObject _infoPopup;
-    [HideInInspector] public int CurIndex = 0;
     [HideInInspector] public TextMeshProUGUI ElementFilterText;
     [HideInInspector] public TextMeshProUGUI RoleFilterText;
     [HideInInspector] public TextMeshProUGUI DragonVeinFilterText;
@@ -27,13 +21,16 @@ public class CharacterInfoController : BaseUI
     [HideInInspector] public UserDataInt UserLevelMaterialData;
     [HideInInspector] public UserDataInt UserEnhanceMaterialData;
     
+    [HideInInspector] public int CurIndex = 0;
+    private int _evolutionIndex;
+    
     private List<int> _holdingCharactersIndex = new List<int>();
 
+    private CharacterInfoPopup _characterInfoPopupCs;
     private CharacterSort _characterSort;
 
     private TextMeshProUGUI _evolutionText;
     private TextMeshProUGUI _sortingText;
-    private Image _evolutionImage;
     
     private Button _leftEvolutionButton;
     private Button _rightEvolutionButton;
@@ -91,11 +88,7 @@ public class CharacterInfoController : BaseUI
         {
             _userEnhanceMaterial = value;
         }
-    }
-
-    private int _evolutionIndex = 0;
-    
- 
+    } 
     protected override void Awake()
     {
         base.Awake(); 
@@ -121,8 +114,7 @@ public class CharacterInfoController : BaseUI
         _characterFilter = GetUI<CharacterFilter>("FilterUI");
         _characterSort = GetUI<CharacterSort>("SortUI"); 
         _infoUI = GetUI<CharacterInfoUI>("InfoUI");
-
-        _evolutionImage = GetUI<Image>("EvolutionImage");
+        _characterInfoPopupCs = GetUI<CharacterInfoPopup>("InfoPopup");
         
         _prevButton = GetUI<Button>("PreviousButton");
         _nextButton = GetUI<Button>("NextButton");
@@ -206,7 +198,7 @@ public class CharacterInfoController : BaseUI
         _characterSort.IsSorting = PlayerPrefs.HasKey("IsSorting") ? PlayerPrefs.GetInt("IsSorting") == 1 : true;
         _characterSort.CharacterListSort();
     }
-
+    
     /// <summary>
     /// 상세 탭 : 이전 캐릭터 정보로 변경
     /// </summary>
@@ -275,7 +267,9 @@ public class CharacterInfoController : BaseUI
         }
 
         _evolutionIndex = 0;
+        _characterInfoPopupCs.ListIndex = _evolutionIndex;
         _leftEvolutionButton.gameObject.SetActive(_evolutionIndex != 0);
+        _rightEvolutionButton.gameObject.SetActive(_evolutionIndex != CurCharacterInfo.CharacterModels.Count - 1);
         
         _nextButton.gameObject.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
         _prevButton.gameObject.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
@@ -292,10 +286,14 @@ public class CharacterInfoController : BaseUI
     {
         if (_evolutionIndex > 0)
         {
+            CurCharacterInfo.CharacterModels[_evolutionIndex].gameObject.SetActive(false);
             _evolutionIndex--;
         }
-
-        EvolutionCharacterUI(CurCharacterInfo._CharacterData.ModelPrefab.NextEvolveModel);
+        
+        CurCharacterInfo.CharacterModels[_evolutionIndex].gameObject.SetActive(true);
+        _characterInfoPopupCs.ListIndex = _evolutionIndex;
+        
+        EvolutionCharacterUI();
     }
 
     /// <summary>
@@ -303,31 +301,22 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void EvolutionNextCharacter()
     {
-        if (_evolutionIndex < 2)
+        if (_evolutionIndex < CurCharacterInfo.CharacterModels.Count)
         {
+            CurCharacterInfo.CharacterModels[_evolutionIndex].gameObject.SetActive(false);
             _evolutionIndex++;
         }
-
-        EvolutionCharacterUI(CurCharacterInfo._CharacterData.ModelPrefab.NextEvolveModel);
+         
+        CurCharacterInfo.CharacterModels[_evolutionIndex].gameObject.SetActive(true);
+        _characterInfoPopupCs.ListIndex = _evolutionIndex;
+        
+        EvolutionCharacterUI();
     }
 
-    public void EvolutionCharacterUI(CharacterModel model)
+    private void EvolutionCharacterUI()
     {
         _leftEvolutionButton.gameObject.SetActive(_evolutionIndex != 0);
         _rightEvolutionButton.gameObject.SetActive(_evolutionIndex != 2);
-        //TODO: 캐릭터 데이터에 진화 이미지 들어오면 풀것
-        //_evolutionImage = CurCharacterInfo._CharacterData.EvolutionImage[_evolutionIndex];
-    
-        //TODO: 작업 필요
-        if (model != null)
-        {
-            _evolutionImage.color = new Color(0, 0, 0, 0);
-        }
-        else
-        {
-            _evolutionImage.color = new Color(1f, _evolutionIndex * 0.3f, 1f);
-        }
-
         _evolutionText.text = $"진화 Lv.{_evolutionIndex + 1}";
     }
     

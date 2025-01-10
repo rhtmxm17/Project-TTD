@@ -1,14 +1,10 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class CharacterInfoUI : BaseUI
 {
-    [HideInInspector] private Sprite[] _enhanceResultIcons = new Sprite[3];
+    private readonly Sprite[] _enhanceResultIcons = new Sprite[3];
     public Sprite[] EnhanceResultIcons => _enhanceResultIcons;
     
     //DetailTab

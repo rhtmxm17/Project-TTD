@@ -8,11 +8,11 @@ using UnityEngine;
 public class CharacterSort : MonoBehaviour
 {
     [HideInInspector] public CharacterInfoController CharacterInfoController;
-     public List<CharacterInfo> _sortCharacterInfos;
+    [HideInInspector] public List<CharacterInfo> _sortCharacterInfos;
     [HideInInspector] public TextMeshProUGUI SortingText;
    
-    public List<CharacterData> _ownedCharacters;
-    public List<CharacterData> _unOwnedCharacters;
+    [HideInInspector] public List<CharacterData> _ownedCharacters;
+    [HideInInspector] public List<CharacterData> _unOwnedCharacters;
     private List<int> _sortList;
     private CharacterSortUI _characterSortUI;
     

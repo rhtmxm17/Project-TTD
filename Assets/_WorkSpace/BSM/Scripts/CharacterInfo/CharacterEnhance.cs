@@ -177,7 +177,9 @@ public class CharacterEnhance : MonoBehaviour
         }
         else
         {
-            EnhanceFail();
+            GameManager.UserData.StartUpdateStream()
+                .SetDBValue(_characterInfoController.UserGoldData, _characterInfoController.UserGoldData.Value - _enhanceGoldCost)
+                .Submit(EnhanceFail); 
         }
     }
 
@@ -202,8 +204,14 @@ public class CharacterEnhance : MonoBehaviour
     /// <summary>
     /// 강화 실패 후 
     /// </summary>
-    private void EnhanceFail()
+    private void EnhanceFail(bool result)
     {
+        if (!result)
+        {
+            ResultPopup("강화 실패 \n 사유 : 네트워크 오류", _characterInfoController._infoUI.EnhanceResultIcons[2]);
+            return;
+        }
+            
         ResultPopup($"+{_characterData.Enhancement.Value + 1} 강화에 실패하셨습니다. \n 마일리지 적립 +10%", _characterInfoController._infoUI.EnhanceResultIcons[1]);
 
         //TODO: 마일리지 누적 값 수정 필요

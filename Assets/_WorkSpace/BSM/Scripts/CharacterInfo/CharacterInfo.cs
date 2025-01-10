@@ -1,17 +1,26 @@
-using System; 
+using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems; 
+using UnityEngine.EventSystems;
 
 public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 {
+    [HideInInspector] public List<CharacterModel> CharacterModels;
     [HideInInspector] public GameObject OwnedObject;
     [SerializeField] private CharacterData _characterData;
-
+ 
     private CharacterInfoController _characterInfoController;
-    private CharacterModel _characterModel;
-    public CharacterModel CharacterModel => _characterModel;
+
+    private CharacterModel levelOne;
+    private CharacterModel levelTwo;
+    private CharacterModel levelThree;
+    private Vector3 modelPos = new Vector3(-30f, 40f, 1f);
+    private Vector3 levelOneScale = new Vector3(400f, 500f, 1f);
+    private Vector3 levelTwoScale = new Vector3(350f, 400f, 1f);
+    private Vector3 levelThreeScale = new Vector3(250f, 250f, 1f);
+    
     
     private TextMeshProUGUI _characterTypeText;
     private TextMeshProUGUI _characterListNameText;
@@ -142,27 +151,59 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// 현재 캐릭터 정보 할당 기능
     /// </summary>
     private void SetInfoPopup()
-    {
+    { 
         _characterInfoController.CurCharacterInfo = this;
         _characterInfoController.CurCharacterEnhance = _characterEnhance; 
         _characterInfoController.CurIndex = _characterInfoController._characterInfos.IndexOf(this);
         _characterInfoController._infoPopup.SetActive(true);
-
+ 
+        CharacterModel();
+        UpdateInfo();
+    }
+ 
+    /// <summary>
+    /// 각 레벨 이미지 호출
+    /// </summary>
+    private void CharacterModel()
+    {
         if (_characterInfoController.CurCharacterInfo == this)
         {
-            if (_characterData.ModelPrefab != null && _characterModel == null)
+            if (_characterData.ModelPrefab != null && CharacterModels.Count == 0)
             {
-                _characterModel = Instantiate(_characterData.ModelPrefab, Vector3.zero, Quaternion.identity, this.transform);
-                _characterModel.transform.localScale = new Vector3(500f, 500f, 1); 
-                _characterInfoController.EvolutionCharacterUI(_characterModel);
+                levelOne = CreateModelPrefab(_characterData.ModelPrefab, modelPos, levelOneScale, true);
+
+                if (levelOne.NextEvolveModel != null)
+                {
+                    levelTwo = CreateModelPrefab(levelOne.NextEvolveModel, modelPos, levelTwoScale, false);
+                }
+
+                if (levelTwo != null && levelTwo.NextEvolveModel != null)
+                {
+                    levelThree = CreateModelPrefab(levelTwo.NextEvolveModel, modelPos, levelThreeScale, false);
+                }
             }
-            else if (_characterModel != null && !_characterModel.gameObject.activeSelf)
+            else if (CharacterModels != null && !CharacterModels[0].gameObject.activeSelf)
             {
-                _characterModel.gameObject.SetActive(true);
+                CharacterModels[0].gameObject.SetActive(true);
             }
         }
-        
-        UpdateInfo();
+    }
+    
+    /// <summary>
+    /// 레벨 별 이미지 생성
+    /// </summary>
+    /// <param name="model">생성할 캐릭터 모델</param>
+    /// <param name="pos">생성될 위치</param>
+    /// <param name="scale">생성될 크기</param>
+    /// <param name="active">활성화 여부</param>
+    /// <returns></returns>
+    private CharacterModel CreateModelPrefab(CharacterModel model, Vector3 pos, Vector3 scale, bool active)
+    {
+        model = Instantiate(model, pos, Quaternion.identity);
+        model.transform.localScale = scale;
+        model.gameObject.SetActive(active);
+        CharacterModels.Add(model);
+        return model;
     }
     
     /// <summary>
