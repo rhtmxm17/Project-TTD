@@ -60,7 +60,7 @@ public class ShopItem : BaseUI
     private void Init()
     {
         itemNameText = GetUI<TMP_Text>("ItemInfoText"); 
-        buyButton.GetComponentInChildren<Button>().onClick.AddListener(Buy);
+        buyButton.GetComponentInChildren<Button>().onClick.AddListener(OpenDoubleWarning);
         buyButtonText = GetUI<TMP_Text>("BuyButtonText");
         itemPriceText = GetUI<TMP_Text>("ItemPriceText");
         itemCountText = GetUI<TMP_Text>("ItemCountText");
@@ -132,6 +132,9 @@ public class ShopItem : BaseUI
         charItemData -= 200; // 상점캐릭터나열이 201...부터되있으니 200빼면 캐릭터ID랑 동일
         Debug.Log($"{charItemData}");
         // CheckCharacter(charItemData);
+        
+        
+        
         if (GameManager.UserData.HasCharacter(charItemData))
         {
            Debug.Log("소유중인 캐릭터입니당");
@@ -151,15 +154,7 @@ public class ShopItem : BaseUI
             OpenPurchasingPanel(); // 확인 팝업띄우는
             return;
         }
-        // TODO: 최대 갯수 변수 세팅해주기
-       // if (isBulk)
-       // {
-       //    // remain = Mathf.FloorToInt((shopItemData.Price.item.Number.Value) / (shopItemData.Price.gain));
-       //    // TODO: 패널창에서 바꿔서 여기서 필요없음, 일단 혹시몰라서 주석처리, 추후 문제없으면 삭제
-       //     Debug.Log("복수구매를 위한 구매확인창 열기");
-       //     OpenPurchasingPanel(); // 확인 팝업띄우는
-       //     return;
-       // }
+
 
         ItemData itemGive = shopItemData.Price.item;
         if (null != itemGive && shopItemData.Price.item.Number.Value < shopItemData.Price.gain)
@@ -262,6 +257,13 @@ public class ShopItem : BaseUI
     {
         OverlayUIManager popupInstance = GameManager.OverlayUIManager;
         popupInstance.OpenSimpleInfoPopup("소지하신 재료가 부족합니다.", "닫기", null);
+    }
+
+    private void OpenDoubleWarning()
+    {
+        OverlayUIManager popupInstance = GameManager.OverlayUIManager;
+        popupInstance.OpenDoubleInfoPopup("해당 아이템을 정말 구매하시겠습니까?", "취소",
+            "확인",null, Buy);
     }
 
     private void CheckItemIndexAndCompare()
