@@ -74,6 +74,8 @@ public class MyRoomUI : BaseUI
             //GetUI<OpenableWindow>("FriendTapCanvas").OpenWindow
         );
         // GetUI<Button>("VisitButton").onClick.AddListener(() => AddStack("FriendTapCanvas"));
+        
+        // TODO: 도감완료 시 추가할 것 
     }
 
     public void LoadImage()
