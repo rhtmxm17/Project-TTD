@@ -226,7 +226,7 @@ public class ShopItem : BaseUI
         buyButtonText.text = "SOLD\nOUT";
         buyButtonText.color = new Color(1f, .1f, .2f, 1f);
         GetUI<Image>("BuyButton").color = new Color(.3f, .3f, .3f, .75f); // 아이템창 어둡게
-        buyButton.onClick.RemoveListener(Buy); //구매버튼 비활성화
+        buyButton.onClick.RemoveListener(OpenDoubleWarning); //구매버튼 비활성화
         ShopItemImage.color = new Color(.3f, .3f, .3f, 1f); // 아이템 어둡게 
         
     }
