@@ -11,6 +11,8 @@ public class ScoreAdder : MonoBehaviour
     {
         combatable = GetComponent<Combatable>();
         combatable.onDamagedEvent.AddListener(((IDamageAddable)StageManager.Instance).IDamageAdd);
-        ((IProgressable)StageManager.Instance).IPrograssable(combatable);
+        if(StageManager.Instance is IProgressable)
+            ((IProgressable)StageManager.Instance).IPrograssable(combatable);
+
     }
 }
