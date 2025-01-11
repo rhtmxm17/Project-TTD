@@ -283,20 +283,19 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
                 /////// null을 허용하는 데이터들
 
                 // BACKGROUND_TYPE
-                backgroundTypePrefab = AssetDatabase.LoadAssetAtPath<ScrollableBG>(
-                    $"{DataTableManager.PrefabsAssetFolder}/ScrollBackground/{cells[(int)Column.BACKGROUND_TYPE]}.prefab");
+                backgroundTypePrefab = SearchAsset.SearchPrefabAsset<ScrollableBG>(cells[(int)Column.BACKGROUND_TYPE]);
 
                 // SPRITE_IMAGE
-                spriteImage = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.SPRITE_IMAGE]}.asset");
+                spriteImage = SearchAsset.SearchSpriteAsset(cells[(int)Column.SPRITE_IMAGE]);
 
                 // PRE_STORY
-                preStory = AssetDatabase.LoadAssetAtPath<StoryDirectingData>($"{DataTableManager.StoryAssetFolder}/{cells[(int)Column.PRE_STORY]}.asset");
+                preStory = SearchAsset.SearchSOAsset<StoryDirectingData>(cells[(int)Column.PRE_STORY]);
 
                 // NAME
                 description = cells[(int)Column.DESCRIPTION];
 
                 // POST_STORY
-                postStory = AssetDatabase.LoadAssetAtPath<StoryDirectingData>($"{DataTableManager.StoryAssetFolder}/{cells[(int)Column.POST_STORY]}.asset");
+                postStory = SearchAsset.SearchSOAsset<StoryDirectingData>(cells[(int)Column.POST_STORY]);
             }
             else
             {
@@ -318,7 +317,7 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
             }
 
             // 현재 행에 몬스터 정보가 있다면 추가
-            CharacterData monsterCharacterData = AssetDatabase.LoadAssetAtPath<CharacterData>($"{DataTableManager.CharacterAssetFolder}/{cells[(int)Column.MONSTER_NAME]}.asset");
+            CharacterData monsterCharacterData = SearchAsset.SearchSOAsset<CharacterData>(cells[(int)Column.MONSTER_NAME]);
             if (monsterCharacterData != null)
             {
                 MonsterInfo monsterInfo = new MonsterInfo() { character = monsterCharacterData };
@@ -344,7 +343,7 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
             }
 
             // 현재 행에 보상 정보가 있다면 추가
-            ItemData rewardItemData = AssetDatabase.LoadAssetAtPath<ItemData>($"{DataTableManager.ItemAssetFolder}/{cells[(int)Column.REWARD_NAME]}.asset");
+            ItemData rewardItemData = SearchAsset.SearchSOAsset<ItemData>(cells[(int)Column.REWARD_NAME]);
             if (rewardItemData != null)
             {
                 ItemGain rewardInfo = new ItemGain() { item = rewardItemData };

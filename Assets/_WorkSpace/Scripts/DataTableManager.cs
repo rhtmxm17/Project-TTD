@@ -124,91 +124,6 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     public const string PackageAssetFolder = "Assets/_WorkSpace/Datas/Packages";
     public const string StoryAssetFolder = "Assets/_WorkSpace/Datas/StoryDirectings";
 
-    private const string SoundsAssetDirQuery = "(dir:\"Assets/Imports/Sounds\" or dir:\"Assets/Imports/Test Folder\")";
-    private const string PrefabsAssetDirQuery = "dir:\"Assets/_WorkSpace/Prefabs\"";
-
-    /// <summary>
-    /// 미리 지정된 경로 내에서 사운드 애셋을 찾습니다<br/>
-    /// 실패시 null 반환
-    /// </summary>
-    /// <param name="assetName">검색할 사운드 애셋 파일명</param>
-    /// <returns>검색된 애셋</returns>
-    public AudioClip SearchAudioClipAsset(string assetName)
-    {
-        using var searchContext = SearchService.CreateContext($"p: {SoundsAssetDirQuery} t:AudioClip name={assetName}");
-        // Initiate the query and get the results.
-        // Note: it is recommended to use SearchService.Request if you wish to fetch the items asynchronously.
-        var results = SearchService.GetItems(searchContext, SearchFlags.WantsMore | SearchFlags.Synchronous);
-
-        if (results.Count == 0)
-        {
-            Debug.LogWarning($"AudioClip:{assetName}을 찾지 못함");
-            return null;
-        }
-
-        if (results.Count != 1)
-        {
-            Debug.LogWarning($"AudioClip:{assetName}이 지정된 경로 내에 복수 존재함");
-        }
-
-        return results[0].ToObject<AudioClip>();
-    }
-
-    /// <summary>
-    /// 미리 지정된 경로 내에서 프리펩을 찾습니다<br/>
-    /// 실패시 null 반환
-    /// </summary>
-    /// <typeparam name="T">찾고자 하는 프리펩의 MonoBehaviour 타입</typeparam>
-    /// <param name="assetName">검색할 애셋 파일명</param>
-    /// <returns>검색된 애셋</returns>
-    public T SearchPrefabAsset<T>(string assetName) where T : MonoBehaviour
-    {
-        using var searchContext = SearchService.CreateContext($"p: {PrefabsAssetDirQuery} t:{typeof(T).Name} name={assetName}.prefab");
-        
-        // 생성된 쿼리로 검색
-        var results = SearchService.GetItems(searchContext, SearchFlags.WantsMore | SearchFlags.Synchronous);
-
-        if (results.Count == 0)
-        {
-            Debug.LogWarning($"{typeof(T).Name}:{assetName}을 찾지 못함");
-            return null;
-        }
-
-        if (results.Count != 1)
-        {
-            Debug.LogWarning($"{typeof(T).Name}:{assetName}이 지정된 경로 내에 복수 존재함");
-        }
-
-        return results[0].ToObject<T>();
-    }
-
-    /// <summary>
-    /// 미리 지정된 경로 내에서 프리펩을 찾습니다<br/>
-    /// 실패시 null 반환
-    /// </summary>
-    /// <param name="assetName">검색할 애셋 파일명</param>
-    /// <returns>검색된 애셋</returns>
-    public GameObject SearchPrefabAsset(string assetName)
-    {
-        using var searchContext = SearchService.CreateContext($"p: {PrefabsAssetDirQuery} t:prefab name={assetName}.prefab");
-
-        // 생성된 쿼리로 검색
-        var results = SearchService.GetItems(searchContext, SearchFlags.WantsMore | SearchFlags.Synchronous);
-
-        if (results.Count == 0)
-        {
-            Debug.LogWarning($"prefab:{assetName}을 찾지 못함");
-            return null;
-        }
-
-        if (results.Count != 1)
-        {
-            Debug.LogWarning($"prefab:{assetName}이 지정된 경로 내에 복수 존재함");
-        }
-
-        return results[0].ToObject<GameObject>();
-    }
-
     [SerializeField] Sprite dummySprite;
     public Sprite DummySprite => dummySprite;
 
@@ -219,12 +134,12 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     [SerializeField] Object packageDataFolder;
     [SerializeField] Object storyDirectingDataFolder;
 
-    private string documentID = "1mshKeAWkTmozk0snaJPWp7Jizs3pSeLhlFU-982BqHA";
-    private string storyDocumentID = "1mCbO7Xdg0DLPY-J9YjVriGHRueg1PSFvvlKqPZp8pVY";
-    private string characterSheetId = "0";
-    private string itemSheetId = "1467425655";
-    private string packageSheetId = "1751436041";
-    private string stageSheetId = "504606070";
+    private const string documentID = "1mshKeAWkTmozk0snaJPWp7Jizs3pSeLhlFU-982BqHA";
+    private const string storyDocumentID = "1mCbO7Xdg0DLPY-J9YjVriGHRueg1PSFvvlKqPZp8pVY";
+    private const string characterSheetId = "0";
+    private const string itemSheetId = "1467425655";
+    private const string packageSheetId = "1751436041";
+    private const string stageSheetId = "504606070";
 
 
     [ContextMenu("시트에서 캐릭터 데이터 불러오기")]

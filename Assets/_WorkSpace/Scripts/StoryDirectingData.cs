@@ -159,22 +159,13 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
                 }
 
                 // BGM
-                if (false == string.IsNullOrEmpty(cells[(int)Column.BGM]))
-                {
-                    parsed.Bgm = AssetDatabase.LoadAssetAtPath<AudioClip>($"{DataTableManager.SoundsAssetFolder}/{cells[(int)Column.BGM]}");
-                }
+                parsed.Bgm = SearchAsset.SearchAudioClipAsset(cells[(int)Column.BGM]);
 
                 // SFX
-                if (false == string.IsNullOrEmpty(cells[(int)Column.SFX]))
-                {
-                    parsed.Sfx = AssetDatabase.LoadAssetAtPath<AudioClip>($"{DataTableManager.SoundsAssetFolder}/{cells[(int)Column.SFX]}");
-                }
+                parsed.Sfx = SearchAsset.SearchAudioClipAsset(cells[(int)Column.SFX]);
 
                 // BG_IMG
-                if (false == string.IsNullOrEmpty(cells[(int)Column.BG_IMG]))
-                {
-                    parsed.BackgroundSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.BG_IMG]}.asset");
-                }
+                parsed.BackgroundSprite = SearchAsset.SearchSpriteAsset(cells[(int)Column.BG_IMG]);
 
                 // FOCUS_X
                 if (string.IsNullOrEmpty(cells[(int)Column.FOCUS_X]))
@@ -233,8 +224,7 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
                     StandingImage loaded = new StandingImage();
                     loaded.ActorId = tempStandingImages.Count;
 
-                    Debug.LogWarning("임시 코드 사용중: 이미지 식별자에서 이미지 파일명 가져오는 기능으로 변경 필요");
-                    loaded.ImageSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{imageKey}.asset");
+                    loaded.ImageSprite = SearchAsset.SearchSpriteAsset(imageKey);
 
                     tempStandingImages.Add(imageKey, loaded);
                 }
