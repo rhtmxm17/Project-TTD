@@ -30,12 +30,6 @@ public class AlreadyHasChar : BaseUI
     private bool isMaxed = false;
     [SerializeField] ItemData maxTocken;
     // [SerializeField] int currentChar;
-  //  private void Awake()
-  //  {
-  //      bgCancelButton.onClick.AddListener(OnPopupOKButtonClicked);
-  //      cancelButton.onClick.AddListener(OnPopupOKButtonClicked);
-  //      exitButton.onClick.AddListener(OnPopupOKButtonClicked);
-  //  }
 
     void OnEnable()
     {

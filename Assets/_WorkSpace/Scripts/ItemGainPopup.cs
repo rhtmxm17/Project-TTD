@@ -22,6 +22,8 @@ public class ItemGainPopup : MonoBehaviour
     [SerializeField] Button backGroundButton;           // '빈 곳을 클릭해 닫기'의 빈 곳
     [SerializeField] Button itemGainOkButton;           // 확인버튼
 
+    List<ItemGainCell> items = new List<ItemGainCell>();
+
     private void Awake()
     {
         backGroundButton.onClick.AddListener(OnPopupOKButtonClicked);
@@ -46,9 +48,12 @@ public class ItemGainPopup : MonoBehaviour
 
             // 정보 출력칸 초기화
             cell.SetItem(info.item, info.gain);
-         }
+            items.Add(cell);
+
+        }
     }
-    
+
+
     /// <summary>
     /// 캐릭터풀강시 대체지급만을 위한 획득창 / 아니면 단일아이템
     /// </summary>
@@ -59,5 +64,17 @@ public class ItemGainPopup : MonoBehaviour
             ItemGainCell cell = Instantiate(itemGainCellPrefab, layoutGroup.transform);
             // 정보 출력칸 초기화
             cell.SetItem(item, 10);
+            items.Add(cell);
+        
+    }
+
+    public void ClearAllItems()
+    {
+        foreach (ItemGainCell item in items)
+        {
+            Destroy(item.gameObject);
+        }
+
+        items.Clear();
     }
 }

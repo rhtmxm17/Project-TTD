@@ -14,7 +14,7 @@ public class TicketDisplayer : MonoBehaviour
 
     const int MAX_TICKET_COUNT = 3;
 
-    ItemData data = DataTableManager.Instance.GetItemData(9/*골드티켓*/);
+    ItemData data;
 
     private void Awake()
     {
