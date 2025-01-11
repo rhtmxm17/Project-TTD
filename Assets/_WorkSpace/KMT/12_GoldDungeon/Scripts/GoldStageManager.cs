@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class GoldStageManager : StageManager, IDamageAddable, IProgressable
@@ -136,12 +137,96 @@ public class GoldStageManager : StageManager, IDamageAddable, IProgressable
                 List<CharacterData> chDataL = new List<CharacterData>(batchDictionary.Values);
                 int randIdx = UnityEngine.Random.Range(0, chDataL.Count);
 
+                Debug.Log(GameManager.UserData.PlayData.GoldDungeonClearRate.Value[curLevel] + "//////");
+
+                string rightButtonText = string.Empty;
+                UnityAction rightButtonAction = null;
+
+                //클리어률 100인 경우 => 다음 스테이지 버튼
+                if (GameManager.UserData.PlayData.GoldDungeonClearRate.Value[curLevel] >= 100)
+                {
+                    rightButtonText = "다음 스테이지로";
+
+                    //다음 스테이지로 갈수있는지 확인하는 로직
+                    rightButtonAction = () => {
+
+                        if (stageDataOnLoad.NextStageId == -1)
+                        {
+                            GameManager.OverlayUIManager.OpenSimpleInfoPopup("다음 단계가 없습니다.", "닫기", null);
+                        }
+                        else
+                        {
+                            StageData nextStageData = DataTableManager.Instance.GetStageData(stageDataOnLoad.NextStageId);
+
+                            if (nextStageData == null)
+                            {
+                                Debug.Log("전달된 다음 인덱스 스테이지 정보가 존재하지 않음.");
+                                return;
+                            }
+
+                            GameManager.OverlayUIManager.OpenDoubleInfoPopup($"다음 스테이지로 가시겠습니까? \n {nextStageData.StageName}", "그만두기", "도전하기", null,
+                                () => {
+
+                                    if (DataTableManager.Instance.GetItemData(9/*골드티켓*/).Number.Value <= 0)
+                                    {
+                                        GameManager.OverlayUIManager.OpenSimpleInfoPopupByCreate(
+                                            "골드 티켓이 부족합니다.",
+                                            "확인",
+                                            null
+                                        );
+                                    }
+                                    else
+                                    {
+                                        prevSceneData.stageData = nextStageData;
+                                        //TODO : 용도에 따라서 지우거나 이용
+                                        //prevSceneData.prevScene = prevSceneData.prevScene;
+                                        GameManager.Instance.LoadBattleFormationScene(prevSceneData);
+                                    }
+                                },
+                                true, false);
+                        }
+
+                    };
+
+
+                }
+                else//클리어률이 100가 아닌 경우 => 재시도버튼
+                {
+                    rightButtonText = "재시도";
+
+                    //재시도가 가능한지 확인하는 로직
+                    rightButtonAction = () =>
+                    {
+
+                        GameManager.OverlayUIManager.OpenDoubleInfoPopup("재도전하시겠습니까?", "그만두기", "다시 도전하기", null,
+                        () =>
+                        {
+                            if (DataTableManager.Instance.GetItemData(9/*골드티켓*/).Number.Value <= 0)
+                            {
+                                GameManager.OverlayUIManager.OpenSimpleInfoPopup(
+                                    "골드 티켓이 부족합니다.",
+                                    "확인",
+                                    null
+                                );
+                            }
+                            else
+                            {
+                                //TODO : 용도에 따라서 지우거나 이용
+                                //prevSceneData.stageData = prevSceneData.stageData;
+                                //prevSceneData.prevScene = prevSceneData.prevScene;
+                                GameManager.Instance.LoadBattleFormationScene(prevSceneData);
+                            }
+                        });
+
+                    };
+                }
+
                 resultPopupWindow.OpenDoubleButtonWithResult(
                     stageDataOnLoad.StageName,
                     new List<ItemGain>() { reward },
                     "확인", LoadPreviousScene,
-                    "다음 스테이지로", null,//TODO : 다음스테이지로 가는 로직 만들기.
-                    true, true,
+                    rightButtonText, rightButtonAction,
+                    true, false,
                     "승리!", chDataL[randIdx].FaceIconSprite,
                     AdvencedPopupInCombatResult.ColorType.VICTORY
                 );
