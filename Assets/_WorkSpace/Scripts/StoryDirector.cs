@@ -60,16 +60,13 @@ public class StoryDirector : BaseUI
 
     protected override void Awake()
     {
+        DOTween.Init();
+
         base.Awake();
         backGroundButton.onClick.AddListener(ClickAction_Started);
 
         // 스탠딩 이미지 영역 설정
         standingImageParent.offsetMin = new Vector2(-standingImageParent.rect.height, 0f); 
-    }
-
-    private void Update()
-    {
-        Debug.Log($"{standingImageParent.rect} / {standingImageParent.offsetMin}");
     }
 
     private void OnDestroy() => ClearActors();
@@ -89,8 +86,8 @@ public class StoryDirector : BaseUI
         {
             actors[actor.ActorId] = Instantiate(standingImagePrefab, standingImageParent);
             actors[actor.ActorId].sprite = actor.ImageSprite;
+            actors[actor.ActorId].color = new Color(1f, 1f, 1f, 0f);
             actors[actor.ActorId].SetNativeSize();
-            actors[actor.ActorId].gameObject.SetActive(false);
 
         }
 
@@ -143,36 +140,41 @@ public class StoryDirector : BaseUI
         nameText.text = storyData.Dialogues[nameCount].Speaker;
         nameBox.SetActive(! string.IsNullOrEmpty(nameText.text));
 
+        StoryDirectingData.Dialogue dialogue = storyData.Dialogues[nameCount];
+
         // 대사 출력
         dialogueText.text = "";     // 앞전 스크립트 초기화용
-        playingDialougeTween = dialogueText.DOText(storyData.Dialogues[nameCount].Script,1,true,ScrambleMode.None);
+        playingDialougeTween = dialogueText.DOText(dialogue.Script, dialogue.Script.Length * 0.1f * dialogue.timeMult, true, ScrambleMode.None);
         playingDialougeTween.onComplete += () => playingDialougeTween = null; // 출력 완료시 참조 비우기
 
         // 사운드 출력
-        if (null != storyData.Dialogues[nameCount].Bgm)
-            GameManager.Sound.PlayBGM(storyData.Dialogues[nameCount].Bgm);
+        if (null != dialogue.Bgm)
+            GameManager.Sound.PlayBGM(dialogue.Bgm);
 
-        if (null != storyData.Dialogues[nameCount].Sfx)
-            GameManager.Sound.PlaySFX(storyData.Dialogues[nameCount].Sfx);
+        if (null != dialogue.Sfx)
+            GameManager.Sound.PlaySFX(dialogue.Sfx);
 
-        if (null != storyData.Dialogues[nameCount].BackgroundSprite)
+        if (null != dialogue.BackgroundSprite)
         {
             // TODO: 배경 변경 연출 추가
-            backGroundImage.texture = storyData.Dialogues[nameCount].BackgroundSprite.texture;
+            backGroundImage.texture = dialogue.BackgroundSprite.texture;
         }
 
-        foreach (StoryDirectingData.TransitionInfo transition in storyData.Dialogues[nameCount].Transitions)
+        foreach (StoryDirectingData.TransitionInfo transition in dialogue.Transitions)
         {
             Image actor = actors[transition.StandingImageId];
 
-            // TODO: 출현/퇴장 연출
-            actor.gameObject.SetActive(transition.Active);
+            // 색상 및 페이드인/아웃
+            actor.DOColor(new Color(
+                    transition.ColorMultiply, 
+                    transition.ColorMultiply, 
+                    transition.ColorMultiply, 
+                    transition.Active ? 1f : 0f),
+                transition.Time);
 
             actor.transform.localScale = transition.Flip ? new Vector3(-1, 1, 1) : new Vector3(1, 1, 1);
-            actor.transform.localPosition = transition.Position;
-
-            actor.color = new Color(transition.ColorMultiply, transition.ColorMultiply, transition.ColorMultiply);
-
+            actor.rectTransform.DOAnchorMin(transition.Position * 0.1f, transition.Time);
+            actor.rectTransform.DOAnchorMax(transition.Position * 0.1f, transition.Time);
         }
     }
 

@@ -76,7 +76,7 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
     /// <summary>
     /// 스테이지 제한 시간(초 단위)
     /// </summary>
-    public int TimeLimit => TimeLimit;
+    public int TimeLimit => timeLimit;
 
     /// <summary>
     /// 스테이지 뒷배경 정보 프리팹

@@ -25,6 +25,12 @@ public class StoryDirectingDataEditor : Editor
 
 public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
 {
+    public enum TransitionType
+    {
+        BLINK, // 순간이동, 기본값
+        NORMAL, // 선형적 이동
+    }
+
     [SerializeField] int id;
     public int Id => id;
 
@@ -37,15 +43,16 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
         public string Loaction;
         public string Speaker;
         [TextArea] public string Script;
+        public float timeMult;
 
         // 해당 다이얼로그 재생과 함께 진행되는 갱신사항들
         // null이라면 해당 내용은 갱신하지 않음을 의미
-        public AudioClip Bgm;
-        public AudioClip Sfx;
-        public Sprite BackgroundSprite;
         public List<TransitionInfo> Transitions; // 스탠딩 이미지 갱신사항
         public Vector2 CameraPosition;
         public float CameraSize;
+        public AudioClip Bgm;
+        public AudioClip Sfx;
+        public Sprite BackgroundSprite;
     }
 
     [System.Serializable]
@@ -56,6 +63,9 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
         public bool Flip;
         public float ColorMultiply; // 1(일반)~0(어두움), rgb에 각각 곱할 값
         public Vector2 Position; // 유효 영역 기준, 좌하단을 (0, 0) 우상단을 (1, 1)로 하는 위치 좌표
+        public float Scale; // 크기, 1이 기본
+        public TransitionType Type;
+        public float Time;
     }
 
     [System.Serializable]
@@ -79,14 +89,18 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
         LOCATION,   // 다이얼로그
         SPEAKER,    // 다이얼로그
         SCRIPT,     // 다이얼로그
+        TIME_MULT,
 
-        STANDING_IMAGE_ID,  // 스탠딩 이미지
-        LEAVE,              // 스탠딩 이미지
-        FLIP,               // 스탠딩 이미지
-        COLOR_MULT,         // 스탠딩 이미지
-        POS_X,              // 스탠딩 이미지
-        POS_Y,              // 스탠딩 이미지
-        TRANSITION,         // 스탠딩 이미지
+        STANDING_IMAGE_ID,  // 트랜지션
+        FADE,               // 트랜지션
+        FLIP,               // 트랜지션
+        COLOR_MULT,         // 트랜지션
+        POS_X,              // 트랜지션
+        POS_Y,              // 트랜지션
+        SCALE,              // 트랜지션
+        DROPDOWN_TRANSITION,
+        TRANSITION,         // 트랜지션
+        TIME,               // 트랜지션
 
         FOCUS_X,    // 카메라
         FOCUS_Y,    // 카메라
@@ -133,6 +147,17 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
                     .Trim('|') // 큰 따옴표 씌우기용
                     .Replace("\"\"", "\""); // 큰 따옴표가 2개씩 들어오는거 해결
 
+                // TIME_MULT
+                if (string.IsNullOrEmpty(cells[(int)Column.TIME_MULT]))
+                {
+                    // 비어있을 경우 기본값
+                    parsed.timeMult = 1f;
+                }
+                else if (false == float.TryParse(cells[(int)Column.TIME_MULT], out parsed.timeMult))
+                {
+                    Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.TIME_MULT]}");
+                }
+
                 // BGM
                 if (false == string.IsNullOrEmpty(cells[(int)Column.BGM]))
                 {
@@ -154,25 +179,19 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
                 // FOCUS_X
                 if (string.IsNullOrEmpty(cells[(int)Column.FOCUS_X]))
                 {
-                    // 비어있을 경우 좌표 유지
-                    if (tempDialogues.Count == 0)
-                        parsed.CameraPosition.x = 0;
-                    else
-                        parsed.CameraPosition.x = tempDialogues[^1].CameraPosition.x;
+                    // 비어있을 경우 기본값
+                    parsed.CameraPosition.x = 10;
                 }
                 else if (false == float.TryParse(cells[(int)Column.FOCUS_X], out parsed.CameraPosition.x))
                 {
                     Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.FOCUS_X]}");
                 }
 
-                // FOCUS_X
+                // FOCUS_Y
                 if (string.IsNullOrEmpty(cells[(int)Column.FOCUS_Y]))
                 {
-                    // 비어있을 경우 좌표 유지
-                    if (tempDialogues.Count == 0)
-                        parsed.CameraPosition.y = 0;
-                    else
-                        parsed.CameraPosition.y = tempDialogues[^1].CameraPosition.y;
+                    // 비어있을 경우 기본값
+                    parsed.CameraPosition.y = 5;
                 }
                 else if (false == float.TryParse(cells[(int)Column.FOCUS_Y], out parsed.CameraPosition.y))
                 {
@@ -182,11 +201,8 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
                 // ZOOM
                 if (string.IsNullOrEmpty(cells[(int)Column.ZOOM]))
                 {
-                    // 비어있을 경우 카메라 사이즈 유지
-                    if (tempDialogues.Count == 0)
-                        parsed.CameraSize = 10f;
-                    else
-                        parsed.CameraSize = tempDialogues[^1].CameraSize;
+                    // 비어있을 경우 기본값
+                    parsed.CameraSize = 1f;
                 }
                 else if (false == float.TryParse(cells[(int)Column.ZOOM], out parsed.CameraSize))
                 {
@@ -198,7 +214,7 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
             // ID가 정수가 아니라면 다이얼로그행이 아님(주석 또는 트랜지션)
             else
             {
-                // 다이얼로그가 비어있다면 주석행
+                // 다이얼로그도 비어있다면 주석행
                 if (tempDialogues.Count == 0)
                     continue;
 
@@ -223,14 +239,18 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
                     tempStandingImages.Add(imageKey, loaded);
                 }
 
-                // LEAVE: 테이블값이 T면 해당 캐릭터 퇴장
-                parsed.Active = ("T" != cells[(int)Column.LEAVE]);
+                // LEAVE: 테이블값이 T면 해당 캐릭터 페이드아웃
+                parsed.Active = ("T" != cells[(int)Column.FADE]);
 
                 // FLIP: 테이블값이 T면 해당 캐릭터는 좌우 반전 상태
                 parsed.Flip = ("T" == cells[(int)Column.FLIP]);
 
                 // COLOR_MULT
-                if (false == float.TryParse(cells[(int)Column.COLOR_MULT], out parsed.ColorMultiply))
+                if (string.IsNullOrEmpty(cells[(int)Column.COLOR_MULT]))
+                {
+                    parsed.ColorMultiply = 1f; // 기본값
+                }
+                else if (false == float.TryParse(cells[(int)Column.COLOR_MULT], out parsed.ColorMultiply))
                 {
                     Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.COLOR_MULT]}");
                     continue;
@@ -250,11 +270,45 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
                     continue;
                 }
 
-                // 0~10 범위를 0~1 범위로 변환
-                parsed.Position *= 0.1f;
+                // SCALE
+                if (string.IsNullOrEmpty(cells[(int)Column.SCALE]))
+                {
+                    parsed.ColorMultiply = 1f; // 기본값
+                }
+                else if (false == float.TryParse(cells[(int)Column.SCALE], out parsed.Scale))
+                {
+                    Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.SCALE]}");
+                    continue;
+                }
+
+                // TRANSITION
+                if (string.IsNullOrEmpty(cells[(int)Column.TRANSITION]))
+                {
+                    parsed.Type = TransitionType.BLINK;
+                }
+                else if (int.TryParse(cells[(int)Column.TRANSITION], out int type))
+                {
+                    parsed.Type = (TransitionType)type;
+                }
+                else
+                {
+                    Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.TRANSITION]}");
+                    continue;
+                }
+
+                // TIME
+                if (string.IsNullOrEmpty(cells[(int)Column.TIME]))
+                {
+                    parsed.Time = 0.5f; // 기본값
+                }
+                else if (false == float.TryParse(cells[(int)Column.TIME], out parsed.Time))
+                {
+                    Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.TIME]}");
+                    continue;
+                }
 
                 // 파싱된 연출 정보를 현재 대사에 등록
-                tempDialogues[tempDialogues.Count - 1].Transitions.Add(parsed);
+                tempDialogues[^1].Transitions.Add(parsed);
             }
         }
 
