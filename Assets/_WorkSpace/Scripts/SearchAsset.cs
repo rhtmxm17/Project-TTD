@@ -29,7 +29,7 @@ public class SearchAsset
     private SearchAsset() { }
 
     private const string SoundsDirQuery = "dir:\"Assets/Imports/Sounds\"";
-    private const string SpritesDirQuery = "(dir:\"Assets/_WorkSpace/Sprites\" or dir:\"Assets/Imports/Etcetera\")";
+    private const string SpritesDirQuery = "(dir:\"Assets/_WorkSpace/Sprites\" or dir:\"Assets/Imports/Sprites\")";
     private const string PrefabsDirQuery = "dir:\"Assets/_WorkSpace/Prefabs\"";
     private const string SODirQuery = "dir:\"Assets/_WorkSpace/Datas\"";
 
@@ -39,7 +39,7 @@ public class SearchAsset
         SearchService.CreateIndex("SearchDB",
             IndexingOptions.Properties | IndexingOptions.Dependencies |
             IndexingOptions.Types | IndexingOptions.Keep,
-            roots: new string[] { "Assets/_WorkSpace", "Assets/Imports/Sounds", "Assets/Imports/Etcetera" }, // 루트 경로
+            roots: new string[] { "Assets/_WorkSpace", "Assets/Imports/Sounds", "Assets/Imports/Sprites" }, // 루트 경로
             includes: null, // 포함 문자열
             excludes: new string[] { ".cs" }, // 제외 문자열
             (name, path, finished) =>
@@ -111,7 +111,32 @@ public class SearchAsset
             Debug.LogWarning($"Sprite:{assetName}이 지정된 경로 내에 복수 존재함");
         }
 
-        return results[0].ToObject<Sprite>();
+        Sprite spriteAsset = results[0].ToObject<Sprite>();
+
+        // Texture2D 문제 해결
+        // Sprite 파일을 따로 생성하지 않은 이미지 파일도 Sprite 에셋을 포함하고 있다
+        // AssetDatabase를 이용해 Texture2D 내부의 Sprite 에셋 참조를 가져온다
+        if (spriteAsset == null)
+        {
+            Texture2D texture = results[0].ToObject<Texture2D>();
+            var Sprites = AssetDatabase.LoadAllAssetRepresentationsAtPath(AssetDatabase.GetAssetPath(texture));
+            if (Sprites.Length != 1)
+            {
+                Debug.LogWarning($"Sprite가 발견된 Texture2D:{assetName} 내에 {Sprites.Length}개 존재함");
+            }
+
+            if (Sprites[0] is Sprite spriteInTexture)
+            {
+                spriteAsset = spriteInTexture;
+            }
+            else
+            {
+                Debug.LogWarning("예상치 못한 예외 상황");
+            }    
+        }
+
+
+        return spriteAsset;
     }
 
     /// <summary>
