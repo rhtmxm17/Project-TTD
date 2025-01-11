@@ -17,6 +17,7 @@ public class BossStageManager : StageManager, IDamageAddable
 
     [Header("Reward UI")]
     [SerializeField] ItemGainPopup itemGainPopupPrefab;
+    [SerializeField] TextMeshProUGUI newRecordText;
 
     float maxTimeLimit;
     float score;
@@ -64,20 +65,32 @@ public class BossStageManager : StageManager, IDamageAddable
         IsCombatEnd = true;
         Debug.Log("타임 오버!");
         
-        RankApplier.ApplyRank("boss", UserData.myUid, GameManager.UserData.Profile.Name.Value, (long)(score + timeLimit), () =>
+        RankApplier.ApplyRank("boss", UserData.myUid, GameManager.UserData.Profile.Name.Value, (long)(score + timeLimit), (isBestRecord, rankCount) =>
         {
 
             // 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
             List<CharacterData> chDataL = new List<CharacterData>(batchDictionary.Values);
             int randIdx = UnityEngine.Random.Range(0, chDataL.Count);
 
+            newRecordText.gameObject.SetActive(isBestRecord);
+
             resultPopupWindow.OpenDoubleButtonWithResult(//todo : 순위?
-                stageDataOnLoad.StageName,
+                $"현재 등수 : {rankCount}",
                 null,
                 "확인", LoadPreviousScene,
-                "재도전", null,//TODO : 다음스테이지로 가는 로직 만들기.
-                true, true,
-                "승리!", chDataL[randIdx].FaceIconSprite,
+                "재도전", () => {
+
+                    GameManager.OverlayUIManager.OpenDoubleInfoPopup("재도전하시겠습니까?", "아니요", "네",
+                        null, () => {
+                            //TODO : 용도에 따라서 지우거나 이용
+                            //prevSceneData.stageData = prevSceneData.stageData;
+                            //prevSceneData.prevScene = prevSceneData.prevScene;
+                            GameManager.Instance.LoadBattleFormationScene(prevSceneData);
+                        });
+
+                },
+                true, false,
+                ((long)(score + timeLimit)).ToString(), chDataL[randIdx].FaceIconSprite,
                 AdvencedPopupInCombatResult.ColorType.VICTORY
             );
 
@@ -97,14 +110,14 @@ public class BossStageManager : StageManager, IDamageAddable
 
         IsCombatEnd = true;
 
-        RankApplier.ApplyRank("boss", UserData.myUid, GameManager.UserData.Profile.Name.Value, (long)(score + timeLimit), () =>
+/*        RankApplier.ApplyRank("boss", UserData.myUid, GameManager.UserData.Profile.Name.Value, (long)(score + timeLimit), (isBestRecord) =>
         {
             // 클리어 팝업 + 확인 클릭시 메인 화면으로
             ItemGainPopup popupInstance = Instantiate(itemGainPopupPrefab, GameManager.PopupCanvas);
             popupInstance.Title.text = "보스전 종료!";
             popupInstance.onPopupClosed += () => GameManager.Instance.LoadMenuScene(PrevScene);
 
-        });
+        });*/
     }
 
 }
