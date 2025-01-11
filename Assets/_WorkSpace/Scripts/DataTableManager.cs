@@ -5,9 +5,9 @@ using System.Linq;
 using UnityEngine.Events;
 using System.Collections.ObjectModel;
 
-
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.Search;
 using Unity.EditorCoroutines.Editor;
 #endif
 
@@ -123,6 +123,91 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     public const string ItemAssetFolder = "Assets/_WorkSpace/Datas/Items";
     public const string PackageAssetFolder = "Assets/_WorkSpace/Datas/Packages";
     public const string StoryAssetFolder = "Assets/_WorkSpace/Datas/StoryDirectings";
+
+    private const string SoundsAssetDirQuery = "(dir:\"Assets/Imports/Sounds\" or dir:\"Assets/Imports/Test Folder\")";
+    private const string PrefabsAssetDirQuery = "dir:\"Assets/_WorkSpace/Prefabs\"";
+
+    /// <summary>
+    /// 미리 지정된 경로 내에서 사운드 애셋을 찾습니다<br/>
+    /// 실패시 null 반환
+    /// </summary>
+    /// <param name="assetName">검색할 사운드 애셋 파일명</param>
+    /// <returns>검색된 애셋</returns>
+    public AudioClip SearchAudioClipAsset(string assetName)
+    {
+        using var searchContext = SearchService.CreateContext($"p: {SoundsAssetDirQuery} t:AudioClip name={assetName}");
+        // Initiate the query and get the results.
+        // Note: it is recommended to use SearchService.Request if you wish to fetch the items asynchronously.
+        var results = SearchService.GetItems(searchContext, SearchFlags.WantsMore | SearchFlags.Synchronous);
+
+        if (results.Count == 0)
+        {
+            Debug.LogWarning($"AudioClip:{assetName}을 찾지 못함");
+            return null;
+        }
+
+        if (results.Count != 1)
+        {
+            Debug.LogWarning($"AudioClip:{assetName}이 지정된 경로 내에 복수 존재함");
+        }
+
+        return results[0].ToObject<AudioClip>();
+    }
+
+    /// <summary>
+    /// 미리 지정된 경로 내에서 프리펩을 찾습니다<br/>
+    /// 실패시 null 반환
+    /// </summary>
+    /// <typeparam name="T">찾고자 하는 프리펩의 MonoBehaviour 타입</typeparam>
+    /// <param name="assetName">검색할 애셋 파일명</param>
+    /// <returns>검색된 애셋</returns>
+    public T SearchPrefabAsset<T>(string assetName) where T : MonoBehaviour
+    {
+        using var searchContext = SearchService.CreateContext($"p: {PrefabsAssetDirQuery} t:{typeof(T).Name} name={assetName}.prefab");
+        
+        // 생성된 쿼리로 검색
+        var results = SearchService.GetItems(searchContext, SearchFlags.WantsMore | SearchFlags.Synchronous);
+
+        if (results.Count == 0)
+        {
+            Debug.LogWarning($"{typeof(T).Name}:{assetName}을 찾지 못함");
+            return null;
+        }
+
+        if (results.Count != 1)
+        {
+            Debug.LogWarning($"{typeof(T).Name}:{assetName}이 지정된 경로 내에 복수 존재함");
+        }
+
+        return results[0].ToObject<T>();
+    }
+
+    /// <summary>
+    /// 미리 지정된 경로 내에서 프리펩을 찾습니다<br/>
+    /// 실패시 null 반환
+    /// </summary>
+    /// <param name="assetName">검색할 애셋 파일명</param>
+    /// <returns>검색된 애셋</returns>
+    public GameObject SearchPrefabAsset(string assetName)
+    {
+        using var searchContext = SearchService.CreateContext($"p: {PrefabsAssetDirQuery} t:prefab name={assetName}.prefab");
+
+        // 생성된 쿼리로 검색
+        var results = SearchService.GetItems(searchContext, SearchFlags.WantsMore | SearchFlags.Synchronous);
+
+        if (results.Count == 0)
+        {
+            Debug.LogWarning($"prefab:{assetName}을 찾지 못함");
+            return null;
+        }
+
+        if (results.Count != 1)
+        {
+            Debug.LogWarning($"prefab:{assetName}이 지정된 경로 내에 복수 존재함");
+        }
+
+        return results[0].ToObject<GameObject>();
+    }
 
     [SerializeField] Sprite dummySprite;
     public Sprite DummySprite => dummySprite;

@@ -196,7 +196,8 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
             faceIconSprite = DataTableManager.Instance.DummySprite;
 
         // SHAPE
-        modelPrefab = AssetDatabase.LoadAssetAtPath<CharacterModel>($"{DataTableManager.PrefabsAssetFolder}/{cells[(int)Column.SHAPE]}.prefab");
+        //modelPrefab = AssetDatabase.LoadAssetAtPath<CharacterModel>($"{DataTableManager.PrefabsAssetFolder}/{cells[(int)Column.SHAPE]}.prefab");
+        modelPrefab = DataTableManager.Instance.SearchPrefabAsset<CharacterModel>(cells[(int)Column.SHAPE]);
 
         // BASE_ATTACK
         basicSkillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.BASE_ATTACK]}.asset");
