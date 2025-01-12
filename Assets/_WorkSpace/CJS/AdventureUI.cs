@@ -66,6 +66,64 @@ public class AdventureUI : BaseUI
         }
     }
 
+    public void SetChapterData(StageData firstStagesDataOfChapter)
+    {
+        foreach (GameObject oldButton in stageButtons)
+        {
+            Destroy(oldButton);
+        }
+        stageButtons.Clear();
+
+        if (firstStagesDataOfChapter == null)
+        {
+            Debug.Log("첫 스테이지가 잘못 지정됨.");
+            return;
+        }
+
+        bool isOdd = true;
+        int idx = 0;
+
+        while (firstStagesDataOfChapter != null)
+        {
+            GameObject buttonHolder = new GameObject($"_{idx}", typeof(RectTransform));
+            buttonHolder.GetComponent<RectTransform>().SetParent(stageButtonGroup.transform);
+
+            IndexedButton instance = Instantiate(stageButtonPrefab, buttonHolder.transform);
+            RectTransform rt = instance.GetComponent<RectTransform>();
+            rt.anchorMin = rt.anchorMax = Vector2.one * 0.5f;
+            rt.anchoredPosition = new Vector2(0f, isOdd ? -verticalSpacing : verticalSpacing);
+
+            instance.Id = idx;
+
+            if (firstStagesDataOfChapter.IsOpened)
+            {
+                instance.Button.interactable = true;
+            }
+            else
+            {
+                instance.Button.interactable = false;
+            }
+
+            instance.Button.onClick.AddListener(() =>
+            {
+                Debug.Log(instance.Id);
+                Popup(firstStagesDataOfChapter);
+            });
+            instance.Text.text = firstStagesDataOfChapter.StageName;
+
+            stageButtons.Add(buttonHolder);
+            isOdd = !isOdd;
+
+            idx++;
+
+            firstStagesDataOfChapter = DataTableManager.Instance.GetStageData(firstStagesDataOfChapter.NextStageId);
+            if (firstStagesDataOfChapter == null)
+                break;
+
+        }
+
+    }
+
     public void ForceOpen()
     {
         Debug.LogWarning("테스트 모드 전용 메서드 호출됨");
