@@ -32,7 +32,15 @@ public class CircleAreaDamage : Skill
         // 지정된 애니메이션 시작
         self.UnitAnimator.SetTrigger(animationHash);
 
+        Vector3 pos = target.transform.position;
+
         yield return waitPreDelay;
+
+        if (target != null)
+            pos = target.transform.position;
+
+        //도중 반복자 순회 오류 대체코드
+        List<Combatable> dest = new List<Combatable>();
 
         if (self.Group.Enemy != null)
         {
@@ -40,11 +48,18 @@ public class CircleAreaDamage : Skill
             {
                 // 실제로 공격이 적용되는 구간
                 if (enemy != null && enemy.IsAlive &&
-                    Vector2.SqrMagnitude(enemy.transform.position - target.transform.position) < areaRadius * areaRadius)//원형범위 적 판정
+                    Vector2.SqrMagnitude(enemy.transform.position - pos) < areaRadius * areaRadius)//원형범위 적 판정
                 {
-                    enemy.Damaged(self.AttackPoint.Value * atkMultiplier, self.igDefenseRate, self.characterData.StatusTable.type); // 타겟에게 데미지 적용
+                    dest.Add(enemy);
+                    //enemy.Damaged(self.AttackPoint.Value * atkMultiplier, self.igDefenseRate, self.characterData.StatusTable.type); // 타겟에게 데미지 적용
                 }
             }
+        }
+
+        //도중 반복자 순회 오류 대체코드
+        foreach (Combatable enemy in dest)
+        {
+            enemy.Damaged(self.AttackPoint.Value * atkMultiplier, self.igDefenseRate, self.characterData.StatusTable.type); // 타겟에게 데미지 적용
         }
 
         yield return waitPostDelay;
