@@ -22,10 +22,11 @@ public class HYJ_CharacterSelect : MonoBehaviour
     [SerializeField] int unitIndex; // 유닛 번호
     [SerializeField] Image characterImage; // 캐릭터 이미지
     [SerializeField] TMP_Text levelText; // 캐릭터 레벨 텍스트
+    [SerializeField] TMP_Text nameText; // 캐릭터 이름 텍스트
     [SerializeField] TMP_Text raceText; //캐릭터 종족 텍스트
     [SerializeField] TMP_Text classText; // 캐릭터 역할 텍스트(탱커/딜러/힐러)
-    [SerializeField] TMP_Text attacktypeText; // 캐릭터 공격 타입 텍스트 (단일/광역)
-    [SerializeField] GameObject UnitChangeUI; // 유닛 변경 확인 팝업 -> 변경하시겠습니까?
+    [SerializeField] TMP_Text powerText; // 캐릭터 공격 타입 텍스트 (단일/광역)
+    GameObject UnitChangeUI; // 유닛 변경 확인 팝업 -> 변경하시겠습니까?
 
 
     public void InitDataPosBtn(int PosIdx, GameObject CharacterSelectPanel, GameObject CantPosUI)
@@ -52,10 +53,11 @@ public class HYJ_CharacterSelect : MonoBehaviour
         UnitChangeUI = unitChangeUI;
 
         characterImage.GetComponent<Image>().sprite = chData.FaceIconSprite;
-        levelText.text = chData.Level.Value.ToString();
-        raceText.text = chData.PowerLevel.ToString();
-        //raceText.text = chData.
-        //classText.text = chData.
+        levelText.text = chData.Level.Value.ToString(); // 레벨 표기
+        nameText.text = chData.Name;
+        raceText.text = chData.StatusTable.type.ToString(); // 종족
+        classText.text = chData.StatusTable.roleType.ToString(); // 역할군
+        float unitPower = 0;
         //attacktypeText.text = chData.
     }
 
@@ -145,7 +147,6 @@ public class HYJ_CharacterSelect : MonoBehaviour
     {
         SelectM.battleInfo.Add(key, value);     // 현재 키 / 밸류 딕셔너리에 추가
         
-        //SelectM.SetCharacterImage(key, value);  // 스프라이트 생성
         SetBtnChImage(true,value);
     }
 
@@ -153,7 +154,6 @@ public class HYJ_CharacterSelect : MonoBehaviour
     {
         SelectM.battleInfo.Remove(key);     // 현재 유닛 고유번호를 갖고 있는 키와 밸류 삭제
         
-        //SelectM.RemoveCharacterImage(key); // 스프라이트 제거
         SetBtnChImage(false,unitIndex);
     }
 
@@ -166,9 +166,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
     /// <param name="unitIdx">변경할 캐릭터 이미지의 캐릭터 고유 번호</param>
     public void SetBtnChImage(bool isOn,int unitIdx)
     { 
-        Debug.Log("ddddd"+unitIdx);
         Debug.Log(posBTNImage);
-        Debug.Log("eeeee"+posBTNImage.name);
         Color color = posBTNImage.GetComponent<Image>().color;
         if (isOn)
         {
