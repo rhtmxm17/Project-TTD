@@ -1,10 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using Microsoft.Unity.VisualStudio.Editor;
 using TMPro;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
-using UnityEngine.UI;
 using Image = UnityEngine.UI.Image;
 
 public class HYJ_MonsterInfo : MonoBehaviour
@@ -20,50 +15,53 @@ public class HYJ_MonsterInfo : MonoBehaviour
     {
         CharacterData.Status monsterStatus = monsterInfo.character.StatusTable;
         monsterImage.GetComponent<Image>().sprite = monsterInfo.character.FaceIconSprite;
-        SetMonsterRace(monsterStatus.type.ToString());
-        SetMonsterClass(monsterStatus.roleType.ToString());
+        SetMonsterRace(monsterStatus.type);
+        SetMonsterClass(monsterStatus.roleType);
         
         levelText.text = monsterInfo.level.ToString();
         nameText.text = monsterInfo.character.Name;
     }
 
-    private void SetMonsterRace(string monsterRace)
+    private void SetMonsterRace(ElementType monsterElementType)
     {
-        switch (monsterRace)
+        switch (monsterElementType.ToString())
         {
-            case "무속성" :
-                monsterImage.GetComponent<Image>().color = Color.white;
+            case "NONE" :
+                raceImage.GetComponent<Image>().color = Color.white;
                 break;
-            case "풀" :
-                monsterImage.GetComponent<Image>().color = Color.green;
+            case "EARTH" :
+                raceImage.GetComponent<Image>().color = Color.green;
                 break;
-            case "물" :
-                monsterImage.GetComponent<Image>().color = Color.blue;
+            case "WATER" :
+                raceImage.GetComponent<Image>().color = Color.blue;
                 break;
-            case "금" :
-                monsterImage.GetComponent<Image>().color = Color.yellow;
+            case "METAL" :
+                raceImage.GetComponent<Image>().color = Color.yellow;
                 break;
-            case "땅" :
-                monsterImage.GetComponent<Image>().color = Color.gray;
+            case "WOOD" :
+                raceImage.GetComponent<Image>().color = Color.gray;
                 break;
-            case "불" :
-                monsterImage.GetComponent<Image>().color = Color.red;
+            case "FIRE" :
+                raceImage.GetComponent<Image>().color = Color.red;
                 break;
         }
     }
 
-    private void SetMonsterClass(string monsterClass)
+    private void SetMonsterClass(RoleType monsterRoleType)
     {
-        switch (monsterClass)
+        switch (monsterRoleType.ToString())
         {
-            case "공격형" :
-                monsterImage.GetComponent<Image>().color = Color.red;
+            case "NONE" :
+                classImage.GetComponent<Image>().color = Color.white;
                 break;
-            case "방어형" :
-                monsterImage.GetComponent<Image>().color = Color.blue;
+            case "ATTACKER" :
+                classImage.GetComponent<Image>().color = Color.red;
                 break;
-            case "지원형" :
-                monsterImage.GetComponent<Image>().color = Color.green;
+            case "DEFENDER" :
+                classImage.GetComponent<Image>().color = Color.blue;
+                break;
+            case "SUPPORTER" :
+                classImage.GetComponent<Image>().color = Color.green;
                 break;
         }
     }
