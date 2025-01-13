@@ -16,18 +16,29 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _defText;
     [HideInInspector] public TextMeshProUGUI _powerLevelText; 
     [HideInInspector] public TextMeshProUGUI _levelUpCoinText;
-    [FormerlySerializedAs("_levelUpMaterialText")] [HideInInspector] public TextMeshProUGUI _levelUpYongGwaText;
+    [HideInInspector] public TextMeshProUGUI _levelUpYongGwaText;
     [HideInInspector] public TextMeshProUGUI _enhanceText;
     [HideInInspector] public TextMeshProUGUI _skillADescText;
     [HideInInspector] public TextMeshProUGUI _skillBDescText;
+    [HideInInspector] public TextMeshProUGUI _beforeBonusAtkText;
+    [HideInInspector] public TextMeshProUGUI _beforeBonusDefText;
+    [HideInInspector] public TextMeshProUGUI _beforeBonusHpText;
+    [HideInInspector] public TextMeshProUGUI _afterBonusAtkText;
+    [HideInInspector] public TextMeshProUGUI _afterBonusDefText;
+    [HideInInspector] public TextMeshProUGUI _afterBonusHpText;
+    [HideInInspector] public TextMeshProUGUI _bonusLevelText;
+    
     [HideInInspector] public Image _skillAIconImage;
     [HideInInspector] public Image _skillBIconImage;
     [HideInInspector] public Image _characterImage;
     [HideInInspector] public Image _levelUpNormalEffect;
     [HideInInspector] public Image _levelUpSpecialEffect;
-    
+     
     [HideInInspector] public Button _levelUpButton;
     [HideInInspector] public GameObject _materialGroup;
+    [HideInInspector] public GameObject _bonusPopup;
+    
+    private Button _bonusExitButton;
     
     //EnhanceTab
     [HideInInspector] public TextMeshProUGUI _curEnhanceLevelText;
@@ -207,15 +218,24 @@ public class CharacterInfoUI : BaseUI
         _defText = GetUI<TextMeshProUGUI>("DefText");
         _skillADescText = GetUI<TextMeshProUGUI>("SkillDescAText");
         _skillBDescText = GetUI<TextMeshProUGUI>("SkillDescBText");
-
+        _beforeBonusAtkText = GetUI<TextMeshProUGUI>("BeforeBonusAtkText");
+        _beforeBonusDefText = GetUI<TextMeshProUGUI>("BeforeBonusDefText");
+        _beforeBonusHpText = GetUI<TextMeshProUGUI>("BeforeBonusHpText");
+        _afterBonusAtkText = GetUI<TextMeshProUGUI>("AfterBonusAtkText");
+        _afterBonusDefText = GetUI<TextMeshProUGUI>("AfterBonusDefText");
+        _afterBonusHpText = GetUI<TextMeshProUGUI>("AfterBonusHpText");
+        _bonusLevelText = GetUI<TextMeshProUGUI>("BonusLevelText"); 
+        
         _levelUpSpecialEffect = GetUI<Image>("LevelUpSpecialEffect");
         _levelUpNormalEffect = GetUI<Image>("LevelUpNormalEffect");
         _skillAIconImage = GetUI<Image>("SkillIconA");
         _skillBIconImage = GetUI<Image>("SkillIconB");
         _characterImage = GetUI<Image>("CharacterImage");
-        
+
+        _bonusExitButton = GetUI<Button>("BonusExitButton");
         _levelUpButton = GetUI<Button>("LevelUpButton");
 
+        _bonusPopup = GetUI("BonusPopup");
         _materialGroup = GetUI("MaterialTextGroup");
     }
      
@@ -229,6 +249,7 @@ public class CharacterInfoUI : BaseUI
         _mileageUseButton.onClick.AddListener(MileageUsePopupException);
         _mileageCancelButton.onClick.AddListener(() => _mileageUsePopup.SetActive(false));
         _tokenCancelButton.onClick.AddListener(() => _enhanceTokenPopup.SetActive(false));
+        _bonusExitButton.onClick.AddListener(() => _bonusPopup.SetActive(false));
     }
 
     private void TabButtonClick(InfoTabType tabType)

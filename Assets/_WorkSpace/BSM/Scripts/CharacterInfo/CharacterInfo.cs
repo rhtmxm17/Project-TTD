@@ -132,7 +132,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             .Submit(LevelUpSuccess);
     }
 
-    private Coroutine _levelUpNormalCo;
+    private Coroutine _levelUpEffectCo;
     /// <summary>
     /// 레벨업 결과
     /// </summary>
@@ -148,26 +148,44 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController.UserGold = _characterInfoController.UserGoldData.Value;
         _characterInfoController.UserYongGwa = _characterInfoController.UserYongGwaData.Value;
         UpdateInfo(); 
-        //TODO: 레벨업 UI 나올 위치
-        
 
+        //레벨업 시 이펙트 재생 및 추가 스탯 UI
         if (_characterLevel % 10 != 0)
         {
-            if (_levelUpNormalCo == null)
+            if (_levelUpEffectCo == null)
             {
-                _levelUpNormalCo = StartCoroutine(LevelUpEffectRoutine(_characterInfoController._infoUI._levelUpNormalEffect, 0.25f));
+                _levelUpEffectCo = StartCoroutine(LevelUpEffectRoutine(_characterInfoController._infoUI._levelUpNormalEffect, 0.25f));
             } 
         }
         else
         {
-            if (_levelUpNormalCo == null)
+            if (_levelUpEffectCo == null)
             {
-                _levelUpNormalCo = StartCoroutine(LevelUpEffectRoutine(_characterInfoController._infoUI._levelUpSpecialEffect, 0.5f));
+                _levelUpEffectCo = StartCoroutine(LevelUpEffectRoutine(_characterInfoController._infoUI._levelUpSpecialEffect, 0.5f));
+                _characterInfoController._infoUI._bonusPopup.SetActive(true);
+                _characterInfoController._infoUI._bonusLevelText.text = $"{_characterLevel}레벨 달성!";
+
+                //레벨업 전 정보
+                _characterInfoController._infoUI._beforeBonusAtkText.text =
+                    $"공격력 {((_characterData.StatusTable.attackPointBase + _characterData.StatusTable.attackPointGrowth) * _characterLevel) * (1f + 0.1f * _characterData.Enhancement.Value)}";
+                _characterInfoController._infoUI._beforeBonusDefText.text =
+                    $"방어력 {((_characterData.StatusTable.defensePointBase + _characterData.StatusTable.defensePointGrouth) * _characterLevel) * (1f + 0.1f * _characterData.Enhancement.Value)}";
+                _characterInfoController._infoUI._beforeBonusHpText.text =
+                    $"체력 {((_characterData.StatusTable.healthPointBase + _characterData.StatusTable.healthPointGrouth) * _characterLevel) * (1f + 0.1f * _characterData.Enhancement.Value)}";
+
+                //레벨업 후 정보
+                _characterInfoController._infoUI._afterBonusAtkText.text =
+                    $"공격력 {(((_characterData.StatusTable.attackPointBase + _characterData.StatusTable.attackPointGrowth) * _characterLevel) * (1f + 0.1f * _characterData.Enhancement.Value)) + ((_characterLevel / 10) * 10)} + {((_characterLevel / 10) * 10)}";
+
+                _characterInfoController._infoUI._afterBonusDefText.text =
+                    $"방어력 {(((_characterData.StatusTable.defensePointBase + _characterData.StatusTable.defensePointGrouth) * _characterLevel) * (1f + 0.1f * _characterData.Enhancement.Value)) + ((_characterLevel / 10) * 10)} + {((_characterLevel / 10) * 10)}";
+                
+                _characterInfoController._infoUI._afterBonusHpText.text =
+                    $"체력 {(((_characterData.StatusTable.healthPointBase + _characterData.StatusTable.healthPointGrouth) * _characterLevel) * (1f + 0.1f * _characterData.Enhancement.Value)) + ((_characterLevel / 10) * 10)} + {((_characterLevel / 10) * 10)}";
             } 
         }
     }
-
-    
+     
     /// <summary>
     /// 레벨업 이펙트 코루틴
     /// </summary>
@@ -331,10 +349,10 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             _ => throw new AggregateException("잘못")
         };
 
-        if (_levelUpNormalCo != null)
+        if (_levelUpEffectCo != null)
         {
-            StopCoroutine(_levelUpNormalCo);
-            _levelUpNormalCo = null;
+            StopCoroutine(_levelUpEffectCo);
+            _levelUpEffectCo = null;
         }
     }
   

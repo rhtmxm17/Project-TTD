@@ -76,11 +76,13 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
 
     public string Name => name;
 
-    public float AttackPointLeveled => ((statusTable.attackPointBase + statusTable.attackPointGrowth) * Level.Value) * (1f + 0.1f * Enhancement.Value);
+    private int BonusStats() => Level.Value % 10 == 0 ? ((Level.Value / 10) * 10) : 0;
+    
+    public float AttackPointLeveled => (((statusTable.attackPointBase + statusTable.attackPointGrowth) * Level.Value) * (1f + 0.1f * Enhancement.Value)) + BonusStats();
 
-    public float HpPointLeveled => ((statusTable.healthPointBase + statusTable.healthPointGrouth) * Level.Value) * (1f + 0.1f * Enhancement.Value);
+    public float HpPointLeveled => (((statusTable.healthPointBase + statusTable.healthPointGrouth) * Level.Value) * (1f + 0.1f * Enhancement.Value)) + BonusStats();
 
-    public float DefensePointLeveled => ((statusTable.defensePointBase + statusTable.defensePointGrouth) * Level.Value) * (1f + 0.1f * Enhancement.Value);
+    public float DefensePointLeveled => (((statusTable.defensePointBase + statusTable.defensePointGrouth) * Level.Value) * (1f + 0.1f * Enhancement.Value)) + BonusStats();
 
     public float PowerLevel => (AttackPointLeveled + HpPointLeveled + DefensePointLeveled);
     
