@@ -22,7 +22,11 @@ public class CharacterInfoPopup : MonoBehaviour
     /// </summary>
     private void InfoPopupClose()
     {
-        _characterInfoController.CurCharacterInfo.CharacterModels[ListIndex].gameObject.SetActive(false);
+        if (_characterInfoController.CurCharacterInfo != null)
+        {
+            _characterInfoController.CurCharacterInfo.CharacterModels[ListIndex].gameObject.SetActive(false);
+        } 
+        
         _characterInfoController.StartListSort();
         _characterInfoController._infoUI._detailTabColor.color = Color.cyan;
         _characterInfoController._infoUI._enhanceTabColor.color = Color.white;

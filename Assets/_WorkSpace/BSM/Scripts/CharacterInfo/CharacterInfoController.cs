@@ -2,10 +2,13 @@ using System.Collections.Generic;
 using System.Linq; 
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class CharacterInfoController : BaseUI
 {
+    public List<Sprite> TokenIcons;
+    
     [HideInInspector] public CharacterInfoUI _infoUI;
     [HideInInspector] public List<CharacterInfo> _characterInfos;
     [HideInInspector] public CharacterInfo CurCharacterInfo;
@@ -18,8 +21,17 @@ public class CharacterInfoController : BaseUI
     [HideInInspector] public CharacterFilter _characterFilter;
     
     [HideInInspector] public UserDataInt UserGoldData;
-    [HideInInspector] public UserDataInt UserLevelMaterialData;
-    [HideInInspector] public UserDataInt UserEnhanceMaterialData;
+    /// <summary>
+    /// 용 강화 재화
+    /// </summary>
+    [HideInInspector] public UserDataInt UserDragonCandyData;
+    
+    /// <summary>
+    /// 용 레벨업 재화
+    /// </summary>
+    [HideInInspector] public UserDataInt UserYongGwaData;
+ 
+    
     
     [HideInInspector] public int CurIndex = 0;
     private int _evolutionIndex;
@@ -60,7 +72,25 @@ public class CharacterInfoController : BaseUI
         }
     }
 
+    private int _userYongGwa;
+    
+    /// <summary>
+    /// 용 레벨업 재화
+    /// </summary>
+    public int UserYongGwa
+    {
+        get => _userYongGwa;
+        set
+        {
+            _userYongGwa = value;
+        }
+    }
+    
     private int _userGold;
+    
+    /// <summary>
+    /// 용 레벨업 골드 재화
+    /// </summary>
     public int UserGold { 
         get => _userGold;
         set
@@ -68,27 +98,21 @@ public class CharacterInfoController : BaseUI
             _userGold = value;
         } 
     }
-
-    private int _userLevelMaterial;
-
-    public int UserLevelMaterial
+    
+    private int _userDragonCandy;
+    
+    /// <summary>
+    /// 용 강화 재화
+    /// </summary>
+    public int UserDragonCandy
     {
-        get => _userLevelMaterial;
+        get => _userDragonCandy;
         set
         {
-            _userLevelMaterial = value;
+            _userDragonCandy = value;
         }
     }
 
-    private int _userEnhanceMaterial; 
-    public int UserEnhanceMaterial
-    {
-        get => _userEnhanceMaterial;
-        set
-        {
-            _userEnhanceMaterial = value;
-        }
-    } 
     protected override void Awake()
     {
         base.Awake(); 
@@ -142,14 +166,13 @@ public class CharacterInfoController : BaseUI
     private void GetUserMaterials()
     {
         UserGoldData = GameManager.TableData.GetItemData(1).Number;
+        UserDragonCandyData = GameManager.TableData.GetItemData(2).Number;
+        UserYongGwaData = GameManager.TableData.GetItemData(5).Number;
         
-        UserLevelMaterialData = GameManager.TableData.GetItemData(2).Number;
-        
-        UserEnhanceMaterialData = GameManager.TableData.GetItemData(3).Number;
-
         _userGold = UserGoldData.Value;
-        _userLevelMaterial = UserLevelMaterialData.Value;
-        _userEnhanceMaterial = UserEnhanceMaterialData.Value; 
+        _userDragonCandy = UserDragonCandyData.Value;
+        _userYongGwa = UserYongGwaData.Value;
+        Debug.Log($"용과 : {_userYongGwa} / 용 캔디 :{_userDragonCandy}");
     }
     
     private void ButtonOnClickEvent()

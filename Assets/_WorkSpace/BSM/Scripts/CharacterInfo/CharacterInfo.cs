@@ -87,7 +87,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private CharacterEnhance _characterEnhance;
     
     private int _characterLevelUpGoldCost;
-    private int _characterLevelUpMaterialCost;
+    private int _characterLevelUpYongGwaCost;
     
     private void Awake()
     {
@@ -126,7 +126,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         GameManager.UserData.StartUpdateStream()
             .SetDBValue(_characterData.Level, _characterData.Level.Value + 1)
             .SetDBValue(_characterInfoController.UserGoldData, _characterInfoController.UserGoldData.Value - _characterLevelUpGoldCost) // 재화 사용
-            .SetDBValue(_characterInfoController.UserLevelMaterialData, _characterInfoController.UserGoldData.Value - _characterLevelUpMaterialCost)
+            .SetDBValue(_characterInfoController.UserYongGwaData, _characterInfoController.UserYongGwaData.Value - _characterLevelUpYongGwaCost)
             .Submit(LevelUpSuccess);
     }
 
@@ -143,7 +143,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         }
 
         _characterInfoController.UserGold = _characterInfoController.UserGoldData.Value;
-        _characterInfoController.UserLevelMaterial = _characterInfoController.UserLevelMaterialData.Value;
+        _characterInfoController.UserYongGwa = _characterInfoController.UserYongGwaData.Value;
         UpdateInfo(); 
         //TODO: 레벨업 UI 나올 위치
     }
@@ -219,7 +219,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             LevelUpCheck();
             
             _characterInfoController._infoUI._levelUpCoinText.text = _characterLevelUpGoldCost.ToString();
-            _characterInfoController._infoUI._levelUpMaterialText.text = _characterLevelUpMaterialCost.ToString();
+            _characterInfoController._infoUI._levelUpYongGwaText.text = _characterLevelUpYongGwaCost.ToString();
             _characterInfoController._infoUI._materialGroup.SetActive(true);
             _characterInfoController._infoUI._levelUpButton.gameObject.SetActive(true);
             _characterInfoController._infoUI._enhanceTabButton.interactable = true;
@@ -299,7 +299,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     {
         //TODO: 임시 캐릭터 레벨업 코스트
         _characterLevelUpGoldCost = 100 * _characterData.Level.Value;
-        _characterLevelUpMaterialCost = 250 * _characterData.Level.Value; 
+        _characterLevelUpYongGwaCost = 250 * _characterData.Level.Value; 
     }
     
     /// <summary>
@@ -318,10 +318,10 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController._infoUI._levelUpCoinText.color =
             _characterInfoController.UserGold >= _characterLevelUpGoldCost ? Color.white : Color.red;
 
-        _characterInfoController._infoUI._levelUpMaterialText.color =
-            _characterInfoController.UserLevelMaterial >=  _characterLevelUpMaterialCost? Color.white : Color.red;
+        _characterInfoController._infoUI._levelUpYongGwaText.color =
+            _characterInfoController.UserYongGwa >=  _characterLevelUpYongGwaCost? Color.white : Color.red;
         
-        _characterInfoController._infoUI._levelUpButton.interactable = _characterInfoController.UserGold >= _characterLevelUpGoldCost && _characterInfoController.UserLevelMaterial >= _characterLevelUpMaterialCost;
+        _characterInfoController._infoUI._levelUpButton.interactable = _characterInfoController.UserGold >= _characterLevelUpGoldCost && _characterInfoController.UserYongGwa >= _characterLevelUpYongGwaCost;
     }
 
     /// <summary>
