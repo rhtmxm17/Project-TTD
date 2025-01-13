@@ -41,6 +41,12 @@ public class FriendList : MonoBehaviour
     {
         GetComponent<OpenableWindow>().onOpenAction += RefreshList;
     }
+    
+    // 처음 화면 열때 새로고침 용도
+    private void OnEnable()
+    {
+        RefreshList();
+    }
 
     [ContextMenu("refresh")]
     public void RefreshList()

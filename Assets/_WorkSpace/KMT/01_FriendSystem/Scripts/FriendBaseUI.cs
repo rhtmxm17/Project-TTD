@@ -26,10 +26,11 @@ public class FriendBaseUI : BaseUI
         tabDictionary.Add(Tabs.REQUESTED, (GetUI<FocusableTab>("RequestedTab"), GetUI<OpenableWindow>("RequestedWindow")));
         tabDictionary.Add(Tabs.RECIEVED, (GetUI<FocusableTab>("RecievedTab"), GetUI<OpenableWindow>("RecievedWindow")));
 
-        GetComponent<OpenableWindow>().onOpenAction += () => SelectTab(Tabs.FRIENDS);
-        GetComponent<OpenableWindow>().onCloseAction += () => CloseAllTab();
+        // SHW: 오픈윈도우 삭제 후 널래퍼런스 오류로 인해 주석처리 합니다.
+        // GetComponent<OpenableWindow>().onOpenAction += () => SelectTab(Tabs.FRIENDS);
+        // GetComponent<OpenableWindow>().onCloseAction += () => CloseAllTab();
 
-        GetComponent<OpenableWindow>().CloseWindow();
+        // GetComponent<OpenableWindow>().CloseWindow();
     }
 
     public void SelectTab(Tabs tapType)
