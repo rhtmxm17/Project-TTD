@@ -292,6 +292,7 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
                     }
 
                     CharacterData characterData = GameManager.TableData.GetCharacterData(id);
+                    haveCharacterIdxList.Add(id);
 
                     GetCharacterLevel(id).SetValueWithDataSnapshot(userData);
                     GetCharacterEnhancement(id).SetValueWithDataSnapshot(userData);
