@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -17,7 +14,6 @@ public class HYJ_StageEnemyInfo : MonoBehaviour
     private void InitStageData()
     {
         StageData curStageData = GameManager.Instance.sceneChangeArgs.stageData;
-        
         stageNameText.text = curStageData.StageName;
 
         foreach (var iWave in curStageData.Waves)
@@ -26,19 +22,12 @@ public class HYJ_StageEnemyInfo : MonoBehaviour
             {
                 GameObject iMonster = Instantiate(monsterPrefab, transform);
                 iMonster.GetComponent<HYJ_MonsterInfo>().InitMonsterData(iWaveMonster);
+                
                 if (GameManager.Instance.sceneChangeArgs.stageType == StageType.BOSS)
                 {
                     iMonster.GetComponent<HYJ_MonsterInfo>().SetBoss();
                 }
             }
         }
-        
-    }
-
-    private void SetRewardList()
-    {
-        StageData curStageData = GameManager.Instance.sceneChangeArgs.stageData;
-        
-        //curStageData.Reward
     }
 }
