@@ -60,7 +60,7 @@ public class ShopItem : BaseUI
     private void Init()
     {
         itemNameText = GetUI<TMP_Text>("ItemInfoText"); 
-        buyButton.GetComponentInChildren<Button>().onClick.AddListener(OpenDoubleWarning);
+        buyButton.GetComponentInChildren<Button>().onClick.AddListener(Buy);
         buyButtonText = GetUI<TMP_Text>("BuyButtonText");
         itemPriceText = GetUI<TMP_Text>("ItemPriceText");
         itemCountText = GetUI<TMP_Text>("ItemCountText");
@@ -127,27 +127,33 @@ public class ShopItem : BaseUI
 
     private void Buy()
     {
-
+        // 복수구매가능한지 체크 & 구매할수 있는량 구하기
+        bool isBulk = shopItemData.IsMany;
+        int remain = shopItemData.LimitedCount - shopItemData.Bought.Value;
+        //캐릭터넘버 구하기
         int charItemData = shopItemData.Id;
         charItemData -= 200; // 상점캐릭터나열이 201...부터되있으니 200빼면 캐릭터ID랑 동일
         Debug.Log($"{charItemData}");
         // CheckCharacter(charItemData);
         
+        ItemData itemGive = shopItemData.Price.item;
+        if (null != itemGive && shopItemData.Price.item.Number.Value < shopItemData.Price.gain)
+        {
+            Debug.LogWarning("비용 부족");
+            // TODO: 팝업UI
+            OpenWarning();
+            return;
+        }
         
-        
+
         if (GameManager.UserData.HasCharacter(charItemData))
         {
            Debug.Log("소유중인 캐릭터입니당");
            OpenCharWarning();
            return;
         }
-
-       
         
-        // TODO: 갯수제한없는 아이템 골드량만큼 한꺼번에 살 수 있도록 하기 (구매확인창 에서) 
-        // TODO: 복수구매 가능한거
-        bool isBulk = shopItemData.IsMany;
-        int remain = shopItemData.LimitedCount - shopItemData.Bought.Value;
+        // 갯수제한없는 아이템 골드량만큼 한꺼번에 살 수 있도록 하기 (구매확인창 에서) 복수구매 
         if (isBulk ||remain > 0 )
         {
             Debug.Log("구매확인창 열기");
@@ -155,7 +161,12 @@ public class ShopItem : BaseUI
             return;
         }
 
+        OpenDoubleWarning();
 
+
+
+        /* 그냥여기서구매되는거는 따로해보기
+        // 가격
         ItemData itemGive = shopItemData.Price.item;
         if (null != itemGive && shopItemData.Price.item.Number.Value < shopItemData.Price.gain)
         {
@@ -168,15 +179,15 @@ public class ShopItem : BaseUI
         var dbUpdateStream = GameManager.UserData.StartUpdateStream() // DB에 갱신 요청 시작
             .AddDBValue(shopItemData.Bought, 1);  // 요청에 '구매 횟수 증가' 등록
 
-
         if (null != itemGive) // 무료가 아니라면
         {
+            OpenDoubleWarning();
             Debug.Log($"소지 개수:{itemGive.Number.Value}/비용:{shopItemData.Price.gain}");
             dbUpdateStream.AddDBValue(itemGive.Number, -shopItemData.Price.gain); // 요청에 '비용 지불' 등록
             // TODO: 구매 가능/불가 판별 => 불가능 팝업
             // (소지금 < 가격 => 구매불가(팝업띄우기))
         }
-        
+
         foreach (ItemGain product in shopItemData.Products)
         {
             UserDataInt itemGet = product.item.Number;
@@ -184,7 +195,9 @@ public class ShopItem : BaseUI
         }
 
         dbUpdateStream.Submit(OnComplete); // 등록된 갱신 요청 전송
-        
+        */
+
+
         // TODO: 네트워크 로딩 띄우기
     }
 
@@ -226,9 +239,39 @@ public class ShopItem : BaseUI
         buyButtonText.text = "SOLD\nOUT";
         buyButtonText.color = new Color(1f, .1f, .2f, 1f);
         GetUI<Image>("BuyButton").color = new Color(.3f, .3f, .3f, .75f); // 아이템창 어둡게
-        buyButton.onClick.RemoveListener(OpenDoubleWarning); //구매버튼 비활성화
+        buyButton.onClick.RemoveListener(Buy); //구매버튼 비활성화
         ShopItemImage.color = new Color(.3f, .3f, .3f, 1f); // 아이템 어둡게 
         
+    }
+
+    public void NormalPurchase()
+    {
+        // 가격 계산
+        ItemData itemGive = shopItemData.Price.item;
+
+        
+        var dbUpdateStream = GameManager.UserData.StartUpdateStream() // DB에 갱신 요청 시작
+            .AddDBValue(shopItemData.Bought, 1);  // 요청에 '구매 횟수 증가' 등록
+
+        if (null != itemGive) // 무료가 아니라면
+        {
+            OpenDoubleWarning();
+            Debug.Log($"소지 개수:{itemGive.Number.Value}/비용:{shopItemData.Price.gain}");
+            dbUpdateStream.AddDBValue(itemGive.Number, -shopItemData.Price.gain); // 요청에 '비용 지불' 등록
+            // TODO: 구매 가능/불가 판별 => 불가능 팝업
+            // (소지금 < 가격 => 구매불가(팝업띄우기))
+        }
+        
+        foreach (ItemGain product in shopItemData.Products)
+        {
+            UserDataInt itemGet = product.item.Number;
+            dbUpdateStream.AddDBValue(itemGet, product.gain); // 요청에 '상품 획득' 등록
+        }
+
+        dbUpdateStream.Submit(OnComplete); // 등록된 갱신 요청 전송
+        
+        // TODO: 네트워크 로딩 띄우기
+
     }
 
     public void SubscribeEvents()
@@ -263,7 +306,7 @@ public class ShopItem : BaseUI
     {
         OverlayUIManager popupInstance = GameManager.OverlayUIManager;
         popupInstance.OpenDoubleInfoPopup("해당 아이템을 정말 구매하시겠습니까?", "취소",
-            "확인",null, Buy);
+            "확인",null, NormalPurchase);
     }
 
     private void CheckItemIndexAndCompare()
