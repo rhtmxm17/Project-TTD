@@ -13,7 +13,6 @@ public class MyRoomSort : MonoBehaviour
     private void Start()
     {
         charactersInvite = GetComponentsInChildren<CharacterInviteUI>().ToList();
-        
     }
     
     /// <summary>
