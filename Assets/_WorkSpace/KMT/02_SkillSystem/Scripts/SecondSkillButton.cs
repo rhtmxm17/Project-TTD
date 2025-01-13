@@ -175,7 +175,7 @@ public class SecondSkillButton : MonoBehaviour
 
         while (true)
         {
-            if (Interactable && isTargetExistFunc.Invoke() && LevelArrived)
+            if (Interactable && !StageManager.Instance.IsInChangeWave && isTargetExistFunc.Invoke() && LevelArrived)
             {
                 skillButton.onClick.Invoke();
             }

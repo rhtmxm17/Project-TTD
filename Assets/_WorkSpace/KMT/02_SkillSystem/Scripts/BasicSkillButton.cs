@@ -146,7 +146,7 @@ public class BasicSkillButton : MonoBehaviour
 
         while (true)
         {
-            if (Interactable && isTargetExistFunc.Invoke())
+            if (Interactable && !StageManager.Instance.IsInChangeWave && isTargetExistFunc.Invoke())
             {
                 skillButton.onClick.Invoke();
             }
