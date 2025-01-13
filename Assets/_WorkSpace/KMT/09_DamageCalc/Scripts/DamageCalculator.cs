@@ -12,8 +12,8 @@ public static class DamageCalculator
     /// <param name="targetDef">피격 대상의 방어력</param>
     /// <param name="targetDefConst">비격 대상의 방어상수 </param>
     /// <returns></returns>
-    public static float Calc(float damage, float igDefRate, float targetDef, float targetDefConst)
+    public static float Calc(float damage, float igDefRate, float targetDef, float targetDefConst, ElementType attackerType, ElementType enemyType)
     {
-        return Mathf.Max(damage - ((targetDef * (1 - igDefRate)) + targetDefConst), 0);
+        return Mathf.Max(damage - ((targetDef * (1 - igDefRate)) + targetDefConst), 0) * ElementalDamageGrid.GetDamageRate(attackerType, enemyType);
     }
 }

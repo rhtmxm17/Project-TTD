@@ -25,7 +25,7 @@ public class WaveClearCheat : MonoBehaviour
 
         foreach (Combatable m in monsters)
         {
-            m.Damaged(float.MaxValue / 2, 999999);
+            m.Damaged(float.MaxValue / 2, 999999, ElementType.NONE);
         }
 
     }
