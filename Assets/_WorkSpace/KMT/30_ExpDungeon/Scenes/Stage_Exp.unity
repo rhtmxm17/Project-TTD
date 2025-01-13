@@ -2462,7 +2462,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1944650724}
-  - component: {fileID: 1944650725}
   - component: {fileID: 1944650728}
   - component: {fileID: 1944650726}
   - component: {fileID: 1944650727}
@@ -2488,36 +2487,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1944650725
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1944650723}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6966ebb3e941fda458f317e35f10ceb9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  stageData: {fileID: 11400000, guid: 8762f0ea627a0de4d85d943c85fb5ec4, type: 2}
-  combatCamera: {fileID: 938216539}
-  characterManager: {fileID: 1961403692}
-  characterSetter: {fileID: 1961403691}
-  scroller: {fileID: 1944650726}
-  monsterWaveParent: {fileID: 1001817018}
-  monsterWavePrefab: {fileID: 3396462444384068605, guid: bbadde1eca3a7024db2793a4dbcd6e96,
-    type: 3}
-  monsterWaveQueue: []
-  monsterWaveOffset: 20
-  MaxPartyCost: 10
-  timeLimit: 10
-  leftTimeText: {fileID: 1724637649}
-  resultPopupWindow: {fileID: 1860170011}
-  costText: {fileID: 1860170009}
-  costSlider: {fileID: 1860170010}
-  wavesText: {fileID: 1860170008}
-  leftTimeBar: {fileID: 1860170007}
 --- !u!114 &1944650726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2568,7 +2537,7 @@ MonoBehaviour:
   monsterWaveQueue: []
   monsterWaveOffset: 20
   MaxPartyCost: 10
-  timeLimit: 10
+  timeLimit: 90
   leftTimeText: {fileID: 1724637649}
   resultPopupWindow: {fileID: 1860170011}
   costText: {fileID: 1860170009}
@@ -2696,7 +2665,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 1961403690}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1961403694}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5dc9f974dabce2343a990877beb1e2e1, type: 3}
@@ -2708,7 +2677,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 1961403690}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1961403694}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 240976470e7f6fc478c6cfe12b38a0ad, type: 3}
@@ -2720,12 +2689,18 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 1961403690}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1961403694}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c8b0aa17aadf0f34f9515a8429214ec6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1961403694 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7064329176246918464, guid: fbb4197ad931a83478982ff704e1f31b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1961403690}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2007739176
 GameObject:
   m_ObjectHideFlags: 0
@@ -2757,7 +2732,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb7e04757b5119c4ca550f1bc087a871, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterCombManager: {fileID: 0}
+  characterCombManager: {fileID: 1961403694}
 --- !u!114 &2007739178
 MonoBehaviour:
   m_ObjectHideFlags: 0

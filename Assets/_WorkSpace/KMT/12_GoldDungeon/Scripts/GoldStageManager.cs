@@ -175,12 +175,13 @@ public class GoldStageManager : StageManager, IDamageAddable, IProgressable
                                     else
                                     {
                                         prevSceneData.stageData = nextStageData;
+                                        prevSceneData.dungeonLevel += 1;
                                         //TODO : 용도에 따라서 지우거나 이용
                                         //prevSceneData.prevScene = prevSceneData.prevScene;
                                         GameManager.Instance.LoadBattleFormationScene(prevSceneData);
                                     }
                                 },
-                                true, false);
+                                true, DataTableManager.Instance.GetItemData(9/*골드티켓*/).Number.Value > 0);
                         }
 
                     };
