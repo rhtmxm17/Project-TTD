@@ -21,7 +21,7 @@ public class StoryDirector : BaseUI
     // 불러올 데이터가 있는 곳
     private StoryDirectingData storyData;
 
-    [SerializeField] Image standingImagePrefab;
+    [SerializeField] StoryActor standingImagePrefab;
 
     // 추가적으로 컨트롤이 필요할 수 있는 박스에 대한 선언(당장 안써서 주석처리)
     [Header("텍스트 박스")]
@@ -53,7 +53,7 @@ public class StoryDirector : BaseUI
     private int dialogueCounter = 0;
     private int maxDialogueCounter;
 
-    private Image[] actors;
+    private StoryActor[] actors;
 
     // [SerializeField]  bool isAuto = false;
     // private int autoCounter = 0;
@@ -81,7 +81,7 @@ public class StoryDirector : BaseUI
         maxDialogueCounter = storyData.Dialogues.Length;
 
         ClearActors();
-        actors = new Image[storyData.StandingImages.Length];
+        actors = new StoryActor[storyData.StandingImages.Length];
         foreach (StoryDirectingData.StandingImage actor in storyData.StandingImages)
         {
             actors[actor.ActorId] = Instantiate(standingImagePrefab, standingImageParent);
@@ -101,7 +101,7 @@ public class StoryDirector : BaseUI
     {
         if (actors != null)
         {
-            foreach (Image actor in actors)
+            foreach (StoryActor actor in actors)
             {
                 Destroy(actor.gameObject);
             }
@@ -162,24 +162,7 @@ public class StoryDirector : BaseUI
 
         foreach (StoryDirectingData.TransitionInfo transition in dialogue.Transitions)
         {
-            Image actor = actors[transition.StandingImageId];
-
-            // 색상 및 페이드인/아웃
-            actor.DOColor(new Color(
-                    transition.ColorMultiply, 
-                    transition.ColorMultiply, 
-                    transition.ColorMultiply, 
-                    transition.Active ? 1f : 0f),
-                transition.Time);
-
-            actor.transform.localScale = new Vector3(
-                transition.Flip ? -transition.Scale : transition.Scale,
-                transition.Scale,
-                1);
-
-
-            actor.rectTransform.DOAnchorMin(transition.Position * 0.1f, transition.Time);
-            actor.rectTransform.DOAnchorMax(transition.Position * 0.1f, transition.Time);
+            actors[transition.StandingImageId].Transition(transition);
         }
     }
 
