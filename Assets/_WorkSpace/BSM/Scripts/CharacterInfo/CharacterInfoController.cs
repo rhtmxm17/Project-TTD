@@ -293,6 +293,9 @@ public class CharacterInfoController : BaseUI
         _characterInfoPopupCs.ListIndex = _evolutionIndex; 
         _leftEvolutionButton.gameObject.SetActive(_evolutionIndex != 0);
         _rightEvolutionButton.gameObject.SetActive(_evolutionIndex != CurCharacterInfo.CharacterModels.Count - 1);
+
+        _infoUI._characterTokenCountText.text = 0.ToString();
+        _infoUI._commonTokenCountText.text = 0.ToString(); 
         
         _nextButton.gameObject.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
         _prevButton.gameObject.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));

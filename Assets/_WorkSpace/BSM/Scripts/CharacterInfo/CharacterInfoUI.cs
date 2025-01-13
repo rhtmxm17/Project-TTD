@@ -70,8 +70,7 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public Button _tokenConfirmButton;
     [HideInInspector] public TMP_InputField _tokenInputField;
     [HideInInspector] public Image _enhanceTokenIcon;
-
-    private Button _tokenCancelButton;
+    [HideInInspector] public Button _tokenCancelButton;
     private Button _mileageCancelButton;
     
     //EvolutionTab

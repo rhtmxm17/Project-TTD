@@ -28,9 +28,23 @@ public class CharacterEnhance : MonoBehaviour
 
     private int _enhanceGoldCost;
     private int _enhanceDragonCandyCost;
-
+    
+    private int _curCharacterToken;
     private int _selectedCommonMaterial;
+
+    public int SelectedCommonMaterial
+    {
+        get => _selectedCommonMaterial;
+        set => _selectedCommonMaterial = value;
+    }
+    
     private int _selectedCharacterMaterial;
+
+    public int SelectedCharacterMaterial
+    {
+        get => _selectedCharacterMaterial;
+        set => _selectedCharacterMaterial = value;
+    }
     
     private EnhanceTokenType _curTokenType;
     
@@ -76,6 +90,7 @@ public class CharacterEnhance : MonoBehaviour
         _characterInfoController._infoUI._tokenDecreaseButton.onClick.AddListener(DecreaseToken); 
         _characterInfoController._infoUI._tokenInputField.onValueChanged.AddListener(x => InputToken(x));
         _characterInfoController._infoUI._tokenConfirmButton.onClick.AddListener(TokenPopupConfirm);
+        _characterInfoController._infoUI._tokenCancelButton.onClick.AddListener(SelectTokenReset);
     }
 
     private void SubscribeEvent()
@@ -89,7 +104,27 @@ public class CharacterEnhance : MonoBehaviour
         OnBeforeEnhance -= BeforeEnhance;
         OnAfterEnhance -= AfterEnhance;
     }
+    
+    
+    /// <summary>
+    /// 마지막으로 입력 후 Confirm했던 값으로 초기화
+    /// </summary>
+    private void SelectTokenReset()
+    {
+        if (_characterInfoController.CurCharacterEnhance != this) return;
 
+        if (_curTokenType == EnhanceTokenType.COMMON_TOKEN)
+        {
+            _selectedCommonMaterial = int.Parse(_characterInfoController._infoUI._commonTokenCountText.text);
+            _characterInfoController._infoUI._commonTokenCountText.text = _selectedCommonMaterial.ToString();
+        }
+        else if (_curTokenType == EnhanceTokenType.CHARACTER_TOKEN)
+        {
+            _selectedCharacterMaterial = int.Parse(_characterInfoController._infoUI._characterTokenCountText.text);
+            _characterInfoController._infoUI._characterTokenCountText.text = _selectedCharacterMaterial.ToString();
+        } 
+    }
+    
     /// <summary>
     /// 강화 토큰 등록 팝업창 셋팅
     /// </summary>
@@ -100,15 +135,23 @@ public class CharacterEnhance : MonoBehaviour
         
         _characterInfoController._infoUI._enhanceTokenPopup.SetActive(true);
         _curTokenType = tokenType;
+        _curCharacterToken = GameManager.TableData
+            .GetItemData(_characterData.EnhanceItemID).Number.Value;
         
         if (_curTokenType == EnhanceTokenType.CHARACTER_TOKEN)
         {
+            _selectedCharacterMaterial = 0;
+            _characterInfoController._infoUI._tokenInputField.text = _selectedCharacterMaterial.ToString();
+            
             _characterInfoController._infoUI._tokenPopupTitleText.text = "캐릭터 전용 토큰 등록";
             //TODO: 캐릭터 전용 토큰 아이콘 등록 필요
             _characterInfoController._infoUI._enhanceTokenIcon.sprite = _characterInfoController.TokenIcons[0];
         }
         else if (_curTokenType == EnhanceTokenType.COMMON_TOKEN)
         {
+            _selectedCommonMaterial = 0;
+            _characterInfoController._infoUI._tokenInputField.text = _selectedCommonMaterial.ToString();
+            
             _characterInfoController._infoUI._tokenPopupTitleText.text = "공용 토큰 등록";
             _characterInfoController._infoUI._enhanceTokenIcon.sprite = _characterInfoController.TokenIcons[1];
         } 
@@ -123,12 +166,18 @@ public class CharacterEnhance : MonoBehaviour
         if (_characterInfoController.CurCharacterEnhance != this) return;
 
         if (_curTokenType == EnhanceTokenType.CHARACTER_TOKEN)
-        {
-            _selectedCharacterMaterial++;
+        { 
+            if (_selectedCharacterMaterial + _selectedCommonMaterial < _enhanceDragonCandyCost
+                && _curCharacterToken > _selectedCharacterMaterial)
+            {
+                _selectedCharacterMaterial++;
+                _characterInfoController._infoUI._tokenInputField.text = _selectedCharacterMaterial.ToString();
+            } 
         }
         else if (_curTokenType == EnhanceTokenType.COMMON_TOKEN)
         {
-            if (_characterInfoController.UserDragonCandy > _selectedCommonMaterial + 1)
+            if (_selectedCharacterMaterial + _selectedCommonMaterial < _enhanceDragonCandyCost
+                && _characterInfoController.UserDragonCandy > _selectedCommonMaterial)
             {
                 _selectedCommonMaterial++;
                 _characterInfoController._infoUI._tokenInputField.text = _selectedCommonMaterial.ToString();
@@ -170,19 +219,59 @@ public class CharacterEnhance : MonoBehaviour
     private void InputToken(string value)
     {
         if (_characterInfoController.CurCharacterEnhance != this) return;
-
-        bool check = int.TryParse(value, out _selectedCommonMaterial);
-        Debug.Log(_selectedCommonMaterial);
+        
         if (_curTokenType == EnhanceTokenType.COMMON_TOKEN)
         {
-            if (_characterInfoController.UserDragonCandy < _selectedCommonMaterial)
+            bool check = int.TryParse(value, out _selectedCommonMaterial);
+            
+            if ((_enhanceDragonCandyCost - _selectedCharacterMaterial) < _selectedCommonMaterial)
             {
-                _selectedCommonMaterial = _characterInfoController.UserDragonCandy;
-            } 
+                if (_characterInfoController.UserDragonCandy < (_enhanceDragonCandyCost - _selectedCharacterMaterial))
+                {
+                    _selectedCommonMaterial = _characterInfoController.UserDragonCandy;
+                    _characterInfoController._infoUI._tokenInputField.text = _selectedCommonMaterial.ToString();
+                }
+                else
+                {
+                    _selectedCommonMaterial = (_enhanceDragonCandyCost - _selectedCharacterMaterial);
+                    _characterInfoController._infoUI._tokenInputField.text = _selectedCommonMaterial.ToString();
+                } 
+            }
+            else
+            {
+                if (_characterInfoController.UserDragonCandy < _selectedCommonMaterial)
+                {
+                    _selectedCommonMaterial = _characterInfoController.UserDragonCandy;
+                    _characterInfoController._infoUI._tokenInputField.text = _selectedCommonMaterial.ToString();
+                }
+            }
         }
-        
-        
-        
+        else if (_curTokenType == EnhanceTokenType.CHARACTER_TOKEN)
+        {
+            bool check2 = int.TryParse(value, out _selectedCharacterMaterial);
+
+            if ((_enhanceDragonCandyCost - _selectedCommonMaterial) < _selectedCharacterMaterial)
+            {
+                if (_curCharacterToken < (_enhanceDragonCandyCost - _selectedCommonMaterial))
+                {
+                    _selectedCharacterMaterial = _curCharacterToken;
+                    _characterInfoController._infoUI._tokenInputField.text = _selectedCharacterMaterial.ToString();
+                }
+                else
+                {
+                    _selectedCharacterMaterial = (_enhanceDragonCandyCost - _selectedCommonMaterial);
+                    _characterInfoController._infoUI._tokenInputField.text = _selectedCharacterMaterial.ToString();
+                }
+            }
+            else
+            {
+                if (_curCharacterToken < _selectedCharacterMaterial)
+                {
+                    _selectedCharacterMaterial = _curCharacterToken;
+                    _characterInfoController._infoUI._tokenInputField.text = _selectedCharacterMaterial.ToString();
+                } 
+            }
+        } 
     }
     
     /// <summary>
@@ -206,14 +295,17 @@ public class CharacterEnhance : MonoBehaviour
         {
             case EnhanceTokenType.NONE:
                 _selectedCharacterMaterial = 0;
+                _selectedCommonMaterial = 0;
                 _characterInfoController._infoUI._tokenInputField.text = 0.ToString();
-                _characterInfoController._infoUI._characterTokenCountText.text = 0.ToString();
-                _characterInfoController._infoUI._commonTokenCountText.text = 0.ToString(); 
+                _characterInfoController._infoUI._characterTokenCountText.text = _selectedCharacterMaterial.ToString();
+                _characterInfoController._infoUI._commonTokenCountText.text = _selectedCommonMaterial.ToString(); 
                 break;
             
             case EnhanceTokenType.COMMON_TOKEN:
-            case EnhanceTokenType.CHARACTER_TOKEN:
                 _characterInfoController._infoUI._commonTokenCountText.text = _selectedCommonMaterial.ToString();
+                break;
+            
+            case EnhanceTokenType.CHARACTER_TOKEN: 
                 _characterInfoController._infoUI._characterTokenCountText.text = _selectedCharacterMaterial.ToString();
                 break;
         } 
@@ -308,11 +400,11 @@ public class CharacterEnhance : MonoBehaviour
         Debug.Log($"성공 최소 확률:{_enhanceProbability} / 나의 확률 :{_chance}");
         
         if (_chance >= _enhanceProbability)
-        { 
+        {  
             DragonCandyDataUpdate(1, true);
         }
         else
-        {
+        {  
             DragonCandyDataUpdate(0, false); 
         }
     }
@@ -322,23 +414,17 @@ public class CharacterEnhance : MonoBehaviour
     /// </summary>
     private void DragonCandyDataUpdate(int enhanceValue,bool result)
     {
-        //TODO: 현재 캐릭터의 토큰은 어떻게?
-        if (_curTokenType == EnhanceTokenType.COMMON_TOKEN)
-        {
-            GameManager.UserData.StartUpdateStream()
-                .SetDBValue(_characterData.Enhancement, _characterData.Enhancement.Value + enhanceValue)
-                .SetDBValue(_characterInfoController.UserGoldData, _characterInfoController.UserGoldData.Value - _enhanceGoldCost)
-                .SetDBValue(_characterInfoController.UserDragonCandyData, _characterInfoController.UserDragonCandyData.Value - _enhanceDragonCandyCost)
-                .Submit(result ? EnhanceSuccess : EnhanceFail); 
-        }
-        else if (_curTokenType == EnhanceTokenType.CHARACTER_TOKEN)
-        {
-            GameManager.UserData.StartUpdateStream()
-                .SetDBValue(_characterData.Enhancement, _characterData.Enhancement.Value + enhanceValue)
-                .SetDBValue(_characterInfoController.UserGoldData, _characterInfoController.UserGoldData.Value - _enhanceGoldCost)
-                .SetDBValue(_characterInfoController.UserDragonCandyData, _characterInfoController.UserDragonCandyData.Value - _enhanceDragonCandyCost)
-                .Submit(result ? EnhanceSuccess : EnhanceFail); 
-        } 
+        //TODO: 강화 시도 시 현재 선택한 토큰들 감소 진행
+        //TODO: UserData 업데이트 하는 부분 수정 필요
+        UserDataInt _characterToken = GameManager.TableData
+            .GetItemData(_characterInfoController.CurCharacterInfo._CharacterData.EnhanceItemID).Number;
+
+        GameManager.UserData.StartUpdateStream()
+            .SetDBValue(_characterData.Enhancement, _characterData.Enhancement.Value + enhanceValue)
+            .SetDBValue(_characterInfoController.UserGoldData, _characterInfoController.UserGoldData.Value - _enhanceGoldCost)
+            .SetDBValue(_characterInfoController.UserDragonCandyData, _characterInfoController.UserDragonCandyData.Value - _selectedCommonMaterial)
+            .SetDBValue(_characterToken, _characterToken.Value - _selectedCharacterMaterial)
+            .Submit(result ? EnhanceSuccess : EnhanceFail);  
     }
     
     /// <summary>
@@ -456,9 +542,11 @@ public class CharacterEnhance : MonoBehaviour
     {
         _characterInfoController.UserGold = _characterInfoController.UserGoldData.Value;
         _characterInfoController.UserDragonCandy = _characterInfoController.UserDragonCandyData.Value;
+        _curCharacterToken = GameManager.TableData.GetItemData(_characterData.EnhanceItemID).Number.Value;
         _characterInfoController._infoUI._enhanceText.text = $"+{_characterData.Enhancement.Value.ToString()}";
+        int temp = _characterData.Enhancement.Value;
     }
-
+ 
     /// <summary>
     /// 강화 확률 반환, 소수점 3자리까지 제한
     /// </summary>
