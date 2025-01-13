@@ -183,6 +183,14 @@ public class StoryDirector : BaseUI
             actors[transition.StandingImageId].transform.SetAsLastSibling(); // 최근 트랜지션이 가장 앞에 노출되도록
             actors[transition.StandingImageId].Transition(transition);
         }
+
+        // 이펙트 적용
+        foreach (StoryDirectingData.EffectInfo effectInfo in dialogue.Effects)
+        {
+            StoryEffect effect = Instantiate(effectInfo.Effect, standingImageParent);
+            effect.RectTransform.anchorMin = effect.RectTransform.anchorMax = effectInfo.Position * 0.1f;
+        }
+
     }
 
     // 텍스트 카운터를 늘려줄 함수
