@@ -60,6 +60,11 @@ public class StoryActor : MonoBehaviour
                     .Append(transitionTransform.DOAnchorPos(Vector2.zero, transition.Time * 0.25f))
                     ;
                 break;
+            case TransitionType.SHAKE:
+                DOTween.Sequence()
+                    .Append(transitionTransform.DOShakeAnchorPos(5f,100f,10,90f,false,false))
+                    ;
+                break;
             default:
                 Debug.LogWarning("정의되지 않은 트랜지션 타입");
                 break;
