@@ -15,7 +15,7 @@ public class HYJ_SelectManager : MonoBehaviour
     [SerializeField] List<Transform> buttonsTransformList;
     
     [Header("필수 설정 사항")]
-    [SerializeField] Button UnitPosResetButton; // 
+    [SerializeField] Button resetBatchButton; // 
     [SerializeField] Button enterStageButton; //스테이지 진입 버튼
     [SerializeField] Button cancelButton; //뒤돌아가기 버튼
     [SerializeField] HYJ_CharacterSelect batchButtonPrefab; //배치버튼 프리팹
@@ -32,7 +32,8 @@ public class HYJ_SelectManager : MonoBehaviour
     {
         enterStageButton.onClick.AddListener(LoadBattleScene);
         // cancelButton.onClick.AddListener(CancelEnterStage);
-
+        resetBatchButton.onClick.AddListener(ResetBatch);
+        
         GameManager.UserData.PlayData.BatchInfo.onValueChanged += (() =>
         {
             Debug.Log("편성 정보가 갱신됨");
@@ -152,8 +153,13 @@ public class HYJ_SelectManager : MonoBehaviour
         CharacterSelectPanel.SetActive(false);
     }
 
-    public void ArrayCharacterList()
+    public void ResetBatch()
     {
-        
+        for (int i = 0; i < buttonCnt; i++)
+        {
+            buttonsTransformList[i].GetComponent<HYJ_CharacterSelect>().RemoveBatch(i);
+        }
+        //battleInfo.Clear();
+        Debug.Log("Reset?" + battleInfo.Count);
     }
 }
