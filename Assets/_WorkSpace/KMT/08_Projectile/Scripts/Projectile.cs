@@ -8,15 +8,17 @@ using UnityEngine.UIElements;
 public class Projectile : MonoBehaviour
 {
     SpriteRenderer spriteRenderer;
+    ElementType projectileEleType;
 
     private void Awake()
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
-    public void StartChase(Combatable target, float damage, float igDefRate, Sprite sprite)
+    public void StartChase(Combatable target, float damage, float igDefRate, Sprite sprite, ElementType attackerType)
     {
         spriteRenderer.sprite = sprite;
+        projectileEleType = attackerType;
         StartCoroutine(ChaseCO(target, damage, igDefRate));
     }
 
@@ -46,7 +48,7 @@ public class Projectile : MonoBehaviour
 
         if (target.IsAlive)
         {
-            target.Damaged(damage, igDefRate);
+            target.Damaged(damage, igDefRate, projectileEleType);
         }
 
         Destroy(gameObject);

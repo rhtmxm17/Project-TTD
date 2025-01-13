@@ -39,8 +39,30 @@ public enum InfoTabType
 [System.Serializable]
 public enum ElementType
 {
-    //0: 무속성/미정의, 1: 화룡, 2: 수룡, 3:정룡 ? 4: 토룡, 5: 진룡
-    NONE, FIRE, WATER, WOOD, EARTH, METAL, 
+    /// <summary>
+    /// 0: 무속성/미정의
+    /// </summary>
+    NONE,
+    /// <summary>
+    /// 1: 화룡
+    /// </summary>
+    FIRE,
+    /// <summary>
+    /// 2: 수룡
+    /// </summary>
+    WATER,
+    /// <summary>
+    /// 3:정룡 ?
+    /// </summary>
+    WOOD,
+    /// <summary>
+    /// 4: 토룡
+    /// </summary>
+    EARTH,
+    /// <summary>
+    /// 5: 진룡
+    /// </summary>
+    METAL, 
 }
 
 /// <summary>
