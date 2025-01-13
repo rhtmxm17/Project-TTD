@@ -9,7 +9,7 @@ public class KMT_BaseUI : BaseUI
 
     Transform buttonsParent;
     HYJ_SelectManager selectManager;
-    HYJ_ListController listController;
+    HYJ_ListController listController; // 필터/&정렬용 리스트
     GameObject unitChangePanel;
 
     DatabaseReference userUidRef;

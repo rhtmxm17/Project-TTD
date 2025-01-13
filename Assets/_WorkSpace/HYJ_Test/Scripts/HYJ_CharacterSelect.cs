@@ -29,14 +29,14 @@ public class HYJ_CharacterSelect : MonoBehaviour
     GameObject UnitChangeUI; // 유닛 변경 확인 팝업 -> 변경하시겠습니까?
 
 
-    public void InitDataPosBtn(int PosIdx, GameObject CharacterSelectPanel, GameObject CantPosUI)
+    public void InitDataPosBtn(int posIdx, GameObject CharacterSelectPanel, GameObject CantPosUI)
     {
         SelectM = gameObject.GetComponentInParent<Transform>().GetComponentInParent<HYJ_SelectManager>();
         this.characterSelectPanel = CharacterSelectPanel;
         this.CantPosUI = CantPosUI;
 
-        posNum = PosIdx;
-        transform.GetComponentInChildren<TextMeshProUGUI>().text = PosIdx.ToString();
+        posNum = posIdx;
+        transform.GetComponentInChildren<TextMeshProUGUI>().text = posIdx.ToString();
         if (CheckPos(posNum))
         {
             SetBtnChImage(true, SelectM.battleInfo[posNum]);
@@ -76,9 +76,9 @@ public class HYJ_CharacterSelect : MonoBehaviour
         }
     }
 
-    public bool CheckPos(int posNum) // 위치가 선택되어 있는지 확인하기
+    public bool CheckPos(int posIdx) // 위치가 선택되어 있는지 확인하기
     {
-        if (SelectM.battleInfo.ContainsKey(posNum))
+        if (SelectM.battleInfo.ContainsKey(posIdx))
         {
             return true;
         }
