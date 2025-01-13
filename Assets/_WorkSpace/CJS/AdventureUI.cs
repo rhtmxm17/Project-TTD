@@ -94,6 +94,7 @@ public class AdventureUI : BaseUI
             rt.anchoredPosition = new Vector2(0f, isOdd ? -verticalSpacing : verticalSpacing);
 
             instance.Id = idx;
+            instance.SetStageData(firstStagesDataOfChapter);
 
             if (firstStagesDataOfChapter.IsOpened)
             {
@@ -107,7 +108,7 @@ public class AdventureUI : BaseUI
             instance.Button.onClick.AddListener(() =>
             {
                 Debug.Log(instance.Id);
-                Popup(firstStagesDataOfChapter);
+                Popup(instance.StageData);
             });
             instance.Text.text = firstStagesDataOfChapter.StageName;
 
