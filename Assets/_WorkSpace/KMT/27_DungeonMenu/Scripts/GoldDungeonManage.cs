@@ -15,12 +15,34 @@ public class GoldDungeonManage : MonoBehaviour
     [SerializeField]
     List<StageData> stageDatas;
 
+    [SerializeField]
+    StageData firstStageDataOfDungeon;
+
     ItemData goldTicketSO;
     int stageLevelIdx = 0;
 
     private void Awake()
     {
         goldTicketSO = DataTableManager.Instance.GetItemData(9/*골드티켓*/);
+
+        stageDatas = new List<StageData>();
+        if (firstStageDataOfDungeon == null)
+        {
+            Debug.Log("1단계 스테이지가 없음.");
+            return;
+        }
+
+        stageDatas.Add(firstStageDataOfDungeon);
+
+        //다음 스테이지가 존재한다면 순서대로 던전 스테이지를 추가.
+        while (firstStageDataOfDungeon.NextStageId != -1)
+        {
+            firstStageDataOfDungeon = DataTableManager.Instance.GetStageData(firstStageDataOfDungeon.NextStageId);
+            if (firstStageDataOfDungeon == null)
+                break;
+            stageDatas.Add(firstStageDataOfDungeon);
+        }
+
 
         enterButton.onClick.AddListener(() => {
 
