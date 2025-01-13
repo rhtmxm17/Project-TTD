@@ -84,3 +84,9 @@ public enum RoleType
 {
     NONE, ATTACKER, DEFENDER, SUPPORTER, 
 }
+
+[System.Serializable]
+public enum EnhanceTokenType
+{
+    NONE, CHARACTER_TOKEN, COMMON_TOKEN
+}

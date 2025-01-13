@@ -34,7 +34,7 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
 
         StartUpdateStream()
             .SetDBValue(chData.Level, 1)
-            .SetDBValue(chData.Enhancement, 1)
+            .SetDBValue(chData.Enhancement, 0)
             .Submit((result) =>
             {
                 Debug.Log("적용 완료!");
