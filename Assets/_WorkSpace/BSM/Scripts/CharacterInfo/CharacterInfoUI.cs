@@ -23,10 +23,12 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public Image _skillAIconImage;
     [HideInInspector] public Image _skillBIconImage;
     [HideInInspector] public Image _characterImage;
-
+    [HideInInspector] public Image _levelUpNormalEffect;
+    [HideInInspector] public Image _levelUpSpecialEffect;
+    
     [HideInInspector] public Button _levelUpButton;
-
     [HideInInspector] public GameObject _materialGroup;
+    
     //EnhanceTab
     [HideInInspector] public TextMeshProUGUI _curEnhanceLevelText;
     [HideInInspector] public TextMeshProUGUI _beforeUpGradeText;
@@ -205,7 +207,9 @@ public class CharacterInfoUI : BaseUI
         _defText = GetUI<TextMeshProUGUI>("DefText");
         _skillADescText = GetUI<TextMeshProUGUI>("SkillDescAText");
         _skillBDescText = GetUI<TextMeshProUGUI>("SkillDescBText");
-        
+
+        _levelUpSpecialEffect = GetUI<Image>("LevelUpSpecialEffect");
+        _levelUpNormalEffect = GetUI<Image>("LevelUpNormalEffect");
         _skillAIconImage = GetUI<Image>("SkillIconA");
         _skillBIconImage = GetUI<Image>("SkillIconB");
         _characterImage = GetUI<Image>("CharacterImage");

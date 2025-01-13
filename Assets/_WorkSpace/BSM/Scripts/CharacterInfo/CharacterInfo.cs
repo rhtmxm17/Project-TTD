@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using Random = System.Random;
 
 public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 {
@@ -130,6 +132,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             .Submit(LevelUpSuccess);
     }
 
+    private Coroutine _levelUpNormalCo;
     /// <summary>
     /// 레벨업 결과
     /// </summary>
@@ -146,8 +149,57 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController.UserYongGwa = _characterInfoController.UserYongGwaData.Value;
         UpdateInfo(); 
         //TODO: 레벨업 UI 나올 위치
+        
+
+        if (_characterLevel % 10 != 0)
+        {
+            if (_levelUpNormalCo == null)
+            {
+                _levelUpNormalCo = StartCoroutine(LevelUpEffectRoutine(_characterInfoController._infoUI._levelUpNormalEffect, 0.25f));
+            } 
+        }
+        else
+        {
+            if (_levelUpNormalCo == null)
+            {
+                _levelUpNormalCo = StartCoroutine(LevelUpEffectRoutine(_characterInfoController._infoUI._levelUpSpecialEffect, 0.5f));
+            } 
+        }
     }
- 
+
+    
+    /// <summary>
+    /// 레벨업 이펙트 코루틴
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator LevelUpEffectRoutine(Image effectImage ,float value)
+    {
+        float elapsedTime = 0f;
+        float endTime = value;
+
+        while (elapsedTime <= endTime)
+        {
+            float r = UnityEngine.Random.Range(0, 1f);
+            float g = UnityEngine.Random.Range(0, 1f);
+            float b = UnityEngine.Random.Range(0, 1f);
+            
+            elapsedTime += Time.deltaTime;
+            effectImage.color = new Color(r, g, b, elapsedTime + 0.35f);
+            yield return null;
+        }
+
+        while (elapsedTime > 0)
+        {
+            float r = UnityEngine.Random.Range(0, 1f);
+            float g = UnityEngine.Random.Range(0, 1f);
+            float b = UnityEngine.Random.Range(0, 1f);
+            
+            elapsedTime -= Time.deltaTime;
+            effectImage.color = new Color(r, g, b, elapsedTime);
+            yield return null;
+        } 
+    }
+    
     /// <summary>
     /// 현재 캐릭터 정보 할당 기능
     /// </summary>
@@ -236,7 +288,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         
         _characterInfoController._infoUI._nameText.text = _characterData.Name;
         _characterInfoController._infoUI._characterImage.sprite = _characterData.FaceIconSprite;
-        _characterInfoController._infoUI._levelText.text = _characterData.Level.Value.ToString();
+        _characterInfoController._infoUI._levelText.text = $"Lv. {_characterData.Level.Value}";
         _characterInfoController._infoUI._enhanceText.text = $"+{_characterData.Enhancement.Value.ToString()}";
         _characterInfoController._infoUI._powerLevelText.text = $"전투력 {_powerLevel}";
         _characterInfoController._infoUI._atkText.text = $"공격력 {_atk}";
@@ -277,7 +329,13 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             DragonVeinType.SINGLE => "단일",
             DragonVeinType.MULTI => "범위",
             _ => throw new AggregateException("잘못")
-        }; 
+        };
+
+        if (_levelUpNormalCo != null)
+        {
+            StopCoroutine(_levelUpNormalCo);
+            _levelUpNormalCo = null;
+        }
     }
   
     /// <summary>
