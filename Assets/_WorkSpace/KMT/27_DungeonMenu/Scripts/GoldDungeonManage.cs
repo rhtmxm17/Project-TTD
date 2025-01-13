@@ -8,12 +8,13 @@ public class GoldDungeonManage : MonoBehaviour
 {
     [SerializeField]
     Button enterButton;
-
     [SerializeField]
     Button skipButton;
 
     [SerializeField]
     List<StageData> stageDatas;
+    [SerializeField]
+    StageType dungeonType;
 
     [SerializeField]
     StageData firstStageDataOfDungeon;
@@ -57,7 +58,7 @@ public class GoldDungeonManage : MonoBehaviour
                 GameManager.Instance.LoadBattleFormationScene(new StageSceneChangeArgs() 
                 {
                     stageData = stageDatas[stageLevelIdx],
-                    stageType = StageType.GOLD,
+                    stageType = dungeonType,
                     prevScene = MenuType.ADVANTURE,
                     dungeonLevel = stageLevelIdx,
                 });
@@ -79,11 +80,11 @@ public class GoldDungeonManage : MonoBehaviour
                     return;
                 }
 
-                //보상이 골드 하나임을 상정, 여러개일 경우 확장 필요
-                ItemGain goldGain = stageDatas[stageLevelIdx].Reward[0];
+                //보상이 하나임을 상정, 여러개일 경우 확장 필요
+                ItemGain rewardGain = stageDatas[stageLevelIdx].Reward[0];
 
                 GameManager.UserData.StartUpdateStream()
-                    .AddDBValue(goldGain.item.Number, goldGain.gain)
+                    .AddDBValue(rewardGain.item.Number, rewardGain.gain)
                     .AddDBValue(DataTableManager.Instance.GetItemData(9/*골드티켓*/).Number, -1)
                     .Submit(result => {
 
@@ -97,7 +98,7 @@ public class GoldDungeonManage : MonoBehaviour
 
                         // 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
                         ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(stageDatas[stageLevelIdx].Reward);
-                        popupInstance.Title.text = "와! 골드!";
+                        popupInstance.Title.text = "와! 획득!";
 
                     });
 

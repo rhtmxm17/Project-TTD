@@ -158,6 +158,8 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
 
         public UserDataDictionaryLong BatchInfo { get; private set; } = new UserDataDictionaryLong("PlayData/BatchInfo");
         public UserDataDictionaryLong GoldDungeonClearRate { get; private set; } = new UserDataDictionaryLong("PlayData/GoldDungeonClearRate");
+        public UserDataDictionaryLong ExpDungeonClearRate { get; private set; } = new UserDataDictionaryLong("PlayData/ExpDungeonClearRate");
+        public UserDataDictionaryLong EnforceDungeonClearRate { get; private set; } = new UserDataDictionaryLong("PlayData/EnforceDungeonClearRate");
 
 
         public List<UserDataInt> HasRoom = new List<UserDataInt>(MaxRoomIndex);
@@ -270,6 +272,8 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
             this.PlayData.IdleRewardTimestamp.SetValueWithDataSnapshot(userData);
             this.PlayData.BatchInfo.SetValueWithDataSnapshot(userData);
             this.PlayData.GoldDungeonClearRate.SetValueWithDataSnapshot(userData);
+            this.PlayData.ExpDungeonClearRate.SetValueWithDataSnapshot(userData);
+            this.PlayData.EnforceDungeonClearRate.SetValueWithDataSnapshot(userData);
 
             foreach (var hasroom in this.PlayData.HasRoom)
             {
