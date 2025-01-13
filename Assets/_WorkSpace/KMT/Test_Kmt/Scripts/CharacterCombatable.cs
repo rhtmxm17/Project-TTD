@@ -56,7 +56,7 @@ public class CharacterCombatable : Combatable
         basicSkillButton.InitTargetingFunc(() => { return characterData.SkillDataSO.TargetingLogic.GetTarget(this) != null ? true : false; });
         basicSkillButton.GetComponent<Button>().onClick.AddListener(() => {
             if (!basicSkillButton.Interactable || !IsAlive) { Debug.Log("사용 불가");  return; }
-            if (!OnSkillCommanded(characterData.SkillDataSO, 1)) { Debug.Log("스킬 타깃이 없음.  또는 더 큰 우선순위의 행동중  사용 취소"); basicSkillButton.DisplayNonTargetText(); return; }
+            if (!OnSkillCommanded(characterData.SkillDataSO, 1)) { Debug.Log("스킬 타깃이 없음.  또는 더 큰 우선순위의 행동중, 또는 전투중이 아님  사용 취소"); basicSkillButton.DisplayNonTargetText(); return; }
             basicSkillButton.StartCoolDown(characterData.StatusTable.BasicSkillCooldown);//쿨타임을 매개변수로 전달.
         });
 
@@ -66,7 +66,7 @@ public class CharacterCombatable : Combatable
         secondSkillButton.GetComponent<Button>().onClick.AddListener(() => {
             if (!secondSkillButton.Interactable || !IsAlive) { Debug.Log("사용 불가"); return; }
             if (!secondSkillButton.LevelArrived) { Debug.Log("만랩이 아님, 사용 불가"); return; }
-            if (!OnSkillCommanded(characterData.SkillDataSO, 3)) { Debug.Log("스킬 타깃이 없음. 또는 더 큰 우선순위의 행동중 사용 취소"); return; }
+            if (!OnSkillCommanded(characterData.SkillDataSO, 3)) { Debug.Log("스킬 타깃이 없음. 또는 더 큰 우선순위의 행동중, 또는 전투중이 아님  사용 취소"); return; }
                 secondSkillButton.StartCoolDown();
         });
 

@@ -10,7 +10,7 @@ public class Heal : Skill
 {
     [Header("디버그용 힐 수치, 나중에는 캐릭터 수치로 추가")]
     [SerializeField]
-    float healPoint;
+    float healRate;
 
     protected override IEnumerator SkillRoutineImplement(Combatable self, Combatable target)
     {
@@ -18,7 +18,7 @@ public class Heal : Skill
 
         if (target != null && target.IsAlive)
         {
-            target.Healed(healPoint);
+            target.Healed(healRate * self.AttackPoint.Value);
             //TODO : 후딜 추가?하기
             //yield return new WaitForSeconds(5);
         }

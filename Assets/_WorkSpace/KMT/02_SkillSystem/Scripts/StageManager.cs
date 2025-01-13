@@ -14,6 +14,7 @@ public class StageManager : MonoBehaviour
     public static StageManager Instance = null;
 
     public float PartyCost { get; private set; } = 0;
+    public bool IsInChangeWave { get; private set; } = true;
     public DamageDisplayer DamageDisplayer { get; private set; }
 
     [SerializeField] protected StageData stageData;
@@ -231,7 +232,7 @@ public class StageManager : MonoBehaviour
 
         }
 
-
+        IsInChangeWave = true;
 
         AddWaveText();
         Debug.Log("다음 웨이브로 이동중...");
@@ -248,6 +249,8 @@ public class StageManager : MonoBehaviour
 
         characterManager.StartCombat(monsterWaveQueue[0]);
         monsterWaveQueue[0].StartCombat(characterManager);
+
+        IsInChangeWave = false;
     }
 
     IEnumerator WaitMonsterWaveCO(Transform monsterWave)
@@ -419,6 +422,8 @@ public class StageManager : MonoBehaviour
 
         characterManager.StartCombat(monsterWaveQueue[0]);
         monsterWaveQueue[0].StartCombat(characterManager);
+
+        IsInChangeWave = false;
 
         StartCoroutine(StartTimerCO());
     }

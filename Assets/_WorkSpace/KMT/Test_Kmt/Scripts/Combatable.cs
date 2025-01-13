@@ -177,7 +177,13 @@ public class Combatable : MonoBehaviour
     protected ReactiveProperty<float> maxHp = new ReactiveProperty<float>();
     public ReadOnlyReactiveProperty<float> MaxHp;
 
+    /// <summary>
+    /// 버프받기 전 베이스 방어력
+    /// </summary>
     protected ReactiveProperty<float> defense = new ReactiveProperty<float>();
+    /// <summary>
+    /// 버프받기 전 베이스 방어력
+    /// </summary>
     public ReadOnlyReactiveProperty<float> Defense;
 
     public void Healed(float amount)
@@ -197,6 +203,34 @@ public class Combatable : MonoBehaviour
 
         hp.Value = afterHp;
 
+    }
+
+    List<int> defBuffList = new List<int>();
+
+    /// <summary>
+    /// 현재 받고있는 방어력 버프 수치
+    /// </summary>
+    int defBuffAmount;
+
+    //방어 버프 영역.
+    public void AddDefBuff(int amount)
+    {
+        defBuffList.Add(amount);
+        ReCalcDefBuff();
+    }
+    public void RemoveDefBuff(int amount)
+    {
+        defBuffList.Remove(amount);
+        ReCalcDefBuff();
+    }
+    void ReCalcDefBuff()
+    {
+        defBuffAmount = 0;
+
+        foreach (int amount in defBuffList)
+        {
+            defBuffAmount = Math.Max(defBuffAmount, amount);
+        }
     }
 
     public void StatusBuffed(StatusBuffType type, float value)
@@ -223,7 +257,7 @@ public class Combatable : MonoBehaviour
             return;
         }
 
-        damage = DamageCalculator.Calc(damage, igDefRate, defense.Value, defConst, atackerType, characterData.StatusTable.type);
+        damage = DamageCalculator.Calc(damage, igDefRate, defense.Value + defBuffAmount, defConst, atackerType, characterData.StatusTable.type);
 
         //View의 setvalue등을 연결하기.
         hp.Value -= damage;
@@ -255,12 +289,18 @@ public class Combatable : MonoBehaviour
     /// </summary>
     /// <param name="skillData">실행할 스킬 데이터</param>
     /// <param name="priority">실행할 스킬의 행동 우선순위</param>
-    /// <returns>타겟 대상이 있는경우 스킬을 실행하고 true 반환, 없거나 다른 우선순위의 스킬을 시전중인 경우 단순 false 반환.</returns>
+    /// <returns>타겟 대상이 있는경우 스킬을 실행하고 true 반환, 없거나 다른 우선순위의 스킬을 시전중인 경우, 웨이브간 정비시간 진행중이라면 단순 false 반환.</returns>
     public bool OnSkillCommanded(Skill skillData, int priority)
     {
         if (curActionPriority > priority)
         {
             Debug.Log("더 우선순위가 큰 행동중.");
+            return false;
+        }
+
+        if (StageManager.Instance.IsInChangeWave)
+        {
+            Debug.Log("웨이브 전환 진행중. 스킬 실행 기각");
             return false;
         }
 
