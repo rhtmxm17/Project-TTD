@@ -55,6 +55,7 @@ public class GoldClearRateSetter : MonoBehaviour
         if (goldClearRateDic.Count == 0)
         {
             slider.value = 0;
+            enterButton.interactable = true;
             skipButton.interactable = false;
             text.text = $"0%";
         }
@@ -62,8 +63,12 @@ public class GoldClearRateSetter : MonoBehaviour
         {
             long clearRate = goldClearRateDic[Numbers.ZERO];
 
+            enterButton.interactable = true;
+
             if (clearRate >= 100)
                 skipButton.interactable = true;
+            else
+                skipButton.interactable = false;
 
             slider.value = clearRate / 100f;
             text.text = $"{clearRate}%";

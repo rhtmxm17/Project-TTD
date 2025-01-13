@@ -89,7 +89,7 @@ public class GameManager : SingletonBehaviour<GameManager>
     /// <summary>
     /// 스테이지 로드 시점에서만 사용, 불러올 스테이지 데이터
     /// </summary>
-    private StageSceneChangeArgs sceneChangeArgs;
+    public StageSceneChangeArgs sceneChangeArgs {get; private set;}
 
     public void LoadMainScene()
     {
@@ -234,7 +234,7 @@ public class StageSceneChangeArgs
     public MenuType prevScene = MenuType.ADVANTURE;
 
     /// <summary>
-    /// 던전 클리어율 기록을 위한 던전 레벨 인덱스.
+    /// 던전 클리어율 기록을 위한 던전 레벨 인덱스.[골드던전용]
     /// </summary>
     public int dungeonLevel = 0;
 

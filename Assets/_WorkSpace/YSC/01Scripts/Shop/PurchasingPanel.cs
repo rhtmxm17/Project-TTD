@@ -71,7 +71,7 @@ public class PurchasingPanel : BaseUI
         currentNumberText = GetUI<TMP_Text>("CurrentNumberText");
         
         // 구매버튼
-        purchaseButton.onClick.AddListener(Purchase);
+        purchaseButton.onClick.AddListener(OpenDoubleWarning);
         
         // 닫기버튼
         backgroundButton.onClick.AddListener(ClosePopup);
@@ -204,6 +204,15 @@ public class PurchasingPanel : BaseUI
        // onPopupClosed?.Invoke();
         Destroy(this.gameObject);
     }
+    
+    private void OpenDoubleWarning()
+    {
+        OverlayUIManager popupInstance = GameManager.OverlayUIManager;
+        popupInstance.OpenDoubleInfoPopup("해당 아이템을 정말 구매하시겠습니까?", "취소",
+            "확인",null, Purchase);
+    }
+
+    
 
     private void Add()
     {

@@ -75,6 +75,7 @@ public class StageManager : MonoBehaviour
     string MAX_WAVE;
 
     private bool isCombatEnd;
+    protected StageSceneChangeArgs prevSceneData;
 
     public bool IsCombatEnd {
         get { return isCombatEnd; }
@@ -104,6 +105,7 @@ public class StageManager : MonoBehaviour
 
     public virtual void Initialize(StageSceneChangeArgs sceneChangeArgs)
     {
+        prevSceneData = sceneChangeArgs;
         PrevScene = sceneChangeArgs.prevScene;
         InitializeStageData(sceneChangeArgs.stageData);
     }
@@ -303,8 +305,33 @@ public class StageManager : MonoBehaviour
                     stageDataOnLoad.StageName,
                     gainList,
                     "확인", LoadPreviousScene,
-                    "다음 스테이지로", null,//TODO : 다음스테이지로 가는 로직 만들기.
-                    true, true,
+                    "다음 스테이지로", () => {
+
+                        if (stageDataOnLoad.NextStageId == -1)
+                        {
+                            GameManager.OverlayUIManager.OpenSimpleInfoPopup("해당 챕터의 마지막 스테이지입니다!", "닫기", null);
+                        }
+                        else
+                        {
+                            StageData nextStageData = DataTableManager.Instance.GetStageData(stageDataOnLoad.NextStageId);
+
+                            if (nextStageData == null)
+                            {
+                                Debug.Log("전달된 다음 인덱스 스테이지 정보가 존재하지 않음.");
+                                return;
+                            }
+
+                            GameManager.OverlayUIManager.OpenDoubleInfoPopup($"다음 스테이지로 가시겠습니까? \n {nextStageData.StageName}", "그만두기", "도전하기", null,
+                                () => {
+                                    prevSceneData.stageData = nextStageData;
+                                    //TODO : 용도에 따라서 지우거나 이용
+                                    //prevSceneData.prevScene = prevSceneData.prevScene;
+                                    GameManager.Instance.LoadBattleFormationScene(prevSceneData);
+                                });
+                        }
+
+                    },
+                    true, false,
                     "승리!", chDataL[randIdx].FaceIconSprite,
                     AdvencedPopupInCombatResult.ColorType.VICTORY
                 );
@@ -330,8 +357,18 @@ public class StageManager : MonoBehaviour
             stageDataOnLoad.StageName,
             null,
             "확인", LoadPreviousScene,
-            "다음 스테이지로", null,//TODO : 다음스테이지로 가는 로직 만들기.
-            true, true,
+            "재도전", () => {
+
+                GameManager.OverlayUIManager.OpenDoubleInfoPopup("재도전하시겠습니까?", "아니요", "네",
+                    null, () => {
+                        //TODO : 용도에 따라서 지우거나 이용
+                        //prevSceneData.stageData = prevSceneData.stageData;
+                        //prevSceneData.prevScene = prevSceneData.prevScene;
+                        GameManager.Instance.LoadBattleFormationScene(prevSceneData);
+                    });
+
+            },
+            true, false,
             "패배..", chDataL[randIdx].FaceIconSprite,
             AdvencedPopupInCombatResult.ColorType.DEFEAT
         );
