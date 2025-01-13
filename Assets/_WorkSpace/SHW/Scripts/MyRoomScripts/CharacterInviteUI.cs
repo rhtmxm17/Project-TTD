@@ -14,7 +14,6 @@ public class CharacterInviteUI : BaseUI
     
     private void Start()
     {
-        // GameObject gameObject = new GameObject("CharacterInviteUI");
         GetUI<Button>("InviteButton").onClick.AddListener(()=>SetCharacter());
     }
 

@@ -23,7 +23,7 @@ public class MyRoomUI : BaseUI
         initializer = GetComponent<MyroomInitializer>();
         GetComponent<MyroomInitializer>().Initialize(this);
         
-        // FIXME : 여기에 기존 룸 체인지 팝업UI의 스프라이트 들을 가져오고 싶은데...
+        // 더미로그인
         GameManager.UserData.TryInitDummyUserAsync(28, () =>
         {
             Debug.Log("완료");
@@ -44,36 +44,23 @@ public class MyRoomUI : BaseUI
         GetUI<Button>("CloseChangeRoomPopup").onClick.AddListener(()=>CloseSetRoomPopup("RoomChangePopup"));
         
         // 캐릭터 바꾸기 팝업 띄우기
-        GetUI<Button>("CharacterChangeButton").onClick.AddListener(()=>
-        {
-            OpenSetRoomPopup("CharacterChange");
-            AddStack("CharacterChange");
-        });
+        GetUI<Button>("CharacterChangeButton").onClick.AddListener(()=>OpenSetRoomPopup("CharacterChange"));
         // 캐릭터 바꾸기 팝업 닫기
-        GetUI<Button>("CloseChangeCharacter").onClick.AddListener(()=>
-        {
-            CloseSetRoomPopup("CharacterChange");
-            outskirtsUI.UIStack.Pop();
-        });
+        GetUI<Button>("CloseChangeCharacter").onClick.AddListener(()=> CloseSetRoomPopup("CharacterChange"));
 
         // 채팅 열기 버튼
-        GetUI<Button>("ChatButton").onClick.AddListener(()=>
-        {
-            GetUI<OpenableWindow>("ChatCanvas").OpenWindow();
-            AddStack("ChatCanvas");
-        });
+        GetUI<Button>("ChatButton").onClick.AddListener(()=> GetUI<OpenableWindow>("ChatCanvas").OpenWindow());
         // 채팅 닫기
         GetUI<Button>("CloseChat").onClick.AddListener(()=> GetUI<OpenableWindow>("ChatCanvas").CloseWindow());
 
+        // 놀러가기 버튼
         GetUI<Button>("VisitButton").onClick.AddListener(
             () =>
             {
                 OpenSetRoomPopup("FriendTapCanvas");
                 AddStack("FriendTapCanvas");
             }
-            //GetUI<OpenableWindow>("FriendTapCanvas").OpenWindow
         );
-        // GetUI<Button>("VisitButton").onClick.AddListener(() => AddStack("FriendTapCanvas"));
         
         // TODO: 도감완료 시 추가할 것 
     }

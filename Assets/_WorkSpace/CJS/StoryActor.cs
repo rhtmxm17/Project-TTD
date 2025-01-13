@@ -61,6 +61,23 @@ public class StoryActor : MonoBehaviour
                     .Append(transitionTransform.DOAnchorPos(Vector2.zero, transition.Time * 0.25f))
                     ;
                 break;
+            case TransitionType.SHAKE:
+                DOTween.Sequence()
+                    .Append(transitionTransform.DOShakeAnchorPos(3f,100f,10,90f,false,false))
+                    ;
+                break;
+            case TransitionType.UPSIZE:
+                DOTween.Sequence()
+                    // 점차 확대 크기 임의 조정(현재 1.5배)(크기,확대속도)
+                    .Append(transitionTransform.DOScale(2f,3f))
+                    ;
+                break;
+            case TransitionType.DOWNSIZE:
+                DOTween.Sequence()
+                    // 점차 축소 크기 임의 조정(현재 0.5배)(크기,축소속도)
+                    .Append(transitionTransform.DOScale(0.5f,3f))
+                    ;
+                break;
             default:
                 Debug.LogWarning("정의되지 않은 트랜지션 타입");
                 break;

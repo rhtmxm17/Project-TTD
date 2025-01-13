@@ -31,6 +31,9 @@ public class StoryDirectingData : ScriptableObject, ITsvSheetParseable
         BLINK, // 순간이동, 기본값
         NORMAL, // 선형적 이동
         BOUNCE, // 통통
+        SHAKE, // 부들부들
+        UPSIZE, // 확대
+        DOWNSIZE, // 축소
     }
 
     [SerializeField] int id;
