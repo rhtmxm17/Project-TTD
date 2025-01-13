@@ -172,7 +172,12 @@ public class StoryDirector : BaseUI
                     transition.Active ? 1f : 0f),
                 transition.Time);
 
-            actor.transform.localScale = transition.Flip ? new Vector3(-1, 1, 1) : new Vector3(1, 1, 1);
+            actor.transform.localScale = new Vector3(
+                transition.Flip ? -transition.Scale : transition.Scale,
+                transition.Scale,
+                1);
+
+
             actor.rectTransform.DOAnchorMin(transition.Position * 0.1f, transition.Time);
             actor.rectTransform.DOAnchorMax(transition.Position * 0.1f, transition.Time);
         }
