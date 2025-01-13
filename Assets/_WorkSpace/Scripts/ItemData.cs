@@ -59,21 +59,18 @@ public class ItemData : ScriptableObject, ICsvRowParseable
     [SerializeField, TextArea] string description;
     public string Description => description;
 
-    public UnityEvent<int> onNumberChanged;
+    public UnityEvent<int> OnNumberChanged => onNumberChanged;
+
+    [SerializeField] UnityEvent<int> onNumberChanged;
+
 
     #region 유저 데이터
     /// <summary>
     /// 소지 개수
     /// </summary>
-    public UserDataInt Number { get; private set; }
+    public UserDataInt Number => GameManager.UserData.GetItemNumber(id);
 
-    private void OnEnable()
-    {
-        Number = new UserDataInt($"Items/{id}");
-        Number.onValueChanged += OnNumberChanged;
-    }
-
-    private void OnNumberChanged(long value) => onNumberChanged?.Invoke((int)value);
+    public void InvokeNumberChanged(long _) => OnNumberChanged?.Invoke(Number.Value);
     #endregion
 
 #if UNITY_EDITOR
@@ -102,7 +99,7 @@ public class ItemData : ScriptableObject, ICsvRowParseable
         itemName = cells[(int)Column.NAME];
 
         // SPRITE
-        spriteImage = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.SPRITE]}.asset");
+        spriteImage = SearchAsset.SearchSpriteAsset(cells[(int)Column.SPRITE]);
         if (spriteImage == null)
             spriteImage = DataTableManager.Instance.DummySprite;
 

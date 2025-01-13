@@ -134,22 +134,10 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     [SerializeField] int getCharacterItemId;
     [SerializeField] int enhanceItemId;
 
-    #region 유저 데이터
-    /// <summary>
-    /// 유저 데이터. DataManager의 LoadUserData()가 호출된 적이 있어야 정상적인 값을 갖는다<br/>
-    /// 주의: 에디터의 Enter Play Mode Settings에서 도메인 리로드가 비활성화 되어있을 경우 이전 실행시의 값이 남아있을 수 있음<br/>
-    /// 주의2: 로그아웃을 구현해야 한다면 마찬가지로 이전 유저의 값이 남아있으므로 인증 정보 변경시 정리하는 메서드 추가할것
-    /// </summary>
-    public UserDataInt Level { get; private set; }
-    public UserDataInt Enhancement { get; private set; }
-    public UserDataInt EnhanceMileagePerMill { get; private set; } // 0 ~ 1000
-
-    private void OnEnable()
-    {
-        Level = new UserDataInt($"Characters/{id}/Level", 1);
-        Enhancement = new UserDataInt($"Characters/{id}/Enhancement");
-        EnhanceMileagePerMill = new UserDataInt($"Characters/{id}/EnhanceMileagePerMill");
-    }
+    #region 유저 데이터 참조
+    public UserDataInt Level => GameManager.UserData.GetCharacterLevel(id);
+    public UserDataInt Enhancement => GameManager.UserData.GetCharacterEnhancement(id);
+    public UserDataInt EnhanceMileagePerMill => GameManager.UserData.GetCharacterEnhancement(id);
     #endregion
 
 #if UNITY_EDITOR
@@ -203,18 +191,19 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         name = cells[(int)Column.NAME];
 
         // FACE_ICON
-        faceIconSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.FACE_ICON]}.asset");
+        faceIconSprite = SearchAsset.SearchSpriteAsset(cells[(int)Column.FACE_ICON]);
         if (faceIconSprite == null)
             faceIconSprite = DataTableManager.Instance.DummySprite;
 
         // SHAPE
-        modelPrefab = AssetDatabase.LoadAssetAtPath<CharacterModel>($"{DataTableManager.PrefabsAssetFolder}/{cells[(int)Column.SHAPE]}.prefab");
+        //modelPrefab = AssetDatabase.LoadAssetAtPath<CharacterModel>($"{DataTableManager.PrefabsAssetFolder}/{cells[(int)Column.SHAPE]}.prefab");
+        modelPrefab = SearchAsset.SearchPrefabAsset<CharacterModel>(cells[(int)Column.SHAPE]);
 
         // BASE_ATTACK
-        basicSkillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.BASE_ATTACK]}.asset");
+        basicSkillDataSO = SearchAsset.SearchSOAsset<Skill>(cells[(int)Column.BASE_ATTACK]);
 
         // NORMAL_SKILL
-        skillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.NORMAL_SKILL]}.asset");
+        skillDataSO = SearchAsset.SearchSOAsset<Skill>(cells[(int)Column.NORMAL_SKILL]);
 
         if (skillDataSO != null) // 일반 스킬이 기재되어 있다면
         {
@@ -226,7 +215,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
             }
 
             // NS_ICON
-            normalSkillIcon = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.NS_ICON]}.asset");
+            normalSkillIcon = SearchAsset.SearchSpriteAsset(cells[(int)Column.NS_ICON]);
             if (normalSkillIcon == null)
                 normalSkillIcon = DataTableManager.Instance.DummySprite;
 
@@ -235,7 +224,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         }
 
         // SPECIAL_SKILL
-        secondSkillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.SPECIAL_SKILL]}.asset");
+        secondSkillDataSO = SearchAsset.SearchSOAsset<Skill>(cells[(int)Column.SPECIAL_SKILL]);
 
         if (secondSkillDataSO != null) // 특수 스킬이 기재되어 있다면
         {
@@ -247,7 +236,8 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
             }
 
             //Special_Skill_Icon
-            specialSkillIcon = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.SS_ICON]}.asset");
+            specialSkillIcon = SearchAsset.SearchSpriteAsset(cells[(int)Column.SS_ICON]);
+
             if (specialSkillIcon == null)
                 specialSkillIcon = DataTableManager.Instance.DummySprite;
 
@@ -348,12 +338,12 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
                 /// 아이템 획득 이벤트에 그 개수를 검사해 캐릭터 또는 전용 강화재료를 획득하는 메서드를 추가한다
 
                 // 직렬화된 UnityEvent 제거 (한 아이템 획득이 여러 메서드를 갖는 경우를 고려하지 않음)
-                while (0 < itemdata.onNumberChanged.GetPersistentEventCount())
+                while (0 < itemdata.OnNumberChanged.GetPersistentEventCount())
                 {
-                    UnityEditor.Events.UnityEventTools.RemovePersistentListener(itemdata.onNumberChanged, 0);
+                    UnityEditor.Events.UnityEventTools.RemovePersistentListener(itemdata.OnNumberChanged, 0);
                 }
                 // 직렬화되는 UnityEvent 등록
-                UnityEditor.Events.UnityEventTools.AddPersistentListener(itemdata.onNumberChanged, AcquireCharacter);
+                UnityEditor.Events.UnityEventTools.AddPersistentListener(itemdata.OnNumberChanged, AcquireCharacter);
                 EditorUtility.SetDirty(itemdata);
             }
         }

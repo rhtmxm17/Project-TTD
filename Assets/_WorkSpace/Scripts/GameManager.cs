@@ -15,7 +15,7 @@ public enum MenuType
     // 주요 메뉴 (빠른 이동 메뉴에서 이동 가능)
     CHARACTERS, ACHIEVEMENT, STORY, SHOP, MYROOM, ADVANTURE, 
     // 기타 메뉴
-    PROFILE,
+    PROFILE, FORMATION,
     // 미정의
     NONE,
 }
@@ -134,6 +134,9 @@ public class GameManager : SingletonBehaviour<GameManager>
             case MenuType.PROFILE:
                 sceneName = "ProfileScene";
                 break;
+            case MenuType.FORMATION:
+                sceneName = "HYJ_BattleFormation";
+                break;
             case MenuType.NONE:
                 Debug.LogWarning("메뉴 타입이 지정되지 않아 로비로 이동함");
                 sceneName = "LobbyScene";
@@ -229,5 +232,10 @@ public class StageSceneChangeArgs
     /// 편성 씬으로 진입 이전 씬(기본값: ADVANTURE)
     /// </summary>
     public MenuType prevScene = MenuType.ADVANTURE;
+
+    /// <summary>
+    /// 던전 클리어율 기록을 위한 던전 레벨 인덱스.
+    /// </summary>
+    public int dungeonLevel = 0;
 
 }

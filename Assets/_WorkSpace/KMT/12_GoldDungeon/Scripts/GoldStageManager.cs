@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GoldStageManager : StageManager, IDamageAddable
+public class GoldStageManager : StageManager, IDamageAddable, IProgressable
 {
     [Header("Gold Stage Info")]
     [SerializeField]
@@ -14,15 +14,26 @@ public class GoldStageManager : StageManager, IDamageAddable
     [SerializeField]
     int clearRewardGold;
 
+    string curLevel;
     float maxTimeLimit;
-    float gainGold;
+    float gaveDamage;
+
+    Combatable bossCharacters;
+
+    public override void Initialize(StageSceneChangeArgs sceneChangeArgs)
+    {
+        base.Initialize(sceneChangeArgs);
+
+        curLevel = sceneChangeArgs.dungeonLevel.ToString();
+    }
+
 
     protected override void StartGame()
     {
         base.StartGame();
 
         maxTimeLimit = timeLimit;
-        gainGold = 0;
+        gaveDamage = 0;
     }
 
 
@@ -31,7 +42,12 @@ public class GoldStageManager : StageManager, IDamageAddable
         if (IsCombatEnd)
             return;
 
-        gainGold += damage;
+        gaveDamage += damage;
+    }
+
+    public void IPrograssable(Combatable monster)
+    {
+        bossCharacters = monster;
     }
 
     protected override IEnumerator StartTimerCO()
@@ -59,13 +75,28 @@ public class GoldStageManager : StageManager, IDamageAddable
         Debug.Log("타임 오버!");
 
         //초과데미지를 주었더라도 최대 보상보다는 적게 주도록 강제
-        Rewarding(System.Math.Min(clearRewardGold, (int)gainGold));
+        Rewarding(gaveDamage, false);
 
     }
 
 
-    void Rewarding(int rewardGold)
+    void Rewarding(float socre, bool isClear)
     {
+
+        float resultRate = Mathf.Clamp01(socre / bossCharacters.MaxHp.Value);//0~1 사이로 고정시키기
+        long resultLong = (long)(resultRate * 100);
+
+        if (isClear)//클리어인경우, 클리어률을 100으로 지정.
+        {
+            resultLong = 100;
+            resultRate = 1;
+        }
+        else//클리어가 아닌 경우라면 99%로 명시.
+        {
+            resultLong = Math.Min(resultLong, 99);
+        }
+
+        int rewardGold = (int)(stageDataOnLoad.Reward[0].gain * resultRate);
 
         Debug.Log("클리어!");
 
@@ -76,6 +107,19 @@ public class GoldStageManager : StageManager, IDamageAddable
         };
 
         var stream = GameManager.UserData.StartUpdateStream();
+
+        var goldClearRateDic = GameManager.UserData.PlayData.GoldDungeonClearRate.Value;
+
+        if (!goldClearRateDic.ContainsKey(curLevel))//첫도전인 경우
+        {
+            stream.SetDBDictionaryInnerValue(GameManager.UserData.PlayData.GoldDungeonClearRate, curLevel, resultLong);
+        }
+        else if (goldClearRateDic[curLevel] < resultLong)//재도전인데 이전 클리어률보다 큰 경우
+        {
+            stream.SetDBDictionaryInnerValue(GameManager.UserData.PlayData.GoldDungeonClearRate, curLevel, resultLong);
+        }
+
+
         stream
             .AddDBValue(reward.item.Number, rewardGold)
             .AddDBValue(DataTableManager.Instance.GetItemData(9/*골드티켓*/).Number, -1)
@@ -89,10 +133,19 @@ public class GoldStageManager : StageManager, IDamageAddable
 
                 Debug.Log("와! 골드!");
 
-                // 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
-                ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(new List<ItemGain>() { reward });
-                popupInstance.Title.text = "와! 골드!";
-                popupInstance.onPopupClosed += GameManager.Instance.LoadMainScene;
+                List<CharacterData> chDataL = new List<CharacterData>(batchDictionary.Values);
+                int randIdx = UnityEngine.Random.Range(0, chDataL.Count);
+
+                resultPopupWindow.OpenDoubleButtonWithResult(
+                    stageDataOnLoad.StageName,
+                    new List<ItemGain>() { reward },
+                    "확인", LoadPreviousScene,
+                    "다음 스테이지로", null,//TODO : 다음스테이지로 가는 로직 만들기.
+                    true, true,
+                    "승리!", chDataL[randIdx].FaceIconSprite,
+                    AdvencedPopupInCombatResult.ColorType.VICTORY
+                );
+
             });
 
     }
@@ -109,6 +162,7 @@ public class GoldStageManager : StageManager, IDamageAddable
 
         Debug.Log("클리어!");
 
-        Rewarding(clearRewardGold);
+        Rewarding(float.MaxValue - 10, true);
     }
+
 }
