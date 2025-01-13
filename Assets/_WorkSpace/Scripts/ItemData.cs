@@ -45,7 +45,7 @@ public struct ItemGain
 }
 
 
-public class ItemData : ScriptableObject, ICsvRowParseable
+public class ItemData : ScriptableObject, ITsvRowParseable
 {
     [SerializeField] int id;
     public int Id => id;
@@ -86,7 +86,7 @@ public class ItemData : ScriptableObject, ICsvRowParseable
         DESCRIPTION,
     }
 
-    public void ParseCsvRow(string[] cells)
+    public void ParseTsvRow(string[] cells)
     {
         // ID
         if (false == int.TryParse(cells[(int)Column.ID], out id))

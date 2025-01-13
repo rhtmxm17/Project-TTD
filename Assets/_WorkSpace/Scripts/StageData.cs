@@ -28,7 +28,7 @@ public enum StatusBuffType : int
     DEF_PERCENTAGE,
 }
 
-public class StageData : ScriptableObject, ICsvMultiRowParseable
+public class StageData : ScriptableObject, ITsvMultiRowParseable
 {
     // ================== 테이블 데이터 속성 ==================
 
@@ -40,7 +40,12 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
     // === UI 관련 데이터 ===
 
     /// <summary>
-    /// 스테이지를 대표하는 이름
+    /// 버튼에서 표시되는 짧은 이름(ex: 1-4)
+    /// </summary>
+    public string ButtonName => buttonName;
+
+    /// <summary>
+    /// 스테이지를 대표하는 이름(ex: 닭이 뛰노는 숲4)
     /// </summary>
     public string StageName => stageName;
 
@@ -145,6 +150,7 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
     // ================== 직렬화 ==================
 
     [SerializeField] int id;
+    [SerializeField] string buttonName;
     [SerializeField] string stageName;
     [SerializeField] List<WaveInfo> waves;
     [SerializeField] List<ItemGain> reward;
@@ -226,7 +232,8 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
         /// 사용되지 않음(DataManager에서 사용)
         /// </summary>
         FILE_NAME,
-        STAGE_NAME,
+        BUTTON_NAME, // 버튼에 표시되는 짧은 이름(ex: 1-4)
+        STAGE_NAME, // 문장형 이름(ex: 닭이 뛰노는 숲4)
 
         WAVE,
 
@@ -256,13 +263,13 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
         NEXT_STAGE_ID,
     }
 
-    public void ParseCsvMultiRow(string[] lines, ref int line)
+    public void ParseTsvMultiRow(string[] lines, ref int line)
     {
         bool isFirst = true;
         List<MonsterInfo> currentWave = null;
         while (lines.Length > line)
         {
-            string[] cells = lines[line].Split(',');
+            string[] cells = lines[line].Split('\t');
 
             if (isFirst) // 첫 줄 한정
             {
@@ -279,7 +286,10 @@ public class StageData : ScriptableObject, ICsvMultiRowParseable
                 tileBuff = new List<BuffInfo>();
                 lockConditionStageIDs = new List<int>();
 
-                // NAME
+                // BUTTON_NAME
+                buttonName = cells[(int)Column.BUTTON_NAME];
+
+                // STAGE_NAME
                 stageName = cells[(int)Column.STAGE_NAME];
 
                 // TIME_LIMIT

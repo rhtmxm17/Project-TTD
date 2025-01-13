@@ -48,6 +48,7 @@ public class StoryActor : MonoBehaviour
         // 트랜지션 연출
         switch (transition.Type)
         {
+            case TransitionType.NONE:
             case TransitionType.BLINK:
             case TransitionType.NORMAL:
                 // 기본 이동형 연출

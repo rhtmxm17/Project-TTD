@@ -68,7 +68,7 @@ public class StoryPanel : MonoBehaviour
         for (int i = 0; i < selectedChapterInfo.episodeList.Count; i++)
         {
             IndexedButton buttonInstance = Instantiate(episodeButtonPrefab, childUIField.episodeLayout.transform);
-            buttonInstance.Text.text = selectedChapterInfo.episodeList[i].StageName;
+            buttonInstance.Text.text = selectedChapterInfo.episodeList[i].ButtonName;
             buttonInstance.Id = i;
             buttonInstance.Button.onClick.AddListener(() => 
             {

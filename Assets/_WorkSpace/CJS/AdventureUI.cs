@@ -59,7 +59,7 @@ public class AdventureUI : BaseUI
                 Debug.Log(instance.Id);
                 Popup(this.stagesData[instance.Id]);
             });
-            instance.Text.text = stagesData[i].StageName;
+            instance.Text.text = stagesData[i].ButtonName;
 
             stageButtons.Add(buttonHolder);
             isOdd = !isOdd;
@@ -110,7 +110,7 @@ public class AdventureUI : BaseUI
                 Debug.Log(instance.Id);
                 Popup(instance.StageData);
             });
-            instance.Text.text = firstStagesDataOfChapter.StageName;
+            instance.Text.text = firstStagesDataOfChapter.ButtonName;
 
             stageButtons.Add(buttonHolder);
             isOdd = !isOdd;

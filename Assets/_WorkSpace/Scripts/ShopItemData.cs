@@ -23,7 +23,7 @@ public class ShopItemDataEditor : Editor
 /// <summary>
 /// 상점 판매 품목 정보
 /// </summary>
-public class ShopItemData : ScriptableObject, ICsvMultiRowParseable
+public class ShopItemData : ScriptableObject, ITsvMultiRowParseable
 {
     public int Id => id;
     [SerializeField] int id;
@@ -114,12 +114,12 @@ public class ShopItemData : ScriptableObject, ICsvMultiRowParseable
         IS_MANY,
     }
 
-    public void ParseCsvMultiRow(string[] lines, ref int line)
+    public void ParseTsvMultiRow(string[] lines, ref int line)
     {
         bool isFirst = true;
         while (lines.Length > line)
         {
-            string[] cells = lines[line].Split(',');
+            string[] cells = lines[line].Split('\t');
 
             if (isFirst) // 첫 줄 한정
             {
