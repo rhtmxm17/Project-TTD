@@ -6,15 +6,15 @@ using UnityEngine.UI;
 
 public class ShopIndicator : BaseUI
 {
-    Image charShopButton;
-    Image itemShopButton;
-    Image packageShopButton;
-    Image cheatShopButton;
+    Button marketCharacterButton;
+    Button marketItemButton;
+    Button marketPackageButton;
+    Button marketCheatButton;
 
-    GameObject charShop;
-    GameObject itemShop;
-    GameObject packageShop;
-    GameObject cheatShop;
+    GameObject marketChar;
+    GameObject marketItem;
+    GameObject marketPackage;
+    GameObject marketCheat;
     
     [SerializeField] Material selectedMaterial;
     private void OnEnable()
@@ -25,20 +25,24 @@ public class ShopIndicator : BaseUI
     private void Init()
     {
         // 버튼등록
-        charShopButton = GetUI<Image>("CharShopButton");
-        itemShopButton = GetUI<Image>("ItemShopButton");
-        packageShopButton = GetUI<Image>("PackageShopButton");
-        cheatShopButton = GetUI<Image>("CheatShopButton");
+        marketCharacterButton = GetUI<Button>("MarketCharacterButton");
+        marketCharacterButton.onClick.AddListener(() => LightOn(marketChar));
+        marketItemButton = GetUI<Button>("MarketItemButton");
+        marketItemButton.onClick.AddListener(() => LightOn(marketItem));
+        marketPackageButton = GetUI<Button>("MarketPackageButton");
+        marketPackageButton.onClick.AddListener(() => LightOn(marketPackage));
+        marketCheatButton = GetUI<Button>("MarketCheatButton");
+        marketCheatButton.onClick.AddListener(() => LightOn(marketCheat));
 
-        charShop = GetUI("MarketCharacter");
-        itemShop = GetUI("MarketItem");
-        packageShop = GetUI("MarketPackage");
-        cheatShop = GetUI("MarketCheat");
+        marketChar = GetUI("MarketCharacter");
+        marketItem = GetUI("MarketItem");
+        marketPackage = GetUI("MarketPackage");
+        marketCheat = GetUI("MarketCheat");
         
-        LightOn(charShop);
-        LightOn(itemShop);
-        LightOn(packageShop);
-        LightOn(cheatShop);
+        LightOn(marketChar);
+        LightOn(marketItem);
+        LightOn(marketPackage);
+        LightOn(marketCheat);
     }
 
     private void Update()
@@ -50,8 +54,23 @@ public class ShopIndicator : BaseUI
     public void LightOn(GameObject shop)
     {
         if (shop.activeSelf)
+        {
             Debug.Log(shop.name + " is On");
-        
+            string name = $"{shop.name}Button";
+            Button tab = GetUI<Button>(name);
+            tab.GetComponent<Image>().color = Color.red;
+        }
+    }
+
+    public void LightOff(GameObject shop)
+    {
+        if (!shop.activeSelf)
+        {
+            Debug.Log(shop.name + " is On");
+            string name = $"{shop.name}Button";
+            Button tab = GetUI<Button>(name);
+            tab.GetComponent<Image>().color = Color.white;
+        }
     }
     
 }

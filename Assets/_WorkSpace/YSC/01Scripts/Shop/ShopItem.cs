@@ -121,7 +121,7 @@ public class ShopItem : BaseUI
             SoldOut();
           
         }
-        Debug.Log("아이템정보를 갱신합니다!!!!!!!!!!");
+      //  Debug.Log("아이템정보를 갱신합니다!!!!!!!!!!");
        
     }
 
