@@ -33,7 +33,7 @@ public static class GoogleSheet
     private static IEnumerator GetSheetDataCo(string documentID, string sheetID, Action<bool, string> process = null)
     {
 
-        string url = $"https://docs.google.com/spreadsheets/d/{documentID}/export?format=csv&gid={sheetID}";
+        string url = $"https://docs.google.com/spreadsheets/d/{documentID}/export?format=tsv&gid={sheetID}";
 
         UnityWebRequest req = UnityWebRequest.Get(url);
 

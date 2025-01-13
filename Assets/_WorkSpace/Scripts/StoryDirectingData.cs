@@ -23,10 +23,11 @@ public class StoryDirectingDataEditor : Editor
 }
 #endif
 
-public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
+public class StoryDirectingData : ScriptableObject, ITsvSheetParseable
 {
     public enum TransitionType
     {
+        NONE,  // 미정의
         BLINK, // 순간이동, 기본값
         NORMAL, // 선형적 이동
         BOUNCE, // 통통
@@ -112,7 +113,7 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
         BG_IMG,     // 기타 연출
     }
 
-    public void ParseCsvSheet(int sheetId, string title, string csv)
+    public void ParseTsvSheet(int sheetId, string title, string csv)
     {
         this.id = sheetId;
         this.title = title;
@@ -128,7 +129,7 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
         string[] lines = csv.Split("\r\n");
         foreach (string line in lines)
         {
-            string[] cells = line.Split(',');
+            string[] cells = line.Split('\t');
 
             // 0번열은 다이얼로그 ID
             if (int.TryParse(cells[0], out int _))

@@ -7,6 +7,7 @@ using UnityEngine.UI;
 // URP 카메라 기능 사용
 using UnityEngine.Rendering.Universal;
 using UnityEngine.Events;
+using static StoryDirectingData;
 
 // FIXME : 완성 후 전체적으로 리펙토링 및 수정 필요
 public class StoryDirector : BaseUI
@@ -30,6 +31,7 @@ public class StoryDirector : BaseUI
 
     [Header("텍스트")]
     // 불러온 데이터를 적용 시킬 곳
+    [SerializeField] TMP_Text locationText;
     [SerializeField] TMP_Text nameText;
     [SerializeField] TMP_Text dialogueText;
 
@@ -133,19 +135,33 @@ public class StoryDirector : BaseUI
         StoryPrint(dialogueCounter);
     }
 
+    //public Vector2 CameraPosition;
+    //public float CameraSize;
+
     // 실질적으로 스토리 텍스트를 출력할 함수
     private void StoryPrint(int nameCount)
     {
-        // 화자 출력
-        nameText.text = storyData.Dialogues[nameCount].Speaker;
-        nameBox.SetActive(! string.IsNullOrEmpty(nameText.text));
-
         StoryDirectingData.Dialogue dialogue = storyData.Dialogues[nameCount];
 
+        // 장소 출력
+        if (false == string.IsNullOrEmpty(dialogue.Loaction))
+        {
+            locationText.text = dialogue.Loaction;
+        }
+
+        // 화자 출력
+        bool isNaration = string.IsNullOrEmpty(dialogue.Speaker);
+        nameText.text = dialogue.Speaker;
+        nameBox.SetActive(false == isNaration);
+
         // 대사 출력
-        dialogueText.text = "";     // 앞전 스크립트 초기화용
+        dialogueText.text = ""; // 앞전 스크립트 제거
+        dialogueText.alignment = isNaration ? TextAlignmentOptions.Center : TextAlignmentOptions.Left; // 나레이션: 가운데, 대사: 왼쪽
         playingDialougeTween = dialogueText.DOText(dialogue.Script, dialogue.Script.Length * 0.1f * dialogue.timeMult, true, ScrambleMode.None);
         playingDialougeTween.onComplete += () => playingDialougeTween = null; // 출력 완료시 참조 비우기
+
+        // 카메라 이동, 줌인아웃
+        directingCamera.orthographicSize = dialogue.CameraSize * 10f;
 
         // 사운드 출력
         if (null != dialogue.Bgm)
@@ -160,8 +176,10 @@ public class StoryDirector : BaseUI
             backGroundImage.texture = dialogue.BackgroundSprite.texture;
         }
 
+        // 트랜지션 정보 적용
         foreach (StoryDirectingData.TransitionInfo transition in dialogue.Transitions)
         {
+            actors[transition.StandingImageId].transform.SetAsLastSibling(); // 최근 트랜지션이 가장 앞에 노출되도록
             actors[transition.StandingImageId].Transition(transition);
         }
     }

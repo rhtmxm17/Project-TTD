@@ -44,7 +44,7 @@ public class CharacterDataEditor : Editor
 }
 #endif
 
-public class CharacterData : ScriptableObject, ICsvRowParseable
+public class CharacterData : ScriptableObject, ITsvRowParseable
 {
     [System.Serializable]
     public struct Status
@@ -178,7 +178,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         ENHANCE_ITEM,
     }
 
-    public void ParseCsvRow(string[] cells)
+    public void ParseTsvRow(string[] cells)
     {
         // ID
         if (false == int.TryParse(cells[(int)Column.ID], out id))
