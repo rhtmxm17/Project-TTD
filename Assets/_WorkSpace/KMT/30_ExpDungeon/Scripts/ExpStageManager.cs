@@ -30,6 +30,43 @@ public class ExpStageManager : StageManager
     }
 
 
+    protected override void OnDefeat()
+    {
+        if (IsCombatEnd)
+        {
+            Debug.Log("이미 전투가 종료됨");
+            return;
+        }
+
+        IsCombatEnd = true;
+
+        Rewarding(false);
+
+/*        //패배
+        List<CharacterData> chDataL = new List<CharacterData>(batchDictionary.Values);
+        int randIdx = UnityEngine.Random.Range(0, chDataL.Count);
+
+        resultPopupWindow.OpenDoubleButtonWithResult(
+            stageDataOnLoad.StageName,
+            null,
+            "확인", LoadPreviousScene,
+            "재도전", () => {
+
+                GameManager.OverlayUIManager.OpenDoubleInfoPopup("재도전하시겠습니까?", "아니요", "네",
+                    null, () => {
+                        //TODO : 용도에 따라서 지우거나 이용
+                        //prevSceneData.stageData = prevSceneData.stageData;
+                        //prevSceneData.prevScene = prevSceneData.prevScene;
+                        GameManager.Instance.LoadBattleFormationScene(prevSceneData);
+                    });
+
+            },
+            true, false,
+            "패배..", chDataL[randIdx].FaceIconSprite,
+            AdvencedPopupInCombatResult.ColorType.DEFEAT
+        );*/
+    }
+
     protected override IEnumerator StartTimerCO()
     {
         TimeSpan leftTimeSpan = TimeSpan.FromSeconds(timeLimit);
@@ -72,6 +109,10 @@ public class ExpStageManager : StageManager
         {
             resultLong = 100;
             resultRate = 1;
+        }
+        else if (resultLong == 0)//웨이브를 아예 못 민 경우, 최대 보상의 20%
+        {
+            resultRate = 0.2f;
         }
         else//클리어가 아닌 경우라면 99%로 명시.
         {
@@ -157,12 +198,13 @@ public class ExpStageManager : StageManager
                                     else
                                     {
                                         prevSceneData.stageData = nextStageData;
+                                        prevSceneData.dungeonLevel += 1;
                                         //TODO : 용도에 따라서 지우거나 이용
                                         //prevSceneData.prevScene = prevSceneData.prevScene;
                                         GameManager.Instance.LoadBattleFormationScene(prevSceneData);
                                     }
                                 },
-                                true, false);
+                                true, DataTableManager.Instance.GetItemData(9/*골드티켓*/).Number.Value > 0);
                         }
 
                     };
@@ -206,8 +248,8 @@ public class ExpStageManager : StageManager
                     "확인", LoadPreviousScene,
                     rightButtonText, rightButtonAction,
                     true, false,
-                    "승리!", chDataL[randIdx].FaceIconSprite,
-                    AdvencedPopupInCombatResult.ColorType.VICTORY
+                    isClear ? "승리!" : "패배" , chDataL[randIdx].FaceIconSprite,
+                    isClear ? AdvencedPopupInCombatResult.ColorType.VICTORY : AdvencedPopupInCombatResult.ColorType.DEFEAT
                 );
 
             });

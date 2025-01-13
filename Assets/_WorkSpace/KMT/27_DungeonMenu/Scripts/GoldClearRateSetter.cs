@@ -42,26 +42,43 @@ public class GoldClearRateSetter : MonoBehaviour
     [SerializeField]
     Button skipButton;
 
+    [Header("Dungeon Type")]
+    [SerializeField]
+    StageType stageType;
+
     Slider slider;
-    Dictionary<string, long> goldClearRateDic;
+    Dictionary<string, long> dungeonClearRateDic;
 
 
     private void Awake()
     {
-        goldClearRateDic = GameManager.UserData.PlayData.GoldDungeonClearRate.Value;
+        switch (stageType)
+        {
+            case StageType.GOLD:
+                dungeonClearRateDic = GameManager.UserData.PlayData.GoldDungeonClearRate.Value;
+                break;
+            case StageType.EXP:
+                dungeonClearRateDic = GameManager.UserData.PlayData.ExpDungeonClearRate.Value;
+                break;
+            case StageType.ENFORCE:
+            dungeonClearRateDic = GameManager.UserData.PlayData.EnforceDungeonClearRate.Value;
+                break;
+            default:
+                break;
+        }
 
         slider = GetComponent<Slider>();
 
-        if (goldClearRateDic.Count == 0)
+        if (dungeonClearRateDic.Count == 0)
         {
             slider.value = 0;
             enterButton.interactable = true;
             skipButton.interactable = false;
             text.text = $"0%";
         }
-        else if (goldClearRateDic.ContainsKey(Numbers.ZERO))
+        else if (dungeonClearRateDic.ContainsKey(Numbers.ZERO))
         {
-            long clearRate = goldClearRateDic[Numbers.ZERO];
+            long clearRate = dungeonClearRateDic[Numbers.ZERO];
 
             enterButton.interactable = true;
 
@@ -88,9 +105,9 @@ public class GoldClearRateSetter : MonoBehaviour
         {
             enterButton.interactable = true;
 
-            if (goldClearRateDic.ContainsKey(Numbers.ZERO))
+            if (dungeonClearRateDic.ContainsKey(Numbers.ZERO))
             {
-                long clearRate = goldClearRateDic[Numbers.ZERO];
+                long clearRate = dungeonClearRateDic[Numbers.ZERO];
 
                 if (clearRate >= 100)
                     skipButton.interactable = true;
@@ -107,17 +124,17 @@ public class GoldClearRateSetter : MonoBehaviour
                 text.text = $"0%";
             }
         }
-        else if (goldClearRateDic.ContainsKey(Numbers.IntToStr(idx)))
+        else if (dungeonClearRateDic.ContainsKey(Numbers.IntToStr(idx)))
         {
-            long clearRate = goldClearRateDic[Numbers.IntToStr(idx)];
+            long clearRate = dungeonClearRateDic[Numbers.IntToStr(idx)];
 
-            if (!goldClearRateDic.ContainsKey(Numbers.IntToStr(idx - 1)))
+            if (!dungeonClearRateDic.ContainsKey(Numbers.IntToStr(idx - 1)))
             {
                 enterButton.interactable = false;
             }
             else
             {
-                if(goldClearRateDic[Numbers.IntToStr(idx - 1)] >= 100)
+                if(dungeonClearRateDic[Numbers.IntToStr(idx - 1)] >= 100)
                     enterButton.interactable = true;
                 else
                     enterButton.interactable = false;
@@ -133,13 +150,13 @@ public class GoldClearRateSetter : MonoBehaviour
         }
         else
         {
-            if (!goldClearRateDic.ContainsKey(Numbers.IntToStr(idx - 1)))
+            if (!dungeonClearRateDic.ContainsKey(Numbers.IntToStr(idx - 1)))
             {
                 enterButton.interactable = false;
             }
             else
             {
-                if (goldClearRateDic[Numbers.IntToStr(idx - 1)] >= 100)
+                if (dungeonClearRateDic[Numbers.IntToStr(idx - 1)] >= 100)
                     enterButton.interactable = true;
                 else
                     enterButton.interactable = false;
