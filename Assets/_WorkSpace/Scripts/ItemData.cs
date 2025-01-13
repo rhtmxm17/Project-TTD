@@ -99,7 +99,7 @@ public class ItemData : ScriptableObject, ICsvRowParseable
         itemName = cells[(int)Column.NAME];
 
         // SPRITE
-        spriteImage = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.SPRITE]}.asset");
+        spriteImage = SearchAsset.SearchSpriteAsset(cells[(int)Column.SPRITE]);
         if (spriteImage == null)
             spriteImage = DataTableManager.Instance.DummySprite;
 

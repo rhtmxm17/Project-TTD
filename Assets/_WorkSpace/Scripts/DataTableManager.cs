@@ -5,9 +5,9 @@ using System.Linq;
 using UnityEngine.Events;
 using System.Collections.ObjectModel;
 
-
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.Search;
 using Unity.EditorCoroutines.Editor;
 #endif
 
@@ -134,12 +134,12 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     [SerializeField] Object packageDataFolder;
     [SerializeField] Object storyDirectingDataFolder;
 
-    private string documentID = "1mshKeAWkTmozk0snaJPWp7Jizs3pSeLhlFU-982BqHA";
-    private string storyDocumentID = "1mCbO7Xdg0DLPY-J9YjVriGHRueg1PSFvvlKqPZp8pVY";
-    private string characterSheetId = "0";
-    private string itemSheetId = "1467425655";
-    private string packageSheetId = "1751436041";
-    private string stageSheetId = "504606070";
+    private const string documentID = "1mshKeAWkTmozk0snaJPWp7Jizs3pSeLhlFU-982BqHA";
+    private const string storyDocumentID = "1mCbO7Xdg0DLPY-J9YjVriGHRueg1PSFvvlKqPZp8pVY";
+    private const string characterSheetId = "0";
+    private const string itemSheetId = "1467425655";
+    private const string packageSheetId = "1751436041";
+    private const string stageSheetId = "504606070";
 
 
     [ContextMenu("시트에서 캐릭터 데이터 불러오기")]

@@ -23,7 +23,6 @@ public class ShopItemDataEditor : Editor
 /// <summary>
 /// 상점 판매 품목 정보
 /// </summary>
-[CreateAssetMenu(menuName = "ScriptableObjects/ShopItemData")]
 public class ShopItemData : ScriptableObject, ICsvMultiRowParseable
 {
     public int Id => id;
@@ -138,11 +137,8 @@ public class ShopItemData : ScriptableObject, ICsvMultiRowParseable
                 shopItemName = cells[(int)Column.PACKAGE_NAME];
 
                 // SPRITE
-                // 공백일 경우 첫 번째 상품의 이미지 사용
-                if (string.IsNullOrEmpty(cells[(int)Column.SPRITE]))
-                    sprite = null;
-                else
-                    sprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.SPRITE]}.asset");
+                // 공백일 경우(null)첫 번째 상품의 이미지 사용
+                sprite = SearchAsset.SearchSpriteAsset(cells[(int)Column.SPRITE]);
 
                 // DESCRIPTION
                 description = cells[(int)Column.DESCRIPTION];
@@ -152,7 +148,7 @@ public class ShopItemData : ScriptableObject, ICsvMultiRowParseable
                     price.item = null;
                 else
                 {
-                    price.item = AssetDatabase.LoadAssetAtPath<ItemData>($"{DataTableManager.ItemAssetFolder}/{cells[(int)Column.PRICE_ITEM]}.asset");
+                    price.item = SearchAsset.SearchSOAsset<ItemData>(cells[(int)Column.PRICE_ITEM]);
                     if (null == price.item)
                     {
                         Debug.LogError($"잘못된 데이터로 갱신 시도됨");
@@ -195,7 +191,7 @@ public class ShopItemData : ScriptableObject, ICsvMultiRowParseable
             }
 
             // 현재 행에 품목 정보가 있다면 추가
-            ItemData productItemData = AssetDatabase.LoadAssetAtPath<ItemData>($"{DataTableManager.ItemAssetFolder}/{cells[(int)Column.PRODUCTS_ITEM]}.asset");
+            ItemData productItemData = SearchAsset.SearchSOAsset<ItemData>(cells[(int)Column.PRODUCTS_ITEM]);
             if (productItemData != null)
             {
                 ItemGain productData = new ItemGain() { item = productItemData };

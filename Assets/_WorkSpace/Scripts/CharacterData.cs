@@ -191,18 +191,19 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         name = cells[(int)Column.NAME];
 
         // FACE_ICON
-        faceIconSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.FACE_ICON]}.asset");
+        faceIconSprite = SearchAsset.SearchSpriteAsset(cells[(int)Column.FACE_ICON]);
         if (faceIconSprite == null)
             faceIconSprite = DataTableManager.Instance.DummySprite;
 
         // SHAPE
-        modelPrefab = AssetDatabase.LoadAssetAtPath<CharacterModel>($"{DataTableManager.PrefabsAssetFolder}/{cells[(int)Column.SHAPE]}.prefab");
+        //modelPrefab = AssetDatabase.LoadAssetAtPath<CharacterModel>($"{DataTableManager.PrefabsAssetFolder}/{cells[(int)Column.SHAPE]}.prefab");
+        modelPrefab = SearchAsset.SearchPrefabAsset<CharacterModel>(cells[(int)Column.SHAPE]);
 
         // BASE_ATTACK
-        basicSkillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.BASE_ATTACK]}.asset");
+        basicSkillDataSO = SearchAsset.SearchSOAsset<Skill>(cells[(int)Column.BASE_ATTACK]);
 
         // NORMAL_SKILL
-        skillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.NORMAL_SKILL]}.asset");
+        skillDataSO = SearchAsset.SearchSOAsset<Skill>(cells[(int)Column.NORMAL_SKILL]);
 
         if (skillDataSO != null) // 일반 스킬이 기재되어 있다면
         {
@@ -214,7 +215,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
             }
 
             // NS_ICON
-            normalSkillIcon = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.NS_ICON]}.asset");
+            normalSkillIcon = SearchAsset.SearchSpriteAsset(cells[(int)Column.NS_ICON]);
             if (normalSkillIcon == null)
                 normalSkillIcon = DataTableManager.Instance.DummySprite;
 
@@ -223,7 +224,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         }
 
         // SPECIAL_SKILL
-        secondSkillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.SPECIAL_SKILL]}.asset");
+        secondSkillDataSO = SearchAsset.SearchSOAsset<Skill>(cells[(int)Column.SPECIAL_SKILL]);
 
         if (secondSkillDataSO != null) // 특수 스킬이 기재되어 있다면
         {
@@ -235,7 +236,8 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
             }
 
             //Special_Skill_Icon
-            specialSkillIcon = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.SS_ICON]}.asset");
+            specialSkillIcon = SearchAsset.SearchSpriteAsset(cells[(int)Column.SS_ICON]);
+
             if (specialSkillIcon == null)
                 specialSkillIcon = DataTableManager.Instance.DummySprite;
 
