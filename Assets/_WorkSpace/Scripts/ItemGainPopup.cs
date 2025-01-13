@@ -33,7 +33,11 @@ public class ItemGainPopup : MonoBehaviour
     protected virtual void OnPopupOKButtonClicked()
     {
         onPopupClosed?.Invoke();
-        Destroy(this.gameObject);
+        for (int i = 0; GameManager.PopupCanvas.transform.childCount > i; i++)
+        {
+            Destroy(GameManager.PopupCanvas.transform.GetChild(i).gameObject);
+           // Destroy(this.gameObject);
+        }
     }
 
     /// <summary>

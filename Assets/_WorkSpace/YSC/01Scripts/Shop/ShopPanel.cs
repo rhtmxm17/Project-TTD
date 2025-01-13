@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,11 @@ public class ShopPanel : BaseUI
     // 상점이름, 추후에 상점종류많아지면 열고 닫을때 교체
     [SerializeField] TMP_Text shopNameText;
 
+    [Header("현제 상점 표시관련")]
+    [SerializeField] Button tabButton;
+    [SerializeField] Material selectedMaterial;
+    [SerializeField] TMP_Text shopChatText;
+    
     private List<ShopItem> shopItemsList;
     
 
@@ -30,6 +36,16 @@ public class ShopPanel : BaseUI
     {
         Init();
     }
+
+    private void OnEnable()
+    {
+        tabButton.GetComponent<Image>().material = selectedMaterial;
+    }
+    private void OnDisable()
+    {
+        tabButton.GetComponent<Image>().material = null;
+    }
+
 
     private void Init()
     {
