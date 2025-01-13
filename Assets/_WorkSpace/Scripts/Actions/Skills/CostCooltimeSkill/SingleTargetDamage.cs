@@ -35,7 +35,7 @@ public class SingleTargetDamage : Skill
         
         // 실제로 공격이 적용되는 구간
         if(target != null && target.IsAlive)
-            target.Damaged(self.AttackPoint.Value * atkMultiplier, self.igDefenseRate); // 타겟에게 데미지 적용
+            target.Damaged(self.AttackPoint.Value * atkMultiplier, self.igDefenseRate, self.characterData.StatusTable.type); // 타겟에게 데미지 적용
         
         // 히트스캔 이펙트 추가
 

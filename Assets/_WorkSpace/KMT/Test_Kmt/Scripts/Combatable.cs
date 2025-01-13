@@ -215,7 +215,7 @@ public class Combatable : MonoBehaviour
         }
     }
 
-    public void Damaged(float damage, float igDefRate)
+    public void Damaged(float damage, float igDefRate, ElementType atackerType)
     {
         if (!IsAlive)
         {
@@ -223,7 +223,7 @@ public class Combatable : MonoBehaviour
             return;
         }
 
-        damage = DamageCalculator.Calc(damage, igDefRate, defense.Value, defConst);
+        damage = DamageCalculator.Calc(damage, igDefRate, defense.Value, defConst, atackerType, characterData.StatusTable.type);
 
         //View의 setvalue등을 연결하기.
         hp.Value -= damage;
