@@ -36,7 +36,7 @@ public class MyroomInitializer : MonoBehaviour
         UserDataManager.Instance.GetOtherUserProfileAsync(destUid, (profile) =>
         {
             initTarget.ChangeBackground(profile.MyroomBgIdx.Value);
-            initTarget.ChangeCharacter(profile.MyroomCharaIdx.Value);
+            initTarget.ChangeCharacter(profile.MyroomCharaIdx.Value-1);
 
             if (destUid.Equals(UserData.myUid))
             {
