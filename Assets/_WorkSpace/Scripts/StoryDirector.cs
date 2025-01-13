@@ -161,7 +161,8 @@ public class StoryDirector : BaseUI
         playingDialougeTween.onComplete += () => playingDialougeTween = null; // 출력 완료시 참조 비우기
 
         // 카메라 이동, 줌인아웃
-        directingCamera.orthographicSize = dialogue.CameraSize * 10f;
+        directingCamera.transform.DOLocalMove((dialogue.CameraPosition - new Vector2(10f, 5f)) * 2f, dialogue.CamereaTransitionTime);
+        directingCamera.DOOrthoSize(dialogue.CameraSize * 10f, dialogue.CamereaTransitionTime);
 
         // 사운드 출력
         if (null != dialogue.Bgm)

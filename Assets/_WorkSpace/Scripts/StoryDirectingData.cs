@@ -52,6 +52,7 @@ public class StoryDirectingData : ScriptableObject, ITsvSheetParseable
         public List<TransitionInfo> Transitions; // 스탠딩 이미지 갱신사항
         public Vector2 CameraPosition;
         public float CameraSize;
+        public float CamereaTransitionTime;
         public AudioClip Bgm;
         public AudioClip Sfx;
         public Sprite BackgroundSprite;
@@ -102,7 +103,8 @@ public class StoryDirectingData : ScriptableObject, ITsvSheetParseable
         SCALE,              // 트랜지션
         DROPDOWN_TRANSITION,
         TRANSITION,         // 트랜지션
-        TIME,               // 트랜지션
+
+        TIME,               // 트랜지션 + 카메라
 
         FOCUS_X,    // 카메라
         FOCUS_Y,    // 카메라
@@ -200,6 +202,17 @@ public class StoryDirectingData : ScriptableObject, ITsvSheetParseable
                 else if (false == float.TryParse(cells[(int)Column.ZOOM], out parsed.CameraSize))
                 {
                     Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.ZOOM]}");
+                }
+
+                // TIME
+                if (string.IsNullOrEmpty(cells[(int)Column.TIME]))
+                {
+                    parsed.CamereaTransitionTime = 0.5f; // 기본값
+                }
+                else if (false == float.TryParse(cells[(int)Column.TIME], out parsed.CamereaTransitionTime))
+                {
+                    Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.TIME]}");
+                    continue;
                 }
 
                 tempDialogues.Add(parsed);
