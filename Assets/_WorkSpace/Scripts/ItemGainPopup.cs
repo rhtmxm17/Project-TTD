@@ -32,7 +32,6 @@ public class ItemGainPopup : MonoBehaviour
 
     protected virtual void OnPopupOKButtonClicked()
     {
-        
         onPopupClosed?.Invoke();
         for (int i = 0; GameManager.PopupCanvas.transform.childCount > i; i++)
         {
