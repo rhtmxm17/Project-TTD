@@ -13,6 +13,10 @@ public class OverlayUIManager : SingletonBehaviour<OverlayUIManager>
 
     [SerializeField] AdvencedGainPopup advencedGainPopupUI;
 
+    [Header("Popup By Instantiate")]
+    [SerializeField] SimpleInfoUI simpleInfoUIPrefab;
+
+
     private void Awake()
     {
         RegisterSingleton(this);
@@ -61,6 +65,22 @@ public class OverlayUIManager : SingletonBehaviour<OverlayUIManager>
     }
 
     /// <summary>
+    /// 단순 정보 표기와 닫기버튼만 존재하는 팝업 생성 [ 새로운 창을 create한 뒤 닫힐 때 destroy되는 방식으로 생성 ]
+    /// </summary>
+    /// <param name="content">출력할 내용 문자열</param>
+    /// <param name="closeButtonText">닫기 버튼에 출력될 내용 문자열</param>
+    /// <param name="onCloseAction">창이 닫힐 때 실행시킬 action, 없으면 null 전달</param>
+    public void OpenSimpleInfoPopupByCreate(in string content, in string closeButtonText, Action onCloseAction)
+    {
+        var popupInstance = Instantiate(simpleInfoUIPrefab, transform);
+        popupInstance.gameObject.SetActive(false);
+        Action closeAction = null;
+        closeAction += onCloseAction;
+        closeAction += () => { Destroy(popupInstance.gameObject); };
+        popupInstance.SetAndOpenSimpleWindow(content, closeButtonText, closeAction);
+    }
+
+    /// <summary>
     /// 정보 표기와 2개의 버튼이 존재하는 팝업 생성
     /// </summary>
     /// <param name="content">출력할 내용 문자열</param>
@@ -73,6 +93,24 @@ public class OverlayUIManager : SingletonBehaviour<OverlayUIManager>
                                         Action onLeftAction, Action onRightAction)
     {
         doubleInfoUI.SetAndOpenDoubleWindow(content, leftButtonText, rightButtonText, onLeftAction, onRightAction);
+    }
+
+    /// <summary>
+    /// 정보 표기와 2개의 버튼이 존재하는 팝업 생성, 버튼 클릭 시 창이 유지될지 여부도 결정
+    /// </summary>
+    /// <param name="content">출력할 내용 문자열</param>
+    /// <param name="leftButtonText">왼쪽 버튼에 출력될 내용 문자열</param>
+    /// <param name="rightButtonText">오른쪽 버튼에 출력될 내용 문자열</param>
+    /// <param name="onLeftAction">왼쪽 버튼이 눌릴때 실행시킬 행동</param>
+    /// <param name="onRightAction">오른쪽 버튼이 눌릴때 실행시킬 행동</param>
+    /// <param name="isCloseOnLeftClicked">왼쪽쪽 버튼이 눌릴때 창을 닫을지 여부</param>
+    /// <param name="isColseOnRightClicked">오른쪽 버튼이 눌릴때 창을 닫을지 여부</param>
+    public void OpenDoubleInfoPopup(in string content,
+                                        in string leftButtonText, in string rightButtonText,
+                                        Action onLeftAction, Action onRightAction,
+                                        bool isCloseOnLeftClicked, bool isColseOnRightClicked)
+    {
+        doubleInfoUI.SetAndOpenDoubleWindow(content, leftButtonText, rightButtonText, onLeftAction, onRightAction, isCloseOnLeftClicked, isColseOnRightClicked);
     }
 
     /// <summary>
