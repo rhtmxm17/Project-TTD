@@ -29,6 +29,7 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
     {
         BLINK, // 순간이동, 기본값
         NORMAL, // 선형적 이동
+        BOUNCE, // 통통
     }
 
     [SerializeField] int id;
@@ -89,7 +90,7 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
         LOCATION,   // 다이얼로그
         SPEAKER,    // 다이얼로그
         SCRIPT,     // 다이얼로그
-        TIME_MULT,
+        TIME_MULT,  // 다이얼로그
 
         STANDING_IMAGE_ID,  // 트랜지션
         FADE,               // 트랜지션
@@ -263,7 +264,7 @@ public class StoryDirectingData : ScriptableObject, ICsvSheetParseable
                 // SCALE
                 if (string.IsNullOrEmpty(cells[(int)Column.SCALE]))
                 {
-                    parsed.ColorMultiply = 1f; // 기본값
+                    parsed.Scale = 1f; // 기본값
                 }
                 else if (false == float.TryParse(cells[(int)Column.SCALE], out parsed.Scale))
                 {
