@@ -357,8 +357,18 @@ public class StageManager : MonoBehaviour
             stageDataOnLoad.StageName,
             null,
             "확인", LoadPreviousScene,
-            "다음 스테이지로", null,//TODO : 다음스테이지로 가는 로직 만들기.
-            true, true,
+            "재도전", () => {
+
+                GameManager.OverlayUIManager.OpenDoubleInfoPopup("재도전하시겠습니까?", "아니요", "네",
+                    null, () => {
+                        //TODO : 용도에 따라서 지우거나 이용
+                        //prevSceneData.stageData = prevSceneData.stageData;
+                        //prevSceneData.prevScene = prevSceneData.prevScene;
+                        GameManager.Instance.LoadBattleFormationScene(prevSceneData);
+                    });
+
+            },
+            true, false,
             "패배..", chDataL[randIdx].FaceIconSprite,
             AdvencedPopupInCombatResult.ColorType.DEFEAT
         );
