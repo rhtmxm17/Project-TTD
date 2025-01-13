@@ -89,7 +89,7 @@ public class GameManager : SingletonBehaviour<GameManager>
     /// <summary>
     /// 스테이지 로드 시점에서만 사용, 불러올 스테이지 데이터
     /// </summary>
-    private StageSceneChangeArgs sceneChangeArgs;
+    public StageSceneChangeArgs sceneChangeArgs {get; private set;}
 
     public void LoadMainScene()
     {
