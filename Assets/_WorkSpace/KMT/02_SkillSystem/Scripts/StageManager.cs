@@ -71,8 +71,8 @@ public class StageManager : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI wavesText;
 
-    int curWave;
-    int maxWave;
+    protected int curWave;
+    protected int maxWave;
     string MAX_WAVE;
 
     private bool isCombatEnd;

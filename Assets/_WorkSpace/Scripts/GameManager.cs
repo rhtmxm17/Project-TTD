@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
-public enum StageType { NORMAL, GOLD, BOSS, STORY, NONE }
+public enum StageType { NORMAL, GOLD, EXP, ENFORCE, BOSS, STORY, NONE }
 
 /// <summary>
 /// 메뉴 목록

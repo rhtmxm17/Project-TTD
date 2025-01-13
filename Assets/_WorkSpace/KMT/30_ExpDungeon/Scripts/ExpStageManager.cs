@@ -1,27 +1,24 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class GoldStageManager : StageManager, IDamageAddable, IProgressable
+public class ExpStageManager : StageManager
 {
-    [Header("Gold Stage Info")]
+    [Header("Exp Stage Info")]
     [SerializeField]
     Slider leftTimeBar;
 
     string curLevel;
     float maxTimeLimit;
-    float gaveDamage;
 
     Combatable bossCharacters;
 
     public override void Initialize(StageSceneChangeArgs sceneChangeArgs)
     {
         base.Initialize(sceneChangeArgs);
-
         curLevel = sceneChangeArgs.dungeonLevel.ToString();
     }
 
@@ -29,24 +26,9 @@ public class GoldStageManager : StageManager, IDamageAddable, IProgressable
     protected override void StartGame()
     {
         base.StartGame();
-
         maxTimeLimit = timeLimit;
-        gaveDamage = 0;
     }
 
-
-    public void IDamageAdd(float damage)
-    {
-        if (IsCombatEnd)
-            return;
-
-        gaveDamage += damage;
-    }
-
-    public void IPrograssable(Combatable monster)
-    {
-        bossCharacters = monster;
-    }
 
     protected override IEnumerator StartTimerCO()
     {
@@ -72,17 +54,19 @@ public class GoldStageManager : StageManager, IDamageAddable, IProgressable
         IsCombatEnd = true;
         Debug.Log("타임 오버!");
 
-        //초과데미지를 주었더라도 최대 보상보다는 적게 주도록 강제
-        Rewarding(gaveDamage, false);
+        //클리어 여부만 반환.
+        Rewarding(false);// => 보상 로직
 
     }
 
-
-    void Rewarding(float socre, bool isClear)
+    //=>보상 로직
+    void Rewarding(bool isClear)
     {
 
-        float resultRate = Mathf.Clamp01(socre / bossCharacters.MaxHp.Value);//0~1 사이로 고정시키기
-        long resultLong = (long)(resultRate * 100);
+        int waveCount = Math.Clamp(curWave, 1, maxWave);//1~max(3)로 고정시킴.
+
+        float resultRate = (waveCount - 1) * (1 / (float)maxWave);//현재 웨이브(max - 1) * (1/max) => 0, 1/3, 2/3 3개중에 하나
+        long resultLong = (int)(100 * resultRate);//현재 웨이브(3 - 1) * 33% + 1
 
         if (isClear)//클리어인경우, 클리어률을 100으로 지정.
         {
@@ -94,32 +78,32 @@ public class GoldStageManager : StageManager, IDamageAddable, IProgressable
             resultLong = Math.Min(resultLong, 99);
         }
 
-        int rewardGold = (int)(stageDataOnLoad.Reward[0].gain * resultRate);
+        int rewardDragonFruit = (int)(stageDataOnLoad.Reward[0].gain * resultRate);
 
         Debug.Log("클리어!");
 
         ItemGain reward = new ItemGain()
         {
-            item = GameManager.TableData.GetItemData(1),
-            gain = rewardGold
+            item = GameManager.TableData.GetItemData(5),
+            gain = rewardDragonFruit
         };
 
         var stream = GameManager.UserData.StartUpdateStream();
 
-        var goldClearRateDic = GameManager.UserData.PlayData.GoldDungeonClearRate.Value;
+        var expClearRateDic = GameManager.UserData.PlayData.ExpDungeonClearRate.Value;
 
-        if (!goldClearRateDic.ContainsKey(curLevel))//첫도전인 경우
+        if (!expClearRateDic.ContainsKey(curLevel))//첫도전인 경우
         {
-            stream.SetDBDictionaryInnerValue(GameManager.UserData.PlayData.GoldDungeonClearRate, curLevel, resultLong);
+            stream.SetDBDictionaryInnerValue(GameManager.UserData.PlayData.ExpDungeonClearRate, curLevel, resultLong);
         }
-        else if (goldClearRateDic[curLevel] < resultLong)//재도전인데 이전 클리어률보다 큰 경우
+        else if (expClearRateDic[curLevel] < resultLong)//재도전인데 이전 클리어률보다 큰 경우
         {
-            stream.SetDBDictionaryInnerValue(GameManager.UserData.PlayData.GoldDungeonClearRate, curLevel, resultLong);
+            stream.SetDBDictionaryInnerValue(GameManager.UserData.PlayData.ExpDungeonClearRate, curLevel, resultLong);
         }
 
 
         stream
-            .AddDBValue(reward.item.Number, rewardGold)
+            .AddDBValue(reward.item.Number, rewardDragonFruit)
             .AddDBValue(DataTableManager.Instance.GetItemData(9/*골드티켓*/).Number, -1)
             .Submit(result =>
             {
@@ -134,13 +118,11 @@ public class GoldStageManager : StageManager, IDamageAddable, IProgressable
                 List<CharacterData> chDataL = new List<CharacterData>(batchDictionary.Values);
                 int randIdx = UnityEngine.Random.Range(0, chDataL.Count);
 
-                Debug.Log(GameManager.UserData.PlayData.GoldDungeonClearRate.Value[curLevel] + "//////");
-
                 string rightButtonText = string.Empty;
                 UnityAction rightButtonAction = null;
 
                 //클리어률 100인 경우 => 다음 스테이지 버튼
-                if (GameManager.UserData.PlayData.GoldDungeonClearRate.Value[curLevel] >= 100)
+                if (GameManager.UserData.PlayData.ExpDungeonClearRate.Value[curLevel] >= 100)
                 {
                     rightButtonText = "다음 스테이지로";
 
@@ -244,7 +226,7 @@ public class GoldStageManager : StageManager, IDamageAddable, IProgressable
 
         Debug.Log("클리어!");
 
-        Rewarding(float.MaxValue - 10, true);
+        //클리어 여부만 반환
+        Rewarding(true);//보상로직.
     }
-
 }
