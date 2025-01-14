@@ -171,6 +171,10 @@ public class StoryDirector : BaseUI
 
         if (IsAutoPlayMode)
         {
+            if (autoPlayRoutine != null)
+            {
+                StopCoroutine(autoPlayRoutine);
+            }
             autoPlayRoutine = StartCoroutine(AutoPlayRoutine());
         }
     }
