@@ -128,13 +128,13 @@ public class MyRoomUI : BaseUI
         roomName.text = "나만의 공간";
         outskirtsUI.UIStack.Pop();
         GetUI<Button>("MyRoomCharacter").enabled = true;
-        GetUI("Dictionary").SetActive(true);
         GetUI("VisitButton").SetActive(true);
         GetUI("CharacterChangeButton").SetActive(true);
         GetUI("RoomChangeButton").SetActive(true);
         GetUI("TimerBox").SetActive(true);
         GetUI("SpawnerButton").SetActive(true);
         GetUI("ReturnMyRoomButton").SetActive(false);
+        // GetUI("Dictionary").SetActive(true);
         // 뒤로가기 버튼 비활성
         outskirtsUI.ReturnButton.enabled = true;
         // 캐릭터 상호작용 되돌리기
