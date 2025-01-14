@@ -17,6 +17,8 @@ public class MyRoomUI : BaseUI
     
     // 현재 위치 표시
     [SerializeField] TMP_Text roomName;
+    // 캐릭터 상호작용
+    [SerializeField] CharacterInteract characterInteract;
 
     private void Start()
     {
@@ -135,5 +137,7 @@ public class MyRoomUI : BaseUI
         GetUI("ReturnMyRoomButton").SetActive(false);
         // 뒤로가기 버튼 비활성
         outskirtsUI.ReturnButton.enabled = true;
+        // 캐릭터 상호작용 되돌리기
+        characterInteract.isFriendRoom = false; 
     }
 }
