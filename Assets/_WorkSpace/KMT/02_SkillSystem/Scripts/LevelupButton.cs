@@ -32,6 +32,8 @@ public class LevelupButton : MonoBehaviour
     public bool IsAlive { get; private set; } = true;
     public int CurLevel { get; private set; } = -1;
 
+    public bool IsCooldown { get; private set; } = false;
+
     public Button LvButton { get { return skillButton; } private set { } }
 
     Coroutine levelupCoroutine = null;
@@ -59,7 +61,8 @@ public class LevelupButton : MonoBehaviour
                 yield break;
             }
 
-            if (StageManager.Instance.PartyCost > cost)
+
+            if (StageManager.Instance.PartyCost > cost && !IsCooldown)
             {
                 skillButton.interactable = true;
                 levelBgPanel.color = ableColor;
@@ -72,6 +75,15 @@ public class LevelupButton : MonoBehaviour
 
             yield return null;
         }
+    }
+
+    public void StartCooldown() => StartCoroutine(StartCooldownCO());
+
+    IEnumerator StartCooldownCO()
+    {
+        IsCooldown = true;
+        yield return new WaitForSeconds(3);
+        IsCooldown = false;
     }
 
     public void SetLevel(int level)
