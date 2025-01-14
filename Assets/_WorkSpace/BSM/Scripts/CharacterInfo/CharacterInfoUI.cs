@@ -41,7 +41,6 @@ public class CharacterInfoUI : BaseUI
     private Button _bonusExitButton;
     
     //EnhanceTab
-    [HideInInspector] public TextMeshProUGUI _curEnhanceLevelText;
     [HideInInspector] public TextMeshProUGUI _beforeUpGradeText;
     [HideInInspector] public TextMeshProUGUI _beforeHpText;
     [HideInInspector] public TextMeshProUGUI _beforeDefText;
@@ -51,18 +50,18 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _afterAtkText;
     [HideInInspector] public TextMeshProUGUI _afterDefText;
     [HideInInspector] public TextMeshProUGUI _mileageValueText;
-    [HideInInspector] public TextMeshProUGUI _afterMaxTitleText;
     [HideInInspector] public TextMeshProUGUI _afterMaxHpText;
     [HideInInspector] public TextMeshProUGUI _afterMaxAtkText;
     [HideInInspector] public TextMeshProUGUI _afterMaxDefText;
     [HideInInspector] public TextMeshProUGUI _enhanceCoinText;
     [HideInInspector] public TextMeshProUGUI _enhanceMaterialText;
-    [HideInInspector] public TextMeshProUGUI _beforeNameText;
-    [HideInInspector] public TextMeshProUGUI _beforeEnhanceLevelText;
     [HideInInspector] public TextMeshProUGUI _characterTokenCountText;
     [HideInInspector] public TextMeshProUGUI _commonTokenCountText;
     [HideInInspector] public TextMeshProUGUI _tokenPopupTitleText;
-    [HideInInspector] public TextMeshProUGUI _requireTokenText;
+    [HideInInspector] public TextMeshProUGUI _amountGoldText;
+    [HideInInspector] public TextMeshProUGUI _amountCharacterTokenText;
+    [HideInInspector] public TextMeshProUGUI _amountCommonTokenText;
+    
     
     [HideInInspector] public Slider _mileageSlider;
     [HideInInspector] public GameObject _beforeMax;
@@ -99,8 +98,6 @@ public class CharacterInfoUI : BaseUI
     
     private Button _detailTabButton; 
     private Button _evolutionTabButton;
-    
-    private GameObject _infoPopup;
 
     public TextMeshProUGUI _tempElemetTypeText;
     public TextMeshProUGUI _tempRoleTypeText;
@@ -138,7 +135,6 @@ public class CharacterInfoUI : BaseUI
     /// </summary>
     private void CommonUI()
     {
-        _infoPopup = GetUI("InfoPopup");  
         _enhanceText = GetUI<TextMeshProUGUI>("EnhanceText"); 
          
         //좌측 Tab 버튼 바인딩
@@ -158,7 +154,6 @@ public class CharacterInfoUI : BaseUI
     {
         _beforeMax = GetUI("BeforeMax");
         _afterMax = GetUI("AfterMax");
-        _curEnhanceLevelText = GetUI<TextMeshProUGUI>("CurEnhanceLevelText");
         _beforeUpGradeText = GetUI<TextMeshProUGUI>("BeforeUpGradeText");
         _beforeHpText = GetUI<TextMeshProUGUI>("BeforeHpText");
         _beforeAtkText = GetUI<TextMeshProUGUI>("BeforeAtkText");
@@ -170,19 +165,18 @@ public class CharacterInfoUI : BaseUI
         _enhanceResultText = GetUI<TextMeshProUGUI>("EnhanceResultText");
         _enhanceResultIcon = GetUI<Image>("EnhanceResultImage");
         _mileageValueText = GetUI<TextMeshProUGUI>("MileageValueText");
-        _requireTokenText = GetUI<TextMeshProUGUI>("RequiredTokenCountText");
-        _afterMaxTitleText = GetUI<TextMeshProUGUI>("AfterMaxTitleText");
         _afterMaxHpText = GetUI<TextMeshProUGUI>("AfterMaxHpText");
         _afterMaxAtkText = GetUI<TextMeshProUGUI>("AfterMaxAtkText");
         _afterMaxDefText = GetUI<TextMeshProUGUI>("AfterMaxDefText");
         _enhanceCoinText = GetUI<TextMeshProUGUI>("EnhanceCoinText");
         _enhanceMaterialText = GetUI<TextMeshProUGUI>("EnhanceMaterialText");
-        _beforeNameText = GetUI<TextMeshProUGUI>("BeforeNameText");
-        _beforeEnhanceLevelText = GetUI<TextMeshProUGUI>("BeforeEnhanceText");
         _characterTokenCountText = GetUI<TextMeshProUGUI>("CharacterTokenCountText");
         _commonTokenCountText = GetUI<TextMeshProUGUI>("CommonTokenCountText");
         _tokenPopupTitleText = GetUI<TextMeshProUGUI>("TokenPopupTitleText");
-
+        _amountGoldText = GetUI<TextMeshProUGUI>("AmountGoldText");
+        _amountCharacterTokenText = GetUI<TextMeshProUGUI>("AmountCharacterTokenText");
+        _amountCommonTokenText = GetUI<TextMeshProUGUI>("AmountCommonTokenText");
+         
         _tokenInputField = GetUI<TMP_InputField>("TokenInputFiled");
         _enhanceTokenIcon = GetUI<Image>("TokenIconImage");
         _tokenCancelButton = GetUI<Button>("TokenCancelButton");

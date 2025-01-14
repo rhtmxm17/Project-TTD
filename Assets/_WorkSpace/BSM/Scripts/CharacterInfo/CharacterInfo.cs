@@ -305,10 +305,6 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             _characterInfoController._infoUI._levelUpButton.gameObject.SetActive(false);
             _characterInfoController._infoUI._enhanceTabButton.interactable = false;
         }
-        
-        _characterInfoController._infoUI._beforeNameText.text = _characterData.Name;
-        _characterInfoController._infoUI._beforeEnhanceLevelText.text =$"+{_characterData.Enhancement.Value.ToString()}";
-        
         _characterInfoController._infoUI._nameText.text = _characterData.Name;
         _characterInfoController._infoUI._characterImage.sprite = _characterData.FaceIconSprite;
         _characterInfoController._infoUI._levelText.text = $"Lv. {_characterData.Level.Value}";

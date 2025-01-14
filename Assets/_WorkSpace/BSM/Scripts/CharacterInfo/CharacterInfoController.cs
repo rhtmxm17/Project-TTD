@@ -297,6 +297,7 @@ public class CharacterInfoController : BaseUI
         _infoUI._characterTokenCountText.text = 0.ToString();
         _infoUI._commonTokenCountText.text = 0.ToString(); 
         
+        _infoUI._beforeMax.SetActive(_curInfoTabType.Equals(InfoTabType.ENHANCE));
         _nextButton.gameObject.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
         _prevButton.gameObject.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
         _characterUIPanel.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL) || _curInfoTabType.Equals(InfoTabType.ENHANCE));

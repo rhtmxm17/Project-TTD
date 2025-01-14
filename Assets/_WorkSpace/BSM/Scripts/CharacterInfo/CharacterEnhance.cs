@@ -323,10 +323,10 @@ public class CharacterEnhance : MonoBehaviour
 
         SetEnhanceCost();
 
-        _characterInfoController._infoUI._beforeUpGradeText.text = $"현재 등급 {_beforeEnhanceLevel}";
-        _characterInfoController._infoUI._beforeHpText.text = $"체력 {_beforeHp}";
+        _characterInfoController._infoUI._beforeUpGradeText.text = $"+{_beforeEnhanceLevel} 현재 능력치";
         _characterInfoController._infoUI._beforeAtkText.text = $"공격력 {_beforeAtk}";
         _characterInfoController._infoUI._beforeDefText.text = $"방어력 {_beforeDef}";
+        _characterInfoController._infoUI._beforeHpText.text = $"체력 {_beforeHp}";
     }
 
     /// <summary>
@@ -336,12 +336,11 @@ public class CharacterEnhance : MonoBehaviour
     {
         _afterEnhanceLevel = (_beforeEnhanceLevel + 1);
         _characterInfoController._infoUI._afterMax.SetActive(_beforeEnhanceLevel >= 10);
-        _characterInfoController._infoUI._beforeMax.SetActive(_beforeEnhanceLevel < 10);
+        _characterInfoController._infoUI._beforeMax.SetActive(_beforeEnhanceLevel < 10 && _characterInfoController.CurInfoTabType == InfoTabType.ENHANCE);
 
         if (_afterEnhanceLevel > 10)
         {
             //강화 Max 단계 정보
-            _characterInfoController._infoUI._afterMaxTitleText.text = $"{_characterData.Name} +{_beforeEnhanceLevel}";
             _characterInfoController._infoUI._afterMaxHpText.text = $"체력 : {_characterData.HpPointLeveled}";
             _characterInfoController._infoUI._afterMaxAtkText.text = $"공격력 : {_characterData.AttackPointLeveled}";
             _characterInfoController._infoUI._afterMaxDefText.text = $"방어력 : {_characterData.DefensePointLeveled}";
@@ -356,7 +355,7 @@ public class CharacterEnhance : MonoBehaviour
             _afterAtk = Convert.ToInt32(_characterData.AttackPointLeveled * (1f + 0.1f * _afterEnhanceLevel) / (1f + 0.1f * (_characterData.Enhancement.Value)));
             _afterDef = Convert.ToInt32(_characterData.DefensePointLeveled * (1f + 0.1f * _afterEnhanceLevel) / (1f + 0.1f * (_characterData.Enhancement.Value)));
 
-            _characterInfoController._infoUI._afterUpGradeText.text = $"강화 후 등급 {_afterEnhanceLevel}";
+            _characterInfoController._infoUI._afterUpGradeText.text = $"+{_afterEnhanceLevel} 강화 후 능력치";
             _characterInfoController._infoUI._afterHpText.text = $"체력 {_afterHp}";
             _characterInfoController._infoUI._afterAtkText.text = $"공격력 {_afterAtk}";
             _characterInfoController._infoUI._afterDefText.text = $"방어력 {_afterDef}";
@@ -566,7 +565,6 @@ public class CharacterEnhance : MonoBehaviour
         _enhanceGoldCost = 100 * (_beforeEnhanceLevel + 1);
         _characterInfoController._infoUI._enhanceCoinText.text = _enhanceGoldCost.ToString();
         _characterInfoController._infoUI._enhanceMaterialText.text = _enhanceDragonCandyCost.ToString();
-        _characterInfoController._infoUI._requireTokenText.text = $"필요한 토큰 {_enhanceDragonCandyCost}개";
     }
 
     /// <summary>
