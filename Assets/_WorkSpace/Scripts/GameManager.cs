@@ -103,7 +103,7 @@ public class GameManager : SingletonBehaviour<GameManager>
     }
 
     /// <summary>
-    /// 지정된 메뉴로 이동
+    /// 지정된 메뉴로 이동[ 비동기 ]
     /// </summary>
     /// <param name="menu"></param>
     public void LoadMenuScene(MenuType menu)
@@ -146,6 +146,53 @@ public class GameManager : SingletonBehaviour<GameManager>
                 return;
         }
         SceneManager.LoadSceneAsync(sceneName);
+
+    }
+
+    /// <summary>
+    /// 지정된 메뉴로 이동[ 동기 ]
+    /// </summary>
+    /// <param name="menu"></param>
+    public void LoadMenuSceneSync(MenuType menu)
+    {
+        Debug.Log($"{menu} 메뉴 씬으로 이동 호출됨");
+
+        string sceneName;
+        switch (menu)
+        {
+            case MenuType.ACHIEVEMENT:
+                Debug.LogWarning("아직 씬이 준비되지 않음");
+                return;
+            case MenuType.CHARACTERS:
+                sceneName = "CharacterMenuScene";
+                break;
+            case MenuType.STORY:
+                sceneName = "StoryMenuScene";
+                break;
+            case MenuType.SHOP:
+                sceneName = "ShopMenuScene";
+                break;
+            case MenuType.MYROOM:
+                sceneName = "MyRoomScene";
+                break;
+            case MenuType.ADVANTURE:
+                sceneName = "AdvantureMenuScene";
+                break;
+            case MenuType.PROFILE:
+                sceneName = "ProfileScene";
+                break;
+            case MenuType.FORMATION:
+                sceneName = "HYJ_BattleFormation";
+                break;
+            case MenuType.NONE:
+                Debug.LogWarning("메뉴 타입이 지정되지 않아 로비로 이동함");
+                sceneName = "LobbyScene";
+                break;
+            default:
+                Debug.LogWarning($"잘못된 MenuType: {menu}");
+                return;
+        }
+        SceneManager.LoadScene(sceneName);
 
     }
 
