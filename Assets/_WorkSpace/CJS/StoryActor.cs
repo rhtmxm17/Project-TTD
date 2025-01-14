@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using DG.Tweening.Core;
 using static StoryDirectingData;
+using DG.Tweening.Plugins.Options;
 
 public class StoryActor : MonoBehaviour
 {
@@ -14,17 +16,22 @@ public class StoryActor : MonoBehaviour
     [SerializeField] RectTransform transitionTransform; // 이동에 동반되는 연출용 트랜스폼
     [SerializeField] Image actorImage;
 
+    // 색상 및 페이드인/아웃
+    private TweenerCore<Color, Color, ColorOptions> fadeTween;
+
     public void SetNativeSize() => actorImage.SetNativeSize();
 
     public void Transition(TransitionInfo transition)
     {
         // 색상 및 페이드인/아웃
-        actorImage.DOColor(new Color(
+        fadeTween.Complete(); // 이전 작업이 미완료일 경우 강제 완료
+        fadeTween = actorImage.DOColor(new Color(
                 transition.ColorMultiply,
                 transition.ColorMultiply,
                 transition.ColorMultiply,
                 transition.Active ? 1f : 0f),
             transition.Time);
+
 
         // 반전 및 크기
         transitionTransform.localScale = new Vector3(
