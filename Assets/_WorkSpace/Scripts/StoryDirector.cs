@@ -228,6 +228,7 @@ public class StoryDirector : BaseUI
         {
             // TODO: 배경 변경 연출 추가
             backGroundImage.texture = dialogue.BackgroundSprite.texture;
+            backGroundImage.SetNativeSize();
         }
 
         // 트랜지션 정보 적용
@@ -264,6 +265,14 @@ public class StoryDirector : BaseUI
 
         yield return new WaitForSeconds(2f);
 
+        OnComplete();
+    }
+
+    /// <summary>
+    /// 스토리 종료 후 작업을 수행 및 디렉터 제거
+    /// </summary>
+    public void OnComplete()
+    {
         // 스택된 카메라 제거
         Camera.main.GetUniversalAdditionalCameraData().cameraStack.Remove(this.directingCamera);
 
