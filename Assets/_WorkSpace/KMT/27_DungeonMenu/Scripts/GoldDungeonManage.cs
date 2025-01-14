@@ -10,6 +10,10 @@ public class GoldDungeonManage : MonoBehaviour
     Button enterButton;
     [SerializeField]
     Button skipButton;
+    [SerializeField]
+    SkipAnimationWindow skipAnimationWindow;
+    [SerializeField]
+    float aniDuaringTime;
 
     [SerializeField]
     List<StageData> stageDatas;
@@ -80,28 +84,32 @@ public class GoldDungeonManage : MonoBehaviour
                     return;
                 }
 
-                //보상이 하나임을 상정, 여러개일 경우 확장 필요
-                ItemGain rewardGain = stageDatas[stageLevelIdx].Reward[0];
+                skipAnimationWindow.SetAndRunSkipAnimation(aniDuaringTime, () => { 
+                
+                    //보상이 하나임을 상정, 여러개일 경우 확장 필요
+                    ItemGain rewardGain = stageDatas[stageLevelIdx].Reward[0];
 
-                GameManager.UserData.StartUpdateStream()
-                    .AddDBValue(rewardGain.item.Number, rewardGain.gain)
-                    .AddDBValue(DataTableManager.Instance.GetItemData(9/*골드티켓*/).Number, -1)
-                    .Submit(result => {
+                    GameManager.UserData.StartUpdateStream()
+                        .AddDBValue(rewardGain.item.Number, rewardGain.gain)
+                        .AddDBValue(DataTableManager.Instance.GetItemData(9/*골드티켓*/).Number, -1)
+                        .Submit(result => {
 
-                        if (!result)
-                        {
-                            Debug.Log("데이터 갱신 실패!");
-                            return;
-                        }
+                            if (!result)
+                            {
+                                Debug.Log("데이터 갱신 실패!");
+                                return;
+                            }
 
-                        Debug.Log("와! 골드!");
+                            Debug.Log("와! 골드!");
 
-                        // 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
-                        ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(stageDatas[stageLevelIdx].Reward);
-                        popupInstance.Title.text = "와! 획득!";
+                            // 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
+                            ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(stageDatas[stageLevelIdx].Reward);
+                            popupInstance.Title.text = "와! 획득!";
 
-                    });
+                        });
 
+                });
+                
             }
             else
             {
