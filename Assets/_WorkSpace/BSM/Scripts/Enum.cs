@@ -88,5 +88,5 @@ public enum RoleType
 [System.Serializable]
 public enum EnhanceTokenType
 {
-    NONE, CHARACTER_TOKEN, COMMON_TOKEN
+    NONE, CHARACTER_TOKEN, COMMON_TOKEN, AUTO
 }

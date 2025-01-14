@@ -91,6 +91,7 @@ public class CharacterEnhance : MonoBehaviour
         _characterInfoController._infoUI._tokenInputField.onValueChanged.AddListener(x => InputToken(x));
         _characterInfoController._infoUI._tokenConfirmButton.onClick.AddListener(TokenPopupConfirm);
         _characterInfoController._infoUI._tokenCancelButton.onClick.AddListener(SelectTokenReset);
+        _characterInfoController._infoUI._autoTokenButton.onClick.AddListener(AutoSelectToken);
     }
 
     private void SubscribeEvent()
@@ -104,7 +105,36 @@ public class CharacterEnhance : MonoBehaviour
         OnBeforeEnhance -= BeforeEnhance;
         OnAfterEnhance -= AfterEnhance;
     }
-    
+
+    private void AutoSelectToken()
+    {
+        if (_characterInfoController.CurCharacterEnhance != this) return;
+        _curTokenType = EnhanceTokenType.AUTO;
+        
+        _curCharacterToken = GameManager.TableData
+            .GetItemData(_characterData.EnhanceItemID).Number.Value;
+
+        if (_curCharacterToken > _enhanceDragonCandyCost)
+        {
+            _selectedCharacterMaterial = _enhanceDragonCandyCost;
+        }
+        else
+        {
+            _selectedCharacterMaterial = _curCharacterToken; 
+            
+            if (_characterInfoController.UserDragonCandy > (_enhanceDragonCandyCost - _selectedCharacterMaterial))
+            {
+                _selectedCommonMaterial = (_enhanceDragonCandyCost - _selectedCharacterMaterial);  
+            }
+            else
+            {
+                _selectedCommonMaterial = _characterInfoController.UserDragonCandy; 
+            }
+        }
+ 
+        TokenCountTextUpdate();
+        EnhanceCheck();
+    }
     
     /// <summary>
     /// 마지막으로 입력 후 Confirm했던 값으로 초기화
@@ -306,6 +336,11 @@ public class CharacterEnhance : MonoBehaviour
                 break;
             
             case EnhanceTokenType.CHARACTER_TOKEN: 
+                _characterInfoController._infoUI._characterTokenCountText.text = _selectedCharacterMaterial.ToString();
+                break;
+            
+            case EnhanceTokenType.AUTO:
+                _characterInfoController._infoUI._commonTokenCountText.text = _selectedCommonMaterial.ToString();
                 _characterInfoController._infoUI._characterTokenCountText.text = _selectedCharacterMaterial.ToString();
                 break;
         } 
@@ -566,7 +601,7 @@ public class CharacterEnhance : MonoBehaviour
     /// </summary>
     private void SetEnhanceCost()
     {
-        _enhanceDragonCandyCost = 500 * (_beforeEnhanceLevel + 1);
+        _enhanceDragonCandyCost = 10 * (_beforeEnhanceLevel + 1);
         _enhanceGoldCost = 100 * (_beforeEnhanceLevel + 1);
         _characterInfoController._infoUI._enhanceCoinText.text = _enhanceGoldCost.ToString();
         _characterInfoController._infoUI._enhanceMaterialText.text = _enhanceDragonCandyCost.ToString();

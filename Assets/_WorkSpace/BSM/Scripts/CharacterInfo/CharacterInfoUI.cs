@@ -64,7 +64,6 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _amountCharacterTokenText;
     [HideInInspector] public TextMeshProUGUI _amountCommonTokenText;
     
-    
     [HideInInspector] public Slider _mileageSlider;
     [HideInInspector] public GameObject _beforeMax;
     [HideInInspector] public GameObject _afterMax;
@@ -85,12 +84,7 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TMP_InputField _tokenInputField;
     [HideInInspector] public Image _enhanceTokenIcon;
     [HideInInspector] public Button _tokenCancelButton;
-    private Button _mileageCancelButton;
-    
-    //EvolutionTab
-    
-
-    private CharacterInfoController _controller;
+    [HideInInspector] public Button _autoTokenButton;
     
     //Common UI
     [HideInInspector] public Button _enhanceTabButton;
@@ -98,6 +92,8 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public Image _enhanceTabColor;
     [HideInInspector] public Image _evolutionTabColor;
     
+    private CharacterInfoController _controller;
+    private Button _mileageCancelButton;
     private Button _detailTabButton; 
     private Button _evolutionTabButton;
 
@@ -178,7 +174,8 @@ public class CharacterInfoUI : BaseUI
         _amountGoldText = GetUI<TextMeshProUGUI>("AmountGoldText");
         _amountCharacterTokenText = GetUI<TextMeshProUGUI>("AmountCharacterTokenText");
         _amountCommonTokenText = GetUI<TextMeshProUGUI>("AmountCommonTokenText");
-         
+
+        _autoTokenButton = GetUI<Button>("AutoTokenButton");
         _tokenInputField = GetUI<TMP_InputField>("TokenInputFiled");
         _enhanceTokenIcon = GetUI<Image>("TokenIconImage");
         _tokenCancelButton = GetUI<Button>("TokenCancelButton");
