@@ -80,7 +80,7 @@ public class CharacterCombatable : Combatable
 
         levelupButton.GetComponent<Button>().onClick.AddListener(() => {
 
-            if (!levelupButton.Interactable || !IsAlive) { Debug.Log("사용 불가"); return; }
+            if (!levelupButton.Interactable || !IsAlive || levelupButton.IsCooldown) { Debug.Log("사용 불가"); return; }
             if (stageLevel.Value >= MAX_STAGE_LEVEL) { Debug.Log("만랩"); return; }
             if(characterModel.NextEvolveModel == null) { Debug.Log("진화할 모델이 지정되지 않음"); return; }
             if(curActionPriority > 2) { Debug.Log("더 큰 우선순위의 행동중"); return; }
@@ -88,6 +88,7 @@ public class CharacterCombatable : Combatable
             {
                 curActionPriority = 2;
                 SetCharacterModel(characterModel.NextEvolveModel);
+                levelupButton.StartCooldown();
                 StageManager.Instance.UsePartyCost(levelIncreasement[stageLevel.Value + 1].needCost);
                 LevelUp();
 
