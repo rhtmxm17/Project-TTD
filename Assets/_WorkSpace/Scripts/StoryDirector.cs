@@ -17,11 +17,36 @@ public class StoryDirector : BaseUI
     /// </summary>
     public event UnityAction onStoryCompleted;
 
+    public bool IsAutoPlayMode
+    {
+        get => isAutoPlayMode;
+        set
+        {
+            if (isAutoPlayMode == value)
+                return;
+
+            isAutoPlayMode = value;
+
+            // 오토 플레이 모드 진입 + 이번 다이얼로그 출력 완료 상태 
+            if (isAutoPlayMode && playingDialougeTween == null)
+            {
+                // 다이얼로그 출력 완료 시점에 AutoPlayRoutine이 실행되므로
+                // 이미 출력 완료 상태라면 오토플레이 진입시 루틴 시작 또는 다음 대사 출력 필요
+                autoPlayRoutine = StartCoroutine(AutoPlayRoutine());
+            }
+
+            // 오토 플레이 모드 종료 + 자동 넘기기 대기중
+            if (isAutoPlayMode == false && autoPlayRoutine != null)
+            {
+                StopCoroutine(autoPlayRoutine);
+                autoPlayRoutine = null;
+            }
+        }
+    }
+
     [SerializeField] StoryDirectingData testData;
 
-    // 불러올 데이터가 있는 곳
-    private StoryDirectingData storyData;
-
+    #region 초기화 필드
     [SerializeField] StoryActor standingImagePrefab;
 
     // 추가적으로 컨트롤이 필요할 수 있는 박스에 대한 선언(당장 안써서 주석처리)
@@ -44,17 +69,30 @@ public class StoryDirector : BaseUI
 
     [Header("연출용 카메라")]
     [SerializeField] Camera directingCamera;
+    #endregion 초기화 필드
+
+    // 진행중인 연출 데이터
+    private StoryDirectingData storyData;
+
     /// <summary>
     /// 현재 출력 진행중인 다이얼로그의 tweening<br/>
     /// null이면 출력 완료
     /// </summary>
     private DG.Tweening.Core.TweenerCore<string, string, DG.Tweening.Plugins.Options.StringOptions> playingDialougeTween = null;
 
-    // private Dialogue[] dialogues;
-    // 대사의 카운트를 늘릴 변수
     private int dialogueCounter = 0;
     private int maxDialogueCounter;
 
+    private bool isAutoPlayMode = false;
+    private Coroutine autoPlayRoutine = null;
+    /// <summary>
+    /// 오토플레이 모드시 대사 출력 완료 후 대기시간
+    /// </summary>
+    private YieldInstruction autoPlayDelay = new WaitForSeconds(1f);
+
+    /// <summary>
+    /// 등장 인물 목록
+    /// </summary>
     private StoryActor[] actors;
 
     // [SerializeField]  bool isAuto = false;
@@ -65,7 +103,7 @@ public class StoryDirector : BaseUI
         DOTween.Init();
 
         base.Awake();
-        backGroundButton.onClick.AddListener(ClickAction_Started);
+        backGroundButton.onClick.AddListener(OnClickForPlayNext);
 
         // 스탠딩 이미지 영역 설정
         standingImageParent.offsetMin = new Vector2(-standingImageParent.rect.height, 0f); 
@@ -112,7 +150,7 @@ public class StoryDirector : BaseUI
         }
     }
 
-    private void ClickAction_Started()
+    private void OnClickForPlayNext()
     {
         if (playingDialougeTween == null)
         {
@@ -122,6 +160,32 @@ public class StoryDirector : BaseUI
         {
             playingDialougeTween.Complete();
         }
+    }
+
+    /// <summary>
+    /// 현재 다이얼로그 대사 출력 완료시 수행할 작업
+    /// </summary>
+    private void OnDialougeTweenComleted()
+    {
+        playingDialougeTween = null; // 출력 완료시 참조 비우기
+
+        if (IsAutoPlayMode)
+        {
+            if (autoPlayRoutine != null)
+            {
+                StopCoroutine(autoPlayRoutine);
+            }
+            autoPlayRoutine = StartCoroutine(AutoPlayRoutine());
+        }
+    }
+
+    private IEnumerator AutoPlayRoutine()
+    {
+        yield return autoPlayDelay;
+        autoPlayRoutine = null;
+
+        // 딜레이 후 '클릭시 동작' 수행 (클릭으로도 넘어갈 수 없는 상태라면 아무 일도 일어나지 않음)
+        OnClickForPlayNext();
     }
 
     private void PlayNextDialogue()
@@ -157,8 +221,8 @@ public class StoryDirector : BaseUI
         // 대사 출력
         dialogueText.text = ""; // 앞전 스크립트 제거
         dialogueText.alignment = isNaration ? TextAlignmentOptions.Center : TextAlignmentOptions.Left; // 나레이션: 가운데, 대사: 왼쪽
-        playingDialougeTween = dialogueText.DOText(dialogue.Script, dialogue.Script.Length * 0.1f * dialogue.timeMult, true, ScrambleMode.None);
-        playingDialougeTween.onComplete += () => playingDialougeTween = null; // 출력 완료시 참조 비우기
+        playingDialougeTween = dialogueText.DOText(dialogue.Script, dialogue.Script.Length * 0.05f * dialogue.timeMult, true, ScrambleMode.None).SetEase(Ease.Linear);
+        playingDialougeTween.onComplete += OnDialougeTweenComleted;
 
         // 카메라 이동, 줌인아웃
         directingCamera.transform.DOLocalMove((dialogue.CameraPosition - new Vector2(10f, 5f)) * 2f, dialogue.CamereaTransitionTime);
@@ -175,6 +239,7 @@ public class StoryDirector : BaseUI
         {
             // TODO: 배경 변경 연출 추가
             backGroundImage.texture = dialogue.BackgroundSprite.texture;
+            backGroundImage.SetNativeSize();
         }
 
         // 트랜지션 정보 적용
@@ -206,11 +271,19 @@ public class StoryDirector : BaseUI
     private IEnumerator StoryEndRoutine()
     {
         Debug.Log("스토리 출력 완료");
-        backGroundButton.onClick.RemoveListener(ClickAction_Started);
+        backGroundButton.onClick.RemoveListener(OnClickForPlayNext);
         GameManager.Sound.StopBGM();
 
         yield return new WaitForSeconds(2f);
 
+        OnComplete();
+    }
+
+    /// <summary>
+    /// 스토리 종료 후 작업을 수행 및 디렉터 제거
+    /// </summary>
+    public void OnComplete()
+    {
         // 스택된 카메라 제거
         Camera.main.GetUniversalAdditionalCameraData().cameraStack.Remove(this.directingCamera);
 

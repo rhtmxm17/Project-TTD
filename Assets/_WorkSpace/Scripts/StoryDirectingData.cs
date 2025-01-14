@@ -163,7 +163,8 @@ public class StoryDirectingData : ScriptableObject, ITsvSheetParseable
                 parsed.Script = cells[(int)Column.SCRIPT]
                     .Trim('\"') // 줄바꿈 등 적용시 자동으로 앞뒤에 씌워짐
                     .Trim('|') // 큰 따옴표 씌우기용
-                    .Replace("\"\"", "\""); // 큰 따옴표가 2개씩 들어오는거 해결
+                    .Replace("\"\"", "\"") // 큰 따옴표가 2개씩 들어오는거 해결
+                    .Replace("\\n", "\n"); // 줄바꿈 문자 치환
 
                 // TIME_MULT
                 if (string.IsNullOrEmpty(cells[(int)Column.TIME_MULT]))
