@@ -425,7 +425,7 @@ public class CharacterEnhance : MonoBehaviour
             .SetDBValue(_characterToken, _characterToken.Value - _selectedCharacterMaterial)
             .Submit(result ? EnhanceSuccess : EnhanceFail);  
     }
-    
+ 
     /// <summary>
     /// 강화 성공 후
     /// </summary>
@@ -439,6 +439,8 @@ public class CharacterEnhance : MonoBehaviour
         }
 
         _curTokenType = EnhanceTokenType.NONE;
+        _characterInfoController.UserCharacterToken = GameManager.TableData.GetItemData(_characterInfoController.CurCharacterInfo._CharacterData.EnhanceItemID).Number.Value;
+        
         TokenCountTextUpdate();
         ResultPopup($"+{_characterData.Enhancement.Value} 강화에 성공하셨습니다.", _characterInfoController._infoUI.EnhanceResultIcons[0]);
         CharacterStats();
@@ -458,10 +460,13 @@ public class CharacterEnhance : MonoBehaviour
         }
 
         _curTokenType = EnhanceTokenType.NONE;
+        _characterInfoController.UserCharacterToken = GameManager.TableData.GetItemData(_characterInfoController.CurCharacterInfo._CharacterData.EnhanceItemID).Number.Value;
+        
         TokenCountTextUpdate();
+        ResultPopup($"+{_characterData.Enhancement.Value + 1} 강화에 실패하셨습니다. \n 마일리지 적립 +10%", _characterInfoController._infoUI.EnhanceResultIcons[1]);
+        CharacterStats();
         UpdateInfo();
         EnhanceCheck();
-        ResultPopup($"+{_characterData.Enhancement.Value + 1} 강화에 실패하셨습니다. \n 마일리지 적립 +10%", _characterInfoController._infoUI.EnhanceResultIcons[1]);
         //TODO: 마일리지 누적 값 수정 필요
         MileageUpdate(_characterData.EnhanceMileagePerMill.Value + 100);
     }

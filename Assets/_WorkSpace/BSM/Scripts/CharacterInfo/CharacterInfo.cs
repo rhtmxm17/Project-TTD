@@ -232,7 +232,6 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController.CurCharacterEnhance = _characterEnhance; 
         _characterInfoController.CurIndex = _characterInfoController._characterInfos.IndexOf(this);
         _characterInfoController._infoPopup.SetActive(true);
-        
         UpdateInfo();
     }
  

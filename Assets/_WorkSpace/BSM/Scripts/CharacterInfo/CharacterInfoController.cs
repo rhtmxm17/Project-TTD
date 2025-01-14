@@ -29,9 +29,7 @@ public class CharacterInfoController : BaseUI
     /// <summary>
     /// 용 레벨업 재화
     /// </summary>
-    [HideInInspector] public UserDataInt UserYongGwaData;
- 
-    
+    [HideInInspector] public UserDataInt UserYongGwaData; 
     
     [HideInInspector] public int CurIndex = 0;
     private int _evolutionIndex;
@@ -96,6 +94,7 @@ public class CharacterInfoController : BaseUI
         set
         {
             _userGold = value;
+            _infoUI._amountGoldText.text = _userGold.ToString();
         } 
     }
     
@@ -110,9 +109,22 @@ public class CharacterInfoController : BaseUI
         set
         {
             _userDragonCandy = value;
+            _infoUI._amountCommonTokenText.text = _userDragonCandy.ToString();
         }
     }
 
+    private int _userCharacterToken;
+
+    public int UserCharacterToken
+    {
+        get => _userCharacterToken;
+        set
+        {
+            _userCharacterToken = value;
+            _infoUI._amountCharacterTokenText.text = _userCharacterToken.ToString();
+        }
+    }
+    
     protected override void Awake()
     {
         base.Awake(); 
@@ -171,8 +183,7 @@ public class CharacterInfoController : BaseUI
         
         _userGold = UserGoldData.Value;
         _userDragonCandy = UserDragonCandyData.Value;
-        _userYongGwa = UserYongGwaData.Value;
-        Debug.Log($"용과 : {_userYongGwa} / 용 캔디 :{_userDragonCandy}");
+        _userYongGwa = UserYongGwaData.Value; 
     }
     
     private void ButtonOnClickEvent()
@@ -294,8 +305,13 @@ public class CharacterInfoController : BaseUI
         _leftEvolutionButton.gameObject.SetActive(_evolutionIndex != 0);
         _rightEvolutionButton.gameObject.SetActive(_evolutionIndex != CurCharacterInfo.CharacterModels.Count - 1);
 
+        //강화 탭 등록한 토큰 개수 UI
         _infoUI._characterTokenCountText.text = 0.ToString();
-        _infoUI._commonTokenCountText.text = 0.ToString(); 
+        _infoUI._commonTokenCountText.text = 0.ToString();
+        
+        UserGold = UserGoldData.Value;
+        UserDragonCandy = UserDragonCandyData.Value;
+        UserCharacterToken = GameManager.TableData.GetItemData(CurCharacterInfo._CharacterData.EnhanceItemID).Number.Value;
         
         _infoUI._beforeMax.SetActive(_curInfoTabType.Equals(InfoTabType.ENHANCE));
         _nextButton.gameObject.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
@@ -339,7 +355,10 @@ public class CharacterInfoController : BaseUI
         
         EvolutionCharacterUI();
     }
-
+    
+    /// <summary>
+    /// 진화 캐릭터 노출 조건
+    /// </summary>
     private void EvolutionCharacterUI()
     {
         _leftEvolutionButton.gameObject.SetActive(_evolutionIndex != 0);
