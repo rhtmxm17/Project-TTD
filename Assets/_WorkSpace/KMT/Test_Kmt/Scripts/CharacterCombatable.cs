@@ -26,7 +26,7 @@ public class CharacterCombatable : Combatable
 
     enum curState { WAITING, OTHERS }
 
-    curState state = curState.WAITING;
+    curState state = curState.OTHERS;
 
     Vector3 originPos;
 
@@ -142,6 +142,14 @@ public class CharacterCombatable : Combatable
     protected override void SetCharacterModel(CharacterModel modelData)
     {
         base.SetCharacterModel(modelData);
+        if (state == curState.WAITING)
+        {
+            PlayAnimation("Idle");
+        }
+        else
+        {
+            PlayAnimation("Walk");
+        }
         characterModel.transform.rotation = Quaternion.Euler(-90, -90, -90);
     }
 
@@ -166,6 +174,8 @@ public class CharacterCombatable : Combatable
 
         yield return new WaitWhile(() => agent.pathPending);
 
+        PlayAnimation("Walk");
+
         Look(originPos);
 
         while (0.1f < agent.remainingDistance)
@@ -175,6 +185,7 @@ public class CharacterCombatable : Combatable
         }
 
         transform.position = originPos;
+        PlayAnimation("Idle");
 
         agent.stoppingDistance = range;//TODO : 개체별 크기가 다른 경우, 해당 로직에 추가 수정.
 

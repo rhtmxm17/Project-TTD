@@ -89,7 +89,6 @@ public class CombManager : MonoBehaviour
     public void OnDead(Combatable deadTrObj)
     {
         CharList.Remove(deadTrObj);
-        Destroy(deadTrObj);//또는 사망처리 + 비활성화.
 
         if (CharList.Count <= 0)
         {

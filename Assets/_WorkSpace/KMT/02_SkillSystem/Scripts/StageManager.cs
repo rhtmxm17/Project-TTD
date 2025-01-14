@@ -224,6 +224,8 @@ public class StageManager : MonoBehaviour
             yield break;
         }
 
+        yield return new WaitForSeconds(1.5f);//여기도 상대 죽는 애니메이션 대기 코드 //TODO : 
+
         while (true)
         {
             yield return new WaitForSeconds(0.5f);
@@ -237,6 +239,12 @@ public class StageManager : MonoBehaviour
         IsInChangeWave = true;
 
         AddWaveText();
+
+        foreach (Combatable character in characterManager.CharList)
+        {
+            character.PlayAnimation("Walk");
+        }
+
         Debug.Log("다음 웨이브로 이동중...");
 
         scroller.StartScroll();
@@ -247,7 +255,6 @@ public class StageManager : MonoBehaviour
         yield return StartCoroutine(WaitMonsterWaveCO(monsterWaveQueue[0].transform));//몬스터 웨이브 이동시간
 
         scroller.StopScroll();
-
 
         characterManager.StartCombat(monsterWaveQueue[0]);
         monsterWaveQueue[0].StartCombat(characterManager);
