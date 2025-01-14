@@ -25,14 +25,14 @@ public class PauseWindow : OpenableWindow
         toMenuButton.onClick.AddListener(() => {
 
             Time.timeScale = 1;
-            GameManager.Instance.LoadMenuScene(StageManager.Instance.PrevScene);
+            GameManager.Instance.LoadMenuSceneSync(StageManager.Instance.PrevScene);
 
         });
 
         retryButton.onClick.AddListener(() => {
 
             Time.timeScale = 1;
-            GameManager.Instance.LoadMenuScene(MenuType.FORMATION);
+            GameManager.Instance.LoadMenuSceneSync(MenuType.FORMATION);
 
         });
 
