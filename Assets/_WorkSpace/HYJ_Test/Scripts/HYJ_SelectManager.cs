@@ -57,13 +57,22 @@ public class HYJ_SelectManager : MonoBehaviour
             Debug.LogError("불러온 유저 배치 정보 오류(5개 보다 많은 배치)");
         }
         
+        // ============= 편성 타일 생성 ===================
+
+        List<StageData.BuffInfo> curStageBuff = GameManager.Instance.sceneChangeArgs.stageData.TileBuff;
         for (int i = 0; i < buttonCnt; i++)
         {
             var obj = Instantiate(batchButtonPrefab, batchWindow);
             buttonsTransformList.Add(obj.transform);
             obj.InitDataPosBtn(i, CharacterSelectPanel, CantPosUI);
-            
-            obj.GetComponent<HYJ_PosBTN>().BuffInput(true,true,true);
+
+            foreach (StageData.BuffInfo checkBuff in curStageBuff)
+            {
+                if (checkBuff.tileIndex == i)
+                {
+                    obj.GetComponent<HYJ_BtnBuff>().BuffInput(checkBuff.type);
+                }
+            }
         }
     }
 
