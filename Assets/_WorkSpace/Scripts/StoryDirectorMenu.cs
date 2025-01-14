@@ -13,6 +13,7 @@ public class StoryDirectorMenu : MonoBehaviour
     [SerializeField] Button autoButton;
     [SerializeField] Button menuButton;
     [SerializeField] SkipWindow skipWindow;
+    [SerializeField] HideWindow hideWindow;
 
     [System.Serializable]
     private class SkipWindow
@@ -27,11 +28,32 @@ public class StoryDirectorMenu : MonoBehaviour
         public void ClosePopup() => GameObject.SetActive(false);
     }
 
+    [System.Serializable]
+    private class HideWindow
+    {
+        public GameObject HideTargetGameObject;
+        public Button BackGroundButton;
+
+        public void Hide()
+        {
+            HideTargetGameObject.SetActive(false);
+            BackGroundButton.gameObject.SetActive(true);
+        }
+        public void Appear()
+        {
+            HideTargetGameObject.SetActive(true);
+            BackGroundButton.gameObject.SetActive(false);
+        }
+    }
+
+
     private StoryDirector director;
+    private Image autoButtonImage;
 
     private void Awake()
     {
         director = GetComponent<StoryDirector>();
+        autoButtonImage = autoButton.GetComponent<Image>();
     }
 
     private void Start()
@@ -41,6 +63,26 @@ public class StoryDirectorMenu : MonoBehaviour
         skipWindow.BackGroundButton.onClick.AddListener(skipWindow.ClosePopup);
         skipWindow.CancelButton.onClick.AddListener(skipWindow.ClosePopup);
         skipWindow.ConfirmButton.onClick.AddListener(director.OnComplete); // 스킵 확인시 스토리 종료시 수행할 작업 강제 실행
+
+        // UI 숨기기
+        hideButton.onClick.AddListener(hideWindow.Hide);
+        hideWindow.BackGroundButton.onClick.AddListener(hideWindow.Appear);
+
+        // 자동 재생 버튼
+        autoButton.onClick.AddListener(ToggleAuto);
+
     }
 
+    private void ToggleAuto()
+    {
+        director.IsAutoPlayMode = !director.IsAutoPlayMode;
+        if (director.IsAutoPlayMode)
+        {
+            autoButtonImage.color = Color.yellow;
+        }
+        else
+        {
+            autoButtonImage.color = Color.white;
+        }
+    }
 }

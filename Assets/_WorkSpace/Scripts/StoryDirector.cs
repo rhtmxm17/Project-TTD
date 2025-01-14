@@ -34,6 +34,13 @@ public class StoryDirector : BaseUI
                 // 이미 출력 완료 상태라면 오토플레이 진입시 루틴 시작 또는 다음 대사 출력 필요
                 autoPlayRoutine = StartCoroutine(AutoPlayRoutine());
             }
+
+            // 오토 플레이 모드 종료 + 자동 넘기기 대기중
+            if (isAutoPlayMode == false && autoPlayRoutine != null)
+            {
+                StopCoroutine(autoPlayRoutine);
+                autoPlayRoutine = null;
+            }
         }
     }
 
