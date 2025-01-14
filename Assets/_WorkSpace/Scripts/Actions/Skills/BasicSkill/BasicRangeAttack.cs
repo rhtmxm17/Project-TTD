@@ -7,23 +7,25 @@ public class BasicRangeAttack : Skill
 {
     [SerializeField] Sprite ProjectileSprite;
     [SerializeField] Projectile projectilePrefab;
-    [SerializeField] string animationTriggerParam = "Attack";
-    private int animationHash;
+
+    [SerializeField] float atkMultiplier = 1f;
+    [SerializeField, Tooltip("선딜레이")] float preDelay = 0.25f;
+    [SerializeField, Tooltip("후딜레이")] float postDelay = 0.75f;
+
+    // 캐싱 데이터
+    private WaitForSeconds waitPreDelay;
+    private WaitForSeconds waitPostDelay;
 
     private void OnEnable()
     {
         // 런타임 진입시 필요한 데이터 캐싱
-        animationHash = Animator.StringToHash(animationTriggerParam);
-        // waitPreDelay = new WaitForSeconds(preDelay);
-        // waitPostDelay = new WaitForSeconds(postDelay);
+        waitPreDelay = new WaitForSeconds(preDelay);
+        waitPostDelay = new WaitForSeconds(postDelay);
     }
 
     protected override IEnumerator SkillRoutineImplement(Combatable self, Combatable target)
     {
-        yield return null;
-
-        // 지정된 애니메이션 시작
-        self.UnitAnimator.SetTrigger(animationHash);
+        yield return waitPreDelay;
 
         // 실제로 공격이 적용되는 구간
         if (target != null && target.IsAlive)
@@ -33,5 +35,6 @@ public class BasicRangeAttack : Skill
             projectile.StartChase(target, self.AttackPoint.Value, self.igDefenseRate, ProjectileSprite, self.characterData.StatusTable.type);
         }
 
+        yield return waitPostDelay;
     }
 }

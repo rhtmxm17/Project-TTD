@@ -9,28 +9,22 @@ using UnityEngine;
 public class AllTargetDamage : Skill
 {
     [SerializeField] float atkMultiplier = 1f;
-    [SerializeField] string animationTriggerParam;
     [SerializeField, Tooltip("선딜레이")] float preDelay;
     [SerializeField, Tooltip("후딜레이")] float postDelay;
 
     // 캐싱 데이터
-    private int animationHash;
     private WaitForSeconds waitPreDelay;
     private WaitForSeconds waitPostDelay;
 
     private void OnEnable()
     {
         // 런타임 진입시 필요한 데이터 캐싱
-        animationHash = Animator.StringToHash(animationTriggerParam);
         waitPreDelay = new WaitForSeconds(preDelay);
         waitPostDelay = new WaitForSeconds(postDelay);
     }
 
     protected override IEnumerator SkillRoutineImplement(Combatable self, Combatable target)
     {
-        // 지정된 애니메이션 시작
-        self.UnitAnimator.SetTrigger(animationHash);
-
         yield return waitPreDelay;
 
         //도중 반복자 순회 오류 대체코드

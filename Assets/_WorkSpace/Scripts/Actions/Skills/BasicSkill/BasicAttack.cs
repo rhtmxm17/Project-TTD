@@ -6,26 +6,30 @@ using UnityEngine;
 
 public class BasicAttack : Skill
 {
-    [SerializeField] string animationTriggerParam = "Attack";
-    private int animationHash;
+    [SerializeField] float atkMultiplier = 1f;
+    [SerializeField, Tooltip("선딜레이")] float preDelay = 0.25f;
+    [SerializeField, Tooltip("후딜레이")] float postDelay = 0.75f;
+
+    // 캐싱 데이터
+    private WaitForSeconds waitPreDelay;
+    private WaitForSeconds waitPostDelay;
 
     private void OnEnable()
     {
         // 런타임 진입시 필요한 데이터 캐싱
-        animationHash = Animator.StringToHash(animationTriggerParam);
+        waitPreDelay = new WaitForSeconds(preDelay);
+        waitPostDelay = new WaitForSeconds(postDelay);
     }
 
     protected override IEnumerator SkillRoutineImplement(Combatable self, Combatable target)
     {
-        yield return null;
-
-        // 지정된 애니메이션 시작
-        self.UnitAnimator.SetTrigger(animationHash);
+        yield return waitPreDelay;
 
         // 실제로 공격이 적용되는 구간
         if (target != null && target.IsAlive)
             target.Damaged(self.AttackPoint.Value, self.igDefenseRate, self.characterData.StatusTable.type); // 타겟에게 데미지 적용
 
+        yield return waitPostDelay;
     }
 
 }
