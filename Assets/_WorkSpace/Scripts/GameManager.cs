@@ -188,6 +188,9 @@ public class GameManager : SingletonBehaviour<GameManager>
             case StageType.EXP:
                 destScene = "Stage_Exp";
                 break;
+            case StageType.ENFORCE:
+                destScene = "Stage_Enforce";
+                break;
             case StageType.NONE:
                 Debug.Log("지정된 스테이지 타입이 없어 기본 전투 씬으로 이동함");
                 destScene = "StageDefault";
