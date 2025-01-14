@@ -18,8 +18,8 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _levelUpCoinText;
     [HideInInspector] public TextMeshProUGUI _levelUpYongGwaText;
     [HideInInspector] public TextMeshProUGUI _enhanceText;
-    [HideInInspector] public TextMeshProUGUI _skillADescText;
-    [HideInInspector] public TextMeshProUGUI _skillBDescText;
+    [HideInInspector] public TextMeshProUGUI _skillNormalDescText;
+    [HideInInspector] public TextMeshProUGUI _skillSpecialDescText;
     [HideInInspector] public TextMeshProUGUI _beforeBonusAtkText;
     [HideInInspector] public TextMeshProUGUI _beforeBonusDefText;
     [HideInInspector] public TextMeshProUGUI _beforeBonusHpText;
@@ -29,6 +29,8 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _bonusLevelText;
     [HideInInspector] public TextMeshProUGUI _levelGoldAmountText;
     [HideInInspector] public TextMeshProUGUI _levelYongGwaAmountText;
+    [HideInInspector] public TextMeshProUGUI _skillNormalTitleText;
+    [HideInInspector] public TextMeshProUGUI _skillSpecialTitleText;
     
     [HideInInspector] public Image _skillAIconImage;
     [HideInInspector] public Image _skillBIconImage;
@@ -209,8 +211,11 @@ public class CharacterInfoUI : BaseUI
         _atkText = GetUI<TextMeshProUGUI>("AtkText");
         _hpText = GetUI<TextMeshProUGUI>("HpText");
         _defText = GetUI<TextMeshProUGUI>("DefText");
-        _skillADescText = GetUI<TextMeshProUGUI>("SkillDescAText");
-        _skillBDescText = GetUI<TextMeshProUGUI>("SkillDescBText");
+        _skillNormalDescText = GetUI<TextMeshProUGUI>("SkillDescAText");
+        _skillSpecialDescText = GetUI<TextMeshProUGUI>("SkillDescBText");
+        _skillNormalTitleText = GetUI<TextMeshProUGUI>("SkillTitleAText");
+        _skillSpecialTitleText = GetUI<TextMeshProUGUI>("SkillTitleBText");
+        
         _beforeBonusAtkText = GetUI<TextMeshProUGUI>("BeforeBonusAtkText");
         _beforeBonusDefText = GetUI<TextMeshProUGUI>("BeforeBonusDefText");
         _beforeBonusHpText = GetUI<TextMeshProUGUI>("BeforeBonusHpText");

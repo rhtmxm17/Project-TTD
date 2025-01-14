@@ -271,6 +271,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private CharacterModel CreateModelPrefab(CharacterModel model, Vector3 pos, Vector3 scale, bool active)
     {
         model = Instantiate(model, pos, Quaternion.identity);
+        //TODO: Scale 값 곱하는 것으로 변경 
         model.transform.localScale = scale;
         model.gameObject.SetActive(active);
         CharacterModels.Add(model);
@@ -318,8 +319,11 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController._infoUI._skillAIconImage.sprite = _characterData.NormalSkillIcon;
         _characterInfoController._infoUI._skillBIconImage.sprite = _characterData.SpecialSkillIcon;
 
-        _characterInfoController._infoUI._skillADescText.text = _characterData.NormalSkillToolTip;
-        _characterInfoController._infoUI._skillBDescText.text = _characterData.SpecialSkillToolTip;
+        //TODO: 캐릭터 스킬 이름 데이터 가져오기
+        _characterInfoController._infoUI._skillNormalTitleText.text = "미정";
+        _characterInfoController._infoUI._skillSpecialTitleText.text = "미정"; 
+        _characterInfoController._infoUI._skillNormalDescText.text = _characterData.NormalSkillToolTip;
+        _characterInfoController._infoUI._skillSpecialDescText.text = _characterData.SpecialSkillToolTip;
         
         //TODO: 임시 텍스트 -> 속성 이미지로 변경 필요
         ElementType tempElementType = (ElementType)_characterData.StatusTable.type;

@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class CharacterEnhance : MonoBehaviour
@@ -53,6 +54,26 @@ public class CharacterEnhance : MonoBehaviour
     /// </summary>
     private float _mileage => Mathf.Clamp(_characterData.EnhanceMileagePerMill.Value * 0.001f, 0f, 1f);
 
+    private float _sliderValue;
+    private float SliderValue
+    {
+        get => _sliderValue;
+        set
+        {
+            _sliderValue = value;
+
+            if (_sliderValue >= 1f)
+            {
+                _characterInfoController._infoUI._mileageSlider.transform.GetChild(1).GetComponentInChildren<Image>().color = Color.cyan;
+            }
+            else
+            {
+                _characterInfoController._infoUI._mileageSlider.transform.GetChild(1).GetComponentInChildren<Image>()
+                    .color = new Color(0.6f, 0.05f, 0.15f);
+            } 
+        }
+    }
+    
     public UnityAction OnBeforeEnhance;
     public UnityAction OnAfterEnhance;
     
@@ -175,7 +196,7 @@ public class CharacterEnhance : MonoBehaviour
         {
             _selectedCharacterMaterial = 0;
             SetTextInputField(_selectedCharacterMaterial);
-            _characterInfoController._infoUI._tokenPopupTitleText.text = "캐릭터 전용 토큰 등록";
+            _characterInfoController._infoUI._tokenPopupTitleText.text = "용사탕 등록";
             //TODO: 캐릭터 전용 토큰 아이콘 등록 필요
             _characterInfoController._infoUI._enhanceTokenIcon.sprite = _characterInfoController.TokenIcons[0];
         }
@@ -183,7 +204,7 @@ public class CharacterEnhance : MonoBehaviour
         {
             _selectedCommonMaterial = 0;
             SetTextInputField(_selectedCommonMaterial);
-            _characterInfoController._infoUI._tokenPopupTitleText.text = "공용 토큰 등록";
+            _characterInfoController._infoUI._tokenPopupTitleText.text = "용젤리 등록";
             _characterInfoController._infoUI._enhanceTokenIcon.sprite = _characterInfoController.TokenIcons[1];
         } 
     }
@@ -359,7 +380,7 @@ public class CharacterEnhance : MonoBehaviour
     {
         _characterInfoController._infoUI._characterTokenCountText.text = _selectedCharacterMaterial.ToString();
     }
-    
+
     /// <summary>
     /// 강화 이전 정보
     /// </summary>
@@ -535,6 +556,7 @@ public class CharacterEnhance : MonoBehaviour
                 }
                 _characterInfoController._infoUI._mileageSlider.value = _mileage;
                 _characterInfoController._infoUI._mileageUseButton.interactable = _mileage >= 1f;
+                SliderValue = _mileage; 
             });
     }
 
@@ -649,6 +671,7 @@ public class CharacterEnhance : MonoBehaviour
         _characterData = characterData;
         _characterInfoController._infoUI._mileageSlider.value = _mileage;
         _characterInfoController._infoUI._mileageUseButton.interactable = _mileage >= 1f;
+        SliderValue = _mileage;
         SetEnhanceCost();
         EnhanceCheck();
     }
