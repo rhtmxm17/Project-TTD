@@ -14,6 +14,7 @@ public class StoryDirectorMenu : MonoBehaviour
     [SerializeField] Button menuButton;
     [SerializeField] SkipWindow skipWindow;
     [SerializeField] HideWindow hideWindow;
+    [SerializeField] MenuWindow menuWindow;
 
     [System.Serializable]
     private class SkipWindow
@@ -46,6 +47,19 @@ public class StoryDirectorMenu : MonoBehaviour
         }
     }
 
+    [System.Serializable]
+    private class MenuWindow
+    {
+        public GameObject GameObject;
+        public Button BackGroundButton;
+        public Button HelpButton;
+        public Button SettingButton;
+        public Button ExitButton;
+
+        public void OpenPopup() => GameObject.SetActive(true);
+        public void ClosePopup() => GameObject.SetActive(false);
+    }
+
 
     private StoryDirector director;
     private Image autoButtonImage;
@@ -71,6 +85,10 @@ public class StoryDirectorMenu : MonoBehaviour
         // 자동 재생 버튼
         autoButton.onClick.AddListener(ToggleAuto);
 
+        // 메뉴 버튼
+        menuButton.onClick.AddListener(menuWindow.OpenPopup);
+        menuWindow.BackGroundButton.onClick.AddListener(menuWindow.ClosePopup);
+        menuWindow.ExitButton.onClick.AddListener(() => Destroy(this.gameObject));
     }
 
     private void ToggleAuto()
