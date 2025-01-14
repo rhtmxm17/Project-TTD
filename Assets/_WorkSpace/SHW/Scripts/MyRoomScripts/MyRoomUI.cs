@@ -32,9 +32,11 @@ public class MyRoomUI : BaseUI
         SetMyRoomUI();
     }
     
-    // 마이룸 나갔다 왔을 때 안보이는 버그 
     private void OnEnable()
     {
+        // 마이룸 입장 시 되돌아가기 버튼 비활성
+        GetUI("ReturnMyRoomButton").SetActive(false);
+        // 마이룸 나갔다 왔을 때 안보이는 버그 
         LoadImage();
     }
 
@@ -68,6 +70,7 @@ public class MyRoomUI : BaseUI
             }
         );
         
+       
         // TODO: 도감완료 시 추가할 것 
     }
 
@@ -130,5 +133,7 @@ public class MyRoomUI : BaseUI
         GetUI("TimerBox").SetActive(true);
         GetUI("SpawnerButton").SetActive(true);
         GetUI("ReturnMyRoomButton").SetActive(false);
+        // 뒤로가기 버튼 비활성
+        outskirtsUI.ReturnButton.enabled = true;
     }
 }
