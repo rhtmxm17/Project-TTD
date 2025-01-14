@@ -57,8 +57,9 @@ public class HYJ_CharacterSelect : MonoBehaviour
         nameText.text = chData.Name;
         raceText.text = chData.StatusTable.type.ToString(); // 종족
         classText.text = chData.StatusTable.roleType.ToString(); // 역할군
-        float unitPower = 0;
-        //attacktypeText.text = chData.
+        powerText.text = chData.PowerLevel.ToString();
+        
+        // TODO : HYJ_UnitInfo에 InitUnitInfo 추가
     }
 
     public void SelectPos()

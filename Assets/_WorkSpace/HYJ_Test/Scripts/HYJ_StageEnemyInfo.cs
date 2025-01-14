@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -6,6 +7,7 @@ public class HYJ_StageEnemyInfo : MonoBehaviour
     [SerializeField] TMP_Text stageNameText;
     [SerializeField] private TMP_Text powerText;
     [SerializeField] GameObject monsterPrefab;
+    private List<int> monsterList = new List<int>();
     private void Start()
     {
         InitStageData();
@@ -20,13 +22,18 @@ public class HYJ_StageEnemyInfo : MonoBehaviour
         {
             foreach (var iWaveMonster in iWave.monsters)
             {
-                GameObject iMonster = Instantiate(monsterPrefab, transform);
-                iMonster.GetComponent<HYJ_MonsterInfo>().InitMonsterData(iWaveMonster);
-                
-                if (GameManager.Instance.sceneChangeArgs.stageType == StageType.BOSS)
+                if (!monsterList.Contains(iWaveMonster.character.Id))
                 {
-                    iMonster.GetComponent<HYJ_MonsterInfo>().SetBoss();
+                    monsterList.Add(iWaveMonster.character.Id);
+                    GameObject iMonster = Instantiate(monsterPrefab, transform);
+                    iMonster.GetComponent<HYJ_MonsterInfo>().InitMonsterData(iWaveMonster);
+                
+                    if (GameManager.Instance.sceneChangeArgs.stageType == StageType.BOSS)
+                    {
+                        iMonster.GetComponent<HYJ_MonsterInfo>().SetBoss();
+                    }    
                 }
+                
             }
         }
     }
