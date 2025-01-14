@@ -323,15 +323,28 @@ public class Combatable : MonoBehaviour
         curActionCoroutine = StartCoroutine(TrackingCo());
     }
 
+    public void PlayAnimation(in string animationTriggerName)
+    {
+        UnitAnimator.SetTrigger(animationTriggerName);
+    }
+
     #endregion
 
     [ContextMenu("OnDead")]
     public void OnDead()
     {
-        //TODO : 애니메이션 코루틴같은거 추가
-        Destroy(gameObject);
-        onDeadEvent?.Invoke(this);
         StopCurActionCoroutine();
+        agent.ResetPath();
+        StopCurActionCoroutine();
+        StartCoroutine(DeathAnimationCO());
+    }
+
+    IEnumerator DeathAnimationCO()
+    {
+        PlayAnimation("Death");
+        onDeadEvent?.Invoke(this);
+        yield return new WaitForSeconds(1.5f);//TODO : 현재 죽는 애니메이션 1.5초로 통일
+        Destroy(gameObject);
     }
 
     public virtual void StartCombat(CombManager againstL)
@@ -365,6 +378,7 @@ public class Combatable : MonoBehaviour
             agent.destination = target.transform.position;
             Look(target.transform);
             yield return new WaitWhile(() => agent.pathPending);
+            PlayAnimation("Walk");
 
             while (target != null && agent.remainingDistance > agent.stoppingDistance)
             {
@@ -378,6 +392,7 @@ public class Combatable : MonoBehaviour
                         agent.destination = target.transform.position;
                         Look(target.transform);
                         yield return new WaitWhile(() => agent.pathPending);
+                        PlayAnimation("Walk");
                     }
 
                 }
@@ -436,6 +451,7 @@ public class Combatable : MonoBehaviour
         {
             Look(target.transform);
             StartCoroutine(baseAttack.SkillRoutine(this, target, null));//이것도 액션으로 관리?
+            PlayAnimation("Attack");
             yield return new WaitForSeconds(1);
         }
 
