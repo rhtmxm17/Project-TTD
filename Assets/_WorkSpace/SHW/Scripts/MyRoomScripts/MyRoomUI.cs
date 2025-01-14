@@ -31,6 +31,12 @@ public class MyRoomUI : BaseUI
         });
         SetMyRoomUI();
     }
+    
+    // 마이룸 나갔다 왔을 때 안보이는 버그 
+    private void OnEnable()
+    {
+        LoadImage();
+    }
 
     private void SetMyRoomUI()
     {
