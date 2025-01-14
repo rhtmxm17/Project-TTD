@@ -118,6 +118,8 @@ public class FriendList : MonoBehaviour
                                                 returnRoomButton.SetActive(true);
                                                 // 캐릭터 상호작용 비활성
                                                 canInteract.enabled = false;
+                                                // 뒤로가기 버튼 비활성
+                                                outskirtsUI.ReturnButton.enabled = false;
                                                  VisitFriend(str, $"{nickname}님의 방이에요! \n 비싼 물건을 찾아보죠!", 
                                                      () => {
                                                          GameManager.OverlayUIManager.OpenSimpleInfoPopup(
@@ -141,6 +143,8 @@ public class FriendList : MonoBehaviour
                                       returnRoomButton.SetActive(true);
                                       // 캐릭터 상호작용 비활성
                                       canInteract.enabled = false;
+                                      // 뒤로가기 버튼 비활성
+                                      outskirtsUI.ReturnButton.enabled = false;
                                       VisitFriend(str, $"{nickname}님의 방이에요! \n 오늘은 이제 구경만 하도록 하죠.", null);
                                   }
                               });
