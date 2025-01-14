@@ -18,11 +18,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private CharacterModel levelOne;
     private CharacterModel levelTwo;
     private CharacterModel levelThree;
-    private Vector3 modelPos = new Vector3(-30f, 40f, 1f);
-    private Vector3 levelOneScale = new Vector3(400f, 500f, 1f);
-    private Vector3 levelTwoScale = new Vector3(350f, 400f, 1f);
-    private Vector3 levelThreeScale = new Vector3(250f, 250f, 1f);
-    
+    private Vector3 modelPos = new Vector3(0f, -1f, 1f);
     
     private TextMeshProUGUI _characterTypeText;
     private TextMeshProUGUI _characterListNameText;
@@ -232,6 +228,9 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController.CurCharacterEnhance = _characterEnhance; 
         _characterInfoController.CurIndex = _characterInfoController._characterInfos.IndexOf(this);
         _characterInfoController._infoPopup.SetActive(true);
+        
+        _characterInfoController.UserGold = _characterInfoController.UserGoldData.Value;
+        _characterInfoController.UserYongGwa = _characterInfoController.UserYongGwaData.Value;
         UpdateInfo();
     }
  
@@ -242,16 +241,16 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     {
         if (_characterData.ModelPrefab != null && CharacterModels.Count == 0)
         {
-            levelOne = CreateModelPrefab(_characterData.ModelPrefab, modelPos, levelOneScale, false);
+            levelOne = CreateModelPrefab(_characterData.ModelPrefab, modelPos, false);
 
             if (levelOne.NextEvolveModel != null)
             {
-                levelTwo = CreateModelPrefab(levelOne.NextEvolveModel, modelPos, levelTwoScale, false);
+                levelTwo = CreateModelPrefab(levelOne.NextEvolveModel, modelPos, false);
             }
 
             if (levelTwo != null && levelTwo.NextEvolveModel != null)
             {
-                levelThree = CreateModelPrefab(levelTwo.NextEvolveModel, modelPos, levelThreeScale, false);
+                levelThree = CreateModelPrefab(levelTwo.NextEvolveModel, modelPos, false);
             }
         }
         else if (CharacterModels != null && !CharacterModels[0].gameObject.activeSelf)
@@ -268,11 +267,9 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// <param name="scale">생성될 크기</param>
     /// <param name="active">활성화 여부</param>
     /// <returns></returns>
-    private CharacterModel CreateModelPrefab(CharacterModel model, Vector3 pos, Vector3 scale, bool active)
+    private CharacterModel CreateModelPrefab(CharacterModel model, Vector3 pos, bool active)
     {
-        model = Instantiate(model, pos, Quaternion.identity);
-        //TODO: Scale 값 곱하는 것으로 변경 
-        model.transform.localScale = scale;
+        model = Instantiate(model, pos, Quaternion.identity, _characterInfoController.ModelParent.transform);
         model.gameObject.SetActive(active);
         CharacterModels.Add(model);
         return model;
