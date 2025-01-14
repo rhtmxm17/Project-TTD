@@ -36,6 +36,9 @@ public class FriendList : MonoBehaviour
     [SerializeField] OutskirtsUI outskirtsUI;
     // 캐릭터 상호작용 비활성용
     [SerializeField] private Button canInteract;
+    
+    // 친구 캐릭터 상호작용
+    [SerializeField] CharacterInteract characterInteract;
 
     private void Awake()
     {
@@ -116,8 +119,10 @@ public class FriendList : MonoBehaviour
                                                 friendRoomText.text = $"{nickname}님의 방";
                                                 // 임시) 내방으로 돌아가기 버튼
                                                 returnRoomButton.SetActive(true);
-                                                // 캐릭터 상호작용 비활성
-                                                canInteract.enabled = false;
+                                                // 뒤로가기 버튼 비활성
+                                                outskirtsUI.ReturnButton.enabled = false;
+                                                // 친구방 캐릭터 상호작용
+                                                characterInteract.isFriendRoom = true;
                                                  VisitFriend(str, $"{nickname}님의 방이에요! \n 비싼 물건을 찾아보죠!", 
                                                      () => {
                                                          GameManager.OverlayUIManager.OpenSimpleInfoPopup(
@@ -139,8 +144,10 @@ public class FriendList : MonoBehaviour
                                       friendRoomText.text = $"{nickname}님의 방";
                                       // 임시) 내방으로 돌아가기 버튼
                                       returnRoomButton.SetActive(true);
-                                      // 캐릭터 상호작용 비활성
-                                      canInteract.enabled = false;
+                                      // 뒤로가기 버튼 비활성
+                                      outskirtsUI.ReturnButton.enabled = false;
+                                      // 친구방 캐릭터 상호작용
+                                      characterInteract.isFriendRoom = true;
                                       VisitFriend(str, $"{nickname}님의 방이에요! \n 오늘은 이제 구경만 하도록 하죠.", null);
                                   }
                               });

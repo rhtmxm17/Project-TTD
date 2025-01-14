@@ -23,6 +23,9 @@ public class CharacterInteract : MonoBehaviour
     
     private Coroutine talkCoroutine;
     
+    // 친구방 놀러감
+    [SerializeField] public bool isFriendRoom;
+    [SerializeField] public int friendRoomIndex;
 
     // 대화 활성화
     public void ClickCharacter()
@@ -30,6 +33,13 @@ public class CharacterInteract : MonoBehaviour
         if(talkCoroutine != null) return;
         
         characterIndex = GameManager.UserData.Profile.MyroomCharaIdx.Value -1;
+        
+        // 친구룸 놀러감
+        if (isFriendRoom)
+        {
+            characterIndex = friendRoomIndex;
+        }
+        
         talkdialogue = roomCData[characterIndex].CharacterDialogue; 
         
         // 주어진 대사에서 랜덤하게 대사 출력

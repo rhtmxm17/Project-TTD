@@ -113,6 +113,7 @@ public class RoomChangePUUI : BaseUI
             });
         
         GetUI("BuyRoomButton").SetActive(false);
+        GetUI("ConfirmPopup").SetActive(false);
     }
     
     // 우버튼 
