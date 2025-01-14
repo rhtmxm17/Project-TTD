@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class CharacterEnhance : MonoBehaviour
@@ -53,6 +54,26 @@ public class CharacterEnhance : MonoBehaviour
     /// </summary>
     private float _mileage => Mathf.Clamp(_characterData.EnhanceMileagePerMill.Value * 0.001f, 0f, 1f);
 
+    private float _sliderValue;
+    private float SliderValue
+    {
+        get => _sliderValue;
+        set
+        {
+            _sliderValue = value;
+
+            if (_sliderValue >= 1f)
+            {
+                _characterInfoController._infoUI._mileageSlider.transform.GetChild(1).GetComponentInChildren<Image>().color = Color.cyan;
+            }
+            else
+            {
+                _characterInfoController._infoUI._mileageSlider.transform.GetChild(1).GetComponentInChildren<Image>()
+                    .color = new Color(0.6f, 0.05f, 0.15f);
+            } 
+        }
+    }
+    
     public UnityAction OnBeforeEnhance;
     public UnityAction OnAfterEnhance;
     
@@ -91,6 +112,7 @@ public class CharacterEnhance : MonoBehaviour
         _characterInfoController._infoUI._tokenInputField.onValueChanged.AddListener(x => InputToken(x));
         _characterInfoController._infoUI._tokenConfirmButton.onClick.AddListener(TokenPopupConfirm);
         _characterInfoController._infoUI._tokenCancelButton.onClick.AddListener(SelectTokenReset);
+        _characterInfoController._infoUI._autoTokenButton.onClick.AddListener(AutoSelectToken);
     }
 
     private void SubscribeEvent()
@@ -105,6 +127,38 @@ public class CharacterEnhance : MonoBehaviour
         OnAfterEnhance -= AfterEnhance;
     }
     
+    /// <summary>
+    /// 토큰 자동 선택 기능 > 캐릭터 전용 토큰 우선 사용
+    /// </summary>
+    private void AutoSelectToken()
+    {
+        if (_characterInfoController.CurCharacterEnhance != this) return;
+        _curTokenType = EnhanceTokenType.AUTO;
+        
+        _curCharacterToken = GameManager.TableData
+            .GetItemData(_characterData.EnhanceItemID).Number.Value;
+
+        if (_curCharacterToken > _enhanceDragonCandyCost)
+        {
+            _selectedCharacterMaterial = _enhanceDragonCandyCost;
+        }
+        else
+        {
+            _selectedCharacterMaterial = _curCharacterToken; 
+            
+            if (_characterInfoController.UserDragonCandy > (_enhanceDragonCandyCost - _selectedCharacterMaterial))
+            {
+                _selectedCommonMaterial = (_enhanceDragonCandyCost - _selectedCharacterMaterial);  
+            }
+            else
+            {
+                _selectedCommonMaterial = _characterInfoController.UserDragonCandy; 
+            }
+        }
+ 
+        TokenCountTextUpdate();
+        EnhanceCheck();
+    }
     
     /// <summary>
     /// 마지막으로 입력 후 Confirm했던 값으로 초기화
@@ -116,12 +170,12 @@ public class CharacterEnhance : MonoBehaviour
         if (_curTokenType == EnhanceTokenType.COMMON_TOKEN)
         {
             _selectedCommonMaterial = int.Parse(_characterInfoController._infoUI._commonTokenCountText.text);
-            _characterInfoController._infoUI._commonTokenCountText.text = _selectedCommonMaterial.ToString();
+            SetTextCommonTokenCount();
         }
         else if (_curTokenType == EnhanceTokenType.CHARACTER_TOKEN)
         {
             _selectedCharacterMaterial = int.Parse(_characterInfoController._infoUI._characterTokenCountText.text);
-            _characterInfoController._infoUI._characterTokenCountText.text = _selectedCharacterMaterial.ToString();
+            SetTextCharacterTokenCount();
         } 
     }
     
@@ -141,18 +195,16 @@ public class CharacterEnhance : MonoBehaviour
         if (_curTokenType == EnhanceTokenType.CHARACTER_TOKEN)
         {
             _selectedCharacterMaterial = 0;
-            _characterInfoController._infoUI._tokenInputField.text = _selectedCharacterMaterial.ToString();
-            
-            _characterInfoController._infoUI._tokenPopupTitleText.text = "캐릭터 전용 토큰 등록";
+            SetTextInputField(_selectedCharacterMaterial);
+            _characterInfoController._infoUI._tokenPopupTitleText.text = "용사탕 등록";
             //TODO: 캐릭터 전용 토큰 아이콘 등록 필요
             _characterInfoController._infoUI._enhanceTokenIcon.sprite = _characterInfoController.TokenIcons[0];
         }
         else if (_curTokenType == EnhanceTokenType.COMMON_TOKEN)
         {
             _selectedCommonMaterial = 0;
-            _characterInfoController._infoUI._tokenInputField.text = _selectedCommonMaterial.ToString();
-            
-            _characterInfoController._infoUI._tokenPopupTitleText.text = "공용 토큰 등록";
+            SetTextInputField(_selectedCommonMaterial);
+            _characterInfoController._infoUI._tokenPopupTitleText.text = "용젤리 등록";
             _characterInfoController._infoUI._enhanceTokenIcon.sprite = _characterInfoController.TokenIcons[1];
         } 
     }
@@ -160,7 +212,6 @@ public class CharacterEnhance : MonoBehaviour
     /// <summary>
     /// 증가 버튼 클릭 기능 동작
     /// </summary>
-    /// <param name="value"></param>
     private void IncreaseToken()
     {
         if (_characterInfoController.CurCharacterEnhance != this) return;
@@ -171,7 +222,7 @@ public class CharacterEnhance : MonoBehaviour
                 && _curCharacterToken > _selectedCharacterMaterial)
             {
                 _selectedCharacterMaterial++;
-                _characterInfoController._infoUI._tokenInputField.text = _selectedCharacterMaterial.ToString();
+                SetTextInputField(_selectedCharacterMaterial);
             } 
         }
         else if (_curTokenType == EnhanceTokenType.COMMON_TOKEN)
@@ -180,7 +231,7 @@ public class CharacterEnhance : MonoBehaviour
                 && _characterInfoController.UserDragonCandy > _selectedCommonMaterial)
             {
                 _selectedCommonMaterial++;
-                _characterInfoController._infoUI._tokenInputField.text = _selectedCommonMaterial.ToString();
+                SetTextInputField(_selectedCommonMaterial);
             } 
         }
     }
@@ -188,7 +239,6 @@ public class CharacterEnhance : MonoBehaviour
     /// <summary>
     /// 감소 버튼 클릭 기능 동작
     /// </summary>
-    /// <param name="value"></param>
     private void DecreaseToken()
     {
         if (_characterInfoController.CurCharacterEnhance != this) return;
@@ -198,7 +248,7 @@ public class CharacterEnhance : MonoBehaviour
             if (_selectedCharacterMaterial > 0)
             {
                 _selectedCharacterMaterial--;
-                _characterInfoController._infoUI._tokenInputField.text = _selectedCharacterMaterial.ToString();
+                SetTextInputField(_selectedCharacterMaterial);
             }
         }
         else if (_curTokenType == EnhanceTokenType.COMMON_TOKEN)
@@ -206,7 +256,7 @@ public class CharacterEnhance : MonoBehaviour
             if (_selectedCommonMaterial > 0)
             {
                 _selectedCommonMaterial--;
-                _characterInfoController._infoUI._tokenInputField.text = _selectedCommonMaterial.ToString();
+                SetTextInputField(_selectedCommonMaterial);
             } 
         }
 
@@ -229,12 +279,12 @@ public class CharacterEnhance : MonoBehaviour
                 if (_characterInfoController.UserDragonCandy < (_enhanceDragonCandyCost - _selectedCharacterMaterial))
                 {
                     _selectedCommonMaterial = _characterInfoController.UserDragonCandy;
-                    _characterInfoController._infoUI._tokenInputField.text = _selectedCommonMaterial.ToString();
+                    SetTextInputField(_selectedCommonMaterial);
                 }
                 else
                 {
                     _selectedCommonMaterial = (_enhanceDragonCandyCost - _selectedCharacterMaterial);
-                    _characterInfoController._infoUI._tokenInputField.text = _selectedCommonMaterial.ToString();
+                    SetTextInputField(_selectedCommonMaterial);
                 } 
             }
             else
@@ -242,7 +292,7 @@ public class CharacterEnhance : MonoBehaviour
                 if (_characterInfoController.UserDragonCandy < _selectedCommonMaterial)
                 {
                     _selectedCommonMaterial = _characterInfoController.UserDragonCandy;
-                    _characterInfoController._infoUI._tokenInputField.text = _selectedCommonMaterial.ToString();
+                    SetTextInputField(_selectedCommonMaterial);
                 }
             }
         }
@@ -255,12 +305,12 @@ public class CharacterEnhance : MonoBehaviour
                 if (_curCharacterToken < (_enhanceDragonCandyCost - _selectedCommonMaterial))
                 {
                     _selectedCharacterMaterial = _curCharacterToken;
-                    _characterInfoController._infoUI._tokenInputField.text = _selectedCharacterMaterial.ToString();
+                    SetTextInputField(_selectedCharacterMaterial);
                 }
                 else
                 {
                     _selectedCharacterMaterial = (_enhanceDragonCandyCost - _selectedCommonMaterial);
-                    _characterInfoController._infoUI._tokenInputField.text = _selectedCharacterMaterial.ToString();
+                    SetTextInputField(_selectedCharacterMaterial);
                 }
             }
             else
@@ -268,7 +318,7 @@ public class CharacterEnhance : MonoBehaviour
                 if (_curCharacterToken < _selectedCharacterMaterial)
                 {
                     _selectedCharacterMaterial = _curCharacterToken;
-                    _characterInfoController._infoUI._tokenInputField.text = _selectedCharacterMaterial.ToString();
+                    SetTextInputField(_selectedCharacterMaterial);
                 } 
             }
         } 
@@ -296,21 +346,41 @@ public class CharacterEnhance : MonoBehaviour
             case EnhanceTokenType.NONE:
                 _selectedCharacterMaterial = 0;
                 _selectedCommonMaterial = 0;
-                _characterInfoController._infoUI._tokenInputField.text = 0.ToString();
-                _characterInfoController._infoUI._characterTokenCountText.text = _selectedCharacterMaterial.ToString();
-                _characterInfoController._infoUI._commonTokenCountText.text = _selectedCommonMaterial.ToString(); 
+                SetTextInputField(0);
+                SetTextCommonTokenCount();
+                SetTextCharacterTokenCount(); 
                 break;
             
             case EnhanceTokenType.COMMON_TOKEN:
-                _characterInfoController._infoUI._commonTokenCountText.text = _selectedCommonMaterial.ToString();
+                SetTextCommonTokenCount();
                 break;
             
             case EnhanceTokenType.CHARACTER_TOKEN: 
-                _characterInfoController._infoUI._characterTokenCountText.text = _selectedCharacterMaterial.ToString();
+                SetTextCharacterTokenCount();
+                break;
+            
+            case EnhanceTokenType.AUTO:
+                SetTextCommonTokenCount();
+                SetTextCharacterTokenCount();
                 break;
         } 
     }
+
+    private void SetTextInputField(int value)
+    {
+        _characterInfoController._infoUI._tokenInputField.text = value.ToString();
+    }
     
+    private void SetTextCommonTokenCount()
+    {
+        _characterInfoController._infoUI._commonTokenCountText.text = _selectedCommonMaterial.ToString();
+    }
+
+    private void SetTextCharacterTokenCount()
+    {
+        _characterInfoController._infoUI._characterTokenCountText.text = _selectedCharacterMaterial.ToString();
+    }
+
     /// <summary>
     /// 강화 이전 정보
     /// </summary>
@@ -323,10 +393,10 @@ public class CharacterEnhance : MonoBehaviour
 
         SetEnhanceCost();
 
-        _characterInfoController._infoUI._beforeUpGradeText.text = $"현재 등급 {_beforeEnhanceLevel}";
-        _characterInfoController._infoUI._beforeHpText.text = $"체력 {_beforeHp}";
+        _characterInfoController._infoUI._beforeUpGradeText.text = $"+{_beforeEnhanceLevel} 현재 능력치";
         _characterInfoController._infoUI._beforeAtkText.text = $"공격력 {_beforeAtk}";
         _characterInfoController._infoUI._beforeDefText.text = $"방어력 {_beforeDef}";
+        _characterInfoController._infoUI._beforeHpText.text = $"체력 {_beforeHp}";
     }
 
     /// <summary>
@@ -336,12 +406,11 @@ public class CharacterEnhance : MonoBehaviour
     {
         _afterEnhanceLevel = (_beforeEnhanceLevel + 1);
         _characterInfoController._infoUI._afterMax.SetActive(_beforeEnhanceLevel >= 10);
-        _characterInfoController._infoUI._beforeMax.SetActive(_beforeEnhanceLevel < 10);
+        _characterInfoController._infoUI._beforeMax.SetActive(_beforeEnhanceLevel < 10 && _characterInfoController.CurInfoTabType == InfoTabType.ENHANCE);
 
         if (_afterEnhanceLevel > 10)
         {
             //강화 Max 단계 정보
-            _characterInfoController._infoUI._afterMaxTitleText.text = $"{_characterData.Name} +{_beforeEnhanceLevel}";
             _characterInfoController._infoUI._afterMaxHpText.text = $"체력 : {_characterData.HpPointLeveled}";
             _characterInfoController._infoUI._afterMaxAtkText.text = $"공격력 : {_characterData.AttackPointLeveled}";
             _characterInfoController._infoUI._afterMaxDefText.text = $"방어력 : {_characterData.DefensePointLeveled}";
@@ -356,7 +425,7 @@ public class CharacterEnhance : MonoBehaviour
             _afterAtk = Convert.ToInt32(_characterData.AttackPointLeveled * (1f + 0.1f * _afterEnhanceLevel) / (1f + 0.1f * (_characterData.Enhancement.Value)));
             _afterDef = Convert.ToInt32(_characterData.DefensePointLeveled * (1f + 0.1f * _afterEnhanceLevel) / (1f + 0.1f * (_characterData.Enhancement.Value)));
 
-            _characterInfoController._infoUI._afterUpGradeText.text = $"강화 후 등급 {_afterEnhanceLevel}";
+            _characterInfoController._infoUI._afterUpGradeText.text = $"+{_afterEnhanceLevel} 강화 후 능력치";
             _characterInfoController._infoUI._afterHpText.text = $"체력 {_afterHp}";
             _characterInfoController._infoUI._afterAtkText.text = $"공격력 {_afterAtk}";
             _characterInfoController._infoUI._afterDefText.text = $"방어력 {_afterDef}";
@@ -414,8 +483,6 @@ public class CharacterEnhance : MonoBehaviour
     /// </summary>
     private void DragonCandyDataUpdate(int enhanceValue,bool result)
     {
-        //TODO: 강화 시도 시 현재 선택한 토큰들 감소 진행
-        //TODO: UserData 업데이트 하는 부분 수정 필요
         UserDataInt _characterToken = GameManager.TableData
             .GetItemData(_characterInfoController.CurCharacterInfo._CharacterData.EnhanceItemID).Number;
 
@@ -426,7 +493,7 @@ public class CharacterEnhance : MonoBehaviour
             .SetDBValue(_characterToken, _characterToken.Value - _selectedCharacterMaterial)
             .Submit(result ? EnhanceSuccess : EnhanceFail);  
     }
-    
+ 
     /// <summary>
     /// 강화 성공 후
     /// </summary>
@@ -440,6 +507,8 @@ public class CharacterEnhance : MonoBehaviour
         }
 
         _curTokenType = EnhanceTokenType.NONE;
+        _characterInfoController.UserCharacterToken = GameManager.TableData.GetItemData(_characterInfoController.CurCharacterInfo._CharacterData.EnhanceItemID).Number.Value;
+        
         TokenCountTextUpdate();
         ResultPopup($"+{_characterData.Enhancement.Value} 강화에 성공하셨습니다.", _characterInfoController._infoUI.EnhanceResultIcons[0]);
         CharacterStats();
@@ -459,10 +528,13 @@ public class CharacterEnhance : MonoBehaviour
         }
 
         _curTokenType = EnhanceTokenType.NONE;
+        _characterInfoController.UserCharacterToken = GameManager.TableData.GetItemData(_characterInfoController.CurCharacterInfo._CharacterData.EnhanceItemID).Number.Value;
+        
         TokenCountTextUpdate();
+        ResultPopup($"+{_characterData.Enhancement.Value + 1} 강화에 실패하셨습니다. \n 마일리지 적립 +10%", _characterInfoController._infoUI.EnhanceResultIcons[1]);
+        CharacterStats();
         UpdateInfo();
         EnhanceCheck();
-        ResultPopup($"+{_characterData.Enhancement.Value + 1} 강화에 실패하셨습니다. \n 마일리지 적립 +10%", _characterInfoController._infoUI.EnhanceResultIcons[1]);
         //TODO: 마일리지 누적 값 수정 필요
         MileageUpdate(_characterData.EnhanceMileagePerMill.Value + 100);
     }
@@ -484,6 +556,7 @@ public class CharacterEnhance : MonoBehaviour
                 }
                 _characterInfoController._infoUI._mileageSlider.value = _mileage;
                 _characterInfoController._infoUI._mileageUseButton.interactable = _mileage >= 1f;
+                SliderValue = _mileage; 
             });
     }
 
@@ -506,12 +579,14 @@ public class CharacterEnhance : MonoBehaviour
     {
         _characterInfoController._infoUI._mileageValueText.text = $"강화 마일리지 {Mathf.Floor(value * 100f)}%";
     }
-
+    
+    /// <summary>
+    /// 마일리지 사용
+    /// </summary>
     private void UseMileage()
     {
         if (_characterInfoController.CurCharacterEnhance != this) return;
-        
-        
+
         GameManager.UserData.StartUpdateStream()
             .SetDBValue(_characterData.Enhancement, _characterData.Enhancement.Value + 1)
             .Submit(result =>
@@ -562,11 +637,11 @@ public class CharacterEnhance : MonoBehaviour
     /// </summary>
     private void SetEnhanceCost()
     {
-        _enhanceDragonCandyCost = 500 * (_beforeEnhanceLevel + 1);
+        //TODO: 강화 코스트 수정 필요
+        _enhanceDragonCandyCost = 10 * (_beforeEnhanceLevel + 1);
         _enhanceGoldCost = 100 * (_beforeEnhanceLevel + 1);
         _characterInfoController._infoUI._enhanceCoinText.text = _enhanceGoldCost.ToString();
         _characterInfoController._infoUI._enhanceMaterialText.text = _enhanceDragonCandyCost.ToString();
-        _characterInfoController._infoUI._requireTokenText.text = $"필요한 토큰 {_enhanceDragonCandyCost}개";
     }
 
     /// <summary>
@@ -596,6 +671,7 @@ public class CharacterEnhance : MonoBehaviour
         _characterData = characterData;
         _characterInfoController._infoUI._mileageSlider.value = _mileage;
         _characterInfoController._infoUI._mileageUseButton.interactable = _mileage >= 1f;
+        SliderValue = _mileage;
         SetEnhanceCost();
         EnhanceCheck();
     }

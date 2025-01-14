@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using Random = System.Random;
 
 public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 {
@@ -130,6 +132,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             .Submit(LevelUpSuccess);
     }
 
+    private Coroutine _levelUpEffectCo;
     /// <summary>
     /// 레벨업 결과
     /// </summary>
@@ -145,9 +148,81 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController.UserGold = _characterInfoController.UserGoldData.Value;
         _characterInfoController.UserYongGwa = _characterInfoController.UserYongGwaData.Value;
         UpdateInfo(); 
-        //TODO: 레벨업 UI 나올 위치
+
+        //레벨업 시 이펙트 재생 및 추가 스탯 UI
+        if (_characterLevel % 10 != 0)
+        {
+            if (_levelUpEffectCo == null)
+            {
+                _levelUpEffectCo = StartCoroutine(LevelUpEffectRoutine(_characterInfoController._infoUI._levelUpNormalEffect, 0.25f));
+            } 
+        }
+        else
+        {
+            if (_levelUpEffectCo == null)
+            {
+                _levelUpEffectCo = StartCoroutine(LevelUpEffectRoutine(_characterInfoController._infoUI._levelUpSpecialEffect, 0.5f));
+                _characterInfoController._infoUI._bonusPopup.SetActive(true);
+                _characterInfoController._infoUI._bonusLevelText.text = $"{_characterLevel}레벨 달성!";
+
+                int atk = (int)(((_characterData.StatusTable.attackPointBase + _characterData.StatusTable.attackPointGrowth) * _characterLevel) * (1f + 0.1f * _characterData.Enhancement.Value));
+                int def = (int)(((_characterData.StatusTable.defensePointBase + _characterData.StatusTable.defensePointGrouth) * _characterLevel) * (1f + 0.1f * _characterData.Enhancement.Value));
+                int hp = (int)(((_characterData.StatusTable.healthPointBase + _characterData.StatusTable.healthPointGrouth) * _characterLevel) * (1f + 0.1f * _characterData.Enhancement.Value));
+                
+                //레벨업 전 정보
+                _characterInfoController._infoUI._beforeBonusAtkText.text =
+                    $"공격력 {atk}";
+                _characterInfoController._infoUI._beforeBonusDefText.text =
+                    $"방어력 {def}";
+                _characterInfoController._infoUI._beforeBonusHpText.text =
+                    $"체력 {hp}";
+                    
+                //TODO: 레벨업 스탯 임시 보정 -> Data도 수정 필요
+                //레벨업 후 정보
+                _characterInfoController._infoUI._afterBonusAtkText.text =
+                    $"공격력 {atk + ((_characterLevel / 10) * 10)} + {((_characterLevel / 10) * 10)}";
+
+                _characterInfoController._infoUI._afterBonusDefText.text =
+                    $"방어력 {def + ((_characterLevel / 10) * 10)} + {((_characterLevel / 10) * 10)}";
+                
+                _characterInfoController._infoUI._afterBonusHpText.text =
+                    $"체력 {hp + ((_characterLevel / 10) * 10)} + {((_characterLevel / 10) * 10)}";
+            } 
+        }
     }
- 
+     
+    /// <summary>
+    /// 레벨업 이펙트 코루틴
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator LevelUpEffectRoutine(Image effectImage ,float value)
+    {
+        float elapsedTime = 0f;
+        float endTime = value;
+
+        while (elapsedTime <= endTime)
+        {
+            float r = UnityEngine.Random.Range(0, 1f);
+            float g = UnityEngine.Random.Range(0, 1f);
+            float b = UnityEngine.Random.Range(0, 1f);
+            
+            elapsedTime += Time.deltaTime;
+            effectImage.color = new Color(r, g, b, elapsedTime + 0.35f);
+            yield return null;
+        }
+
+        while (elapsedTime > 0)
+        {
+            float r = UnityEngine.Random.Range(0, 1f);
+            float g = UnityEngine.Random.Range(0, 1f);
+            float b = UnityEngine.Random.Range(0, 1f);
+            
+            elapsedTime -= Time.deltaTime;
+            effectImage.color = new Color(r, g, b, elapsedTime);
+            yield return null;
+        } 
+    }
+    
     /// <summary>
     /// 현재 캐릭터 정보 할당 기능
     /// </summary>
@@ -157,7 +232,6 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController.CurCharacterEnhance = _characterEnhance; 
         _characterInfoController.CurIndex = _characterInfoController._characterInfos.IndexOf(this);
         _characterInfoController._infoPopup.SetActive(true);
-        
         UpdateInfo();
     }
  
@@ -197,6 +271,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private CharacterModel CreateModelPrefab(CharacterModel model, Vector3 pos, Vector3 scale, bool active)
     {
         model = Instantiate(model, pos, Quaternion.identity);
+        //TODO: Scale 값 곱하는 것으로 변경 
         model.transform.localScale = scale;
         model.gameObject.SetActive(active);
         CharacterModels.Add(model);
@@ -211,6 +286,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterEnhance.GetCharacterData(_characterData);
         _characterEnhance.OnBeforeEnhance?.Invoke();
         _characterEnhance.OnAfterEnhance?.Invoke();
+        _characterInfoController.UserYongGwa = _characterInfoController.UserYongGwaData.Value;
         CharacterStats();
         
         if (GameManager.UserData.HasCharacter(_characterData.Id))
@@ -231,12 +307,9 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             _characterInfoController._infoUI._enhanceTabButton.interactable = false;
         }
         
-        _characterInfoController._infoUI._beforeNameText.text = _characterData.Name;
-        _characterInfoController._infoUI._beforeEnhanceLevelText.text =$"+{_characterData.Enhancement.Value.ToString()}";
-        
         _characterInfoController._infoUI._nameText.text = _characterData.Name;
         _characterInfoController._infoUI._characterImage.sprite = _characterData.FaceIconSprite;
-        _characterInfoController._infoUI._levelText.text = _characterData.Level.Value.ToString();
+        _characterInfoController._infoUI._levelText.text = $"Lv. {_characterData.Level.Value}";
         _characterInfoController._infoUI._enhanceText.text = $"+{_characterData.Enhancement.Value.ToString()}";
         _characterInfoController._infoUI._powerLevelText.text = $"전투력 {_powerLevel}";
         _characterInfoController._infoUI._atkText.text = $"공격력 {_atk}";
@@ -246,8 +319,11 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController._infoUI._skillAIconImage.sprite = _characterData.NormalSkillIcon;
         _characterInfoController._infoUI._skillBIconImage.sprite = _characterData.SpecialSkillIcon;
 
-        _characterInfoController._infoUI._skillADescText.text = _characterData.NormalSkillToolTip;
-        _characterInfoController._infoUI._skillBDescText.text = _characterData.SpecialSkillToolTip;
+        //TODO: 캐릭터 스킬 이름 데이터 가져오기
+        _characterInfoController._infoUI._skillNormalTitleText.text = "미정";
+        _characterInfoController._infoUI._skillSpecialTitleText.text = "미정"; 
+        _characterInfoController._infoUI._skillNormalDescText.text = _characterData.NormalSkillToolTip;
+        _characterInfoController._infoUI._skillSpecialDescText.text = _characterData.SpecialSkillToolTip;
         
         //TODO: 임시 텍스트 -> 속성 이미지로 변경 필요
         ElementType tempElementType = (ElementType)_characterData.StatusTable.type;
@@ -277,7 +353,13 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             DragonVeinType.SINGLE => "단일",
             DragonVeinType.MULTI => "범위",
             _ => throw new AggregateException("잘못")
-        }; 
+        };
+
+        if (_levelUpEffectCo != null)
+        {
+            StopCoroutine(_levelUpEffectCo);
+            _levelUpEffectCo = null;
+        }
     }
   
     /// <summary>
