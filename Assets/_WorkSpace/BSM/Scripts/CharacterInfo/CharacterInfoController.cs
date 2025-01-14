@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class CharacterInfoController : BaseUI
 {
+    public GameObject ModelParent;
     public List<Sprite> TokenIcons;
     
     [HideInInspector] public CharacterInfoUI _infoUI;
@@ -303,10 +304,9 @@ public class CharacterInfoController : BaseUI
         
         CurCharacterInfo.CharacterModels[_characterInfoPopupCs.ListIndex].gameObject.SetActive(_curInfoTabType.Equals(InfoTabType.EVOLUTION));
         _evolutionIndex = 0;
-        _characterInfoPopupCs.ListIndex = _evolutionIndex; 
-        _leftEvolutionButton.gameObject.SetActive(_evolutionIndex != 0);
-        _rightEvolutionButton.gameObject.SetActive(_evolutionIndex != CurCharacterInfo.CharacterModels.Count - 1);
-
+        _characterInfoPopupCs.ListIndex = _evolutionIndex;
+        EvolutionCharacterUI();
+        
         //강화 탭 등록한 토큰 개수 UI
         _infoUI._characterTokenCountText.text = 0.ToString();
         _infoUI._commonTokenCountText.text = 0.ToString();
@@ -364,7 +364,7 @@ public class CharacterInfoController : BaseUI
     private void EvolutionCharacterUI()
     {
         _leftEvolutionButton.gameObject.SetActive(_evolutionIndex != 0);
-        _rightEvolutionButton.gameObject.SetActive(_evolutionIndex != 2);
+        _rightEvolutionButton.gameObject.SetActive(_evolutionIndex != CurCharacterInfo.CharacterModels.Count - 1);
         _evolutionText.text = $"진화 Lv.{_evolutionIndex + 1}";
     }
     
