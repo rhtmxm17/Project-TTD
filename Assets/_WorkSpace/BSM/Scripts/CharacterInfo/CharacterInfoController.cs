@@ -81,6 +81,7 @@ public class CharacterInfoController : BaseUI
         set
         {
             _userYongGwa = value;
+            _infoUI._levelYongGwaAmountText.text = _userYongGwa.ToString();
         }
     }
     
@@ -95,6 +96,7 @@ public class CharacterInfoController : BaseUI
         {
             _userGold = value;
             _infoUI._amountGoldText.text = _userGold.ToString();
+            _infoUI._levelGoldAmountText.text = _userGold.ToString();
         } 
     }
     

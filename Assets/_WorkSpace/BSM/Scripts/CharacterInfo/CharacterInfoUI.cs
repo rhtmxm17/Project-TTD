@@ -27,6 +27,8 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _afterBonusDefText;
     [HideInInspector] public TextMeshProUGUI _afterBonusHpText;
     [HideInInspector] public TextMeshProUGUI _bonusLevelText;
+    [HideInInspector] public TextMeshProUGUI _levelGoldAmountText;
+    [HideInInspector] public TextMeshProUGUI _levelYongGwaAmountText;
     
     [HideInInspector] public Image _skillAIconImage;
     [HideInInspector] public Image _skillBIconImage;
@@ -218,8 +220,10 @@ public class CharacterInfoUI : BaseUI
         _afterBonusAtkText = GetUI<TextMeshProUGUI>("AfterBonusAtkText");
         _afterBonusDefText = GetUI<TextMeshProUGUI>("AfterBonusDefText");
         _afterBonusHpText = GetUI<TextMeshProUGUI>("AfterBonusHpText");
-        _bonusLevelText = GetUI<TextMeshProUGUI>("BonusLevelText"); 
-        
+        _bonusLevelText = GetUI<TextMeshProUGUI>("BonusLevelText");
+        _levelGoldAmountText = GetUI<TextMeshProUGUI>("LevelCoinAmountText");
+        _levelYongGwaAmountText = GetUI<TextMeshProUGUI>("LevelYongGwaAmountText");
+
         _levelUpSpecialEffect = GetUI<Image>("LevelUpSpecialEffect");
         _levelUpNormalEffect = GetUI<Image>("LevelUpNormalEffect");
         _skillAIconImage = GetUI<Image>("SkillIconA");
