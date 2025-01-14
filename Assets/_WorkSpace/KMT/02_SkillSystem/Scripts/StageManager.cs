@@ -167,6 +167,8 @@ public class StageManager : MonoBehaviour
         MAX_WAVE = maxWave.ToString();
         curWave = 0;
 
+        timeLimit = stageDataOnLoad.TimeLimit;
+
         AddWaveText();
 
     }

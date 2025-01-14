@@ -42,29 +42,6 @@ public class ExpStageManager : StageManager
 
         Rewarding(false);
 
-/*        //패배
-        List<CharacterData> chDataL = new List<CharacterData>(batchDictionary.Values);
-        int randIdx = UnityEngine.Random.Range(0, chDataL.Count);
-
-        resultPopupWindow.OpenDoubleButtonWithResult(
-            stageDataOnLoad.StageName,
-            null,
-            "확인", LoadPreviousScene,
-            "재도전", () => {
-
-                GameManager.OverlayUIManager.OpenDoubleInfoPopup("재도전하시겠습니까?", "아니요", "네",
-                    null, () => {
-                        //TODO : 용도에 따라서 지우거나 이용
-                        //prevSceneData.stageData = prevSceneData.stageData;
-                        //prevSceneData.prevScene = prevSceneData.prevScene;
-                        GameManager.Instance.LoadBattleFormationScene(prevSceneData);
-                    });
-
-            },
-            true, false,
-            "패배..", chDataL[randIdx].FaceIconSprite,
-            AdvencedPopupInCombatResult.ColorType.DEFEAT
-        );*/
     }
 
     protected override IEnumerator StartTimerCO()
