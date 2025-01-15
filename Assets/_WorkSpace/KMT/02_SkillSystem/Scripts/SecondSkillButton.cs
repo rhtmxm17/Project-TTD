@@ -91,6 +91,16 @@ public class SecondSkillButton : MonoBehaviour
         }
     }
 
+    public void DecreseCooltime(float amount)
+    {
+
+        if (skillCooldownCoroutine != null)
+        {
+            waitedCooltime += amount;
+        }
+
+    }
+
     IEnumerator StartCoolDownCO(float coolTime)
     {
         yield return null;
