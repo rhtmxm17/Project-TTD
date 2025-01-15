@@ -12,7 +12,7 @@ public class CharacterInteract : MonoBehaviour
     [SerializeField] Image talkImage;
     
     [SerializeField] TMP_Text talkText;                 // 출력할 대화창
-     private string[] talkdialogue;     // 대사들 모음
+    private string[] talkdialogue;     // 대사들 모음
     [SerializeField] private int repeatNum;             // 반복 대사 스텍
     
     [SerializeField] private MyRoomCData[] roomCData;
@@ -22,6 +22,9 @@ public class CharacterInteract : MonoBehaviour
     RectTransform rectTransform;
     
     private Coroutine talkCoroutine;
+    
+    // 상점에서 사용할 경우
+    [SerializeField] private bool isShop;
     
     // 친구방 놀러감
     [SerializeField] public bool isFriendRoom;
@@ -40,15 +43,37 @@ public class CharacterInteract : MonoBehaviour
             characterIndex = friendRoomIndex;
         }
         
-        talkdialogue = roomCData[characterIndex].CharacterDialogue; 
-        
-        // 주어진 대사에서 랜덤하게 대사 출력
-        talkText.text = talkdialogue[Random.Range(0,talkdialogue.Length-1)];
-        // 랜덤 대사 스택이 다 쌓이면
-        if (repeatNum == 5)
+        talkdialogue = roomCData[characterIndex].CharacterDialogue;
+
+        // 상점에서 사용할 경우
+        if (isShop)
         {
-            talkText.text = talkdialogue[talkdialogue.Length-1];
-            repeatNum = 0;
+            // 주어진 대사에서 랜덤하게 대사 출력
+            talkText.text = talkdialogue[Random.Range(0,talkdialogue.Length-1)];
+        
+            // 5스택 대사
+            if (repeatNum == 5)
+            {
+                talkText.text = talkdialogue[talkdialogue.Length-1];
+            }
+        }
+        
+        // 마이룸에서 사용할 경우(기본)
+        else
+        {
+            talkText.text = talkdialogue[Random.Range(0,talkdialogue.Length-4)];
+            
+            // 5스택 대사
+            if (repeatNum == 5)
+            {
+                talkText.text = talkdialogue[Random.Range(talkdialogue.Length-3,talkdialogue.Length-2)];
+            }
+            // 10스택 대사 
+            if (repeatNum == 10)
+            {
+                talkText.text = talkdialogue[talkdialogue.Length-1];
+                repeatNum = 0;
+            }
         }
         
         talkBox.SetActive(true);
