@@ -51,6 +51,7 @@ public class PurchasingPanel : BaseUI
         Init();
     }
 
+
     private void Init()
     {
         // Buttons

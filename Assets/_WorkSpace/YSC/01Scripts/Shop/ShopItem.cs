@@ -55,7 +55,17 @@ public class ShopItem : BaseUI
     private void Start()
     {
         Init();
+        
+    }
+
+    void OnEnable()
+    {
         SubscribeEvents();
+    }
+
+    void OnDisable()
+    {
+        PurchasingPanel.OnAmountChanged -= UpdateInfo; 
     }
     private void Init()
     {
