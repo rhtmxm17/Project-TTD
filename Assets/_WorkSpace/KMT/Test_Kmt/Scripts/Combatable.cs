@@ -6,19 +6,19 @@ using UnityEngine.Events;
 using UniRx;
 using Unity.Mathematics;
 using UnityEngine.UI;
-//using static Spine.Unity.Editor.SkeletonBaker.BoneWeightContainer;
+using UnityEngine.AI;
+using Spine;
+using Unity.IO.LowLevel.Unsafe;
 
-[RequireComponent(typeof(Trackable))]
+[RequireComponent(typeof(NavMeshAgent))]
 public class Combatable : MonoBehaviour
 {
 
     [SerializeField]
     CombManager againistObjList;
-    [SerializeField]
-    SearchLogic searchLogicType;
 
     [SerializeField]
-    Slider hpSlider;
+    protected Slider hpSlider;
 
     [HideInInspector]
     public UnityEvent waveClearEvent = new UnityEvent();
@@ -27,27 +27,30 @@ public class Combatable : MonoBehaviour
     public UnityEvent<Combatable> onDeadEvent = new UnityEvent<Combatable>();
     public UnityEvent<float> onDamagedEvent = new UnityEvent<float>();
 
-    protected Trackable trackable;
     protected Coroutine curActionCoroutine = null;
-    protected Coroutine moveCoroutine = null;
-    protected SkillButton SkillButton;
 
-    Func<Transform, Combatable> foundEnemyLogic = null;
-    Func<Transform, Combatable> foundNearEnemyLogic = null;
-    Func<Transform, Combatable> foundFarEnemyLogic = null;
-
-    int rangePow;
+    protected float range;
     Skill baseAttack;
+
+    protected int curActionPriority = 0;
+
+    protected NavMeshAgent agent;
+    protected CharacterModel characterModel;
+
+    [Header("No Damage")]
+    [SerializeField]
+    protected bool IsNoDamage = false;
 
     [Header("TestParams")]
     [SerializeField]
     public float igDefenseRate;
-
     //무적 디버그를 위한 public
     [SerializeField]
     public float defConst;
 
     public bool IsAlive { get; private set; }
+
+    public float CharacterSizeRadius {  get; protected set; }
 
     public enum SearchLogic { NEAR_FIRST, FAR_FIRST }
 
@@ -55,9 +58,8 @@ public class Combatable : MonoBehaviour
 
     protected virtual void Awake()
     {
-
-        trackable = GetComponent<Trackable>();
         onDeadEvent.AddListener(GetComponentInParent<CombManager>().OnDead);
+        agent = GetComponent<NavMeshAgent>();
 
         AttackPoint = attackPoint.ToReadOnlyReactiveProperty();
         Hp = hp.ToReadOnlyReactiveProperty();
@@ -66,11 +68,43 @@ public class Combatable : MonoBehaviour
     }
 
     /// <summary>
-    /// 전투 씬에서 캐릭터를 초기화
+    /// 전투 씬에서 유저 데이터의 레벨 등 상태에 기반해 캐릭터를 초기화
     /// </summary>
     /// <param name="Group">캐릭터가 속한 그룹(플레이어측 혹은 적 웨이브)</param>
     /// <param name="data">캐릭터 데이터</param>
-    public void Initialize(CombManager Group, CharacterData data) => InitializeWithLevel(Group, data, data.Level.Value);
+    public void InitializeWithUserData(CombManager Group, CharacterData data)
+    {
+        if (characterData != null)
+        {
+            Debug.LogWarning("캐릭터 초기화 함수가 두 번 실행됨");
+        }
+        characterData = data;
+        gameObject.name = data.Name;
+        SetCharacterModel(data.ModelPrefab);
+        // 그룹 지정
+        this.Group = Group;
+        IsAlive = true;
+        CharacterData.Status table = data.StatusTable;
+
+        // ============= 능력치 셋팅 ==============
+        attackPoint.Value = data.AttackPointLeveled;
+        maxHp.Value = data.HpPointLeveled;
+        hp.Value = MaxHp.Value;
+        defense.Value = data.DefensePointLeveled;
+
+        defConst = table.defenseCon;
+        agent.stoppingDistance = table.Range;
+        range = table.Range;//사거리
+
+        //TODO : 이동속도가 다른경우 파라미터 추가하기.
+
+        baseAttack = data.BasicSkillDataSO;
+
+        hp.Subscribe(x =>
+        {
+            hpSlider.value = x / MaxHp.Value;
+        });
+    }
 
     /// <summary>
     /// 전투 씬에서 레벨을 지정해서 캐릭터를 초기화
@@ -85,49 +119,55 @@ public class Combatable : MonoBehaviour
             Debug.LogWarning("캐릭터 초기화 함수가 두 번 실행됨");
         }
         characterData = data;
-
-        // 외형 생성
-        GameObject model = Instantiate(data.ModelPrefab, this.transform);
-        model.name = "Model";
-        if (false == model.TryGetComponent(out Animator animator))
-        {
-            animator = model.GetComponentInChildren<Animator>();
-        }
-        UnitAnimator = animator;
-
+        gameObject.name = data.Name;
+        SetCharacterModel(data.ModelPrefab);
         // 그룹 지정
         this.Group = Group;
-
         IsAlive = true;
+        CharacterData.Status table = data.StatusTable;
 
-        // 레벨이 지정되지 않았을 경우 유저 데이터의 레벨 사용
-        if (level < 0)
-            level = data.Level.Value;
-
-        CharacterData.Status table  = data.StatusTable;
-
+        // ============= 능력치 셋팅 ==============
         attackPoint.Value = table.attackPointBase
                           + table.attackPointGrowth * level;
-
         maxHp.Value = table.healthPointBase
                     + table.healthPointGrouth * level;
-
         hp.Value = MaxHp.Value;
-
         defense.Value = table.defensePointBase
                       + table.defensePointGrouth * level;
 
         defConst = table.defenseCon;
-        
-        rangePow = (int)(table.Range * table.Range);//사거리
+        agent.stoppingDistance = table.Range;
+        range = table.Range;//사거리
+
+        //TODO : 이동속도가 다른경우 파라미터 추가하기.
 
         baseAttack = data.BasicSkillDataSO;
 
-        hp.Subscribe(x => {
-
+        hp.Subscribe(x =>
+        {
             hpSlider.value = x / MaxHp.Value;
-
         });
+    }
+
+    /// <summary>
+    /// 모델을 세팅하는 함수
+    /// </summary>
+    /// <param name="modelData">세팅할 모델 프리팹</param>
+    protected virtual void SetCharacterModel(CharacterModel modelData)
+    {
+        if(characterModel != null)
+            Destroy(characterModel.gameObject);
+
+        // 외형 생성
+        characterModel = Instantiate(modelData, transform);
+        characterModel.transform.rotation = Quaternion.Euler(90, 0, 0);
+        CharacterSizeRadius = characterModel.ModelSize;
+        characterModel.name = "Model";
+        if (false == characterModel.TryGetComponent(out Animator animator))
+        {
+            animator = characterModel.GetComponentInChildren<Animator>();
+        }
+        UnitAnimator = animator;
     }
 
     public Animator UnitAnimator { get; private set; }
@@ -142,25 +182,96 @@ public class Combatable : MonoBehaviour
     protected ReactiveProperty<float> maxHp = new ReactiveProperty<float>();
     public ReadOnlyReactiveProperty<float> MaxHp;
 
+    /// <summary>
+    /// 버프받기 전 베이스 방어력
+    /// </summary>
     protected ReactiveProperty<float> defense = new ReactiveProperty<float>();
+    /// <summary>
+    /// 버프받기 전 베이스 방어력
+    /// </summary>
     public ReadOnlyReactiveProperty<float> Defense;
 
-    public void Damaged(float damage, float igDefRate)
+    public void Healed(float amount)
     {
-
         if (!IsAlive)
         {
             Debug.Log("이미 죽은 대상.");
             return;
         }
 
-        damage = DamageCalculator.Calc(damage, igDefRate, defense.Value, defConst);
+        float healAmount = hp.Value;
 
-        //Debug.Log($"피격데미지{damage}");
+        float afterHp = MathF.Min(MaxHp.Value, hp.Value + amount);
+
+        healAmount = afterHp - healAmount;
+        StageManager.Instance.DamageDisplayer.PlayTextDisplay(healAmount, false, transform.position + Vector3.forward * CharacterSizeRadius * 3);
+
+        hp.Value = afterHp;
+
+    }
+
+    List<int> defBuffList = new List<int>();
+
+    /// <summary>
+    /// 현재 받고있는 방어력 버프 수치
+    /// </summary>
+    int defBuffAmount;
+
+    //방어 버프 영역.
+    public void AddDefBuff(int amount)
+    {
+        defBuffList.Add(amount);
+        ReCalcDefBuff();
+    }
+    public void RemoveDefBuff(int amount)
+    {
+        defBuffList.Remove(amount);
+        ReCalcDefBuff();
+    }
+    void ReCalcDefBuff()
+    {
+        defBuffAmount = 0;
+
+        foreach (int amount in defBuffList)
+        {
+            defBuffAmount = Math.Max(defBuffAmount, amount);
+        }
+    }
+
+    public void StatusBuffed(StatusBuffType type, float value)
+    {
+        switch (type)
+        {
+            case StatusBuffType.ATK_PERCENTAGE:
+                attackPoint.Value *= (1f + value * 0.01f);
+                break;
+            case StatusBuffType.DEF_PERCENTAGE:
+                defense.Value *= (1f + value * 0.01f);
+                break;
+            default:
+                Debug.LogWarning("잘못되었거나 정의되지 않은 버프 타입");
+                break;
+        }
+    }
+
+    public void Damaged(float damage, float igDefRate, ElementType atackerType)
+    {
+        if (!IsAlive)
+        {
+            Debug.Log("이미 죽은 대상.");
+            return;
+        }
+
+        damage = DamageCalculator.Calc(damage, igDefRate, defense.Value + defBuffAmount, defConst, atackerType, characterData.StatusTable.type);
 
         //View의 setvalue등을 연결하기.
-        hp.Value -= damage;
+
+        if (!IsNoDamage)
+        {
+            hp.Value -= damage;
+        }
         onDamagedEvent?.Invoke(damage);
+        StageManager.Instance.DamageDisplayer.PlayTextDisplay(damage, true, transform.position + Vector3.forward * CharacterSizeRadius * 3);
 
         if (hp.Value < 0)
         {
@@ -173,118 +284,84 @@ public class Combatable : MonoBehaviour
     }
 
 
-    void InitSearchLogic()
-    {
-        switch (searchLogicType)
-        {
-            case SearchLogic.NEAR_FIRST:
-                foundEnemyLogic = foundNearEnemyLogic;
-                break;
-            case SearchLogic.FAR_FIRST:
-                foundEnemyLogic = foundFarEnemyLogic;
-                break;
-            default:
-                Debug.LogError("정의되지 않은 초기 로직.");
-                break;
-        }
-    }
 
-    protected void StopCurActionCoroutine()//중지시키는거 더 고려
-    {
 
+    protected void StopCurActionCoroutine()
+    {
         if (curActionCoroutine != null)
             StopCoroutine(curActionCoroutine);
-
-        if (moveCoroutine != null)
-            StopCoroutine(moveCoroutine);
-
     }
 
     #region 스킬_추가 
-    public virtual void OnSkillCommanded(Skill skillData)
+    /// <summary>
+    /// 스킬의 타겟팅 로직을 실행해본 뒤, 타겟이 있다면 스킬을 실행.
+    /// </summary>
+    /// <param name="skillData">실행할 스킬 데이터</param>
+    /// <param name="priority">실행할 스킬의 행동 우선순위</param>
+    /// <returns>타겟 대상이 있는경우 스킬을 실행하고 true 반환, 없거나 다른 우선순위의 스킬을 시전중인 경우, 웨이브간 정비시간 진행중이라면 단순 false 반환.</returns>
+    public bool OnSkillCommanded(Skill skillData, int priority)
     {
-        
-        StopCurActionCoroutine();
+        if (curActionPriority > priority)
+        {
+            Debug.Log("더 우선순위가 큰 행동중.");
+            return false;
+        }
 
-        curActionCoroutine = StartCoroutine(skillData.SkillRoutine(this, OnSkillCompleted));
+        if (StageManager.Instance.IsInChangeWave)
+        {
+            Debug.Log("웨이브 전환 진행중. 스킬 실행 기각");
+            return false;
+        }
+
+        Combatable skillTarget = skillData.TargetingLogic.GetTarget(this);
+        if (skillTarget == null)
+            return false;
+
+        StopCurActionCoroutine();
+        Look(skillTarget.transform);
+        curActionPriority = priority;
+        curActionCoroutine = StartCoroutine(skillData.SkillRoutine(this, skillTarget, OnSkillCompleted));
+        agent.ResetPath();
+        return true;
     }
 
     private void OnSkillCompleted()
     {
-
         StopCurActionCoroutine();
+        curActionPriority = 0;
         curActionCoroutine = StartCoroutine(TrackingCo());
-        /*        Debug.Log(curActionCoroutine == null);
-                Debug.Log(gameObject == null);*/
     }
 
-    //private IEnumerator SkillRoutine(Skill skillData)
-    //{   
-    //    //TODO : 실제 스킬 발동시키기.
-    //    Debug.Log($"{name} 캐릭터 : 스킬 사용 개시");
-
-    //    yield return new WaitForSeconds(1.5f);
-
-
-    //    Debug.Log($"{name} 캐릭터 : 스킬 종료, 자동 공격 시작");
-
-
-    //    //스킬 사용 종료 후 자동 공격 다시 시작
-    //    StopCurActionCoroutine();
-    //    curActionCoroutine = StartCoroutine(TrackingCo());
-    //}  
+    public virtual void SetStateToMoving()
+    {
+    }
+    public void PlayAnimation(in string animationTriggerName)
+    {
+        UnitAnimator.SetTrigger(animationTriggerName);
+    }
 
     #endregion
 
     [ContextMenu("OnDead")]
     public void OnDead()
     {
-        //TODO : 애니메이션 코루틴같은거 추가
-        Destroy(gameObject);
+        StopCurActionCoroutine();
+        agent.ResetPath();
+        StopCurActionCoroutine();
+        StartCoroutine(DeathAnimationCO());
+    }
+
+    IEnumerator DeathAnimationCO()
+    {
+        PlayAnimation("Death");
         onDeadEvent?.Invoke(this);
-        StopCurActionCoroutine();
-    }
-
-    [ContextMenu("ChangeToNear")]
-    public void ChangeSearchLogicToNear()
-    {
-        StopCurActionCoroutine();
-        searchLogicType = SearchLogic.NEAR_FIRST;
-        InitSearchLogic();
-        curActionCoroutine = StartCoroutine(TrackingCo());
-    }
-
-    [ContextMenu("ChangeToFar")]
-    public void ChangeSearchLogicToFar()
-    {
-        StopCurActionCoroutine();
-        searchLogicType = SearchLogic.FAR_FIRST;
-        InitSearchLogic();
-        curActionCoroutine = StartCoroutine(TrackingCo());
-    }
-
-    public void ChangeSearchLoginInCombat(SearchLogic searchLogic)
-    {
-        StopCurActionCoroutine();
-        searchLogicType = searchLogic;
-        InitSearchLogic();
-        curActionCoroutine = StartCoroutine(TrackingCo());
-    }
-    public void ChangeSearchLoginInCombat(Func<Transform, Combatable> customSearchLogic)
-    {
-        StopCurActionCoroutine();
-        foundEnemyLogic = customSearchLogic;
-        curActionCoroutine = StartCoroutine(TrackingCo());
+        yield return new WaitForSeconds(1.5f);//TODO : 현재 죽는 애니메이션 1.5초로 통일
+        Destroy(gameObject);
     }
 
     public virtual void StartCombat(CombManager againstL)
     {
         againistObjList = againstL;
-
-        foundNearEnemyLogic = againistObjList.GetNearestTrackable;
-        foundFarEnemyLogic = againistObjList.GetFarestTrackable;
-
-        InitSearchLogic();
 
         StopCurActionCoroutine();
         curActionCoroutine = StartCoroutine(TrackingCo());
@@ -302,35 +379,49 @@ public class Combatable : MonoBehaviour
     {
         yield return null;
 
-        Combatable target = foundEnemyLogic.Invoke(transform);
+        Combatable target = baseAttack.TargetingLogic.GetTarget(this);
+
         float trackTime = 0.2f;
         float time = 0;
 
         while (target != null && target.IsAlive && againistObjList != null)
         {
+            agent.stoppingDistance = range + target.CharacterSizeRadius;
+            agent.destination = target.transform.position;
+            Look(target.transform);
+            yield return new WaitWhile(() => agent.pathPending);
+            PlayAnimation("Walk");
 
-            Vector3 moveDir = (target.transform.position - transform.position).normalized;
-
-            while (target != null && rangePow < Vector3.SqrMagnitude(target.transform.position - transform.position))
+            while (target != null && agent.remainingDistance > agent.stoppingDistance)
             {
                 if (time > trackTime)
                 {
                     time = 0;
-                    moveDir = (target.transform.position - transform.position).normalized;
+
+                    target = baseAttack.TargetingLogic.GetTarget(this);
+                    if (target != null && target.IsAlive && againistObjList != null)
+                    {
+                        agent.destination = target.transform.position;
+                        Look(target.transform);
+                        yield return new WaitWhile(() => agent.pathPending);
+                        PlayAnimation("Walk");
+                    }
+
                 }
 
-                //TODO : 이동속도 상수 제거
-                transform.Translate(10 * moveDir.normalized * Time.deltaTime);
                 time += Time.deltaTime;
                 yield return null;
             }
 
-
-            if (!target.IsAlive)//이동중에 적이 쓰러진 경우.
+            if (target == null)//타깃 null 체크
             {
-                target = foundEnemyLogic.Invoke(transform);//새로운 대상 탐색
+                target = baseAttack.TargetingLogic.GetTarget(this);//새로운 대상 탐색
             }
-            else
+            else if (!target.IsAlive)//이동중에 적이 쓰러진 경우.
+            {
+                target = baseAttack.TargetingLogic.GetTarget(this);//새로운 대상 탐색
+            }
+            else//적이 살아있고 사거리에 도착했을 경우.
             {
                 StopCurActionCoroutine();
                 curActionCoroutine = StartCoroutine(CombatCO(target));
@@ -344,55 +435,108 @@ public class Combatable : MonoBehaviour
 
     }
 
+    protected void Look(Transform target)
+    {
+        //본인이 타깃인 경우 보는 방향을 바꾸지 않음
+        if (target == null || target == transform)
+            return;
+
+        Look(target.position);
+    } 
+    protected void Look(Vector3 target)
+    {
+        if (Vector3.Dot(target - transform.position, Vector3.right) > -0.1f)
+        {
+            characterModel.transform.localRotation = Quaternion.Euler(-90, -90, -90);
+        }
+        else
+        {
+            characterModel.transform.localRotation = Quaternion.Euler(90, 0, 0);
+        }
+    }
+
     IEnumerator CombatCO(Combatable target)
     {
         yield return null;
 
-        while (target.IsAlive && rangePow > Vector3.SqrMagnitude(target.transform.position - transform.position))
+        while (target != null && target.IsAlive && range + target.CharacterSizeRadius > Vector3.Distance(target.transform.position, transform.position))
         {
-            StartCoroutine(baseAttack.SkillRoutine(this, null));
+            Look(target.transform);
+            StartCoroutine(baseAttack.SkillRoutine(this, target, null));//이것도 액션으로 관리?
+            PlayAnimation("Attack");
             yield return new WaitForSeconds(1);
         }
 
         StopCurActionCoroutine();
         curActionCoroutine = StartCoroutine(TrackingCo());
-        yield break;
     }
 
-    /*
-        //게임에서는 웨이브 자체를 전달. + 특성에 따라 추적 대상 함수등을 전달할수도..
-        IEnumerator CombatCO()
+
+    // Legacy Targeting Logic
+    #region 이전 타겟팅 코드 영역 [ 현재 사용되지 않음 ]
+
+    SearchLogic searchLogicType;
+
+    Func<Transform, Combatable> foundEnemyLogic = null;
+    Func<Transform, Combatable> foundNearEnemyLogic = null;
+    Func<Transform, Combatable> foundFarEnemyLogic = null;
+
+
+    /// <summary>
+    /// targeting타입 SO를 오버라이드하여 Skill에 지정하여 사용하세요.
+    /// </summary>
+    [Obsolete]
+    void InitSearchLogic()
+    {
+        switch (searchLogicType)
         {
-            yield return null;
-            Transform ch = foundEnemyLogic.Invoke(transform);
-
-            //추적 대상이 있고, 웨이브가 진행중인 경우.
-            while (ch != null && againistObjList != null)
-            {
-                moveCoroutine = StartCoroutine(trackable.TrackingCO(ch));
-                yield return moveCoroutine;//이동 코루틴
-
-                if (ch == null)//이동중에 적이 쓰러진 경우.
-                {
-                    ch = foundEnemyLogic.Invoke(transform);//새로운 대상 탐색
-                    continue;
-                }
-
-                while (ch != null && trackable.rangePow > Vector3.SqrMagnitude(ch.transform.position - transform.position))
-                {
-                    //ch.transform.Rotate(Vector3.forward * 10);
-                    ch.GetComponent<SpriteRenderer>().color = UnityEngine. Random.ColorHSV();
-                    yield return new WaitForSeconds(1);
-                }
-
-                ch = foundEnemyLogic.Invoke(transform);//적이 사라진 뒤 다음 타깃 탐색
-
-            }
-
-            //전투가 끝난경우.
-            EndCombat();
-
+            case SearchLogic.NEAR_FIRST:
+                foundEnemyLogic = foundNearEnemyLogic;
+                break;
+            case SearchLogic.FAR_FIRST:
+                foundEnemyLogic = foundFarEnemyLogic;
+                break;
+            default:
+                Debug.LogError("정의되지 않은 초기 로직.");
+                break;
         }
-    */
+    }
+
+    [Obsolete]
+    public void ChangeSearchLogicToNear()
+    {
+        StopCurActionCoroutine();
+        searchLogicType = SearchLogic.NEAR_FIRST;
+        InitSearchLogic();
+        curActionCoroutine = StartCoroutine(TrackingCo());
+    }
+
+    [Obsolete]
+    public void ChangeSearchLogicToFar()
+    {
+        StopCurActionCoroutine();
+        searchLogicType = SearchLogic.FAR_FIRST;
+        InitSearchLogic();
+        curActionCoroutine = StartCoroutine(TrackingCo());
+    }
+
+    [Obsolete]
+    public void ChangeSearchLoginInCombat(SearchLogic searchLogic)
+    {
+        StopCurActionCoroutine();
+        searchLogicType = searchLogic;
+        InitSearchLogic();
+        curActionCoroutine = StartCoroutine(TrackingCo());
+    }
+
+    [Obsolete]
+    public void ChangeSearchLoginInCombat(Func<Transform, Combatable> customSearchLogic)
+    {
+        StopCurActionCoroutine();
+        foundEnemyLogic = customSearchLogic;
+        curActionCoroutine = StartCoroutine(TrackingCo());
+    }
+
+    #endregion
 
 }

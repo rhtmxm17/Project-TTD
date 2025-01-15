@@ -1,52 +1,39 @@
 using Firebase.Database;
 using System.Collections.Generic;
-using TMPro;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class HYJ_SelectManager : MonoBehaviour
 {
-    [SerializeField] public int curPos;
-    [SerializeField] public int curUnitIndex;
+    [Header("현재 선택한 위치&유닛 정보")]
+    [SerializeField] public int curPos; //현재 선택한 위치
+    [SerializeField] public int curUnitIndex; //현재 선택한 유닛의 고유번호
 
-    [Header("buttonList")]
-    [SerializeField]
-    List<Transform> buttonsTransformList;
-
-    [SerializeField] Button enterStageButton;
-    [SerializeField] Button cancelButton;
-
-    [Header("이미지 프리팹")]
-    [SerializeField] public GameObject ChImagePrefab;
-
-    [SerializeField]
-    HYJ_CharacterSelect batchButtonPrefab;
-    [SerializeField]
-    Transform batchButtonsTransform;
-    [SerializeField]
-    int buttonCnt;
+    [Header("버튼 리스트")]
+    [SerializeField] List<Transform> buttonsTransformList;
+    
+    [Header("필수 설정 사항")]
+    [SerializeField] Button resetBatchButton; // 
+    [SerializeField] Button enterStageButton; //스테이지 진입 버튼
+    [SerializeField] Button cancelButton; //뒤돌아가기 버튼
+    [SerializeField] HYJ_CharacterSelect batchButtonPrefab; //배치버튼 프리팹
+    [SerializeField] Transform batchWindow; //배치버튼 윈도우
+    [SerializeField] int buttonCnt; //버튼 생성 수
     [SerializeField] public GameObject CharacterSelectPanel; // 캐릭터 선택 창 
     [SerializeField] public GameObject CantPosUI; // 선택 불가 팝업 -> 5개 유닛이 이미 다 배치 되었을 때의 팝업
-
+    [SerializeField] GameObject UnitChangeUI; // 유닛 변경 확인 팝업 -> 변경하시겠습니까?
+    
     // 키 값은 위치 / 밸류 값은 유닛 고유번호;
     public Dictionary<int, int> battleInfo = new Dictionary<int, int>();
 
     private void Start()
     {
         enterStageButton.onClick.AddListener(LoadBattleScene);
-        cancelButton.onClick.AddListener(CancelEnterStage);
+        // cancelButton.onClick.AddListener(CancelEnterStage);
+        resetBatchButton.onClick.AddListener(ResetBatch);
         
-        for (int i = 0; i < buttonCnt; i++)
-        {
-            var obj = Instantiate(batchButtonPrefab, batchButtonsTransform);
-            buttonsTransformList.Add(obj.transform);
-            obj.InitDataPosBTN(i, CharacterSelectPanel, CantPosUI);
-            //obj.posNum = i;
-            //obj.GetComponentInChildren<TextMeshProUGUI>().text = i.ToString();
-        }
-
         GameManager.UserData.PlayData.BatchInfo.onValueChanged += (() =>
         {
             Debug.Log("편성 정보가 갱신됨");
@@ -56,38 +43,36 @@ public class HYJ_SelectManager : MonoBehaviour
             Debug.Log("유저 정보 불러오기 완료 확인");
         });
 
-        // TODO : 편성 정보 가져와서 battleInfo에 저장 > (배치하기) 만들기
         // ============= 플레이어 캐릭터 초기화 =============
-
         //키 : 배치정보, 값 : 캐릭터 고유 번호(ID)
         Dictionary<string, long> batchData = GameManager.UserData.PlayData.BatchInfo.Value;
-        //Dictionary<int, CharacterData> batchDictionary = new Dictionary<int, CharacterData>(batchData.Count);
 
         foreach (var pair in batchData)
         {
             battleInfo[int.Parse(pair.Key)] = (int)pair.Value;
-
         }
-
-        //battleInfo.Add(GameManager.UserData.PlayData.BatchInfo.)
-
-
+        
         if (battleInfo.Count > 5)
         {
             Debug.LogError("불러온 유저 배치 정보 오류(5개 보다 많은 배치)");
         }
-        else if (battleInfo.Count > 0)
-        {
-            SetBattleInfo(battleInfo);
-        }
-    }
+        
+        // ============= 편성 타일 생성 ===================
 
-    public void SetBattleInfo(Dictionary<int, int> battleInfo)
-    {
-        // 불러온 유저 정보를 배치하기
-        foreach (KeyValuePair<int, int> entry in battleInfo)
+        List<StageData.BuffInfo> curStageBuff = GameManager.Instance.sceneChangeArgs.stageData.TileBuff;
+        for (int i = 0; i < buttonCnt; i++)
         {
-            SetCharacterImage(entry.Key, entry.Value);
+            var obj = Instantiate(batchButtonPrefab, batchWindow);
+            buttonsTransformList.Add(obj.transform);
+            obj.InitDataPosBtn(i, CharacterSelectPanel, CantPosUI);
+
+            foreach (StageData.BuffInfo checkBuff in curStageBuff)
+            {
+                if (checkBuff.tileIndex == i)
+                {
+                    obj.GetComponent<HYJ_BtnBuff>().BuffInput(checkBuff.type);
+                }
+            }
         }
     }
 
@@ -101,7 +86,7 @@ public class HYJ_SelectManager : MonoBehaviour
         });
     }
 
-    private void SaveBatch(UnityAction<bool> onCompleteCallback)
+    private void SaveBatch(UnityAction<bool> onCompleteCallback) // 배치 저장
     {
         Dictionary<string, long> updates = new Dictionary<string, long>();
         foreach (var pair in battleInfo)
@@ -114,47 +99,9 @@ public class HYJ_SelectManager : MonoBehaviour
             .Submit(onCompleteCallback);
     }
 
-    public void SetCharacterImage(int posIdx, int charIdx)
-    {
-        var chImage = Instantiate(ChImagePrefab, buttonsTransformList[posIdx]);
-        CharacterData chData = GameManager.TableData.GetCharacterData(charIdx);
-        chImage.transform.localPosition = Vector3.zero;
-        chImage.GetComponent<Image>().sprite = chData.FaceIconSprite;
-        chImage.GetComponent<HYJ_CharacterImage>().curPos = posIdx;
-        chImage.GetComponent<HYJ_CharacterImage>().unitIndex = charIdx;
-    }
-
-    public void RemoveCharacterImage(int posIdx)
-    {
-        Destroy(buttonsTransformList[posIdx].GetComponentInChildren<HYJ_CharacterImage>().gameObject);
-    }
-
-    public void ChangeImagePos(int fromIdx, int destIdx)
-    {
-        if (buttonsTransformList[destIdx].GetComponentInChildren<HYJ_CharacterImage>() != null)
-        {
-            RemoveCharacterImage(destIdx);
-        }
-        buttonsTransformList[fromIdx].GetComponentInChildren<HYJ_CharacterImage>().transform.SetParent(buttonsTransformList[destIdx].transform);
-
-        HYJ_CharacterImage[] transL = buttonsTransformList[destIdx].GetComponentsInChildren<HYJ_CharacterImage>();
-        RectTransform trans = transL[transL.Length - 1].GetComponent<RectTransform>();
-        trans.anchoredPosition = Vector3.zero;
-    }
-
-    public void TestLog()
-    {
-        // 간편 테스트용 / 파이어 베이스 연결x
-        Debug.Log("-------");
-        foreach (var (key, value) in battleInfo)
-        {
-            Debug.Log($"{key} : {value}");
-        }
-        Debug.Log("-------");
-    }
-
     public void LoadBattleScene()
     {
+        // 전투 시작
         if (battleInfo.Count < 1)
         {
             // TODO : 팝업창 만들어서 하나 이상의 캐릭터를 배치해야 시작할 수 있다고 알려주기
@@ -177,6 +124,7 @@ public class HYJ_SelectManager : MonoBehaviour
 
     public void CancelEnterStage()
     {
+        // 뒤로가기(배치 창 닫기)
         SaveBatch(result =>
         {
             if (false == result)
@@ -189,14 +137,38 @@ public class HYJ_SelectManager : MonoBehaviour
         });
     }
 
-    public void UpdateFormation()
+    public void AddPosBtnImage()
     {
-        if (battleInfo.Count > 0)
+        buttonsTransformList[curPos].GetComponent<HYJ_CharacterSelect>().AddBatch(curPos,curUnitIndex);
+    }
+    
+    public void ResetPosBtnImage()
+    {
+        buttonsTransformList[curPos].GetComponent<HYJ_CharacterSelect>().RemoveBatch(curPos);
+    }
+
+    public void ChangePosBtnImage()
+    {
+        if (battleInfo.ContainsKey(curPos))
         {
-            foreach (var index in battleInfo)
-            {
-                //SelectM.battleInfo
-            }
+            ResetPosBtnImage();
         }
+        
+        int curUnitIndexsPos = battleInfo.FirstOrDefault(x => x.Value == curUnitIndex).Key;
+        buttonsTransformList[curUnitIndexsPos].GetComponent<HYJ_CharacterSelect>().RemoveBatch(curUnitIndexsPos);
+        buttonsTransformList[curPos].GetComponent<HYJ_CharacterSelect>().AddBatch(curPos, curUnitIndex);
+        
+        UnitChangeUI.SetActive(false);
+        CharacterSelectPanel.SetActive(false);
+    }
+
+    public void ResetBatch()
+    {
+        for (int i = 0; i < buttonCnt; i++)
+        {
+            buttonsTransformList[i].GetComponent<HYJ_CharacterSelect>().RemoveBatch(i);
+        }
+        //battleInfo.Clear();
+        Debug.Log("Reset?" + battleInfo.Count);
     }
 }

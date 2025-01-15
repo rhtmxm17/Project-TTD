@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,11 +12,50 @@ public class BasicSkillButton : MonoBehaviour
     [SerializeField]
     Button skillButton;
 
+    [SerializeField]
+    TextMeshProUGUI nonTargetText;
+    [SerializeField]
+    TextMeshProUGUI levelText;
+
+    Coroutine autoCoroutine = null;
+    WaitForSeconds autoDelay = new WaitForSeconds(0.1f);
+    Func<bool> isTargetExistFunc;
+
+    public bool IsInAuto { 
+        get { return isAuto; } 
+        set 
+        {
+            if (value == true)//오토를 켜는 경우
+            {
+                if (autoCoroutine != null)
+                {
+                    StopCoroutine(autoCoroutine);
+                    autoCoroutine = null;
+                }
+
+                autoCoroutine = StartCoroutine(AutoModeCO());
+
+            }
+            else//오토를 끄는 경우
+            {
+                if (autoCoroutine != null)
+                {
+                    StopCoroutine(autoCoroutine);
+                    autoCoroutine = null;
+                }
+            }
+            isAuto = value; 
+        } 
+    }
+    bool isAuto = false;
+
+    Coroutine textCoroutine = null;
+    WaitForSeconds displayTime = new WaitForSeconds(0.5f);
+
     public bool Interactable => skillButton.interactable;
 
     Coroutine skillCooldownCoroutine = null;
     float waitedCooltime = 0;
-
 
     public void OffSkillButton(Combatable obj)
     {
@@ -24,8 +65,41 @@ public class BasicSkillButton : MonoBehaviour
             skillCooldownCoroutine = null;
         }
 
-        skillButton.enabled = false;
+        if (autoCoroutine != null)
+        {
+            StopCoroutine(autoCoroutine);
+            autoCoroutine = null;
+        }
+
+        skillButton.interactable = false;
         cooldownImg.fillAmount = 1;
+    }
+
+    public void DisplayNonTargetText()
+    {
+        if (textCoroutine != null)
+        { 
+            StopCoroutine(textCoroutine);
+        }
+        textCoroutine = StartCoroutine(TextDisplayCO());
+    }
+
+    public void InitTargetingFunc(Func<bool> isTargetExistFunc)
+    {
+        this.isTargetExistFunc = isTargetExistFunc;
+    }
+
+    public void SetLevel(int level)
+    { 
+        levelText.text = $"Lv{level.ToString()}";
+    }
+
+    IEnumerator TextDisplayCO()
+    {
+        nonTargetText.gameObject.SetActive(true);
+        yield return displayTime;
+        nonTargetText.gameObject.SetActive(false);
+        textCoroutine = null;
     }
 
     public void StartCoolDown(float coolTime)
@@ -39,7 +113,7 @@ public class BasicSkillButton : MonoBehaviour
     public IEnumerator StartCoolDownCO(float coolTime)
     {
         waitedCooltime = 0;
-        skillButton.enabled = false;
+        skillButton.interactable = false;
         yield return null;
 
         while (waitedCooltime < coolTime)
@@ -52,7 +126,7 @@ public class BasicSkillButton : MonoBehaviour
 
         cooldownImg.fillAmount = 0;
 
-        skillButton.enabled = true;
+        skillButton.interactable = true;
         skillCooldownCoroutine = null;
     }
 
@@ -65,4 +139,24 @@ public class BasicSkillButton : MonoBehaviour
         }
 
     }
+
+    IEnumerator AutoModeCO()
+    {
+        yield return null;
+
+        while (true)
+        {
+            if (Interactable && !StageManager.Instance.IsInChangeWave && isTargetExistFunc.Invoke())
+            {
+                skillButton.onClick.Invoke();
+            }
+            else
+            {
+                //Debug.Log("스킬 비활성화 상태 또는 타겟이 없는 상태");
+            }
+
+            yield return autoDelay;
+        }
+    }
+
 }

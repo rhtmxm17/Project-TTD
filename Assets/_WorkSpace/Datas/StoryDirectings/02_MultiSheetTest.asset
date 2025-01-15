@@ -15,51 +15,87 @@ MonoBehaviour:
   id: 2
   title: "\uC2DC\uD2B8 \uB298\uB824\uBCF4\uAE30"
   dialogues:
-  - Speaker: "\uACE0\uC591\uC774"
+  - Loaction: "\uC774\uC0C1\uD55C \uBC29"
+    Speaker: "\uACE0\uC591\uC774"
     Script: "\uC774\uAC74 \uB2E4\uB978 \uC2A4\uD1A0\uB9AC\uC57C"
-    Bgm: {fileID: 8300000, guid: 16b7ad735bb712046bf2a700fa77bc44, type: 3}
-    Sfx: {fileID: 0}
-    BackgroundSprite: {fileID: 0}
+    timeMult: 1
     Transitions:
     - StandingImageId: 0
       Active: 1
       Flip: 0
       ColorMultiply: 1
-      Position: {x: 0.333333, y: 0.3}
+      Position: {x: 3.33333, y: 3}
+      Scale: 1
+      Type: 3
+      Time: 0.5
     - StandingImageId: 1
       Active: 1
       Flip: 0
       ColorMultiply: 0.5
-      Position: {x: 0.7, y: 0.3}
-  - Speaker: 
-    Script: "\uD654\uC790\uB97C \uBE44\uC6CC\uB454 \uACBD\uC6B0 \uD14C\uC2A4\uD2B8"
-    Bgm: {fileID: 0}
-    Sfx: {fileID: 8300000, guid: f5cb6fec689ae16429ef53de8fba3821, type: 3}
+      Position: {x: 7, y: 3}
+      Scale: 1
+      Type: 1
+      Time: 0.5
+    Effects: []
+    CameraPosition: {x: 10, y: 5}
+    CameraSize: 1
+    CamereaTransitionTime: 0.5
+    Bgm: {fileID: 8300000, guid: 16b7ad735bb712046bf2a700fa77bc44, type: 3}
+    Sfx: {fileID: 0}
     BackgroundSprite: {fileID: 0}
+  - Loaction: "\uAD50\uC2E4"
+    Speaker: 
+    Script: "\uD654\uC790\uB97C \uBE44\uC6CC\uB454 \uACBD\uC6B0 \uD14C\uC2A4\uD2B8"
+    timeMult: 1
     Transitions:
-    - StandingImageId: 1
+    - StandingImageId: 0
       Active: 1
       Flip: 1
       ColorMultiply: 1
-      Position: {x: 0.7, y: 0.3}
-  - Speaker: ???
-    Script: '"......"'
+      Position: {x: 7, y: 3}
+      Scale: 1
+      Type: 3
+      Time: 0.5
+    Effects: []
+    CameraPosition: {x: 10, y: 5}
+    CameraSize: 1
+    CamereaTransitionTime: 0.5
     Bgm: {fileID: 0}
-    Sfx: {fileID: 0}
-    BackgroundSprite: {fileID: 0}
+    Sfx: {fileID: 8300000, guid: f5cb6fec689ae16429ef53de8fba3821, type: 3}
+    BackgroundSprite: {fileID: 21300000, guid: 6d72148527a852f4982725bfa2ab3fe9, type: 3}
+  - Loaction: 
+    Speaker: ???
+    Script: '"......"'
+    timeMult: 1
     Transitions:
-    - StandingImageId: 0
+    - StandingImageId: 1
       Active: 0
       Flip: 0
       ColorMultiply: 1
-      Position: {x: 1.5, y: 0.3}
-    - StandingImageId: 1
+      Position: {x: 15, y: 3}
+      Scale: 1
+      Type: 3
+      Time: 0.5
+    - StandingImageId: 0
       Active: 0
       Flip: 1
       ColorMultiply: 0
-      Position: {x: 0.7, y: 0.3}
+      Position: {x: 7, y: 3}
+      Scale: 1
+      Type: 1
+      Time: 0.5
+    Effects:
+    - Effect: {fileID: 6028183875680834408, guid: 40468ad044e856e45a3c958d791fc2cd,
+        type: 3}
+      Position: {x: 7, y: 3}
+    CameraPosition: {x: 10, y: 5}
+    CameraSize: 1
+    CamereaTransitionTime: 0.5
+    Bgm: {fileID: 0}
+    Sfx: {fileID: 0}
+    BackgroundSprite: {fileID: 0}
   standingImages:
   - ActorId: 0
-    ImageSprite: {fileID: 21300000, guid: b7169af4919284643b18132376b8cf5d, type: 2}
-  - ActorId: 1
     ImageSprite: {fileID: 21300000, guid: 6eb13f9d6b60c3146b71eac52b081a30, type: 2}
+  - ActorId: 1
+    ImageSprite: {fileID: 21300000, guid: b7169af4919284643b18132376b8cf5d, type: 2}

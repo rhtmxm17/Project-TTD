@@ -2,8 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "ScriptableObjects/ShopItemData")]
-public class ShopItemData : ScriptableObject
+#if UNITY_EDITOR
+using UnityEditor;
+
+[CustomEditor(typeof(ShopItemData))]
+public class ShopItemDataEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        if (GUILayout.Button("테이블 매니저 바로가기"))
+        {
+            UnityEditor.Selection.activeObject = DataTableManager.Instance;
+        }
+
+        base.OnInspectorGUI();
+    }
+}
+#endif
+
+/// <summary>
+/// 상점 판매 품목 정보
+/// </summary>
+public class ShopItemData : ScriptableObject, ITsvMultiRowParseable
 {
     public int Id => id;
     [SerializeField] int id;
@@ -59,15 +79,134 @@ public class ShopItemData : ScriptableObject
     public int LimitedCount => limitedCount;
     [SerializeField] int limitedCount;
 
+    /// <summary>
+    ///  복수구매여부 T면 구매확인창으로 여러개 구매
+    /// </summary>
+    public bool IsMany => isMany;
+    [SerializeField] bool isMany;
+
     #region 유저 데이터
     /// <summary>
     /// 구매한 횟수
     /// </summary>
-    public UserDataInt Bought { get; private set; }
+    public UserDataInt Bought => GameManager.UserData.GetPackageBought(id);
 
-    private void OnEnable()
-    {
-        Bought = new UserDataInt($"ShopItems/{id}/Bought");
-    }
     #endregion
+
+#if UNITY_EDITOR
+    private enum Column
+    {
+        ID,
+        /// <summary>
+        /// 사용되지 않음(DataManager에서 사용)
+        /// </summary>
+        FILE_NAME,
+        PACKAGE_NAME,
+        SPRITE,
+        DESCRIPTION,
+        PRICE_ITEM,
+        PRICE_NUMBER,
+        PRODUCTS_ITEM,
+        PRODUCTS_NUMBER,
+
+        IS_LIMITED,
+        LIMITED_COUNT,
+        IS_MANY,
+    }
+
+    public void ParseTsvMultiRow(string[] lines, ref int line)
+    {
+        bool isFirst = true;
+        while (lines.Length > line)
+        {
+            string[] cells = lines[line].Split('\t');
+
+            if (isFirst) // 첫 줄 한정
+            {
+                isFirst = false;
+                // ID
+                if (false == int.TryParse(cells[(int)Column.ID], out this.id))
+                {
+                    Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+                    return;
+                }
+
+                products = new List<ItemGain>();
+
+                // NAME
+                shopItemName = cells[(int)Column.PACKAGE_NAME];
+
+                // SPRITE
+                // 공백일 경우(null)첫 번째 상품의 이미지 사용
+                sprite = SearchAsset.SearchSpriteAsset(cells[(int)Column.SPRITE]);
+
+                // DESCRIPTION
+                description = cells[(int)Column.DESCRIPTION];
+
+                // 공백일 경우 무료 품목
+                if (string.IsNullOrEmpty(cells[(int)Column.PRICE_ITEM]))
+                    price.item = null;
+                else
+                {
+                    price.item = SearchAsset.SearchSOAsset<ItemData>(cells[(int)Column.PRICE_ITEM]);
+                    if (null == price.item)
+                    {
+                        Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+                        return;
+                    }
+
+                    // PRICE_NUMBER
+                    if (false == int.TryParse(cells[(int)Column.PRICE_NUMBER], out price.gain))
+                    {
+                        Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+                        return;
+                    }
+                }
+
+                // IS_LIMITED: 테이블값이 T면 구매횟수 제한 존재
+                isLimited = ("T" == cells[(int)Column.IS_LIMITED]);
+
+                // LIMITED_COUNT
+                if (false == int.TryParse(cells[(int)Column.LIMITED_COUNT], out limitedCount))
+                {
+                    Debug.Log($"구매 가능 횟수 데이터에 기본값(0) 적용됨");
+                    limitedCount = 0;
+                }
+                
+                // IS_MANY: 테이블값이 T면 복수구매창(구매확인창) 을 엶, F면 그냥 limitedCount로
+                isMany = ("T" == cells[(int)Column.IS_MANY]);
+                if (string.IsNullOrEmpty(cells[(int)Column.IS_MANY]))
+                    isMany = false;
+                
+            }
+            else
+            {
+                // 첫 행에 다른 ID가 나타났다면 더이상 자신의 데이터가 아님
+                if (false == string.IsNullOrEmpty(cells[(int)Column.ID]))
+                {
+                    Debug.Log($"상품 데이터({shopItemName}) 생성됨");
+                    line--;
+                    return;
+                }
+            }
+
+            // 현재 행에 품목 정보가 있다면 추가
+            ItemData productItemData = SearchAsset.SearchSOAsset<ItemData>(cells[(int)Column.PRODUCTS_ITEM]);
+            if (productItemData != null)
+            {
+                ItemGain productData = new ItemGain() { item = productItemData };
+
+                if (false == int.TryParse(cells[(int)Column.PRODUCTS_NUMBER], out productData.gain))
+                {
+                    Debug.Log($"상품 데이터에 기본값(1개) 적용됨");
+                    productData.gain = 1;
+                }
+
+                products.Add(productData);
+            }
+
+            line++;
+        }
+    }
+#endif
 }

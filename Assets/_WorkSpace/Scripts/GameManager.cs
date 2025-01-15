@@ -1,8 +1,24 @@
+using Spine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+
+public enum StageType { NORMAL, GOLD, EXP, ENFORCE, BOSS, STORY, NONE }
+
+/// <summary>
+/// 메뉴 목록
+/// </summary>
+public enum MenuType 
+{
+    // 주요 메뉴 (빠른 이동 메뉴에서 이동 가능)
+    CHARACTERS, ACHIEVEMENT, STORY, SHOP, MYROOM, ADVANTURE, 
+    // 기타 메뉴
+    PROFILE, FORMATION,
+    // 미정의
+    NONE,
+}
 
 public class GameManager : SingletonBehaviour<GameManager>
 {
@@ -42,6 +58,7 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     public void StartShortLoadingUI()
     {
+        Debug.Log("로딩시작했다");
         shortLoadingPanel.gameObject.SetActive(true);
 
         //if (loadingCounter == 0)
@@ -52,6 +69,7 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     public void StopShortLoadingUI()
     {
+        Debug.Log("로딩끝났다");
         shortLoadingPanel.gameObject.SetActive(false);
 
 //        loadingCounter--;
@@ -71,26 +89,121 @@ public class GameManager : SingletonBehaviour<GameManager>
     /// <summary>
     /// 스테이지 로드 시점에서만 사용, 불러올 스테이지 데이터
     /// </summary>
-    private StageData stageData;
-    
-    public enum StageType { NORMAL, GOLD, BOSS, NONE}
-    public StageType stageType { get; private set; } = StageType.NONE;
+    public StageSceneChangeArgs sceneChangeArgs {get; private set;}
 
     public void LoadMainScene()
     {
-        Debug.Log($"씬 전환: {SceneManager.GetActiveScene().name} -> MainMenu");
-        SceneManager.LoadSceneAsync("MainMenu");
+        Debug.Log($"씬 전환: {SceneManager.GetActiveScene().name} -> LobbyScene");
+        SceneManager.LoadSceneAsync("LobbyScene");
+    }
+
+    public void LoadLobbyScene()
+    {
+        SceneManager.LoadSceneAsync("LobbyScene");
     }
 
     /// <summary>
-    /// 전투 스테이지 데이터와 전투씬 타입을 지정
+    /// 지정된 메뉴로 이동[ 비동기 ]
     /// </summary>
-    /// <param name="StageData">스테이지 데이터</param>
-    /// <param name="stageType">전투씬 타입</param>
-    public void SetLoadStageType(StageData StageData, StageType stageType)
+    /// <param name="menu"></param>
+    public void LoadMenuScene(MenuType menu)
     {
-        this.stageType = stageType;
-        this.stageData = StageData;
+        Debug.Log($"{menu} 메뉴 씬으로 이동 호출됨");
+
+        string sceneName;
+        switch (menu)
+        {
+            case MenuType.ACHIEVEMENT:
+                Debug.LogWarning("아직 씬이 준비되지 않음");
+                return;
+            case MenuType.CHARACTERS:
+                sceneName = "CharacterMenuScene";
+                break;
+            case MenuType.STORY:
+                sceneName = "StoryMenuScene";
+                break;
+            case MenuType.SHOP:
+                sceneName = "ShopMenuScene";
+                break;
+            case MenuType.MYROOM:
+                sceneName = "MyRoomScene";
+                break;
+            case MenuType.ADVANTURE:
+                sceneName = "AdvantureMenuScene";
+                break;
+            case MenuType.PROFILE:
+                sceneName = "ProfileScene";
+                break;
+            case MenuType.FORMATION:
+                sceneName = "HYJ_BattleFormation";
+                break;
+            case MenuType.NONE:
+                Debug.LogWarning("메뉴 타입이 지정되지 않아 로비로 이동함");
+                sceneName = "LobbyScene";
+                break;
+            default:
+                Debug.LogWarning($"잘못된 MenuType: {menu}");
+                return;
+        }
+        SceneManager.LoadSceneAsync(sceneName);
+
+    }
+
+    /// <summary>
+    /// 지정된 메뉴로 이동[ 동기 ]
+    /// </summary>
+    /// <param name="menu"></param>
+    public void LoadMenuSceneSync(MenuType menu)
+    {
+        Debug.Log($"{menu} 메뉴 씬으로 이동 호출됨");
+
+        string sceneName;
+        switch (menu)
+        {
+            case MenuType.ACHIEVEMENT:
+                Debug.LogWarning("아직 씬이 준비되지 않음");
+                return;
+            case MenuType.CHARACTERS:
+                sceneName = "CharacterMenuScene";
+                break;
+            case MenuType.STORY:
+                sceneName = "StoryMenuScene";
+                break;
+            case MenuType.SHOP:
+                sceneName = "ShopMenuScene";
+                break;
+            case MenuType.MYROOM:
+                sceneName = "MyRoomScene";
+                break;
+            case MenuType.ADVANTURE:
+                sceneName = "AdvantureMenuScene";
+                break;
+            case MenuType.PROFILE:
+                sceneName = "ProfileScene";
+                break;
+            case MenuType.FORMATION:
+                sceneName = "HYJ_BattleFormation";
+                break;
+            case MenuType.NONE:
+                Debug.LogWarning("메뉴 타입이 지정되지 않아 로비로 이동함");
+                sceneName = "LobbyScene";
+                break;
+            default:
+                Debug.LogWarning($"잘못된 MenuType: {menu}");
+                return;
+        }
+        SceneManager.LoadScene(sceneName);
+
+    }
+
+    /// <summary>
+    /// 스테이지 씬 로딩 데이터를 지정해 편성 씬 로딩
+    /// </summary>
+    /// <param name="args">스테이지 씬 전환 데이터 목록</param>
+    public void LoadBattleFormationScene(StageSceneChangeArgs args)
+    {
+        this.sceneChangeArgs = args;
+        SceneManager.LoadSceneAsync("HYJ_BattleFormation");
     }
 
     /// <summary>
@@ -104,27 +217,37 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     void SwitchStageType()
     {
-        switch (stageType)
+        string destScene; // 이동할 씬 이름
+        switch (sceneChangeArgs.stageType)
         { 
             case StageType.NORMAL:
-                SceneManager.sceneLoaded += OnStageSceneLoaded;
-                SceneManager.LoadSceneAsync("StageDefault");
+                destScene = "StageDefault";
                 break;
             case StageType.GOLD:
-                SceneManager.sceneLoaded += OnStageSceneLoaded;
-                SceneManager.LoadSceneAsync("Stage_Coin");
+                destScene = "Stage_Coin";
                 break;
             case StageType.BOSS:
-                SceneManager.sceneLoaded += OnStageSceneLoaded;
-                SceneManager.LoadSceneAsync("Stage_Boss");
+                destScene = "Stage_Boss";
+                break;
+            case StageType.STORY:
+                destScene = "Stage_Story";
+                break;
+            case StageType.EXP:
+                destScene = "Stage_Exp";
+                break;
+            case StageType.ENFORCE:
+                destScene = "Stage_Enforce";
                 break;
             case StageType.NONE:
-                Debug.Log("지정된 스테이지 타입이 없음");
+                Debug.Log("지정된 스테이지 타입이 없어 기본 전투 씬으로 이동함");
+                destScene = "StageDefault";
                 break;
             default:
-                Debug.Log("예외상황");
-                break;
+                Debug.Log($"잘못된 StageType: {sceneChangeArgs.stageType}");
+                return;
         }
+        SceneManager.sceneLoaded += OnStageSceneLoaded;
+        SceneManager.LoadSceneAsync(destScene);
     }
 
     /// <summary>
@@ -134,10 +257,38 @@ public class GameManager : SingletonBehaviour<GameManager>
     {
         GameObject.FindWithTag("GameController").TryGetComponent(out StageManager stageManager);
 
-        stageManager.Initialize(stageData);
+        stageManager.Initialize(sceneChangeArgs);
         stageManager.StartGameOnSceneLoaded();
         SceneManager.sceneLoaded -= OnStageSceneLoaded;
     }
 
     #endregion LoadScene
+}
+
+/// <summary>
+/// 스테이지 변경 및 초기화에 필요한 데이터 모음<br/>
+/// 스테이지에 따라서는 사용되지 않는 데이터도 포함되어있습니다
+/// </summary>
+public class StageSceneChangeArgs
+{
+    /// <summary>
+    /// 시트 기반 스테이지 데이터
+    /// </summary>
+    public StageData stageData = null;
+
+    /// <summary>
+    /// 스테이지 타입(기본값: NORMAL)
+    /// </summary>
+    public StageType stageType = StageType.NORMAL;
+
+    /// <summary>
+    /// 편성 씬으로 진입 이전 씬(기본값: ADVANTURE)
+    /// </summary>
+    public MenuType prevScene = MenuType.ADVANTURE;
+
+    /// <summary>
+    /// 던전 클리어율 기록을 위한 던전 레벨 인덱스.[골드던전용]
+    /// </summary>
+    public int dungeonLevel = 0;
+
 }

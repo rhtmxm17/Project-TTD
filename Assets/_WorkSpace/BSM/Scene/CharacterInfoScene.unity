@@ -797,16 +797,30 @@ MonoBehaviour:
   _hpText: {fileID: 0}
   _defText: {fileID: 0}
   _powerLevelText: {fileID: 0}
-  _coinText: {fileID: 0}
-  _jewelryText: {fileID: 0}
+  _levelUpCoinText: {fileID: 0}
+  _levelUpYongGwaText: {fileID: 0}
   _enhanceText: {fileID: 0}
-  _skillADescText: {fileID: 0}
-  _skillBDescText: {fileID: 0}
+  _skillNormalDescText: {fileID: 0}
+  _skillSpecialDescText: {fileID: 0}
+  _beforeBonusAtkText: {fileID: 0}
+  _beforeBonusDefText: {fileID: 0}
+  _beforeBonusHpText: {fileID: 0}
+  _afterBonusAtkText: {fileID: 0}
+  _afterBonusDefText: {fileID: 0}
+  _afterBonusHpText: {fileID: 0}
+  _bonusLevelText: {fileID: 0}
+  _levelGoldAmountText: {fileID: 0}
+  _levelYongGwaAmountText: {fileID: 0}
+  _skillNormalTitleText: {fileID: 0}
+  _skillSpecialTitleText: {fileID: 0}
   _skillAIconImage: {fileID: 0}
   _skillBIconImage: {fileID: 0}
   _characterImage: {fileID: 0}
+  _levelUpNormalEffect: {fileID: 0}
+  _levelUpSpecialEffect: {fileID: 0}
   _levelUpButton: {fileID: 0}
-  _curEnhanceLevelText: {fileID: 0}
+  _materialGroup: {fileID: 0}
+  _bonusPopup: {fileID: 0}
   _beforeUpGradeText: {fileID: 0}
   _beforeHpText: {fileID: 0}
   _beforeDefText: {fileID: 0}
@@ -816,11 +830,42 @@ MonoBehaviour:
   _afterAtkText: {fileID: 0}
   _afterDefText: {fileID: 0}
   _mileageValueText: {fileID: 0}
+  _afterMaxHpText: {fileID: 0}
+  _afterMaxAtkText: {fileID: 0}
+  _afterMaxDefText: {fileID: 0}
+  _enhanceCoinText: {fileID: 0}
+  _enhanceMaterialText: {fileID: 0}
+  _characterTokenCountText: {fileID: 0}
+  _commonTokenCountText: {fileID: 0}
+  _tokenPopupTitleText: {fileID: 0}
+  _amountGoldText: {fileID: 0}
+  _amountCharacterTokenText: {fileID: 0}
+  _amountCommonTokenText: {fileID: 0}
   _mileageSlider: {fileID: 0}
+  _beforeMax: {fileID: 0}
+  _afterMax: {fileID: 0}
   _enhanceResultPopup: {fileID: 0}
   _enhanceResultText: {fileID: 0}
+  _enhanceResultIcon: {fileID: 0}
   _enhanceResultConfirm: {fileID: 0}
   _enhanceButton: {fileID: 0}
+  _mileageUseButton: {fileID: 0}
+  _mileageUseConfirmButton: {fileID: 0}
+  _mileageUsePopup: {fileID: 0}
+  _characterTokenButton: {fileID: 0}
+  _commonTokenButton: {fileID: 0}
+  _enhanceTokenPopup: {fileID: 0}
+  _tokenIncreaseButton: {fileID: 0}
+  _tokenDecreaseButton: {fileID: 0}
+  _tokenConfirmButton: {fileID: 0}
+  _tokenInputField: {fileID: 0}
+  _enhanceTokenIcon: {fileID: 0}
+  _tokenCancelButton: {fileID: 0}
+  _autoTokenButton: {fileID: 0}
+  _enhanceTabButton: {fileID: 0}
+  _detailTabColor: {fileID: 0}
+  _enhanceTabColor: {fileID: 0}
+  _evolutionTabColor: {fileID: 0}
   _tempElemetTypeText: {fileID: 0}
   _tempRoleTypeText: {fileID: 0}
   _tempDragonVeinTypeText: {fileID: 0}
@@ -1818,6 +1863,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b8394d18e2a544e88bd341da7e7fb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CharacterModels: []
+  OwnedObject: {fileID: 0}
   _characterData: {fileID: 11400000, guid: c67b7de9dd51fc64d8c6f62f3d693a8a, type: 2}
 --- !u!1 &1251019403
 GameObject:
@@ -2089,11 +2136,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: facd3b2730b1b0c43ace0e595ec4eba7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ModelParent: {fileID: 0}
+  TokenIcons: []
   _infoUI: {fileID: 0}
   _characterInfos: []
   CurCharacterInfo: {fileID: 0}
   CurCharacterEnhance: {fileID: 0}
+  SortButtonText: {fileID: 0}
   _infoPopup: {fileID: 0}
+  ElementFilterText: {fileID: 0}
+  RoleFilterText: {fileID: 0}
+  DragonVeinFilterText: {fileID: 0}
+  _characterFilter: {fileID: 0}
   CurIndex: 0
 --- !u!1 &1381679176
 GameObject:
@@ -2186,6 +2240,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b8394d18e2a544e88bd341da7e7fb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CharacterModels: []
+  OwnedObject: {fileID: 0}
   _characterData: {fileID: 11400000, guid: d1e60ff18312018448249d8b48dcdbb6, type: 2}
 --- !u!1 &1460501951
 GameObject:
@@ -4209,6 +4265,18 @@ PrefabInstance:
       propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 859391054, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 859391054, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 859391054, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1101863852, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -4317,6 +4385,10 @@ PrefabInstance:
       propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1368898716, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1715539856, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -4435,6 +4507,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2084423673, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
       propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2794146426466843521, guid: 085a192f6cf8ef54e99629d807e6bcf2,
+        type: 3}
+      propertyPath: m_PresetInfoIsWorld
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2794146426466843523, guid: 085a192f6cf8ef54e99629d807e6bcf2,
@@ -4480,6 +4557,21 @@ PrefabInstance:
     - target: {fileID: 2794146426466843523, guid: 085a192f6cf8ef54e99629d807e6bcf2,
         type: 3}
       propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2794146426466843523, guid: 085a192f6cf8ef54e99629d807e6bcf2,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2794146426466843523, guid: 085a192f6cf8ef54e99629d807e6bcf2,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2794146426466843523, guid: 085a192f6cf8ef54e99629d807e6bcf2,
+        type: 3}
+      propertyPath: m_LocalScale.z
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2794146426466843523, guid: 085a192f6cf8ef54e99629d807e6bcf2,
@@ -4547,6 +4639,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: CharacterInfo
       objectReference: {fileID: 0}
+    - target: {fileID: 4165827270396396760, guid: 085a192f6cf8ef54e99629d807e6bcf2,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.45031738
+      objectReference: {fileID: 0}
+    - target: {fileID: 6359526563550961058, guid: 085a192f6cf8ef54e99629d807e6bcf2,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.4970703
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 085a192f6cf8ef54e99629d807e6bcf2, type: 3}
 --- !u!224 &7833139463593601646
@@ -4583,6 +4685,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b8394d18e2a544e88bd341da7e7fb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CharacterModels: []
+  OwnedObject: {fileID: 0}
   _characterData: {fileID: 11400000, guid: 6eecc43c74500a444b8783b470494463, type: 2}
 --- !u!1 &8752961997111218564
 GameObject:

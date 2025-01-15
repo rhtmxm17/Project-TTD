@@ -1,33 +1,26 @@
 using Firebase.Database;
 using Firebase.Extensions;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class KMT_BaseUI : BaseUI
 {
 
-    [SerializeField]
-    HYJ_CharacterSelect buttonPrefab;
+    [SerializeField] HYJ_CharacterSelect buttonPrefab;
 
     Transform buttonsParent;
     HYJ_SelectManager selectManager;
+    HYJ_ListController listController; // 필터/&정렬용 리스트
     GameObject unitChangePanel;
 
     DatabaseReference userUidRef;
 
     private void Start()
     {
-        //yield return new WaitUntil(() => { return GameManager.Database != null; });
-        //yield return new WaitUntil(() => { return GameManager.Database.RootReference != null; });
-        //yield return StartCoroutine(UserDataManager.InitDummyUser(7));
-
         userUidRef = BackendManager.CurrentUserDataRef;
         Debug.Log(userUidRef == null);
 
         selectManager = GetComponent<HYJ_SelectManager>();
-
+        listController = GetComponent<HYJ_ListController>();
         buttonsParent = GetUI<Transform>("Content_Characters");
         unitChangePanel = GetUI<Transform>("UnitChangePanel").gameObject;
 
@@ -51,9 +44,12 @@ public class KMT_BaseUI : BaseUI
             foreach (DataSnapshot chInfo in snapshot.Children)
             {
                 HYJ_CharacterSelect button = Instantiate(buttonPrefab, buttonsParent);
-                Debug.Log("TP" + int.TryParse(chInfo.Key,out int Parsd));
-                Debug.Log(Parsd);
-                button.InitDataUnitBTN(selectManager, Parsd, unitChangePanel);
+                int.TryParse(chInfo.Key, out int parsd);
+                //Debug.Log("TP" + int.TryParse(chInfo.Key,out int Parsd));
+                //int.TryParse(chInfo.ket, out int Parsd);
+                //Debug.Log(Parsd);
+                button.InitDataUnitBtn(selectManager, parsd, unitChangePanel);
+                //listController.AddListUnit(parsd);
             }
         });
     }

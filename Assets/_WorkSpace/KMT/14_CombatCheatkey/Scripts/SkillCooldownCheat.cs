@@ -11,9 +11,9 @@ public class SkillCooldownCheat : MonoBehaviour
     public void OnClick()
     {
 
-        var skills = skillButtonParent.GetComponentsInChildren<BasicSkillButton>();
+        var skills = skillButtonParent.GetComponentsInChildren<SecondSkillButton>();
 
-        foreach (BasicSkillButton skill in skills)
+        foreach (SecondSkillButton skill in skills)
         {
             skill.DecreseCooltime(float.MaxValue / 2);
         }

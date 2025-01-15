@@ -18,11 +18,17 @@ public class EnterStageButton : MonoBehaviour
     protected virtual void Awake()
     {
         button = GetComponent<Button>();
-        button.onClick.AddListener(() => {
 
-            GameManager.Instance.SetLoadStageType(stageDataSO, stageType);
-            SceneManager.LoadSceneAsync("HYJ_BattleFormation");
+        StageSceneChangeArgs sceneChangeArgs = new StageSceneChangeArgs()
+        {
+            stageData = stageDataSO,
+            stageType = stageType,
+            prevScene = MenuType.ADVANTURE,
+        };
 
+        button.onClick.AddListener(() =>
+        {
+            GameManager.Instance.LoadBattleFormationScene(sceneChangeArgs);
         });
     }
 

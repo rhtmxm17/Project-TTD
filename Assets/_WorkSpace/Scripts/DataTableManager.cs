@@ -5,23 +5,30 @@ using System.Linq;
 using UnityEngine.Events;
 using System.Collections.ObjectModel;
 
-
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.Search;
 using Unity.EditorCoroutines.Editor;
 #endif
 
-public interface ICsvRowParseable
+public interface ITsvRowParseable
 {
 #if UNITY_EDITOR
-    public void ParseCsvRow(string[] cells);
+    public void ParseTsvRow(string[] cells);
 #endif
 }
 
-public interface ICsvSheetParseable
+public interface ITsvMultiRowParseable
 {
 #if UNITY_EDITOR
-    public void ParseCsvSheet(int id, string title, string csv);
+    public void ParseTsvMultiRow(string[] lines, ref int line);
+#endif
+}
+
+public interface ITsvSheetParseable
+{
+#if UNITY_EDITOR
+    public void ParseTsvSheet(int id, string title, string tsv);
 #endif
 }
 
@@ -36,6 +43,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
 
     [SerializeField] List<StageData> stageDataList;
     private Dictionary<int, StageData> stageDataIdDic; // id 기반 검색용
+    public ReadOnlyCollection<StageData> StageDataList => stageDataList.AsReadOnly();
 
     [SerializeField] List<StoryDirectingData> storyDirectingDataList;
     private Dictionary<int, StoryDirectingData> storyDirectingDataIdDic; // id 기반 검색용
@@ -66,11 +74,15 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
         return itemDataIdDic[id];
     }
 
+    /// <summary>
+    /// 해당 id를 갖는 스테이지를 반환합니다. id가 존재하지 않으면 null이 반환됩니다
+    /// </summary>
+    /// <param name="id">스테이지의 id</param>
+    /// <returns>스테이지(null 가능)</returns>
     public StageData GetStageData(int id)
     {
         if (false == stageDataIdDic.ContainsKey(id))
         {
-            Debug.LogWarning($"존재하지 않는 스테이지 ID({id})가 요청됨");
             return null;
         }
 
@@ -109,6 +121,8 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     public const string SkillAssetFolder = "Assets/_WorkSpace/Datas/Skills";
     public const string CharacterAssetFolder = "Assets/_WorkSpace/Datas/Character";
     public const string ItemAssetFolder = "Assets/_WorkSpace/Datas/Items";
+    public const string PackageAssetFolder = "Assets/_WorkSpace/Datas/Packages";
+    public const string StoryAssetFolder = "Assets/_WorkSpace/Datas/StoryDirectings";
 
     [SerializeField] Sprite dummySprite;
     public Sprite DummySprite => dummySprite;
@@ -117,27 +131,16 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     [SerializeField] Object characterDataFolder;
     [SerializeField] Object itemDataFolder;
     [SerializeField] Object stageDataFolder;
+    [SerializeField] Object packageDataFolder;
     [SerializeField] Object storyDirectingDataFolder;
-    [SerializeField] Object shopItemDataFolder;
 
-    private string documentID = "1mshKeAWkTmozk0snaJPWp7Jizs3pSeLhlFU-982BqHA";
-    private string storyDocumentID = "1mCbO7Xdg0DLPY-J9YjVriGHRueg1PSFvvlKqPZp8pVY";
-    private string characterSheetId = "0";
-    private string itemSheetId = "1467425655";
-    private string stageSheetId = "504606070";
+    private const string documentID = "1mshKeAWkTmozk0snaJPWp7Jizs3pSeLhlFU-982BqHA";
+    private const string storyDocumentID = "1mCbO7Xdg0DLPY-J9YjVriGHRueg1PSFvvlKqPZp8pVY";
+    private const string characterSheetId = "0";
+    private const string itemSheetId = "1467425655";
+    private const string packageSheetId = "1751436041";
+    private const string stageSheetId = "504606070";
 
-    [ContextMenu("상점 아이템 긁어오기(파싱x)")]
-    private void GetShopItem()
-    {
-        string path = $"{AssetDatabase.GetAssetPath(shopItemDataFolder)}";
-        string[] shopItems = AssetDatabase.FindAssets("t:ShopItemData", new string[] { path } );
-        shopItemDataList.Clear();
-        foreach (var shopItem in shopItems)
-        {
-            shopItemDataList.Add(AssetDatabase.LoadAssetAtPath<ShopItemData>(AssetDatabase.GUIDToAssetPath(shopItem)));
-        }
-        IndexData();
-    }
 
     [ContextMenu("시트에서 캐릭터 데이터 불러오기")]
     private void GetCharacterDataFromSheet()
@@ -156,11 +159,18 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     [ContextMenu("시트에서 스테이지 데이터 불러오기")]
     private void GetStageDataFromSheet()
     {
-        GetStageDataFromSheet(stageSheetId, stageDataFolder, stageDataList);
+        GetMultiRowDataFromSheet(stageSheetId, stageDataFolder, stageDataList);
         IndexData();
     }
 
-    [ContextMenu("스토리 데이터 불러오기 테스트")]
+    [ContextMenu("시트에서 상점 패키지 데이터 불러오기")]
+    private void GetShopItem()
+    {
+        GetMultiRowDataFromSheet(packageSheetId, packageDataFolder, shopItemDataList);
+        IndexData();
+    }
+
+    [ContextMenu("시트에서 스토리 데이터 불러오기")]
     private void GetStroyDataTest()
     {
         GetSheetDataFromDocument<StoryDirectingData>(storyDocumentID, storyDirectingDataFolder, storyDirectingDataList);
@@ -168,7 +178,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
     }
 
 
-    private void GetRowDataFromSheet<T>(string sheetId, Object dataFolder, List<T> dataList) where T : ScriptableObject, ICsvRowParseable
+    private void GetRowDataFromSheet<T>(string sheetId, Object dataFolder, List<T> dataList) where T : ScriptableObject, ITsvRowParseable
     {
         GoogleSheet.GetSheetData(documentID, sheetId, this, (succeed, result) =>
         {
@@ -180,7 +190,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
                 string[] lines = result.Split("\r\n");
                 foreach (string line in lines)
                 {
-                    string[] cells = line.Split(',');
+                    string[] cells = line.Split('\t');
 
                     // 0번열은 ID
                     // ID가 정수가 아니라면 데이터행이 아닌 것으로 간주(주석 등)
@@ -194,7 +204,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
                     if (System.IO.File.Exists(soPath))
                     {
                         soAsset = AssetDatabase.LoadAssetAtPath(soPath, typeof(T)) as T;
-                        soAsset.ParseCsvRow(cells);
+                        soAsset.ParseTsvRow(cells);
 
                         EditorUtility.SetDirty(soAsset);
                     }
@@ -202,7 +212,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
                     {
                         soAsset = ScriptableObject.CreateInstance<T>();
 
-                        soAsset.ParseCsvRow(cells);
+                        soAsset.ParseTsvRow(cells);
 
                         AssetDatabase.CreateAsset(soAsset, soPath);
                     }
@@ -224,7 +234,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
         });
     }
 
-    private void GetStageDataFromSheet(string sheetId, Object dataFolder, List<StageData> dataList)
+    private void GetMultiRowDataFromSheet<T>(string sheetId, Object dataFolder, List<T> dataList) where T : ScriptableObject, ITsvMultiRowParseable
     {
         GoogleSheet.GetSheetData(documentID, sheetId, this, (succeed, result) =>
         {
@@ -236,7 +246,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
                 string[] lines = result.Split("\r\n");
                 for (int i = 0; i < lines.Length; i++)
                 {
-                    string[] cells = lines[i].Split(',');
+                    string[] cells = lines[i].Split('\t');
 
                     // 0번열은 ID
                     // ID가 정수가 아니라면 데이터행이 아닌 것으로 간주(주석 등)
@@ -246,19 +256,19 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
                     // 1번열은 파일명
                     string soPath = $"{soFolderPath}/{cells[1]}.asset";
 
-                    StageData soAsset;
+                    T soAsset;
                     if (System.IO.File.Exists(soPath))
                     {
-                        soAsset = AssetDatabase.LoadAssetAtPath(soPath, typeof(StageData)) as StageData;
-                        soAsset.ParseCsvMultiRow(lines, ref i);
+                        soAsset = AssetDatabase.LoadAssetAtPath(soPath, typeof(T)) as T;
+                        soAsset.ParseTsvMultiRow(lines, ref i);
 
                         EditorUtility.SetDirty(soAsset);
                     }
                     else
                     {
-                        soAsset = ScriptableObject.CreateInstance<StageData>();
+                        soAsset = ScriptableObject.CreateInstance<T>();
 
-                        soAsset.ParseCsvMultiRow(lines, ref i);
+                        soAsset.ParseTsvMultiRow(lines, ref i);
 
                         AssetDatabase.CreateAsset(soAsset, soPath);
                     }
@@ -288,7 +298,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
         public string sheetId;
     }
 
-    private void GetSheetDataFromDocument<T>(string documentID, Object dataFolder, List<T> dataList) where T : ScriptableObject, ICsvSheetParseable
+    private void GetSheetDataFromDocument<T>(string documentID, Object dataFolder, List<T> dataList) where T : ScriptableObject, ITsvSheetParseable
     {
         GoogleSheet.GetSheetData(documentID, "0", this, (succeed, result) =>
         {
@@ -304,7 +314,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
             List<SheetIndexer> sheetIndex = new List<SheetIndexer>();
             foreach (string line in lines)
             {
-                string[] cells = line.Split(',');
+                string[] cells = line.Split('\t');
 
                 // 0번열은 ID
                 // ID가 정수가 아니라면 데이터행이 아닌 것으로 간주(주석 등)
@@ -325,7 +335,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
         });
     }
 
-    private IEnumerator ParseDocumentRoutine<T>(string documentID, List<SheetIndexer> sheetIndex, List<T> dataList) where T : ScriptableObject, ICsvSheetParseable
+    private IEnumerator ParseDocumentRoutine<T>(string documentID, List<SheetIndexer> sheetIndex, List<T> dataList) where T : ScriptableObject, ITsvSheetParseable
     {
         dataList.Clear();
         bool complete;
@@ -345,7 +355,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
                 if (System.IO.File.Exists(sheetIndex[i].soPath))
                 {
                     soAsset = AssetDatabase.LoadAssetAtPath(sheetIndex[i].soPath, typeof(T)) as T;
-                    soAsset.ParseCsvSheet(sheetIndex[i].id, sheetIndex[i].title, result);
+                    soAsset.ParseTsvSheet(sheetIndex[i].id, sheetIndex[i].title, result);
 
                     EditorUtility.SetDirty(soAsset);
                 }
@@ -353,7 +363,7 @@ public class DataTableManager : SingletonScriptable<DataTableManager>
                 {
                     soAsset = ScriptableObject.CreateInstance<T>();
 
-                    soAsset.ParseCsvSheet(sheetIndex[i].id, sheetIndex[i].title, result);
+                    soAsset.ParseTsvSheet(sheetIndex[i].id, sheetIndex[i].title, result);
 
                     AssetDatabase.CreateAsset(soAsset, sheetIndex[i].soPath);
                 }

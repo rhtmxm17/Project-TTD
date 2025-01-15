@@ -14,7 +14,7 @@ public class LoginCheckTest_kmt : MonoBehaviour
     {
         for (int i = 0; i < buttons.Length; i++)
         {
-            int dummyIdx = i + 1000;
+            int dummyIdx = i + 2000;
             buttons[i].onClick.AddListener(() => OnClick(dummyIdx));
         }
     }
@@ -48,7 +48,7 @@ public class LoginCheckTest_kmt : MonoBehaviour
         //UserData.myNickname = GameManager.UserData.Profile.Name.Value;
 
         DailyChecker.IsTodayFirstConnect((isFirst) => {
-
+            Debug.Log("체크끝");
             if (isFirst)
             {
                 SceneManager.LoadScene("DailyBonusScene");

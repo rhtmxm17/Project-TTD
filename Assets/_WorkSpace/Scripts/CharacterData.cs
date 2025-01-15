@@ -35,7 +35,7 @@ public class CharacterDataEditor : Editor
         rect.x += rect.width;
         if (characterData.ModelPrefab != null)
         {
-            Texture2D texture = AssetPreview.GetAssetPreview(characterData.ModelPrefab);
+            Texture2D texture = AssetPreview.GetAssetPreview(characterData.ModelPrefab.gameObject);
             GUI.DrawTexture(rect, texture);
         }
 
@@ -44,36 +44,14 @@ public class CharacterDataEditor : Editor
 }
 #endif
 
-/// <summary>
-/// 캐릭터의 속성입니다
-/// </summary>
-public enum CharacterType
-{
-    _0,
-    _1,
-    _2,
-    _3,
-    _4,
-}
-
-public enum CharacterRoleType
-{
-    _0, _1, _2
-}
-
-public enum CharacterDragonVeinType
-{
-    _0, _1
-}
-
-public class CharacterData : ScriptableObject, ICsvRowParseable
+public class CharacterData : ScriptableObject, ITsvRowParseable
 {
     [System.Serializable]
     public struct Status
     {
         public float Range;
         public float BasicSkillCooldown;
-        public float SecondSkillCost;
+        public float SecondSkillCooldown;
 
         /// <summary>
         /// 0레벨 공격력
@@ -89,18 +67,28 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         public float defensePointBase;
         public float defensePointGrouth;
         public float defenseCon;
-        public CharacterType type;
-        public CharacterRoleType roleType;
-        public CharacterDragonVeinType dragonVeinType;
+        public ElementType type;
+        public RoleType roleType;
+        public DragonVeinType dragonVeinType;
     }
 
     public int Id => id;
 
     public string Name => name;
+    
+    private int BonusStats => Level.Value % 10 == 0 ? ((Level.Value / 10) * 10) : 0;
+    
+    public float AttackPointLeveled => (((statusTable.attackPointBase + statusTable.attackPointGrowth) * Level.Value) * (1f + 0.1f * Enhancement.Value)) + BonusStats;
 
+    public float HpPointLeveled => (((statusTable.healthPointBase + statusTable.healthPointGrouth) * Level.Value) * (1f + 0.1f * Enhancement.Value)) + BonusStats;
+
+    public float DefensePointLeveled => (((statusTable.defensePointBase + statusTable.defensePointGrouth) * Level.Value) * (1f + 0.1f * Enhancement.Value)) + BonusStats;
+
+    public float PowerLevel => (AttackPointLeveled + HpPointLeveled + DefensePointLeveled);
+    
     public Sprite FaceIconSprite => faceIconSprite;
 
-    public GameObject ModelPrefab => modelPrefab;
+    public CharacterModel ModelPrefab => modelPrefab;
 
     public Status StatusTable => statusTable;
 
@@ -135,7 +123,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     [SerializeField] int id;
     [SerializeField] new string name;
     [SerializeField] Sprite faceIconSprite;
-    [SerializeField] GameObject modelPrefab;
+    [SerializeField] CharacterModel modelPrefab;
     [SerializeField] Status statusTable;
     [Header("Skill datas")]
     [SerializeField] Skill basicSkillDataSO;
@@ -148,22 +136,10 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
     [SerializeField] int getCharacterItemId;
     [SerializeField] int enhanceItemId;
 
-    #region 유저 데이터
-    /// <summary>
-    /// 유저 데이터. DataManager의 LoadUserData()가 호출된 적이 있어야 정상적인 값을 갖는다<br/>
-    /// 주의: 에디터의 Enter Play Mode Settings에서 도메인 리로드가 비활성화 되어있을 경우 이전 실행시의 값이 남아있을 수 있음<br/>
-    /// 주의2: 로그아웃을 구현해야 한다면 마찬가지로 이전 유저의 값이 남아있으므로 인증 정보 변경시 정리하는 메서드 추가할것
-    /// </summary>
-    public UserDataInt Level { get; private set; }
-    public UserDataInt Enhancement { get; private set; }
-    public UserDataInt EnhanceMileagePerMill { get; private set; } // 0 ~ 1000
-
-    private void OnEnable()
-    {
-        Level = new UserDataInt($"Characters/{id}/Level");
-        Enhancement = new UserDataInt($"Characters/{id}/Enhancement");
-        EnhanceMileagePerMill = new UserDataInt($"Characters/{id}/EnhanceMileagePerMill");
-    }
+    #region 유저 데이터 참조
+    public UserDataInt Level => GameManager.UserData.GetCharacterLevel(id);
+    public UserDataInt Enhancement => GameManager.UserData.GetCharacterEnhancement(id);
+    public UserDataInt EnhanceMileagePerMill => GameManager.UserData.GetCharacterMileage(id);
     #endregion
 
 #if UNITY_EDITOR
@@ -194,14 +170,17 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         HP_BASE,
         HP_GROWTH,
         DEFCON,
+        DROPDOWN_CHAR_TYPE,
         CHAR_TYPE,
+        DROPDOWN_ROLE_TYPE,
         ROLE_TYPE,
+        DROPDOWN_DRAGONVEIN_TYPE,
         DRAGONVEIN_TYPE,
         GET_CHARACTER_ITEM,
         ENHANCE_ITEM,
     }
 
-    public void ParseCsvRow(string[] cells)
+    public void ParseTsvRow(string[] cells)
     {
         // ID
         if (false == int.TryParse(cells[(int)Column.ID], out id))
@@ -214,51 +193,59 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
         name = cells[(int)Column.NAME];
 
         // FACE_ICON
-        faceIconSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.FACE_ICON]}.asset");
+        faceIconSprite = SearchAsset.SearchSpriteAsset(cells[(int)Column.FACE_ICON]);
         if (faceIconSprite == null)
             faceIconSprite = DataTableManager.Instance.DummySprite;
 
         // SHAPE
-        modelPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{DataTableManager.PrefabsAssetFolder}/{cells[(int)Column.SHAPE]}.prefab");
+        //modelPrefab = AssetDatabase.LoadAssetAtPath<CharacterModel>($"{DataTableManager.PrefabsAssetFolder}/{cells[(int)Column.SHAPE]}.prefab");
+        modelPrefab = SearchAsset.SearchPrefabAsset<CharacterModel>(cells[(int)Column.SHAPE]);
 
         // BASE_ATTACK
-        basicSkillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.BASE_ATTACK]}.asset");
+        basicSkillDataSO = SearchAsset.SearchSOAsset<Skill>(cells[(int)Column.BASE_ATTACK]);
 
         // NORMAL_SKILL
-        skillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.NORMAL_SKILL]}.asset");
+        skillDataSO = SearchAsset.SearchSOAsset<Skill>(cells[(int)Column.NORMAL_SKILL]);
 
-        // NS_COOLDOWN
-        if (false == float.TryParse(cells[(int)Column.NS_COOLDOWN], out statusTable.BasicSkillCooldown))
+        if (skillDataSO != null) // 일반 스킬이 기재되어 있다면
         {
-            Debug.LogError($"잘못된 데이터로 갱신 시도됨");
-            return;
+            // NS_COOLDOWN
+            if (false == float.TryParse(cells[(int)Column.NS_COOLDOWN], out statusTable.BasicSkillCooldown))
+            {
+                Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+                return;
+            }
+
+            // NS_ICON
+            normalSkillIcon = SearchAsset.SearchSpriteAsset(cells[(int)Column.NS_ICON]);
+            if (normalSkillIcon == null)
+                normalSkillIcon = DataTableManager.Instance.DummySprite;
+
+            // NS_TOOLTIP
+            normalSkillToolTip = cells[(int)Column.NS_TOOLTIP];
         }
-
-        // NS_ICON
-        normalSkillIcon = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.NS_ICON]}.asset");
-        if (normalSkillIcon == null)
-            normalSkillIcon = DataTableManager.Instance.DummySprite;
-
-        // NS_TOOLTIP
-        normalSkillToolTip = cells[(int)Column.NS_TOOLTIP];
 
         // SPECIAL_SKILL
-        secondSkillDataSO = AssetDatabase.LoadAssetAtPath<Skill>($"{DataTableManager.SkillAssetFolder}/{cells[(int)Column.SPECIAL_SKILL]}.asset");
+        secondSkillDataSO = SearchAsset.SearchSOAsset<Skill>(cells[(int)Column.SPECIAL_SKILL]);
 
-        // SS_COST
-        if (false == float.TryParse(cells[(int)Column.SS_COST], out statusTable.SecondSkillCost))
+        if (secondSkillDataSO != null) // 특수 스킬이 기재되어 있다면
         {
-            Debug.LogError($"잘못된 데이터로 갱신 시도됨");
-            return;
+            // SS_COST
+            if (false == float.TryParse(cells[(int)Column.SS_COST], out statusTable.SecondSkillCooldown))
+            {
+                Debug.LogError($"잘못된 데이터로 갱신 시도됨");
+                return;
+            }
+
+            //Special_Skill_Icon
+            specialSkillIcon = SearchAsset.SearchSpriteAsset(cells[(int)Column.SS_ICON]);
+
+            if (specialSkillIcon == null)
+                specialSkillIcon = DataTableManager.Instance.DummySprite;
+
+            // SS_TOOLTIP
+            specialSkillToolTip = cells[(int)Column.SS_TOOLTIP];
         }
-
-        //Special_Skill_Icon
-        specialSkillIcon = AssetDatabase.LoadAssetAtPath<Sprite>($"{DataTableManager.SpritesAssetFolder}/{cells[(int)Column.SS_ICON]}.asset");
-        if (specialSkillIcon == null)
-            specialSkillIcon = DataTableManager.Instance.DummySprite;
-
-        // SS_TOOLTIP
-        specialSkillToolTip = cells[(int)Column.SS_TOOLTIP];
 
         // RANGE
         if (false == float.TryParse(cells[(int)Column.RANGE], out statusTable.Range))
@@ -322,7 +309,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
             Debug.LogError($"잘못된 데이터로 갱신 시도됨");
             return;
         }
-        statusTable.type = (CharacterType)type;
+        statusTable.type = (ElementType)type;
 
         // CHAR_ROLE_TYPE
         if (false == int.TryParse(cells[(int)Column.ROLE_TYPE], out int roleType))
@@ -330,7 +317,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
             Debug.LogError($"잘못된 데이터로 갱신 시도됨");
             return;
         }
-        statusTable.roleType = (CharacterRoleType)roleType;
+        statusTable.roleType = (RoleType)roleType;
 
         // CHAR_DRAGON_TYPE
         if (false == int.TryParse(cells[(int)Column.DRAGONVEIN_TYPE], out int dragonType))
@@ -338,7 +325,7 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
             Debug.LogError($"잘못된 데이터로 갱신 시도됨");
             return;
         }
-        statusTable.dragonVeinType = (CharacterDragonVeinType)dragonType;
+        statusTable.dragonVeinType = (DragonVeinType)dragonType;
 
         // GET_CHARACTER_ITEM
         if (int.TryParse(cells[(int)Column.GET_CHARACTER_ITEM], out getCharacterItemId))
@@ -353,12 +340,12 @@ public class CharacterData : ScriptableObject, ICsvRowParseable
                 /// 아이템 획득 이벤트에 그 개수를 검사해 캐릭터 또는 전용 강화재료를 획득하는 메서드를 추가한다
 
                 // 직렬화된 UnityEvent 제거 (한 아이템 획득이 여러 메서드를 갖는 경우를 고려하지 않음)
-                while (0 < itemdata.onNumberChanged.GetPersistentEventCount())
+                while (0 < itemdata.OnNumberChanged.GetPersistentEventCount())
                 {
-                    UnityEditor.Events.UnityEventTools.RemovePersistentListener(itemdata.onNumberChanged, 0);
+                    UnityEditor.Events.UnityEventTools.RemovePersistentListener(itemdata.OnNumberChanged, 0);
                 }
                 // 직렬화되는 UnityEvent 등록
-                UnityEditor.Events.UnityEventTools.AddPersistentListener(itemdata.onNumberChanged, AcquireCharacter);
+                UnityEditor.Events.UnityEventTools.AddPersistentListener(itemdata.OnNumberChanged, AcquireCharacter);
                 EditorUtility.SetDirty(itemdata);
             }
         }

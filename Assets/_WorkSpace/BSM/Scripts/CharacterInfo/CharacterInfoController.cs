@@ -1,58 +1,64 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using DG.DemiLib;
+using System.Linq; 
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class CharacterInfoController : BaseUI
 {
+    public GameObject ModelParent;
+    public List<Sprite> TokenIcons;
+    
     [HideInInspector] public CharacterInfoUI _infoUI;
     [HideInInspector] public List<CharacterInfo> _characterInfos;
     [HideInInspector] public CharacterInfo CurCharacterInfo;
     [HideInInspector] public CharacterEnhance CurCharacterEnhance;
-
+    [HideInInspector] public TextMeshProUGUI SortButtonText;
     [HideInInspector] public GameObject _infoPopup;
-
-    [HideInInspector] public int CurIndex = 0;
-
-    private List<int> _holdingCharactersIndex = new List<int>();
+    [HideInInspector] public TextMeshProUGUI ElementFilterText;
+    [HideInInspector] public TextMeshProUGUI RoleFilterText;
+    [HideInInspector] public TextMeshProUGUI DragonVeinFilterText;
+    [HideInInspector] public CharacterFilter _characterFilter;
     
-    private GameObject _characterUISet;
-    private CharacterSort _characterSort;
-    private CharacterFilter _characterFilter;
+    [HideInInspector] public UserDataInt UserGoldData;
+    /// <summary>
+    /// 용 강화 재화
+    /// </summary>
+    [HideInInspector] public UserDataInt UserDragonCandyData;
+    
+    /// <summary>
+    /// 용 레벨업 재화
+    /// </summary>
+    [HideInInspector] public UserDataInt UserYongGwaData; 
+    
+    [HideInInspector] public int CurIndex = 0;
+    private int _evolutionIndex;
+    
+    private List<int> _holdingCharactersIndex = new List<int>();
 
+    private CharacterInfoPopup _characterInfoPopupCs;
+    private CharacterSort _characterSort;
+
+    private TextMeshProUGUI _evolutionText;
+    private TextMeshProUGUI _sortingText;
+    
+    private Button _leftEvolutionButton;
+    private Button _rightEvolutionButton;
     private Button _prevButton;
     private Button _nextButton;
     private Button _sortButton;
-    private Button _filterButton;
-
-    private SortType _lastSortType;
-    private RectTransform _contentForm;
-    private Vector2 _characterCellSize;
-    private Vector2 _characterSpacing;
-
-    private int _characterCount;
-
+    private Button _sortingButton;
+    private Button _elementFilterButton;
+    private Button _roleFilterButton;
+    private Button _dragonVeinFilterButton;
+    
+    private GameObject _characterUIPanel;
     private GameObject _detailTab;
     private GameObject _enhanceTab;
     private GameObject _evolutionTab;
-    private GameObject _meanTab;
-
-    private int CharacterCount
-    {
-        get => _characterInfos.Count;
-        set
-        {
-            _characterCount = value;
-            ResizeContentForm();
-        }
-    }
-
+    
+    private SortType _lastSortType;
     private InfoTabType _curInfoTabType;
 
     public InfoTabType CurInfoTabType
@@ -65,70 +71,137 @@ public class CharacterInfoController : BaseUI
         }
     }
 
-    private int _userGold;
-
-    public int UserGold
+    private int _userYongGwa;
+    
+    /// <summary>
+    /// 용 레벨업 재화
+    /// </summary>
+    public int UserYongGwa
     {
+        get => _userYongGwa;
+        set
+        {
+            _userYongGwa = value;
+            _infoUI._levelYongGwaAmountText.text = _userYongGwa.ToString();
+        }
+    }
+    
+    private int _userGold;
+    
+    /// <summary>
+    /// 용 레벨업 골드 재화
+    /// </summary>
+    public int UserGold { 
         get => _userGold;
-        set { _userGold = value; }
+        set
+        {
+            _userGold = value;
+            _infoUI._amountGoldText.text = _userGold.ToString();
+            _infoUI._levelGoldAmountText.text = _userGold.ToString();
+        } 
+    }
+    
+    private int _userDragonCandy;
+    
+    /// <summary>
+    /// 용 강화 재화
+    /// </summary>
+    public int UserDragonCandy
+    {
+        get => _userDragonCandy;
+        set
+        {
+            _userDragonCandy = value;
+            _infoUI._amountCommonTokenText.text = _userDragonCandy.ToString();
+        }
     }
 
-    public UserDataInt UserGoldData;
-    public TextMeshProUGUI SortButtonText { get; set; }
+    private int _userCharacterToken;
 
+    public int UserCharacterToken
+    {
+        get => _userCharacterToken;
+        set
+        {
+            _userCharacterToken = value;
+            _infoUI._amountCharacterTokenText.text = _userCharacterToken.ToString();
+        }
+    }
+    
     protected override void Awake()
     {
         base.Awake(); 
         Init();
         ButtonOnClickEvent();
-        SetContentFormGridLayOut(); 
-        SetDatabase(); 
+        GetUserMaterials(); 
     }
 
-    private void SetDatabase()
-    {
-        UserGoldData = GameManager.TableData.GetItemData(1).Number;
-        _userGold = UserGoldData.Value;
+    private void OnEnable()
+    { 
+        UpdateCharacterList(); 
     }
-
-    private void OnEnable() => UpdateCharacterList();
-
+    
     private void Init()
     {
-        _infoPopup = GetUI("InfoPopup");
-        _characterUISet = GetUI("CharacterUISet");
-
-        //Sort, Filter GetBind
-        _characterFilter = GetUI<CharacterFilter>("FilterUI");
-        _characterSort = GetUI<CharacterSort>("SortUI");
-        _characterSort.CurSortType = (SortType)PlayerPrefs.GetInt("SortType", 1);
-        
-        _infoUI = GetUI<CharacterInfoUI>("InfoUI");
-
-        _contentForm = GetUI<RectTransform>("Content");
-        _prevButton = GetUI<Button>("PreviousButton");
-        _nextButton = GetUI<Button>("NextButton");
-
-        _sortButton = GetUI<Button>("SortButton");
-        SortButtonText = _sortButton.GetComponentInChildren<TextMeshProUGUI>();
-        _filterButton = GetUI<Button>("FilterButton");
-
-
         _detailTab = GetUI("DetailTab");
         _enhanceTab = GetUI("EnhanceTab");
         _evolutionTab = GetUI("EvolutionTab");
-        _meanTab = GetUI("MeanTab");
+        _infoPopup = GetUI("InfoPopup");
+        _characterUIPanel = GetUI("CharacterUIPanel");
 
-        _characterCellSize = _contentForm.GetComponent<GridLayoutGroup>().cellSize;
-        _characterSpacing = _contentForm.GetComponent<GridLayoutGroup>().spacing;
+        //Sort, Filter GetBind
+        _characterFilter = GetUI<CharacterFilter>("FilterUI");
+        _characterSort = GetUI<CharacterSort>("SortUI"); 
+        _infoUI = GetUI<CharacterInfoUI>("InfoUI");
+        _characterInfoPopupCs = GetUI<CharacterInfoPopup>("InfoPopup");
+        
+        _prevButton = GetUI<Button>("PreviousButton");
+        _nextButton = GetUI<Button>("NextButton");
+        _sortButton = GetUI<Button>("SortButton");
+        _elementFilterButton = GetUI<Button>("ElementFilterButton");
+        _roleFilterButton = GetUI<Button>("RoleFilterButton");
+        _dragonVeinFilterButton = GetUI<Button>("DragonVeinFilterButton");
+        _sortingButton = GetUI<Button>("SortingButton");
+        _leftEvolutionButton = GetUI<Button>("LeftEvolutionButton");
+        _rightEvolutionButton = GetUI<Button>("RightEvolutionButton");
+        
+        SortButtonText = _sortButton.GetComponentInChildren<TextMeshProUGUI>();
+
+        _evolutionText = GetUI<TextMeshProUGUI>("EvolutionText");
+        _sortingText = GetUI<TextMeshProUGUI>("SortingButtonText");
+        ElementFilterText = GetUI<TextMeshProUGUI>("ElementFilterText"); 
+        RoleFilterText = GetUI<TextMeshProUGUI>("RoleFilterText");
+        DragonVeinFilterText = GetUI<TextMeshProUGUI>("DragonVeinFilterText");
+        
     }
 
+    /// <summary>
+    /// 현재 유저가 보유한 골드 가져옴
+    /// </summary>
+    private void GetUserMaterials()
+    {
+        UserGoldData = GameManager.TableData.GetItemData(1).Number;
+        UserDragonCandyData = GameManager.TableData.GetItemData(2).Number;
+        UserYongGwaData = GameManager.TableData.GetItemData(5).Number;
+        
+        _userGold = UserGoldData.Value;
+        _userDragonCandy = UserDragonCandyData.Value;
+        _userYongGwa = UserYongGwaData.Value; 
+    }
+    
     private void ButtonOnClickEvent()
     {
-        _prevButton.onClick.AddListener(PreviousCharacter);
-        _nextButton.onClick.AddListener(NextCharacter);
+        _leftEvolutionButton.onClick.AddListener(EvolutionPrevCharacter);
+        _rightEvolutionButton.onClick.AddListener(EvolutionNextCharacter);
+        _prevButton.onClick.AddListener(DetailPreviousCharacter);
+        _nextButton.onClick.AddListener(DetailNextCharacter);
         _sortButton.onClick.AddListener(() => _characterSort.transform.GetChild(0).gameObject.SetActive(true));
-        _filterButton.onClick.AddListener(() => _characterFilter.transform.GetChild(0).gameObject.SetActive(true));
+        _sortingButton.onClick.AddListener(()=> _characterSort.SortingLayerEvent());
+        
+        _elementFilterButton.onClick.AddListener(() => _characterFilter.transform.GetChild(0).gameObject.SetActive(true));
+        _roleFilterButton.onClick.AddListener(() => _characterFilter.transform.GetChild(1).gameObject.SetActive(true));
+        _dragonVeinFilterButton.onClick.AddListener(() =>_characterFilter.transform.GetChild(2).gameObject.SetActive(true));
+
     }
 
     /// <summary>
@@ -136,50 +209,37 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void UpdateCharacterList()
     { 
+        _characterSort.CurSortType = PlayerPrefs.HasKey("SortType") ? (SortType)PlayerPrefs.GetInt("SortType") : SortType.LEVEL;
+        
         _characterInfos = GetComponentsInChildren<CharacterInfo>(true).ToList();
         
         for (int i = 0; i < _characterInfos.Count; i++)
         {
             _characterInfos[i].SetCharacterData();
         }
-        
-        CharacterCount = _characterInfos.Count;
-        _characterSort._sortCharacterInfos= _characterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)).ToList();
+
+        _characterSort._sortCharacterInfos= _characterInfos;
         _characterSort.CharacterInfoController = this;
-        _characterFilter._filterCharacterInfos = _characterInfos.Where(x=> GameManager.UserData.HasCharacter(x._CharacterData.Id)).ToList();
+        _characterSort.SortingText = _sortingText;
+        _characterFilter._filterCharacterInfos = _characterInfos;
+        _characterFilter.CharacterController = this;
         StartListSort();
-        
-        for (int i = 0; i < _characterInfos.Count; i++)
-        {
-            if (!GameManager.UserData.HasCharacter(_characterInfos[i]._CharacterData.Id))
-            {
-                _characterInfos[i].gameObject.SetActive(false);  
-            }
-            else
-            {
-                _characterInfos[i].gameObject.SetActive(true);
-            }
-        }
-
-        _holdingCharactersIndex = _characterInfos.Where(x => GameManager.UserData.HasCharacter(x._CharacterData.Id))
-            .Select(x => _characterInfos.IndexOf(x)).ToList();
-
     }
-
+    
     /// <summary>
     /// 마지막 정렬 방식 저장 후 시작했을 때 해당 방식으로 정렬
     /// </summary>
-    private void StartListSort()
+    public void StartListSort()
     {
-        //1 : 내림차순 , 0 : 오름차순
-        _characterSort.IsSorting = PlayerPrefs.GetInt("IsSorting") == 1;
+        //1(True) : 내림차순 , 0(False) : 오름차순
+        _characterSort.IsSorting = PlayerPrefs.HasKey("IsSorting") ? PlayerPrefs.GetInt("IsSorting") == 1 : true;
         _characterSort.CharacterListSort();
     }
-
+    
     /// <summary>
-    /// 이전 캐릭터 정보로 변경
+    /// 상세 탭 : 이전 캐릭터 정보로 변경
     /// </summary>
-    private void PreviousCharacter()
+    private void DetailPreviousCharacter()
     {
         while (true)
         {
@@ -192,18 +252,22 @@ public class CharacterInfoController : BaseUI
                 CurIndex--;
             }
 
-            if (_holdingCharactersIndex.Contains(CurIndex)) break;
-            
+            if (_characterInfos[CurIndex].gameObject.activeSelf) break;
         }
-         
+        
+        if (_infoUI._enhanceResultPopup.activeSelf)
+        {
+            _infoUI._enhanceResultPopup.SetActive(false);
+        }
+        
         CurCharacterInfo = _characterInfos[CurIndex];
         CurCharacterInfo.UpdateInfo();
     }
 
     /// <summary>
-    /// 다음 캐릭터 정보로 변경
+    /// 상세 탭 : 다음 캐릭터 정보로 변경
     /// </summary>
-    private void NextCharacter()
+    private void DetailNextCharacter()
     {
         while (true)
         {
@@ -216,36 +280,16 @@ public class CharacterInfoController : BaseUI
                 CurIndex++;
             }
             
-            if (_holdingCharactersIndex.Contains(CurIndex)) break;
+            if (_characterInfos[CurIndex].gameObject.activeSelf) break;
         }
-         
+        
+        if (_infoUI._enhanceResultPopup.activeSelf)
+        {
+            _infoUI._enhanceResultPopup.SetActive(false);
+        }
+        
         CurCharacterInfo = _characterInfos[CurIndex];
         CurCharacterInfo.UpdateInfo();
-    }
-
-    /// <summary>
-    /// ContentForm GridLayout 설정
-    /// </summary>
-    private void SetContentFormGridLayOut()
-    {
-        GridLayoutGroup contentFormGrid = _contentForm.GetComponent<GridLayoutGroup>();
-        contentFormGrid.cellSize = new Vector2(300, 467);
-        contentFormGrid.spacing = new Vector2(80, 0);
-    }
-
-    /// <summary>
-    /// 캐릭터 리스트 Content Form ReSize 기능
-    /// </summary>
-    private void ResizeContentForm()
-    {
-        //Width 300 + space 80  
-        //(캐릭터 Width + spacing) * List.Count + 1 > Content.SizeDelta.x -> ReSize 진행
-        float totalWidth = (_characterCellSize.x + _characterSpacing.x) * _characterInfos.Count + 1;
-        float contentWidth = _contentForm.sizeDelta.x;
-
-        if (totalWidth < contentWidth) return;
-
-        _contentForm.sizeDelta = new Vector2(totalWidth, _contentForm.sizeDelta.y);
     }
 
     /// <summary>
@@ -253,10 +297,75 @@ public class CharacterInfoController : BaseUI
     /// </summary>
     private void TabSwitch()
     {
-        _characterUISet.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL) || _curInfoTabType.Equals(InfoTabType.ENHANCE));
+        if (_infoUI._enhanceResultPopup.activeSelf)
+        {
+            _infoUI._enhanceResultPopup.SetActive(false);
+        }
+        
+        CurCharacterInfo.CharacterModels[_characterInfoPopupCs.ListIndex].gameObject.SetActive(_curInfoTabType.Equals(InfoTabType.EVOLUTION));
+        _evolutionIndex = 0;
+        _characterInfoPopupCs.ListIndex = _evolutionIndex;
+        EvolutionCharacterUI();
+        
+        //강화 탭 등록한 토큰 개수 UI
+        _infoUI._characterTokenCountText.text = 0.ToString();
+        _infoUI._commonTokenCountText.text = 0.ToString();
+        
+        UserGold = UserGoldData.Value;
+        UserDragonCandy = UserDragonCandyData.Value;
+        UserCharacterToken = GameManager.TableData.GetItemData(CurCharacterInfo._CharacterData.EnhanceItemID).Number.Value;
+        
+        _infoUI._beforeMax.SetActive(_curInfoTabType.Equals(InfoTabType.ENHANCE));
+        _nextButton.gameObject.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
+        _prevButton.gameObject.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
+        _characterUIPanel.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL) || _curInfoTabType.Equals(InfoTabType.ENHANCE));
         _detailTab.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
         _enhanceTab.SetActive(_curInfoTabType.Equals(InfoTabType.ENHANCE));
         _evolutionTab.SetActive(_curInfoTabType.Equals(InfoTabType.EVOLUTION));
-        _meanTab.SetActive(_curInfoTabType.Equals(InfoTabType.MEAN));
     }
+
+    /// <summary>
+    /// 진화 탭 : 이전 레벨 진화 캐릭터
+    /// </summary>
+    private void EvolutionPrevCharacter()
+    {
+        if (_evolutionIndex > 0)
+        {
+            CurCharacterInfo.CharacterModels[_evolutionIndex].gameObject.SetActive(false);
+            _evolutionIndex--;
+        }
+        
+        CurCharacterInfo.CharacterModels[_evolutionIndex].gameObject.SetActive(true);
+        _characterInfoPopupCs.ListIndex = _evolutionIndex;
+        
+        EvolutionCharacterUI();
+    }
+
+    /// <summary>
+    /// 진화 탭 : 다음 레벨 진화 캐릭터
+    /// </summary>
+    private void EvolutionNextCharacter()
+    {
+        if (_evolutionIndex < CurCharacterInfo.CharacterModels.Count)
+        {
+            CurCharacterInfo.CharacterModels[_evolutionIndex].gameObject.SetActive(false);
+            _evolutionIndex++;
+        }
+         
+        CurCharacterInfo.CharacterModels[_evolutionIndex].gameObject.SetActive(true);
+        _characterInfoPopupCs.ListIndex = _evolutionIndex;
+        
+        EvolutionCharacterUI();
+    }
+    
+    /// <summary>
+    /// 진화 캐릭터 노출 조건
+    /// </summary>
+    private void EvolutionCharacterUI()
+    {
+        _leftEvolutionButton.gameObject.SetActive(_evolutionIndex != 0);
+        _rightEvolutionButton.gameObject.SetActive(_evolutionIndex != CurCharacterInfo.CharacterModels.Count - 1);
+        _evolutionText.text = $"진화 Lv.{_evolutionIndex + 1}";
+    }
+    
 }

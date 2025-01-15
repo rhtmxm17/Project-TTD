@@ -6,7 +6,7 @@ using UnityEngine.Events;
 using Firebase.Database;
 using System;
 
-public class UserDataManager : SingletonScriptable<UserDataManager>
+public class UserDataManager : SingletonBehaviour<UserDataManager>
 {
     /// <summary>
     /// 24. 12. 27 김민태 캐릭터 소유 목록 추가
@@ -34,7 +34,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
 
         StartUpdateStream()
             .SetDBValue(chData.Level, 1)
-            .SetDBValue(chData.Enhancement, 1)
+            .SetDBValue(chData.Enhancement, 0)
             .Submit((result) =>
             {
                 Debug.Log("적용 완료!");
@@ -45,11 +45,96 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
 
     #endregion
 
-    public UnityEvent onLoadUserDataCompleted;
+    public UnityEvent onLoadUserDataCompleted { get; private set; } = new UnityEvent();
 
     public UserProfile Profile { get; private set; } = new UserProfile();
 
     public GamePlayData PlayData { get; private set; } = new GamePlayData();
+
+    #region SO 연계형 유저 데이터
+    
+
+    private Dictionary<int, UserDataInt> itemNumberDict = new Dictionary<int, UserDataInt>();
+    public UserDataInt GetItemNumber(int id)
+    {
+        if (itemNumberDict.ContainsKey(id))
+            return itemNumberDict[id];
+        else
+        {
+            UserDataInt udInt = new UserDataInt($"Items/{id}");
+            itemNumberDict.Add(id, udInt);
+            // 아이템은 SO의 이벤트를 발생시킴
+            udInt.onValueChanged += GameManager.TableData.GetItemData(id).InvokeNumberChanged;
+            return udInt;
+        }
+    }
+
+    private Dictionary<int, UserDataInt> stageClearCountDict = new Dictionary<int, UserDataInt>();
+    public UserDataInt GetStageClearCount(int id)
+    {
+        if (stageClearCountDict.ContainsKey(id))
+            return stageClearCountDict[id];
+        else
+        {
+            UserDataInt udInt = new UserDataInt($"Stages/{id}/ClearCount");
+            stageClearCountDict.Add(id, udInt);
+            return udInt;
+        }
+    }
+
+    private Dictionary<int, UserDataInt> characterLevelDict = new Dictionary<int, UserDataInt>();
+    public UserDataInt GetCharacterLevel(int id)
+    {
+        if (characterLevelDict.ContainsKey(id))
+            return characterLevelDict[id];
+        else
+        {
+            UserDataInt udInt = new UserDataInt($"Characters/{id}/Level", 1);
+            characterLevelDict.Add(id, udInt);
+            return udInt;
+        }
+    }
+
+    private Dictionary<int, UserDataInt> characterEnhancementDict = new Dictionary<int, UserDataInt>();
+    public UserDataInt GetCharacterEnhancement(int id)
+    {
+        if (characterEnhancementDict.ContainsKey(id))
+            return characterEnhancementDict[id];
+        else
+        {
+            UserDataInt udInt = new UserDataInt($"Characters/{id}/Enhancement");
+            characterEnhancementDict.Add(id, udInt);
+            return udInt;
+        }
+    }
+
+    private Dictionary<int, UserDataInt> characterMileageDict = new Dictionary<int, UserDataInt>();
+    public UserDataInt GetCharacterMileage(int id)
+    {
+        if (characterMileageDict.ContainsKey(id))
+            return characterMileageDict[id];
+        else
+        {
+            UserDataInt udInt = new UserDataInt($"Characters/{id}/EnhanceMileagePerMill");
+            characterMileageDict.Add(id, udInt);
+            return udInt;
+        }
+    }
+
+    private Dictionary<int, UserDataInt> packageBoughtDict = new Dictionary<int, UserDataInt>();
+    public UserDataInt GetPackageBought(int id)
+    {
+        if (packageBoughtDict.ContainsKey(id))
+            return packageBoughtDict[id];
+        else
+        {
+            UserDataInt udInt = new UserDataInt($"ShopItems/{id}/Bought");
+            packageBoughtDict.Add(id, udInt);
+            return udInt;
+        }
+    }
+
+    #endregion SO 연계형 유저 데이터
 
     public class UserProfile
     {
@@ -65,11 +150,32 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
 
     public class GamePlayData
     {
+        public const int MaxRoomIndex = 5;
+
         public UserDataDateTime EggGainTimestamp { get; private set; } = new UserDataDateTime("PlayData/EggGainTimestamp");
         public UserDataDateTime IdleRewardTimestamp { get; private set; } = new UserDataDateTime("PlayData/IdleRewardTimestamp");
 
-        public UserDataDictionaryLong BatchInfo { get; private set; } = new UserDataDictionaryLong("PlayData/BatchInfo");
 
+        public UserDataDictionaryLong BatchInfo { get; private set; } = new UserDataDictionaryLong("PlayData/BatchInfo");
+        public UserDataDictionaryLong GoldDungeonClearRate { get; private set; } = new UserDataDictionaryLong("PlayData/GoldDungeonClearRate");
+        public UserDataDictionaryLong ExpDungeonClearRate { get; private set; } = new UserDataDictionaryLong("PlayData/ExpDungeonClearRate");
+        public UserDataDictionaryLong EnforceDungeonClearRate { get; private set; } = new UserDataDictionaryLong("PlayData/EnforceDungeonClearRate");
+
+
+        public List<UserDataInt> HasRoom = new List<UserDataInt>(MaxRoomIndex);
+
+        public GamePlayData()
+        {
+            for (int i = 0; i < MaxRoomIndex; i++)
+            {
+                HasRoom.Add(new UserDataInt($"PlayData/HasRoom/{i}"));
+            }
+        }
+    }
+
+    private void Awake()
+    {
+        RegisterSingleton(this);
     }
 
     /// <summary>
@@ -89,22 +195,18 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
         // Auth 초기화 대기
         yield return new WaitWhile(() => GameManager.Auth == null);
         
-        if (GameManager.Auth.CurrentUser != null)
-        {
-            GameManager.Auth.SignOut();
-        }
-        
-        if (BackendManager.CurrentUserDataRef != null) // 이미 더미 인증된 이력이 있을 경우 즉시 완료
-        {
-            onCompletedCallback?.Invoke();
-            yield break;
-        }
         GameManager.Instance.StartShortLoadingUI();
 
-        BackendManager.Instance.UseDummyUserDataRef(DummyNumber); // 테스트코드
-
-        onLoadUserDataCompleted.AddListener(() => onCompletedCallback?.Invoke());
-        onLoadUserDataCompleted.AddListener(GameManager.Instance.StopShortLoadingUI);
+        if (BackendManager.CurrentUserDataRef == null) // CurrentUserDataRef가 비어있다면 더미로 등록
+        {
+            BackendManager.Instance.UseDummyUserDataRef(DummyNumber); // 테스트코드
+        }
+        
+        onLoadUserDataCompleted.AddListener(() =>
+        {
+            GameManager.Instance.StopShortLoadingUI();
+            onCompletedCallback?.Invoke();
+        });
         LoadUserData();
     }
 
@@ -169,6 +271,14 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             this.PlayData.EggGainTimestamp.SetValueWithDataSnapshot(userData);
             this.PlayData.IdleRewardTimestamp.SetValueWithDataSnapshot(userData);
             this.PlayData.BatchInfo.SetValueWithDataSnapshot(userData);
+            this.PlayData.GoldDungeonClearRate.SetValueWithDataSnapshot(userData);
+            this.PlayData.ExpDungeonClearRate.SetValueWithDataSnapshot(userData);
+            this.PlayData.EnforceDungeonClearRate.SetValueWithDataSnapshot(userData);
+
+            foreach (var hasroom in this.PlayData.HasRoom)
+            {
+                hasroom.SetValueWithDataSnapshot(userData);
+            }
 
             // 캐릭터 데이터 로딩
             if (userData.HasChild("Characters"))
@@ -186,13 +296,11 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                     }
 
                     CharacterData characterData = GameManager.TableData.GetCharacterData(id);
-
-                    //kmt - 보유 캐릭터 목록 초기화
                     haveCharacterIdxList.Add(id);
 
-                    characterData.Level.SetValueWithDataSnapshot(userData);
-                    characterData.Enhancement.SetValueWithDataSnapshot(userData);
-                    characterData.EnhanceMileagePerMill.SetValueWithDataSnapshot(userData);
+                    GetCharacterLevel(id).SetValueWithDataSnapshot(userData);
+                    GetCharacterEnhancement(id).SetValueWithDataSnapshot(userData);
+                    GetCharacterMileage(id).SetValueWithDataSnapshot(userData);
                 }
 
             }
@@ -213,9 +321,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                         continue;
                     }
 
-                    ItemData itemData = GameManager.TableData.GetItemData(id);
-
-                    itemData.Number.SetValueWithDataSnapshot(userData);
+                    GetItemNumber(id).SetValueWithDataSnapshot(userData);
                 }
             }
 
@@ -234,9 +340,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                         continue;
                     }
 
-                    StageData stageData = GameManager.TableData.GetStageData(id);
-
-                    stageData.ClearCount.SetValueWithDataSnapshot(userData);
+                    GetStageClearCount(id).SetValueWithDataSnapshot(userData);
                 }
             }
 
@@ -255,9 +359,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                         continue;
                     }
 
-                    ShopItemData shopItemData = GameManager.TableData.GetShopItemData(id);
-
-                    shopItemData.Bought.SetValueWithDataSnapshot(userData);
+                    GetPackageBought(id).SetValueWithDataSnapshot(userData);
                 }
             }
 
@@ -422,15 +524,30 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             public void SetValueWithDataSnapshot(DataSnapshot userDataSnapshot)
             {
                 object value = userDataSnapshot.Child(Key).Value;
-                Dictionary<string, object> tempDict = value as Dictionary<string, object>;
-                if (tempDict != null)
+                //Dictionary<string, object> tempDict = value as Dictionary<string, object>;
+
+                DataSnapshot tempDict = userDataSnapshot.Child(Key);
+
+                if (tempDict != null) 
+                {
+
+                    Value = new Dictionary<string, T>((int)tempDict.ChildrenCount << 1);
+
+                    foreach (var data in tempDict.Children)
+                    {
+                        Value[data.Key] = (T)data.Value;
+                    }
+                }
+            
+
+/*                if (tempDict != null)
                 {
                     this.Value = new Dictionary<string, T>(tempDict.Count << 1);
                     foreach (var pair in tempDict)
                     {
                         this.Value[pair.Key] = (T)pair.Value;
                     }
-                }
+                }*/
             }
 
             /// <summary>
@@ -446,6 +563,22 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
                 {
                     Value = value;
                     onValueChanged?.Invoke();
+                };
+            }
+
+            /// <summary>
+            /// UpdateDbChain.SetDBValue()에서 갱신 대상 등록을 위한 메서드<br/>
+            /// 다른 용도의 사용을 상정하지 않음
+            /// </summary>
+            /// <param name="updateDbChain"></param>
+            /// <param name="value"></param>
+            public void RegisterToDBValueChain(UpdateDbChain updateDbChain, string childKeyValue, T value)
+            {
+                updateDbChain.updates[$"{Key}/{childKeyValue}"] = value;
+                updateDbChain.propertyCallbackOnSubmit += () =>
+                {
+                    Value[childKeyValue] = value;
+                    //onValueChanged?.Invoke();//호출 안함 [ 임시조치 ]
                 };
             }
         }
@@ -480,6 +613,7 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             return this;
         }
 
+        [Obsolete]
         public UpdateDbChain AddDBValue(PropertyAdapter<double> property, float value)
         {
 #if DEBUG
@@ -506,6 +640,27 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
             return this;
         }
 
+        /// <summary>
+        /// 딕셔너리 타입의 내부 요소 일부를 수정하기 위한 함수
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="property">갱신할 대상 딕셔너리</param>
+        /// <param name="keyValue">갱신할 딕셔너리의 키</param>
+        /// <param name="value">갱신할 값</param>
+        /// <returns></returns>
+        public UpdateDbChain SetDBDictionaryInnerValue<T>(DictionaryAdapter<T> property, in string keyValue, T value)
+        {
+#if DEBUG
+            if (updates.ContainsKey($"{property.Key}/{keyValue}"))
+            {
+                Debug.LogWarning("한 스트림에 데이터를 두번 갱신하고 있음");
+            }
+#endif //DEBUG
+            property.RegisterToDBValueChain(this, keyValue, value);
+
+            return this;
+        }
+
         public UpdateDbChain SetDBTimestamp(UserDataDateTime property)
         {
 #if DEBUG
@@ -516,6 +671,27 @@ public class UserDataManager : SingletonScriptable<UserDataManager>
 #endif //DEBUG
 
             property.RegisterTimestampToChain(this);
+
+            return this;
+        }
+
+        /// <summary>
+        /// DB경로를 직접 지정하여 값을 갱신
+        /// </summary>
+        /// <typeparam name="T">갱신될 값의 타입</typeparam>
+        /// <param name="databasePath">데이터베이스의 경로 [Users/uid]기준 경로</param>
+        /// <param name="value">갱신될 값</param>
+        /// <returns></returns>
+        public UpdateDbChain SetDBValue<T>(string databasePath, T value)
+        {
+#if DEBUG
+            if (updates.ContainsKey(databasePath))
+            {
+                Debug.LogWarning("한 스트림에 데이터를 두번 갱신하고 있음");
+            }
+#endif //DEBUG
+
+            updates[databasePath] = value;
 
             return this;
         }

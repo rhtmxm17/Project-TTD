@@ -2,6 +2,7 @@ using Firebase.Database;
 using Firebase.Extensions;
 using System.Collections;
 using System.Collections.Generic;
+using Firebase.Auth;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -41,6 +42,8 @@ public class DialogueUI : BaseUI
     protected override void Awake()
     {
         base.Awake();
+        FirebaseAuth auth = BackendManager.Auth;
+        curUid = auth.CurrentUser.UserId;
         input = GetUI<TMP_InputField>("ChatInput");
         sendBtn = GetUI<Button>("SendButton");
         boardTransform = GetUI<Transform>("Content");
