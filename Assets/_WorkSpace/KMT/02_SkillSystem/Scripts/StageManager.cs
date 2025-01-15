@@ -242,7 +242,7 @@ public class StageManager : MonoBehaviour
 
         foreach (Combatable character in characterManager.CharList)
         {
-            character.PlayAnimation("Walk");
+            character.SetStateToMoving();
         }
 
         Debug.Log("다음 웨이브로 이동중...");

@@ -323,6 +323,9 @@ public class Combatable : MonoBehaviour
         curActionCoroutine = StartCoroutine(TrackingCo());
     }
 
+    public virtual void SetStateToMoving()
+    {
+    }
     public void PlayAnimation(in string animationTriggerName)
     {
         UnitAnimator.SetTrigger(animationTriggerName);
