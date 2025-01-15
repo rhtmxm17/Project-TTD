@@ -89,7 +89,7 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
             return characterLevelDict[id];
         else
         {
-            UserDataInt udInt = new UserDataInt($"Characters/{id}/Level");
+            UserDataInt udInt = new UserDataInt($"Characters/{id}/Level", 1);
             characterLevelDict.Add(id, udInt);
             return udInt;
         }

@@ -13,7 +13,6 @@ public class DailyBonus : MonoBehaviour
 
     public void OnClick()
     {
-
         ItemData goldTicket = DataTableManager.Instance.GetItemData(9/*골드티켓*/);
         ItemData friendTicket = DataTableManager.Instance.GetItemData(10/*친구방문 보상 수령 카운트*/);
         // 상점아이템 구매횟수 갱신될 아이템 가져오기
@@ -23,7 +22,20 @@ public class DailyBonus : MonoBehaviour
 
         UserDataManager.UpdateDbChain updateChain = GameManager.UserData.StartUpdateStream();
 
-        //TODO : 일일보상 여기에 추가
+        // 팝업에 표시될 출석 보상
+        // TODO : 일일보상 직렬화?
+        List<ItemGain> gainList = new List<ItemGain>()
+        {
+            new ItemGain() { item = DataTableManager.Instance.GetItemData(1), gain = 5000 }, // 5000 골드
+            new ItemGain() { item = DataTableManager.Instance.GetItemData(2), gain = 10 }, // 10 용젤리
+        };
+
+        foreach (ItemGain gain in gainList)
+        {
+            updateChain.AddDBValue(gain.item.Number, gain.gain);
+        }
+
+        // 입장 횟수 아이템 충전
         if (goldTicket.Number.Value < 3)
             updateChain.SetDBValue(goldTicket.Number, REFILL_GOLDTICKET_COUNT);
 
@@ -48,7 +60,9 @@ public class DailyBonus : MonoBehaviour
                 if (result)
                 {
                     Debug.Log("일일보상처리 완료");
-                    GameManager.Instance.LoadLobbyScene();
+                    var popUp = GameManager.OverlayUIManager.PopupItemGain(gainList);
+                    popUp.onPopupClosed += GameManager.Instance.LoadLobbyScene;
+                    popUp.Title.text = "로그인 보너스 획득!";
                 }
                 else 
                 {
