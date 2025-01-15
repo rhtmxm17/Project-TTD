@@ -25,6 +25,8 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
     public bool HasCharacter(int characterIdx)
     { 
         return haveCharacterIdxList.Contains(characterIdx);
+        
+        // return (GetHasCharacterData(characterIdx).Value != 0);
     }
 
     public void ApplyCharacter(int characterIdx)
@@ -33,11 +35,12 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
         CharacterData chData = GameManager.TableData.GetCharacterData(characterIdx);
 
         StartUpdateStream()
+            .SetDBValue(chData.Has, 1)
             .SetDBValue(chData.Level, 1)
             .SetDBValue(chData.Enhancement, 0)
             .Submit((result) =>
             {
-                Debug.Log("적용 완료!");
+                Debug.Log($"캐릭터 확득 결과:{result}");
 
                 haveCharacterIdxList.Add(characterIdx);
             });
@@ -78,6 +81,19 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
         {
             UserDataInt udInt = new UserDataInt($"Stages/{id}/ClearCount");
             stageClearCountDict.Add(id, udInt);
+            return udInt;
+        }
+    }
+
+    private Dictionary<int, UserDataInt> hasCharacterDict = new Dictionary<int, UserDataInt>();
+    public UserDataInt GetHasCharacterData(int id)
+    {
+        if (hasCharacterDict.ContainsKey(id))
+            return hasCharacterDict[id];
+        else
+        {
+            UserDataInt udInt = new UserDataInt($"Characters/{id}/Has");
+            hasCharacterDict.Add(id, udInt);
             return udInt;
         }
     }
@@ -238,8 +254,9 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
                 StartUpdateStream()
                     .SetDBValue(this.Profile.Name, $"새로운 테스터{UnityEngine.Random.Range(1000, 10000)}")
                     .SetDBValue(this.Profile.Level, 1)
-                    .SetDBValue(startingChara.Level, 5)
-                    .SetDBValue(startingChara.Enhancement, 1)
+                    .SetDBValue(startingChara.Has, 1)
+                    .SetDBValue(startingChara.Level, 1)
+                    .SetDBValue(startingChara.Enhancement, 0)
                     .SetDBValue(startinCharaItem.Number, 1)
                     .Submit(result =>
                     {
@@ -298,6 +315,7 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
                     CharacterData characterData = GameManager.TableData.GetCharacterData(id);
                     haveCharacterIdxList.Add(id);
 
+                    GetHasCharacterData(id).SetValueWithDataSnapshot(userData);
                     GetCharacterLevel(id).SetValueWithDataSnapshot(userData);
                     GetCharacterEnhancement(id).SetValueWithDataSnapshot(userData);
                     GetCharacterMileage(id).SetValueWithDataSnapshot(userData);

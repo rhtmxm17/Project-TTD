@@ -137,9 +137,12 @@ public class CharacterData : ScriptableObject, ITsvRowParseable
     [SerializeField] int enhanceItemId;
 
     #region 유저 데이터 참조
+    public UserDataInt Has => GameManager.UserData.GetHasCharacterData(id);
     public UserDataInt Level => GameManager.UserData.GetCharacterLevel(id);
     public UserDataInt Enhancement => GameManager.UserData.GetCharacterEnhancement(id);
     public UserDataInt EnhanceMileagePerMill => GameManager.UserData.GetCharacterMileage(id);
+
+    
     #endregion
 
 #if UNITY_EDITOR
