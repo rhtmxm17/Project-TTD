@@ -19,7 +19,17 @@ public class BackendManager : SingletonBehaviour<BackendManager>
     public static FirebaseDatabase Database => database;
 
     public static DatabaseReference AllUsersDataRef => usersDataRef;
-    public static DatabaseReference CurrentUserDataRef => currentUserDataRef;
+    public static DatabaseReference CurrentUserDataRef
+    {
+        get => currentUserDataRef;
+        set
+        {
+            if (currentUserDataRef == value)
+                return;
+
+            currentUserDataRef = value;
+        }
+    }
 
     private void Awake()
     {
