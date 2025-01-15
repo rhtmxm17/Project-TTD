@@ -41,6 +41,7 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public Button _levelUpButton;
     [HideInInspector] public GameObject _materialGroup;
     [HideInInspector] public GameObject _bonusPopup;
+    [HideInInspector] public GameObject _amountGroup;
     
     private Button _bonusExitButton;
     
@@ -136,7 +137,7 @@ public class CharacterInfoUI : BaseUI
     private void CommonUI()
     {
         _enhanceText = GetUI<TextMeshProUGUI>("EnhanceText"); 
-         
+
         //좌측 Tab 버튼 바인딩
         _detailTabButton = GetUI<Button>("DetailTabButton");
         _enhanceTabButton = GetUI<Button>("EnhanceTabButton");
@@ -235,6 +236,7 @@ public class CharacterInfoUI : BaseUI
         _bonusExitButton = GetUI<Button>("BonusExitButton");
         _levelUpButton = GetUI<Button>("LevelUpButton");
 
+        _amountGroup = GetUI("AmountTextGroup");
         _bonusPopup = GetUI("BonusPopup");
         _materialGroup = GetUI("MaterialTextGroup");
     }
