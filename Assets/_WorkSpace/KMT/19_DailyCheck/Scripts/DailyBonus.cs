@@ -13,6 +13,8 @@ public class DailyBonus : MonoBehaviour
 
     public void OnClick()
     {
+        // 팝업에 표시될 출석 보상
+        List<ItemGain> gainList = new List<ItemGain>();
 
         ItemData goldTicket = DataTableManager.Instance.GetItemData(9/*골드티켓*/);
         ItemData friendTicket = DataTableManager.Instance.GetItemData(10/*친구방문 보상 수령 카운트*/);
@@ -24,6 +26,12 @@ public class DailyBonus : MonoBehaviour
         UserDataManager.UpdateDbChain updateChain = GameManager.UserData.StartUpdateStream();
 
         //TODO : 일일보상 여기에 추가
+        foreach (ItemGain gain in gainList)
+        {
+            updateChain.AddDBValue(gain.item, gain.gain);
+        }
+
+        // 입장 횟수 아이템 충전
         if (goldTicket.Number.Value < 3)
             updateChain.SetDBValue(goldTicket.Number, REFILL_GOLDTICKET_COUNT);
 
