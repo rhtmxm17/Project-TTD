@@ -431,6 +431,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     {
         _characterTypeText.text = type switch
         {
+            ElementType.NONE => "무속성",
             ElementType.FIRE => "화룡",
             ElementType.WATER => "수룡",
             ElementType.WOOD => "정룡",

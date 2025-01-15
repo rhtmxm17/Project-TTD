@@ -272,7 +272,6 @@ public class StoryDirector : BaseUI
     {
         Debug.Log("스토리 출력 완료");
         backGroundButton.onClick.RemoveListener(OnClickForPlayNext);
-        GameManager.Sound.StopBGM();
 
         yield return new WaitForSeconds(2f);
 
@@ -284,6 +283,9 @@ public class StoryDirector : BaseUI
     /// </summary>
     public void OnComplete()
     {
+        // BGM 정지
+        GameManager.Sound.StopBGM();
+
         // 스택된 카메라 제거
         Camera.main.GetUniversalAdditionalCameraData().cameraStack.Remove(this.directingCamera);
 
