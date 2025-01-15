@@ -2,15 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 /// <summary>
-/// 체력 비율이 가장 낮은 아군 하나의 방어력을 올리는 스킬
+/// 단일 대상에게 공격력 버프를 주는 스킬
 /// </summary>
-[CreateAssetMenu(menuName = "ScriptableObjects/Skill/SingleTargetDefenseBuff")]
-public class DefenseBuff : Skill
+[CreateAssetMenu(menuName = "ScriptableObjects/Skill/SingleTargetAttackBuff")]
+public class AttackBuff : Skill
 {
-    [Header("방어 배율")]
+    [Header("공격 배율")]
     [SerializeField]
-    float defRate;
+    float atkRate;
     [SerializeField]
     float duringTime;
 
@@ -20,7 +21,7 @@ public class DefenseBuff : Skill
 
         if (target != null && target.IsAlive)
         {
-            target.StartCoroutine(StartBufftimeCO(target, (int)(defRate * self.CurAttackPoint)));
+            target.StartCoroutine(StartBufftimeCO(target, (int)(atkRate * self.CurAttackPoint)));
             //TODO : 후딜 추가?하기
             //yield return new WaitForSeconds(5);
         }
@@ -29,8 +30,9 @@ public class DefenseBuff : Skill
     IEnumerator StartBufftimeCO(Combatable target, int amount)
     {
         yield return null;
-        target.AddDefBuff(amount);
+        target.AddAtkBuff(amount);
         yield return new WaitForSeconds(duringTime);
-        target.RemoveDefBuff(amount);
+        target.RemoveAtkBuff(amount);
     }
+
 }

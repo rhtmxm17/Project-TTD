@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 아군 전원의 방어력을 올리는 스킬
+/// 아군 전원의 공격력을 올리는 스킬
 /// </summary>
-[CreateAssetMenu(menuName = "ScriptableObjects/Skill/AllTargetDefenseBuff")]
-public class AllTargetDefenseBuff : Skill
+[CreateAssetMenu(menuName = "ScriptableObjects/Skill/AllTargetAttackBuff")]
+public class AllTargetAttackBuff : Skill
 {
-    [Header("방어 배율")]
+    [Header("공격버프 배율")]
     [SerializeField]
-    float defRate;
+    float atkRate;
     [SerializeField]
     float duringTime;
 
@@ -22,7 +22,7 @@ public class AllTargetDefenseBuff : Skill
         {
             if (friendlyTarget != null && friendlyTarget.IsAlive)
             {
-                friendlyTarget.StartCoroutine(StartBufftimeCO(friendlyTarget, (int)(defRate * self.CurAttackPoint)));
+                friendlyTarget.StartCoroutine(StartBufftimeCO(friendlyTarget, (int)(atkRate * self.CurAttackPoint)));
             }
         }
 
@@ -31,8 +31,8 @@ public class AllTargetDefenseBuff : Skill
     IEnumerator StartBufftimeCO(Combatable target, int amount)
     {
         yield return null;
-        target.AddDefBuff(amount);
+        target.AddAtkBuff(amount);
         yield return new WaitForSeconds(duringTime);
-        target.RemoveDefBuff(amount);
+        target.RemoveAtkBuff(amount);
     }
 }

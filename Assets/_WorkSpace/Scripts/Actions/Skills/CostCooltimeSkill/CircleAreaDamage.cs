@@ -53,7 +53,7 @@ public class CircleAreaDamage : Skill
         //도중 반복자 순회 오류 대체코드
         foreach (Combatable enemy in dest)
         {
-            enemy.Damaged(self.AttackPoint.Value * self.AttackFloorBuff * atkMultiplier, self.igDefenseRate, self.characterData.StatusTable.type); // 타겟에게 데미지 적용
+            enemy.Damaged(self.CurAttackPoint * atkMultiplier, self.igDefenseRate, self.characterData.StatusTable.type); // 타겟에게 데미지 적용
         }
 
         yield return waitPostDelay;
