@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,20 +8,42 @@ public class HYJ_ListController : MonoBehaviour
     [SerializeField] private List<int> defaultUnitList;
     //[SerializeField] private List<int> changedUnitList;
     private List<int> unitInfo = new List<int>();
-    [SerializeField] public Dictionary<int,List<int>> unitInfoDict = new Dictionary<int, List<int>>();  
-    [SerializeField] private HYJ_SelectManager selectM;
+    [SerializeField] private List<HYJ_UnitInfo> UnitInfos;
 
-
-    public void AddListUnit(int unitIdx, int unitLevel, int unitPower)
+    public void InitUnitsList()
     {
+        // TODO : 게임 시작 시, 초기화
         
     }
 
-    public void FilterList()
+    public void FilterRoleTypeList(RoleType unitRoleType, bool isOn)
     {
-        
+        if (isOn)
+        {
+            isOn = false;
+            
+        }
+        else
+        {
+            isOn = true;
+            
+        }
     }
 
+    public void FilterElementTypeList(ElementType unitElementType, bool isOn)
+    {
+        if (isOn) // 이미 
+        {
+            isOn = false;
+            
+        }
+        else
+        {
+            isOn = true;
+            
+        }
+    }
+    
     public void SortList()
     {
         

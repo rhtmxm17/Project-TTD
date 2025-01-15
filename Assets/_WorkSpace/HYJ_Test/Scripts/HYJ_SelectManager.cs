@@ -17,7 +17,7 @@ public class HYJ_SelectManager : MonoBehaviour
     [Header("필수 설정 사항")]
     [SerializeField] Button resetBatchButton; // 
     [SerializeField] Button enterStageButton; //스테이지 진입 버튼
-    [SerializeField] Button cancelButton; //뒤돌아가기 버튼
+    [SerializeField] OutskirtsUI outskirtsUI; //뒤돌아가기 버튼 등록용
     [SerializeField] HYJ_CharacterSelect batchButtonPrefab; //배치버튼 프리팹
     [SerializeField] Transform batchWindow; //배치버튼 윈도우
     [SerializeField] int buttonCnt; //버튼 생성 수
@@ -28,11 +28,18 @@ public class HYJ_SelectManager : MonoBehaviour
     // 키 값은 위치 / 밸류 값은 유닛 고유번호;
     public Dictionary<int, int> battleInfo = new Dictionary<int, int>();
 
+    // 배치한 캐릭터 전투력 표시용
+    private float batchUnitsPower;
+    private float stagePower;
     private void Start()
     {
         enterStageButton.onClick.AddListener(LoadBattleScene);
-        // cancelButton.onClick.AddListener(CancelEnterStage);
         resetBatchButton.onClick.AddListener(ResetBatch);
+        outskirtsUI.PrevMenu = GameManager.Instance.sceneChangeArgs.prevScene;
+
+        // 편성 씬을 벗어날 때의 동작
+        outskirtsUI.ReturnButton.onClick.AddListener(OnCancelEnterStage);
+        outskirtsUI.HomeButton.onClick.AddListener(OnCancelEnterStage);
         
         GameManager.UserData.PlayData.BatchInfo.onValueChanged += (() =>
         {
@@ -58,7 +65,6 @@ public class HYJ_SelectManager : MonoBehaviour
         }
         
         // ============= 편성 타일 생성 ===================
-
         List<StageData.BuffInfo> curStageBuff = GameManager.Instance.sceneChangeArgs.stageData.TileBuff;
         for (int i = 0; i < buttonCnt; i++)
         {
@@ -74,6 +80,8 @@ public class HYJ_SelectManager : MonoBehaviour
                 }
             }
         }
+        
+        // ============= 편성 타일 생성 ===================
     }
 
     public void LookLog()
@@ -122,7 +130,10 @@ public class HYJ_SelectManager : MonoBehaviour
         }
     }
 
-    public void CancelEnterStage()
+    /// <summary>
+    /// 스테이지 진입 취소시 동작
+    /// </summary>
+    public void OnCancelEnterStage()
     {
         // 뒤로가기(배치 창 닫기)
         SaveBatch(result =>
@@ -132,8 +143,6 @@ public class HYJ_SelectManager : MonoBehaviour
                 Debug.LogWarning("db 접속에 실패");
                 return;
             }
-
-            GameManager.Instance.LoadMainScene();
         });
     }
 

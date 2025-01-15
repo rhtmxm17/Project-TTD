@@ -32,7 +32,7 @@ public class BasicRangeAttack : Skill
         {
             var projectile = Instantiate(projectilePrefab);
             projectile.transform.position = self.transform.position;
-            projectile.StartChase(target, self.AttackPoint.Value * self.AttackFloorBuff, self.igDefenseRate, ProjectileSprite, self.characterData.StatusTable.type);
+            projectile.StartChase(target, self.CurAttackPoint, self.igDefenseRate, ProjectileSprite, self.characterData.StatusTable.type);
         }
 
         yield return waitPostDelay;

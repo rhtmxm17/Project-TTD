@@ -21,7 +21,7 @@ public class Recovery : Skill
     {
         yield return null;
 
-        float healAmount = self.AttackPoint.Value * self.AttackFloorBuff * healMultiplier / duaringSec;//수치 조정
+        float healAmount = self.CurAttackPoint * healMultiplier / duaringSec;//수치 조정
 
         if (target != null && target.IsAlive)
         {

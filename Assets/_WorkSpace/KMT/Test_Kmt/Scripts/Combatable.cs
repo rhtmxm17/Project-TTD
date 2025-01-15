@@ -175,6 +175,10 @@ public class Combatable : MonoBehaviour
 
     protected ReactiveProperty<float> attackPoint = new ReactiveProperty<float>();
     public ReadOnlyReactiveProperty<float> AttackPoint { get; private set; }
+    /// <summary>
+    /// 최종 공격력을 반환. 현재공격력 * 공격장판 버프 배율 + 받고있는 공격 버프.
+    /// </summary>
+    public float CurAttackPoint => attackPoint.Value * AttackFloorBuff + atkBuffAmount;
 
     protected ReactiveProperty<float> hp = new ReactiveProperty<float>();
     public ReadOnlyReactiveProperty<float> Hp;
@@ -210,11 +214,39 @@ public class Combatable : MonoBehaviour
 
     }
 
-    List<int> defBuffList = new List<int>();
 
     public float AttackFloorBuff { get; private set; } = 1;
+    List<int> atkBuffList = new List<int>();
     public float DefFloorBuff { get; private set; } = 1;
+    List<int> defBuffList = new List<int>();
 
+    /// <summary>
+    /// 현재 받고있는 공격력 버프 수치
+    /// </summary>
+    int atkBuffAmount;
+
+    //공격 버프 영역
+    public void AddAtkBuff(int amount)
+    {
+        atkBuffList.Add(amount);
+        ReCalcAtkBuff();
+    }
+
+    public void RemoveAtkBuff(int amount)
+    {
+        atkBuffList.Remove(amount);
+        ReCalcAtkBuff();
+    }
+
+    void ReCalcAtkBuff()
+    {
+        atkBuffAmount = 0;
+
+        foreach (int amount in atkBuffList)
+        {
+            atkBuffAmount = Math.Max(atkBuffAmount, amount);
+        }
+    }
 
     /// <summary>
     /// 현재 받고있는 방어력 버프 수치

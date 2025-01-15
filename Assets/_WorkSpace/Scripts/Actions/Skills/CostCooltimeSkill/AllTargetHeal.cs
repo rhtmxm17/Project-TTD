@@ -33,7 +33,7 @@ public class AllTargetHeal : Skill
             {
                 // 실제로 힐이 적용되는 구간
                 if (friendlyCharacter != null && friendlyCharacter.IsAlive)
-                    friendlyCharacter.Healed(self.AttackPoint.Value * self.AttackFloorBuff * healMultiplier); // 타겟에게 힐 적용
+                    friendlyCharacter.Healed(self.CurAttackPoint * healMultiplier); // 타겟에게 힐 적용
             }
         }
 
