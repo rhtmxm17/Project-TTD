@@ -63,6 +63,7 @@ public class LoginPanel : BaseUI
         GetUI<Button>("FindPWButton").onClick.AddListener(() => Open("FindPWPanel"));
         resetPWInputField = GetUI<TMP_InputField>("ResetPWInputField");
         GetUI<Button>("ResetPWButton").onClick.AddListener(ResetPW);
+        GetUI<Button>("ResetPWCloseButton").onClick.AddListener(() => Close("FindPWPanel"));
 
         
         // 인증메일 팝업창
