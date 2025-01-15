@@ -54,7 +54,7 @@ public enum ElementType
     /// <summary>
     /// 3:정룡 ?
     /// </summary>
-    WOOD,
+    WIND,
     /// <summary>
     /// 4: 토룡
     /// </summary>

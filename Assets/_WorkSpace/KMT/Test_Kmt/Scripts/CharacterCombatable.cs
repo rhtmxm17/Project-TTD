@@ -24,9 +24,9 @@ struct StatIncreaseBlock
 public class CharacterCombatable : Combatable
 {
 
-    enum curState { WAITING, OTHERS }
+    enum curState { WAITING, MOVING }
 
-    curState state = curState.OTHERS;
+    curState state = curState.MOVING;
 
     Vector3 originPos;
 
@@ -135,7 +135,7 @@ public class CharacterCombatable : Combatable
     }
     public override void StartCombat(CombManager againstL)
     {
-        state = curState.OTHERS;
+        state = curState.MOVING;
         base.StartCombat(againstL);
     }
 
@@ -151,6 +151,13 @@ public class CharacterCombatable : Combatable
             PlayAnimation("Walk");
         }
         characterModel.transform.rotation = Quaternion.Euler(-90, -90, -90);
+    }
+
+    public override void SetStateToMoving()
+    {
+        base.SetStateToMoving();
+        UnitAnimator.SetTrigger("Walk");
+        state = curState.MOVING;
     }
 
     public bool IsWaiting()

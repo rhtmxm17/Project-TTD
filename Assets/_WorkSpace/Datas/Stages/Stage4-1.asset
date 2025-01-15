@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Stage4-1
   m_EditorClassIdentifier: 
   id: 31
-  buttonName: "4-1 \uB3FC\uC9C0 \uD3C9\uC6D0"
+  buttonName: 4-1
   stageName: "\uB3FC\uC9C0 \uD3C9\uC6D0"
   waves:
   - monsters:
@@ -66,10 +66,19 @@ MonoBehaviour:
       pose: {x: 15, y: 2.5}
   reward:
   - item: {fileID: 11400000, guid: 12e790c0bce17a341b088004576f5edc, type: 2}
-    gain: 30000
+    gain: 6000
   - item: {fileID: 11400000, guid: f1b8b3e0c681e2343a6e842af432fdd9, type: 2}
-    gain: 1000
-  tileBuff: []
+    gain: 3000
+  tileBuff:
+  - type: 2
+    value: 20
+    tileIndex: 7
+  - type: 1
+    value: 10
+    tileIndex: 4
+  - type: 1
+    value: 10
+    tileIndex: 0
   timeLimit: 180
   backgroundTypePrefab: {fileID: -6182571598995262185, guid: c20b4f243b437f84da933ec3ef719098,
     type: 3}
