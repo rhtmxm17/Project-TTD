@@ -377,8 +377,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private void SetCurrentCost()
     {
         //TODO: 임시 캐릭터 레벨업 코스트
-        _characterLevelUpGoldCost = 100 * _characterData.Level.Value;
-        _characterLevelUpYongGwaCost = 250 * _characterData.Level.Value; 
+        _characterLevelUpGoldCost = 1000 * _characterData.Level.Value;
+        _characterLevelUpYongGwaCost = 50 * _characterData.Level.Value; 
     }
     
     /// <summary>
