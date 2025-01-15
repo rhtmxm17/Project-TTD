@@ -13,13 +13,13 @@ public static class ElementalDamageGrid
     }
 
     static float[,] elementDamageGrid = new float[,]
-    {  //         NONE, FIRE, WATER, WOOD, EARTH, METAL
+    {  //         NONE, FIRE, WATER, WIND, EARTH, METAL
        /*NONE*/  {1    ,1    ,1     ,1    ,1     ,1     },
-       /*FIRE*/  {1    ,1    ,0.85f ,1.15f,1     ,1     },
-       /*WATER*/ {1    ,1.15f,1     ,1    ,1     ,0.85f },
-       /*WOOD*/  {1    ,0.85f,1     ,1    ,1.15f ,1     },
-       /*EARTH*/ {1    ,1    ,1     ,0.85f,1     ,1.15f },
-       /*METAL*/ {1    ,1    ,1.15f ,1    ,0.85f ,1     },
+       /*FIRE*/  {1    ,1    ,0.85f ,1    ,1.15f ,1     },
+       /*WATER*/ {1    ,1.15f,1     ,0.85f,1     ,1     },
+       /*WIND*/  {1    ,1    ,1.15f ,1    ,1     ,0.85f },
+       /*EARTH*/ {1    ,0.85f,1     ,1    ,1     ,1.15f },
+       /*METAL*/ {1    ,1    ,1     ,1.15f,0.85f ,1     },
     };
 
 }

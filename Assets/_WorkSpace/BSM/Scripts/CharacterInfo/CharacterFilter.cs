@@ -33,7 +33,7 @@ public class CharacterFilter : MonoBehaviour
     {
         _characterFilterUI._fireFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.FIRE, _characterFilterUI._fireFilterButton));
         _characterFilterUI._waterFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.WATER, _characterFilterUI._waterFilterButton));
-        _characterFilterUI._grassFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.WOOD, _characterFilterUI._grassFilterButton));
+        _characterFilterUI._grassFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.WIND, _characterFilterUI._grassFilterButton));
         _characterFilterUI._groundFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.EARTH, _characterFilterUI._groundFilterButton));
         _characterFilterUI._electricFilterButton.onClick.AddListener(() => FilterEventFunc(ElementType.METAL, _characterFilterUI._electricFilterButton));
 
@@ -304,7 +304,7 @@ public class CharacterFilter : MonoBehaviour
                 //0: 화룡, 1: 수룡, 2:정룡 ? 3: 토룡, 4: 진룡
                 ElementType.FIRE => "화룡",
                 ElementType.WATER => "수룡",
-                ElementType.WOOD => "정룡",
+                ElementType.WIND => "정룡",
                 ElementType.EARTH => "토룡",
                 ElementType.METAL => "진룡",
                 _ => throw new AggregateException("잘못된 타입")
@@ -521,7 +521,7 @@ public class CharacterFilter : MonoBehaviour
 
             _filterTypes.Remove(ElementType.FIRE);
             _filterTypes.Remove(ElementType.WATER);
-            _filterTypes.Remove(ElementType.WOOD);
+            _filterTypes.Remove(ElementType.WIND);
             _filterTypes.Remove(ElementType.METAL);
             _filterTypes.Remove(ElementType.EARTH);
 

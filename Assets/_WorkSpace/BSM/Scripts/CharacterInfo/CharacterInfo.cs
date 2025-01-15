@@ -331,7 +331,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         {
             ElementType.FIRE => "화룡",
             ElementType.WATER => "수룡",
-            ElementType.WOOD => "정룡",
+            ElementType.WIND => "정룡",
             ElementType.EARTH => "토룡",
             ElementType.METAL => "진룡",
             _ => throw new AggregateException("잘못됨")
@@ -434,7 +434,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             ElementType.NONE => "무속성",
             ElementType.FIRE => "화룡",
             ElementType.WATER => "수룡",
-            ElementType.WOOD => "정룡",
+            ElementType.WIND => "정룡",
             ElementType.EARTH => "토룡",
             ElementType.METAL => "진룡",
             _ => throw new AggregateException("잘못된 타입")
