@@ -640,8 +640,8 @@ public class CharacterEnhance : MonoBehaviour
         //TODO: 강화 코스트 수정 필요
         _enhanceDragonCandyCost = 100 * (_beforeEnhanceLevel + 1);
         _enhanceGoldCost = 1000 * (_beforeEnhanceLevel + 1);
-        _characterInfoController._infoUI._enhanceCoinText.text = _enhanceGoldCost.ToString();
-        _characterInfoController._infoUI._enhanceMaterialText.text = _enhanceDragonCandyCost.ToString();
+        _characterInfoController._infoUI._enhanceCoinText.text = CurrencyFormat.Trans(_enhanceGoldCost);
+        _characterInfoController._infoUI._enhanceMaterialText.text = CurrencyFormat.Trans(_enhanceDragonCandyCost);
     }
 
     /// <summary>

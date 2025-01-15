@@ -84,7 +84,7 @@ public class CharacterInfoController : BaseUI
         set
         {
             _userYongGwa = value;
-            _infoUI._levelYongGwaAmountText.text = _userYongGwa.ToString();
+            _infoUI._levelYongGwaAmountText.text = CurrencyFormat.Trans(_userYongGwa);
         }
     }
     
@@ -98,8 +98,8 @@ public class CharacterInfoController : BaseUI
         set
         {
             _userGold = value;
-            _infoUI._amountGoldText.text = _userGold.ToString();
-            _infoUI._levelGoldAmountText.text = _userGold.ToString();
+            _infoUI._amountGoldText.text = CurrencyFormat.Trans(_userGold);
+            _infoUI._levelGoldAmountText.text = CurrencyFormat.Trans(_userGold); 
         } 
     }
     
@@ -114,7 +114,7 @@ public class CharacterInfoController : BaseUI
         set
         {
             _userDragonCandy = value;
-            _infoUI._amountCommonTokenText.text = _userDragonCandy.ToString();
+            _infoUI._amountCommonTokenText.text = CurrencyFormat.Trans(_userDragonCandy);
         }
     }
 
@@ -126,7 +126,7 @@ public class CharacterInfoController : BaseUI
         set
         {
             _userCharacterToken = value;
-            _infoUI._amountCharacterTokenText.text = _userCharacterToken.ToString();
+            _infoUI._amountCharacterTokenText.text = CurrencyFormat.Trans(_userCharacterToken);
         }
     }
     

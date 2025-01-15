@@ -148,7 +148,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             Debug.LogWarning("접속 실패");
             return;
         }
-        
+
         if (_levelUpNormalEffectCo != null)
         {
             _characterInfoController._infoUI._levelUpNormalEffect.color =new Color(1, 1, 1, 0f);
@@ -342,9 +342,9 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         {
             SetCurrentCost();
             LevelUpCheck();
-            
-            _characterInfoController._infoUI._levelUpCoinText.text = _characterLevelUpGoldCost.ToString();
-            _characterInfoController._infoUI._levelUpYongGwaText.text = _characterLevelUpYongGwaCost.ToString();
+
+            _characterInfoController._infoUI._levelUpCoinText.text = CurrencyFormat.Trans(_characterLevelUpGoldCost);
+            _characterInfoController._infoUI._levelUpYongGwaText.text = CurrencyFormat.Trans(_characterLevelUpYongGwaCost);
             _characterInfoController._infoUI._materialGroup.SetActive(true);
             _characterInfoController._infoUI._levelUpButton.gameObject.SetActive(true);
             _characterInfoController._infoUI._amountGroup.SetActive(true);
