@@ -131,6 +131,7 @@ public class CharacterInfoController : BaseUI
     }
     
     private GridLayoutGroup _gridLayout;
+    private Scrollbar _verticalBar;
     
     protected override void Awake()
     {
@@ -138,21 +139,10 @@ public class CharacterInfoController : BaseUI
         Init();
         ButtonOnClickEvent();
         GetUserMaterials();
-        RatiPaddingModify(); 
-    }
-
-    private void RatiPaddingModify()
-    {
-        float ratio = (float)Screen.width / Screen.height;
-        _gridLayout.padding.left = (Mathf.Floor(ratio * 10f) / 10f) switch
-        {
-            2.4f => 180,
-            2.7f => 165,
-            1.7f => 125,
-            _ => 50
-        };
-    }
-
+        RatioPaddingModify();
+        SetVerticalScrollbar();
+    } 
+    
     private void OnEnable()
     { 
         UpdateCharacterList(); 
@@ -166,6 +156,7 @@ public class CharacterInfoController : BaseUI
         _infoPopup = GetUI("InfoPopup");
         _characterUIPanel = GetUI("CharacterUIPanel");
 
+        _verticalBar = GetUI<Scrollbar>("Scrollbar Vertical");
         _gridLayout = GetUI<GridLayoutGroup>("Content");
         
         //Sort, Filter GetBind
@@ -194,6 +185,23 @@ public class CharacterInfoController : BaseUI
         
     }
 
+    private void SetVerticalScrollbar()
+    {
+        _verticalBar.value = 10;
+    }
+    
+    private void RatioPaddingModify()
+    {
+        float ratio = (float)Screen.width / Screen.height;
+        _gridLayout.padding.left = (Mathf.Floor(ratio * 10f) / 10f) switch
+        {
+            2.4f => 180,
+            2.7f => 165,
+            1.7f => 125,
+            _ => 50
+        };
+    }
+    
     /// <summary>
     /// 현재 유저가 보유한 골드 가져옴
     /// </summary>
