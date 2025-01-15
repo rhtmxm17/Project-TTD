@@ -44,11 +44,11 @@ public class DailyBonus : MonoBehaviour
         
         /// 상점아이템 구매횟수 초기화 추가
         // 구매횟수가 최대수치보다 작거나 같으면, 회숫 0으로 변경
-        if (enTocken.Bought.Value <= REFILL_TOKEN_COUNT)
+        if (enTocken.Bought.Value != 0)
             updateChain.SetDBValue(enTocken.Bought, 0);
-        if (lvTocken.Bought.Value <= REFILL_TOKEN_COUNT)
+        if (lvTocken.Bought.Value != 0)
             updateChain.SetDBValue(lvTocken.Bought, 0);
-        if (genTocken.Bought.Value <= REFILL_TOKEN_COUNT)
+        if (genTocken.Bought.Value != 0)
             updateChain.SetDBValue(genTocken.Bought, 0);
 
 
