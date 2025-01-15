@@ -8,6 +8,7 @@ using Unity.Mathematics;
 using UnityEngine.UI;
 using UnityEngine.AI;
 using Spine;
+using Unity.IO.LowLevel.Unsafe;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class Combatable : MonoBehaviour
@@ -35,6 +36,10 @@ public class Combatable : MonoBehaviour
 
     protected NavMeshAgent agent;
     protected CharacterModel characterModel;
+
+    [Header("No Damage")]
+    [SerializeField]
+    protected bool IsNoDamage = false;
 
     [Header("TestParams")]
     [SerializeField]
@@ -260,7 +265,11 @@ public class Combatable : MonoBehaviour
         damage = DamageCalculator.Calc(damage, igDefRate, defense.Value + defBuffAmount, defConst, atackerType, characterData.StatusTable.type);
 
         //View의 setvalue등을 연결하기.
-        hp.Value -= damage;
+
+        if (!IsNoDamage)
+        {
+            hp.Value -= damage;
+        }
         onDamagedEvent?.Invoke(damage);
         StageManager.Instance.DamageDisplayer.PlayTextDisplay(damage, true, transform.position + Vector3.forward * CharacterSizeRadius * 3);
 

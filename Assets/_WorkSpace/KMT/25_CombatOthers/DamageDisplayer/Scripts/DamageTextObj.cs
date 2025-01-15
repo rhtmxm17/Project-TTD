@@ -35,7 +35,7 @@ public class DamageTextObj : MonoBehaviour
     {
         gameObject.SetActive(true);
         canvasGroup.alpha = 1;
-        text.text = amount.ToString("0.##");
+        text.text = amount < 0.00001f && isDamage? "막힘" : amount.ToString("0.##");
         text.color = isDamage ? damageColor : HeadColor;
         transform.position = position;
          
