@@ -22,6 +22,8 @@ public class OutskirtsUI : MonoBehaviour
     /// </summary>
     public readonly Stack<GameObject> UIStack = new Stack<GameObject>();
 
+    public MenuType PrevMenu { get; set; } = MenuType.NONE;
+
     /// <summary>
     /// 뒤로 가기 버튼
     /// </summary>
@@ -100,10 +102,15 @@ public class OutskirtsUI : MonoBehaviour
             // 등록된 닫을 UI가 있다면 닫는다
             closingUI.SetActive(false);
         }
-        else
+        else if (PrevMenu == MenuType.NONE)
         {
             // 현재 씬의 최상위 UI라면 홈 버튼과 동일
             OnHomeButtonClicked();
+        }
+        else
+        {
+            // 이전 씬이 등록되어 있다면 그 씬으로
+            GameManager.Instance.LoadMenuScene(GameManager.Instance.sceneChangeArgs.prevScene);
         }
     }
 
