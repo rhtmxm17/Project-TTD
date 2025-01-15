@@ -18,7 +18,7 @@ public class Heal : Skill
 
         if (target != null && target.IsAlive)
         {
-            target.Healed(healRate * self.AttackPoint.Value);
+            target.Healed(healRate * self.AttackPoint.Value * self.AttackFloorBuff);
             //TODO : 후딜 추가?하기
             //yield return new WaitForSeconds(5);
         }

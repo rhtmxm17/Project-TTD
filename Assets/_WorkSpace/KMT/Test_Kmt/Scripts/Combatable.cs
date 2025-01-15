@@ -212,6 +212,10 @@ public class Combatable : MonoBehaviour
 
     List<int> defBuffList = new List<int>();
 
+    public float AttackFloorBuff { get; private set; } = 1;
+    public float DefFloorBuff { get; private set; } = 1;
+
+
     /// <summary>
     /// 현재 받고있는 방어력 버프 수치
     /// </summary>
@@ -243,10 +247,10 @@ public class Combatable : MonoBehaviour
         switch (type)
         {
             case StatusBuffType.ATK_PERCENTAGE:
-                attackPoint.Value *= (1f + value * 0.01f);
+                AttackFloorBuff = (1f + value * 0.01f);
                 break;
             case StatusBuffType.DEF_PERCENTAGE:
-                defense.Value *= (1f + value * 0.01f);
+                DefFloorBuff = (1f + value * 0.01f);
                 break;
             default:
                 Debug.LogWarning("잘못되었거나 정의되지 않은 버프 타입");
@@ -262,7 +266,7 @@ public class Combatable : MonoBehaviour
             return;
         }
 
-        damage = DamageCalculator.Calc(damage, igDefRate, defense.Value + defBuffAmount, defConst, atackerType, characterData.StatusTable.type);
+        damage = DamageCalculator.Calc(damage, igDefRate, defense.Value * DefFloorBuff + defBuffAmount, defConst, atackerType, characterData.StatusTable.type);
 
         //View의 setvalue등을 연결하기.
 

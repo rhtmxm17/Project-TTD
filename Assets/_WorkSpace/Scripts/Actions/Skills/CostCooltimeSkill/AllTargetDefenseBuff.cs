@@ -22,7 +22,7 @@ public class AllTargetDefenseBuff : Skill
         {
             if (friendlyTarget != null && friendlyTarget.IsAlive)
             {
-                friendlyTarget.StartCoroutine(StartBufftimeCO(friendlyTarget, (int)(defRate * self.AttackPoint.Value)));
+                friendlyTarget.StartCoroutine(StartBufftimeCO(friendlyTarget, (int)(defRate * self.AttackPoint.Value * self.AttackFloorBuff)));
             }
         }
 

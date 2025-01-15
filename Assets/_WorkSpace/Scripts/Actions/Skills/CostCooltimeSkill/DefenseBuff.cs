@@ -20,7 +20,7 @@ public class DefenseBuff : Skill
 
         if (target != null && target.IsAlive)
         {
-            target.StartCoroutine(StartBufftimeCO(target, (int)(defRate * self.AttackPoint.Value)));
+            target.StartCoroutine(StartBufftimeCO(target, (int)(defRate * self.AttackPoint.Value * self.AttackFloorBuff)));
             //TODO : 후딜 추가?하기
             //yield return new WaitForSeconds(5);
         }

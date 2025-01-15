@@ -19,7 +19,7 @@ public class AllTargetRecovery : Skill
     {
         yield return null;
 
-        float healAmount = self.AttackPoint.Value * healMultiplier / duaringSec;
+        float healAmount = self.AttackPoint.Value * self.AttackFloorBuff * healMultiplier / duaringSec;
 
         foreach (Combatable friendlyTarget in self.Group.CharList)
         {
