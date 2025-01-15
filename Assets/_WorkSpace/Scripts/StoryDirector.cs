@@ -109,7 +109,13 @@ public class StoryDirector : BaseUI
         standingImageParent.offsetMin = new Vector2(-standingImageParent.rect.height, 0f); 
     }
 
-    private void OnDestroy() => ClearActors();
+    private void OnDestroy()
+    {
+        ClearActors();
+
+        // BGM 정지
+        GameManager.Sound.StopBGM();
+    }
 
     [ContextMenu("테스트 데이터로 재생")]
     public void TestStart() => SetDirectionData(testData);
@@ -287,8 +293,6 @@ public class StoryDirector : BaseUI
     /// </summary>
     public void OnComplete()
     {
-        // BGM 정지
-        GameManager.Sound.StopBGM();
 
         // 스택된 카메라 제거
         Camera.main.GetUniversalAdditionalCameraData().cameraStack.Remove(this.directingCamera);
