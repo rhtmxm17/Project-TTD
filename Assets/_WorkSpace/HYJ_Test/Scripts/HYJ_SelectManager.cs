@@ -28,6 +28,9 @@ public class HYJ_SelectManager : MonoBehaviour
     // 키 값은 위치 / 밸류 값은 유닛 고유번호;
     public Dictionary<int, int> battleInfo = new Dictionary<int, int>();
 
+    // 배치한 캐릭터 전투력 표시용
+    private float batchUnitsPower;
+    private float stagePower;
     private void Start()
     {
         enterStageButton.onClick.AddListener(LoadBattleScene);
@@ -58,7 +61,6 @@ public class HYJ_SelectManager : MonoBehaviour
         }
         
         // ============= 편성 타일 생성 ===================
-
         List<StageData.BuffInfo> curStageBuff = GameManager.Instance.sceneChangeArgs.stageData.TileBuff;
         for (int i = 0; i < buttonCnt; i++)
         {
@@ -74,6 +76,8 @@ public class HYJ_SelectManager : MonoBehaviour
                 }
             }
         }
+        
+        // ============= 편성 타일 생성 ===================
     }
 
     public void LookLog()
