@@ -36,6 +36,11 @@ public class CharacterInteract : MonoBehaviour
         if(talkCoroutine != null) return;
         
         characterIndex = GameManager.UserData.Profile.MyroomCharaIdx.Value -1;
+
+        if (isShop)
+        {
+            characterIndex = 0;
+        }
         
         // 친구룸 놀러감
         if (isFriendRoom)

@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq; 
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -82,7 +84,7 @@ public class CharacterInfoController : BaseUI
         set
         {
             _userYongGwa = value;
-            _infoUI._levelYongGwaAmountText.text = _userYongGwa.ToString();
+            _infoUI._levelYongGwaAmountText.text = CurrencyFormat.Trans(_userYongGwa);
         }
     }
     
@@ -96,8 +98,8 @@ public class CharacterInfoController : BaseUI
         set
         {
             _userGold = value;
-            _infoUI._amountGoldText.text = _userGold.ToString();
-            _infoUI._levelGoldAmountText.text = _userGold.ToString();
+            _infoUI._amountGoldText.text = CurrencyFormat.Trans(_userGold);
+            _infoUI._levelGoldAmountText.text = CurrencyFormat.Trans(_userGold); 
         } 
     }
     
@@ -112,28 +114,43 @@ public class CharacterInfoController : BaseUI
         set
         {
             _userDragonCandy = value;
-            _infoUI._amountCommonTokenText.text = _userDragonCandy.ToString();
+            _infoUI._amountCommonTokenText.text = CurrencyFormat.Trans(_userDragonCandy);
         }
     }
 
     private int _userCharacterToken;
-
+    
     public int UserCharacterToken
     {
         get => _userCharacterToken;
         set
         {
             _userCharacterToken = value;
-            _infoUI._amountCharacterTokenText.text = _userCharacterToken.ToString();
+            _infoUI._amountCharacterTokenText.text = CurrencyFormat.Trans(_userCharacterToken);
         }
     }
+    
+    private GridLayoutGroup _gridLayout;
     
     protected override void Awake()
     {
         base.Awake(); 
         Init();
         ButtonOnClickEvent();
-        GetUserMaterials(); 
+        GetUserMaterials();
+        RatiPaddingModify(); 
+    }
+
+    private void RatiPaddingModify()
+    {
+        float ratio = (float)Screen.width / Screen.height;
+        _gridLayout.padding.left = (Mathf.Floor(ratio * 10f) / 10f) switch
+        {
+            2.4f => 180,
+            2.7f => 165,
+            1.7f => 125,
+            _ => 50
+        };
     }
 
     private void OnEnable()
@@ -149,6 +166,8 @@ public class CharacterInfoController : BaseUI
         _infoPopup = GetUI("InfoPopup");
         _characterUIPanel = GetUI("CharacterUIPanel");
 
+        _gridLayout = GetUI<GridLayoutGroup>("Content");
+        
         //Sort, Filter GetBind
         _characterFilter = GetUI<CharacterFilter>("FilterUI");
         _characterSort = GetUI<CharacterSort>("SortUI"); 
