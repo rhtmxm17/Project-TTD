@@ -137,7 +137,7 @@ public class CharacterInfoUI : BaseUI
     private void CommonUI()
     {
         _enhanceText = GetUI<TextMeshProUGUI>("EnhanceText"); 
-         
+
         //좌측 Tab 버튼 바인딩
         _detailTabButton = GetUI<Button>("DetailTabButton");
         _enhanceTabButton = GetUI<Button>("EnhanceTabButton");

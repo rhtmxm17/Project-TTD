@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq; 
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -117,7 +119,7 @@ public class CharacterInfoController : BaseUI
     }
 
     private int _userCharacterToken;
-
+    
     public int UserCharacterToken
     {
         get => _userCharacterToken;
@@ -128,12 +130,27 @@ public class CharacterInfoController : BaseUI
         }
     }
     
+    private GridLayoutGroup _gridLayout;
+    
     protected override void Awake()
     {
         base.Awake(); 
         Init();
         ButtonOnClickEvent();
-        GetUserMaterials(); 
+        GetUserMaterials();
+        RatiPaddingModify(); 
+    }
+
+    private void RatiPaddingModify()
+    {
+        float ratio = (float)Screen.width / Screen.height;
+        _gridLayout.padding.left = (Mathf.Floor(ratio * 10f) / 10f) switch
+        {
+            2.4f => 180,
+            2.7f => 165,
+            1.7f => 125,
+            _ => 50
+        };
     }
 
     private void OnEnable()
@@ -149,6 +166,8 @@ public class CharacterInfoController : BaseUI
         _infoPopup = GetUI("InfoPopup");
         _characterUIPanel = GetUI("CharacterUIPanel");
 
+        _gridLayout = GetUI<GridLayoutGroup>("Content");
+        
         //Sort, Filter GetBind
         _characterFilter = GetUI<CharacterFilter>("FilterUI");
         _characterSort = GetUI<CharacterSort>("SortUI"); 
