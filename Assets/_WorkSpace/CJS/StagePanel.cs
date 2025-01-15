@@ -27,9 +27,10 @@ public class StagePanel : MonoBehaviour
 
     private void Awake()
     {
-        for (int i = 0; i < chapters.Count; i++)
+        int i = 0;
+        foreach (var chapter in chapters)
         {
-            chapters[i].enterButton.onClick.AddListener(() => OpenChapterPanel(chapters[i].stageDatas));
+            chapter.enterButton.onClick.AddListener(() => OpenChapterPanel(chapter.stageDatas));
 
             // 바로가기 버튼 생성
             IndexedButton instance = Instantiate(chapterLeadButtonPrefab, leadButtonGroup.transform);
@@ -37,12 +38,12 @@ public class StagePanel : MonoBehaviour
             instance.Button.onClick.AddListener(() =>
             {
                 // 바로가기 버튼 클릭시 id번째 챕터 버튼의 위치로 월드맵 이동
-                SnapTo(chapters[instance.Id].enterButton.GetComponent<RectTransform>());
+                SnapTo(chapter.enterButton.GetComponent<RectTransform>());
             });
 
             instance.Text.text = (i + 1).ToString();
+            i++;
         }
-
     }
 
     private void OpenChapterPanel(List<StageData> stageDatas)
