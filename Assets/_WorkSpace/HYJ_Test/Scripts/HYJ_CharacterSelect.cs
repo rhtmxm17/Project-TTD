@@ -19,6 +19,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
     [SerializeField] GameObject posBTNImage;
     
     [Header("유닛 버튼 설정")]
+    [SerializeField] HYJ_UnitInfo unitInfoScript;
     [SerializeField] int unitIndex; // 유닛 번호
     [SerializeField] Image characterImage; // 캐릭터 이미지
     [SerializeField] TMP_Text levelText; // 캐릭터 레벨 텍스트
@@ -27,7 +28,6 @@ public class HYJ_CharacterSelect : MonoBehaviour
     [SerializeField] TMP_Text classText; // 캐릭터 역할 텍스트(탱커/딜러/힐러)
     [SerializeField] TMP_Text powerText; // 캐릭터 공격 타입 텍스트 (단일/광역)
     GameObject UnitChangeUI; // 유닛 변경 확인 팝업 -> 변경하시겠습니까?
-
 
     public void InitDataPosBtn(int posIdx, GameObject CharacterSelectPanel, GameObject CantPosUI)
     {
@@ -54,12 +54,12 @@ public class HYJ_CharacterSelect : MonoBehaviour
 
         characterImage.GetComponent<Image>().sprite = chData.FaceIconSprite;
         levelText.text = chData.Level.Value.ToString(); // 레벨 표기
-        nameText.text = chData.Name;
+        nameText.text = chData.Name; // 몬스터 명
         raceText.text = chData.StatusTable.type.ToString(); // 종족
         classText.text = chData.StatusTable.roleType.ToString(); // 역할군
         powerText.text = chData.PowerLevel.ToString();
         
-        // TODO : HYJ_UnitInfo에 InitUnitInfo 추가
+        unitInfoScript.InitUnitInfo(chData);
     }
 
     public void SelectPos()
