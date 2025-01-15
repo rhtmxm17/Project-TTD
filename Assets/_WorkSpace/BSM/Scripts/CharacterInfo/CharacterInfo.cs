@@ -120,7 +120,14 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     {
         //오픈한 캐릭터 정보가 구독된 리스트중 자신과 같지 않으면 return
         if (_characterInfoController.CurCharacterInfo != this) return;
-
+        
+        if (_characterInfoController._infoUI._bonusPopup.activeSelf)
+        {
+            _characterInfoController._infoUI._bonusPopup.SetActive(false);
+            return;
+            ;
+        }
+        
         GameManager.UserData.StartUpdateStream()
             .SetDBValue(_characterData.Level, _characterData.Level.Value + 1)
             .SetDBValue(_characterInfoController.UserGoldData, _characterInfoController.UserGoldData.Value - _characterLevelUpGoldCost) // 재화 사용
@@ -128,7 +135,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             .Submit(LevelUpSuccess);
     }
 
-    private Coroutine _levelUpEffectCo;
+    private Coroutine _levelUpNormalEffectCo;
+    private Coroutine _levelUpSpecialEffectCo;
     /// <summary>
     /// 레벨업 결과
     /// </summary>
@@ -140,24 +148,39 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             Debug.LogWarning("접속 실패");
             return;
         }
+        
+        if (_levelUpNormalEffectCo != null)
+        {
+            _characterInfoController._infoUI._levelUpNormalEffect.color =new Color(1, 1, 1, 0f);
+            StopCoroutine(_levelUpNormalEffectCo);
+            _levelUpNormalEffectCo = null;
+        }
 
+        if (_levelUpSpecialEffectCo != null)
+        {
+            _characterInfoController._infoUI._levelUpSpecialEffect.color = new Color(1, 1, 1, 0f);
+            StopCoroutine(_levelUpSpecialEffectCo);
+            _levelUpSpecialEffectCo = null;
+        }
+        
         _characterInfoController.UserGold = _characterInfoController.UserGoldData.Value;
         _characterInfoController.UserYongGwa = _characterInfoController.UserYongGwaData.Value;
+
         UpdateInfo(); 
 
         //레벨업 시 이펙트 재생 및 추가 스탯 UI
         if (_characterLevel % 10 != 0)
         {
-            if (_levelUpEffectCo == null)
+            if (_levelUpNormalEffectCo == null)
             {
-                _levelUpEffectCo = StartCoroutine(LevelUpEffectRoutine(_characterInfoController._infoUI._levelUpNormalEffect, 0.25f));
+                _levelUpNormalEffectCo = StartCoroutine(LevelUpNormalEffectRoutine(_characterInfoController._infoUI._levelUpNormalEffect, 0.25f));
             } 
         }
         else
         {
-            if (_levelUpEffectCo == null)
+            if (_levelUpSpecialEffectCo == null)
             {
-                _levelUpEffectCo = StartCoroutine(LevelUpEffectRoutine(_characterInfoController._infoUI._levelUpSpecialEffect, 0.5f));
+                _levelUpSpecialEffectCo = StartCoroutine(LevelUpSpecialffectRoutine(_characterInfoController._infoUI._levelUpSpecialEffect, 0.5f));
                 _characterInfoController._infoUI._bonusPopup.SetActive(true);
                 _characterInfoController._infoUI._bonusLevelText.text = $"{_characterLevel}레벨 달성!";
 
@@ -191,7 +214,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// 레벨업 이펙트 코루틴
     /// </summary>
     /// <returns></returns>
-    private IEnumerator LevelUpEffectRoutine(Image effectImage ,float value)
+    private IEnumerator LevelUpNormalEffectRoutine(Image effectImage ,float value)
     {
         float elapsedTime = 0f;
         float endTime = value;
@@ -218,6 +241,35 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             yield return null;
         } 
     }
+    
+    private IEnumerator LevelUpSpecialffectRoutine(Image effectImage ,float value)
+    {
+        float elapsedTime = 0f;
+        float endTime = value;
+
+        while (elapsedTime <= endTime)
+        {
+            float r = UnityEngine.Random.Range(0, 1f);
+            float g = UnityEngine.Random.Range(0, 1f);
+            float b = UnityEngine.Random.Range(0, 1f);
+            
+            elapsedTime += Time.deltaTime;
+            effectImage.color = new Color(r, g, b, elapsedTime + 0.35f);
+            yield return null;
+        }
+
+        while (elapsedTime >= 0)
+        {
+            float r = UnityEngine.Random.Range(0, 1f);
+            float g = UnityEngine.Random.Range(0, 1f);
+            float b = UnityEngine.Random.Range(0, 1f);
+            
+            elapsedTime -= Time.deltaTime;
+            effectImage.color = new Color(r, g, b, elapsedTime);
+            yield return null;
+        } 
+    }
+    
     
     /// <summary>
     /// 현재 캐릭터 정보 할당 기능
@@ -295,10 +347,12 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             _characterInfoController._infoUI._levelUpYongGwaText.text = _characterLevelUpYongGwaCost.ToString();
             _characterInfoController._infoUI._materialGroup.SetActive(true);
             _characterInfoController._infoUI._levelUpButton.gameObject.SetActive(true);
+            _characterInfoController._infoUI._amountGroup.SetActive(true);
             _characterInfoController._infoUI._enhanceTabButton.interactable = true;
         }
         else
         {
+            _characterInfoController._infoUI._amountGroup.SetActive(false);
             _characterInfoController._infoUI._materialGroup.SetActive(false);
             _characterInfoController._infoUI._levelUpButton.gameObject.SetActive(false);
             _characterInfoController._infoUI._enhanceTabButton.interactable = false;
@@ -352,11 +406,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             _ => throw new AggregateException("잘못")
         };
 
-        if (_levelUpEffectCo != null)
-        {
-            StopCoroutine(_levelUpEffectCo);
-            _levelUpEffectCo = null;
-        }
+        
+        
     }
   
     /// <summary>
