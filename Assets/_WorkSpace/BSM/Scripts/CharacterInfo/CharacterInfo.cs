@@ -371,6 +371,9 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController._infoUI._skillBIconImage.sprite = _characterData.SpecialSkillIcon;
 
         //TODO: 캐릭터 스킬 이름 데이터 가져오기
+        // _characterInfoController._infoUI._skillNormalTitleText.text = _characterData.NormalSkillName;
+        // _characterInfoController._infoUI._skillSpecialTitleText.text = _characterData.SpecialSkillName; 
+        
         _characterInfoController._infoUI._skillNormalTitleText.text = "미정";
         _characterInfoController._infoUI._skillSpecialTitleText.text = "미정"; 
         _characterInfoController._infoUI._skillNormalDescText.text = _characterData.NormalSkillToolTip;

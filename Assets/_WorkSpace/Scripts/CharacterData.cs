@@ -104,6 +104,8 @@ public class CharacterData : ScriptableObject, ITsvRowParseable
 
     public Sprite NormalSkillIcon => normalSkillIcon;
 
+    public string NormalSkillName => normalSkillName;
+    
     public string NormalSkillToolTip => normalSkillToolTip;
 
     /// <summary>
@@ -113,6 +115,8 @@ public class CharacterData : ScriptableObject, ITsvRowParseable
 
     public Sprite SpecialSkillIcon => specialSkillIcon;
 
+    public string SpecialSkillName => specialSkillName;
+    
     public string SpecialSkillToolTip => specialSkillToolTip;
 
     /// <summary>
@@ -129,9 +133,11 @@ public class CharacterData : ScriptableObject, ITsvRowParseable
     [SerializeField] Skill basicSkillDataSO;
     [SerializeField] Skill skillDataSO;
     [SerializeField] Sprite normalSkillIcon;
+    [SerializeField] string normalSkillName;
     [SerializeField] string normalSkillToolTip;
     [SerializeField] Skill secondSkillDataSO;
     [SerializeField] Sprite specialSkillIcon;
+    [SerializeField] string specialSkillName;
     [SerializeField] string specialSkillToolTip;
     [SerializeField] int getCharacterItemId;
     [SerializeField] int enhanceItemId;
@@ -158,10 +164,12 @@ public class CharacterData : ScriptableObject, ITsvRowParseable
         SHAPE,
         BASE_ATTACK,
         NORMAL_SKILL,
+        NS_NAME,
         NS_COOLDOWN,
         NS_ICON,
         NS_TOOLTIP,
         SPECIAL_SKILL,
+        SS_NAME,
         SS_COST,
         SS_ICON,
         SS_TOOLTIP,
@@ -223,7 +231,10 @@ public class CharacterData : ScriptableObject, ITsvRowParseable
             normalSkillIcon = SearchAsset.SearchSpriteAsset(cells[(int)Column.NS_ICON]);
             if (normalSkillIcon == null)
                 normalSkillIcon = DataTableManager.Instance.DummySprite;
-
+            
+            //NS_NAME
+            normalSkillName = cells[(int)Column.NS_NAME];
+            
             // NS_TOOLTIP
             normalSkillToolTip = cells[(int)Column.NS_TOOLTIP];
         }
@@ -245,7 +256,10 @@ public class CharacterData : ScriptableObject, ITsvRowParseable
 
             if (specialSkillIcon == null)
                 specialSkillIcon = DataTableManager.Instance.DummySprite;
-
+            
+            //SS_NAME
+            specialSkillName = cells[(int)Column.SS_NAME];
+            
             // SS_TOOLTIP
             specialSkillToolTip = cells[(int)Column.SS_TOOLTIP];
         }
