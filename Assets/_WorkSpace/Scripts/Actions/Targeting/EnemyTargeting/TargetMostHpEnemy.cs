@@ -23,7 +23,7 @@ public class TargetMostHpEnemy : Targeting
     public override Combatable GetTarget(Combatable self)
     {
         Combatable result = self;
-        float maxValue = 1f;
+        float maxValue = 0f;
 
         foreach (Combatable enemy in self.Group.Enemy.CharList)
         {
