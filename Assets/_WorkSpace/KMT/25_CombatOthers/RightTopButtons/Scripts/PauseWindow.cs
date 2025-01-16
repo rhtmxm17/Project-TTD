@@ -22,6 +22,12 @@ public class PauseWindow : OpenableWindow
     private void Awake()
     {
 
+        optionButton.onClick.AddListener(() => {
+
+            GameManager.OverlayUIManager.PopupSettingWindow();
+
+        });
+
         toMenuButton.onClick.AddListener(() => {
 
             Time.timeScale = 1;

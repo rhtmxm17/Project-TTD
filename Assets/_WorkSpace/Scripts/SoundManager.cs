@@ -6,6 +6,13 @@ using UnityEngine.Audio;
 
 public enum AudioGroup { MASTER, BGM, SFX }
 
+[System.Serializable]
+public struct AudioVolume
+{
+    public bool isMute;
+    public float scale;
+}
+
 public class SoundManager : SingletonBehaviour<SoundManager>
 {
     public const int AudioGroupCount = 3;
@@ -16,30 +23,18 @@ public class SoundManager : SingletonBehaviour<SoundManager>
 
     private static readonly string[] paramNames = { "Master", "BGM", "SFX" };
 
-    private struct Volume
-    {
-        public bool isMute;
-        public float scale;
-    }
-
-    private Volume[] mixerVolume = new Volume[AudioGroupCount];
+    private AudioVolume[] MixerVolume => UserSettingData.Instance.Data.soundScale;
 
     private void Awake()
     {
         RegisterSingleton(this);
-
     }
 
     private void Start()
     {
         // 음량 기본값 설정
         // 플레이어 로컬 설정 파일을 만든다면 여기서 입력
-
-        for (int i = 0; i < AudioGroupCount; i++)
-        {
-            mixerVolume[i].scale = 1f;
-
-        }
+        UserSettingData.Instance.LoadSetting();
 
         UpdateMixer(AudioGroup.MASTER);
         UpdateMixer(AudioGroup.BGM);
@@ -81,33 +76,33 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     /// <param name="scale">음량(0~1 권장)</param>
     public void SetMixerScale(AudioGroup group, float scale)
     {
-        mixerVolume[(int)group].scale = scale;
+        MixerVolume[(int)group].scale = scale;
         UpdateMixer(group);
     }
 
     public float GetMixerScale(AudioGroup group)
     {
-        return mixerVolume[(int)group].scale;
+        return MixerVolume[(int)group].scale;
     }
 
     public void SetMute(AudioGroup group, bool isMute)
     {
-        mixerVolume[(int)group].isMute = isMute;
+        MixerVolume[(int)group].isMute = isMute;
         UpdateMixer(group);
     }
 
     public bool GetMute(AudioGroup group)
     {
-        return mixerVolume[(int)group].isMute;
+        return MixerVolume[(int)group].isMute;
     }
 
     private void UpdateMixer(AudioGroup group)
     {
         float scale;
-        if (mixerVolume[(int)group].isMute)
+        if (MixerVolume[(int)group].isMute)
             scale = -80f;
         else
-            scale = (mixerVolume[(int)group].scale - 1f) * 20f;
+            scale = (MixerVolume[(int)group].scale - 1f) * 20f;
 
         mixer.SetFloat(paramNames[(int)group], scale);
     }

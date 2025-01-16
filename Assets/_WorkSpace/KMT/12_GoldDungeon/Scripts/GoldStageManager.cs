@@ -17,6 +17,13 @@ public class GoldStageManager : StageManager, IDamageAddable, IProgressable
     float gaveDamage;
 
     Combatable bossCharacters;
+    AdvencedPopupInCombatResult_Dungeon resultPopupInDungeon;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        resultPopupInDungeon = (AdvencedPopupInCombatResult_Dungeon)resultPopupWindow;
+    }
 
     public override void Initialize(StageSceneChangeArgs sceneChangeArgs)
     {
@@ -83,6 +90,10 @@ public class GoldStageManager : StageManager, IDamageAddable, IProgressable
 
         float resultRate = Mathf.Clamp01(socre / bossCharacters.MaxHp.Value);//0~1 사이로 고정시키기
         long resultLong = (long)(resultRate * 100);
+        long prevResultLong = 0;
+
+        if(GameManager.UserData.PlayData.GoldDungeonClearRate.Value.ContainsKey(curLevel))
+            prevResultLong = GameManager.UserData.PlayData.GoldDungeonClearRate.Value[curLevel];
 
         if (isClear)//클리어인경우, 클리어률을 100으로 지정.
         {
@@ -117,119 +128,112 @@ public class GoldStageManager : StageManager, IDamageAddable, IProgressable
             stream.SetDBDictionaryInnerValue(GameManager.UserData.PlayData.GoldDungeonClearRate, curLevel, resultLong);
         }
 
+        List<CharacterData> chDataL = new List<CharacterData>(batchDictionary.Values);
+        int randIdx = UnityEngine.Random.Range(0, chDataL.Count);
 
-        stream
-            .AddDBValue(reward.item.Number, rewardGold)
-            .AddDBValue(DataTableManager.Instance.GetItemData(9/*골드티켓*/).Number, -1)
-            .Submit(result =>
-            {
-                if (false == result)
-                {
-                    Debug.Log("요청 전송에 실패했습니다");
-                    return;
-                }
+        resultPopupInDungeon.OpenTripleButtonWithResult(
+            stageDataOnLoad.StageName,
+            new List<ItemGain>() { reward },
+            "획득하기", () => { //아이템 획득
 
-                Debug.Log("와! 골드!");
+                stream
+                .AddDBValue(reward.item.Number, rewardGold)
+                .AddDBValue(DataTableManager.Instance.GetItemData(9/*골드티켓*/).Number, -1)
+                .Submit(result => {
 
-                List<CharacterData> chDataL = new List<CharacterData>(batchDictionary.Values);
-                int randIdx = UnityEngine.Random.Range(0, chDataL.Count);
-
-                Debug.Log(GameManager.UserData.PlayData.GoldDungeonClearRate.Value[curLevel] + "//////");
-
-                string rightButtonText = string.Empty;
-                UnityAction rightButtonAction = null;
-
-                //클리어률 100인 경우 => 다음 스테이지 버튼
-                if (GameManager.UserData.PlayData.GoldDungeonClearRate.Value[curLevel] >= 100)
-                {
-                    rightButtonText = "다음 스테이지로";
-
-                    //다음 스테이지로 갈수있는지 확인하는 로직
-                    rightButtonAction = () => {
-
-                        if (stageDataOnLoad.NextStageId == -1)
-                        {
-                            GameManager.OverlayUIManager.OpenSimpleInfoPopup("다음 단계가 없습니다.", "닫기", null);
-                        }
-                        else
-                        {
-                            StageData nextStageData = DataTableManager.Instance.GetStageData(stageDataOnLoad.NextStageId);
-
-                            if (nextStageData == null)
-                            {
-                                Debug.Log("전달된 다음 인덱스 스테이지 정보가 존재하지 않음.");
-                                return;
-                            }
-
-                            GameManager.OverlayUIManager.OpenDoubleInfoPopup($"다음 스테이지로 가시겠습니까? \n {nextStageData.StageName}", "그만두기", "도전하기", null,
-                                () => {
-
-                                    if (DataTableManager.Instance.GetItemData(9/*골드티켓*/).Number.Value <= 0)
-                                    {
-                                        GameManager.OverlayUIManager.OpenSimpleInfoPopupByCreate(
-                                            "골드 티켓이 부족합니다.",
-                                            "확인",
-                                            null
-                                        );
-                                    }
-                                    else
-                                    {
-                                        prevSceneData.stageData = nextStageData;
-                                        prevSceneData.dungeonLevel += 1;
-                                        //TODO : 용도에 따라서 지우거나 이용
-                                        //prevSceneData.prevScene = prevSceneData.prevScene;
-                                        GameManager.Instance.LoadBattleFormationScene(prevSceneData);
-                                    }
-                                },
-                                true, DataTableManager.Instance.GetItemData(9/*골드티켓*/).Number.Value > 0);
-                        }
-
-                    };
-
-
-                }
-                else//클리어률이 100가 아닌 경우 => 재시도버튼
-                {
-                    rightButtonText = "재시도";
-
-                    //재시도가 가능한지 확인하는 로직
-                    rightButtonAction = () =>
+                    if (false == result)
                     {
+                        Debug.Log("요청 전송에 실패했습니다");
+                        return;
+                    }
 
-                        GameManager.OverlayUIManager.OpenDoubleInfoPopup("재도전하시겠습니까?", "그만두기", "다시 도전하기", null,
-                        () =>
-                        {
-                            if (DataTableManager.Instance.GetItemData(9/*골드티켓*/).Number.Value <= 0)
+                    LoadPreviousScene();
+
+                });
+
+            },
+
+            "재도전", () =>//재도전.
+            {
+
+                GameManager.OverlayUIManager.OpenDoubleInfoPopup("재도전하시겠습니까?", "그만두기", "다시 도전하기", null,
+                () =>
+                {
+                    //TODO : 용도에 따라서 지우거나 이용
+                    //prevSceneData.stageData = prevSceneData.stageData;
+                    //prevSceneData.prevScene = prevSceneData.prevScene;
+                    GameManager.Instance.LoadBattleFormationScene(prevSceneData);
+                });
+
+            },
+
+            "다음 스테이지로", () => {
+
+                if (stageDataOnLoad.NextStageId == -1)
+                {
+                    GameManager.OverlayUIManager.OpenSimpleInfoPopup("다음 단계가 없습니다.", "닫기", null);
+                }
+                else
+                {
+                    StageData nextStageData = DataTableManager.Instance.GetStageData(stageDataOnLoad.NextStageId);
+
+                    if (nextStageData == null)
+                    {
+                        Debug.Log("전달된 다음 인덱스 스테이지 정보가 존재하지 않음.");
+                        return;
+                    }
+
+                    GameManager.OverlayUIManager.OpenDoubleInfoPopup($"다음 스테이지로 가시겠습니까? \n {nextStageData.StageName}", "그만두기", "도전하기", null,
+                        () => {
+
+                            if (DataTableManager.Instance.GetItemData(9/*골드티켓*/).Number.Value <= 1)//보상정산용도 + 다음 입장 용도
                             {
-                                GameManager.OverlayUIManager.OpenSimpleInfoPopup(
+                                GameManager.OverlayUIManager.OpenSimpleInfoPopupByCreate(
                                     "골드 티켓이 부족합니다.",
+                                    "확인",
+                                    null
+                                );
+                            }
+                            else if (prevResultLong < 100 && resultLong < 100)
+                            {
+                                GameManager.OverlayUIManager.OpenSimpleInfoPopupByCreate(
+                                    "현재 스테이지의 진행률을 \n 100%로 채워야 합니다..",
                                     "확인",
                                     null
                                 );
                             }
                             else
                             {
-                                //TODO : 용도에 따라서 지우거나 이용
-                                //prevSceneData.stageData = prevSceneData.stageData;
-                                //prevSceneData.prevScene = prevSceneData.prevScene;
-                                GameManager.Instance.LoadBattleFormationScene(prevSceneData);
-                            }
-                        });
 
-                    };
+                                stream
+                                    .AddDBValue(reward.item.Number, rewardGold)
+                                    .AddDBValue(DataTableManager.Instance.GetItemData(9/*골드티켓*/).Number, -1)
+                                    .Submit(result => {
+
+                                        if (false == result)
+                                        {
+                                            Debug.Log("요청 전송에 실패했습니다");
+                                            return;
+                                        }
+
+                                        prevSceneData.stageData = nextStageData;
+                                        prevSceneData.dungeonLevel += 1;
+                                        //TODO : 용도에 따라서 지우거나 이용
+                                        //prevSceneData.prevScene = prevSceneData.prevScene;
+                                        GameManager.Instance.LoadBattleFormationScene(prevSceneData);
+
+                                    });
+
+
+                            }
+                        },
+                        true, DataTableManager.Instance.GetItemData(9/*골드티켓*/).Number.Value > 1 && (prevResultLong >= 100 || resultLong >= 100));
                 }
 
-                resultPopupWindow.OpenDoubleButtonWithResult(
-                    stageDataOnLoad.StageName,
-                    new List<ItemGain>() { reward },
-                    "확인", LoadPreviousScene,
-                    rightButtonText, rightButtonAction,
-                    true, false,
-                    "승리!", chDataL[randIdx].FaceIconSprite,
-                    AdvencedPopupInCombatResult.ColorType.VICTORY
-                );
-
-            });
+            }/*다음 스테이지 로직*/,
+            false, false, false,
+            $"{resultLong}%", chDataL[randIdx].FaceIconSprite,
+            AdvencedPopupInCombatResult.ColorType.VICTORY);
 
     }
 

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -5,7 +6,6 @@ using UnityEngine.UI;
 
 public class HYJ_CharacterSelect : MonoBehaviour
 {
-    // 캐릭터 (9종)
     // 캐릭터 데이터 구조 : index(ID)
     [SerializeField] GameObject characterSelectPanel; // 캐릭터 선택 창 
     GameObject CantPosUI; // 선택 불가 팝업 -> 5개 유닛이 이미 다 배치 되었을 때의 팝업
@@ -112,6 +112,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
             {
                 SelectM.GetComponent<HYJ_SelectManager>().AddPosBtnImage();
                 SelectM.CharacterSelectPanel.SetActive(false);
+                SelectM.ChangeAllBtnColorOff();
             }
         }
     }

@@ -32,7 +32,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7071634056206775769}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -60,7 +60,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.95686275, g: 1, b: 0, a: 0.2784314}
+  m_Color: {r: 0.95686275, g: 1, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -132,7 +132,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7071634056206775769}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -327,6 +327,7 @@ GameObject:
   - component: {fileID: 7071634056206775770}
   - component: {fileID: 7071634056206775773}
   - component: {fileID: 7071634056206775762}
+  - component: {fileID: 2844539362496250413}
   m_Layer: 5
   m_Name: TestPosBTNBuff
   m_TagString: Untagged
@@ -347,8 +348,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7071634055271324550}
-  - {fileID: 3182163638082568398}
   - {fileID: 4947715350009993997}
+  - {fileID: 3182163638082568398}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -451,6 +452,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 2844539362496250413}
+        m_TargetAssemblyTypeName: HYJ_ChangeBtnColor, Assembly-CSharp
+        m_MethodName: ChangeBtnColor
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!114 &7071634056206775773
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -494,5 +507,16 @@ MonoBehaviour:
     type: 3}
   HealBuffImage: {fileID: 3543991166884047176, guid: 57c5c6c49fe2bd243a7383b9afe49c9a,
     type: 3}
-  atkBuff: {fileID: 2100000, guid: 61be966d38d8fd84382e012fab52e54b, type: 2}
-  defBuff: {fileID: 2100000, guid: d46084203ab0522409017c68932258a5, type: 2}
+--- !u!114 &2844539362496250413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7071634056206775768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 505068759b07cbe4587a3b06776f452a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  btnImg: {fileID: 0}

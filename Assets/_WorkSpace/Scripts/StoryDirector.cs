@@ -258,12 +258,9 @@ public class StoryDirector : BaseUI
         // 이펙트 적용
         foreach (StoryDirectingData.EffectInfo effectInfo in dialogue.Effects)
         {
-            // 임시: 작업 미완료 이펙트
-            if (effectInfo.Effect.RectTransform == null)
-                continue;
-
             StoryEffect effect = Instantiate(effectInfo.Effect, standingImageParent);
-            effect.RectTransform.anchorMin = effect.RectTransform.anchorMax = effectInfo.Position * 0.1f;
+
+            effect.transform.localPosition = (effectInfo.Position * 0.1f) * standingImageParent.rect.size + standingImageParent.rect.position;
         }
 
     }

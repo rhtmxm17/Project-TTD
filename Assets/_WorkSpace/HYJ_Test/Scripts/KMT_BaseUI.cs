@@ -6,10 +6,9 @@ public class KMT_BaseUI : BaseUI
 {
 
     [SerializeField] HYJ_CharacterSelect buttonPrefab;
-
+    [SerializeField] HYJ_ListController listController;
     Transform buttonsParent;
-    HYJ_SelectManager selectManager;
-    HYJ_ListController listController; // 필터/&정렬용 리스트
+    HYJ_SelectManager selectManager;// 필터/&정렬용 리스트
     GameObject unitChangePanel;
 
     DatabaseReference userUidRef;
@@ -20,12 +19,12 @@ public class KMT_BaseUI : BaseUI
         Debug.Log(userUidRef == null);
 
         selectManager = GetComponent<HYJ_SelectManager>();
-        listController = GetComponent<HYJ_ListController>();
         buttonsParent = GetUI<Transform>("Content_Characters");
         unitChangePanel = GetUI<Transform>("UnitChangePanel").gameObject;
 
         SettingMyCharacters();
-
+        
+        
     }
 
     private void SettingMyCharacters()
@@ -49,8 +48,9 @@ public class KMT_BaseUI : BaseUI
                 //int.TryParse(chInfo.ket, out int Parsd);
                 //Debug.Log(Parsd);
                 button.InitDataUnitBtn(selectManager, parsd, unitChangePanel);
-                //listController.AddListUnit(parsd);
             }
+            listController.InitUnitsList();
         });
+        
     }
 }

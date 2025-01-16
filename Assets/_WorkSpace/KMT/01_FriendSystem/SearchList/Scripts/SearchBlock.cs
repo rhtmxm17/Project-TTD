@@ -35,8 +35,8 @@ public class SearchBlock : MonoBehaviour
     public void Request()
     {
         GameManager.OverlayUIManager.OpenDoubleInfoPopup(
-            $"{text.text}님에게 \n 친구비를 내실건가요?",
-            "그정도는 아닌듯", "친구가 되어줘...!",
+            $"{text.text}님에게 \n 친구요청을 보낼까요?",
+            "아니에요", "네!",
             null, () => {
 
                 userNode.GetValueAsync().ContinueWithOnMainThread(t1 =>
@@ -50,14 +50,14 @@ public class SearchBlock : MonoBehaviour
 
                     if (t1.Result.Child(UserData.myUid).Child("friends/friendList").ChildrenCount >= FriendList.MAX_FRIEND_CNT)
                     {
-                        GameManager.OverlayUIManager.OpenSimpleInfoPopup($"친구가 너무 많아요! \n 친구좀 줄이고 오시죠", "앗 아아..", null);
+                        GameManager.OverlayUIManager.OpenSimpleInfoPopup($"친구가 너무 많아요! \n 친구좀 줄이고 오시죠", "창닫기", null);
                         return;
                     }
 
                     if (t1.Result.Child(destUid).Child("friends/friendList").ChildrenCount >= FriendList.MAX_FRIEND_CNT)
                     {
                         GameManager.OverlayUIManager.OpenSimpleInfoPopup(
-                            $"{t1.Result.Child(destUid).Child("Profile/Name").Value.ToString()}님은 인싸에요! \n 더 받아줄수 없다네요...", "비겁한 인싸녀석들...", null);
+                            $"{t1.Result.Child(destUid).Child("Profile/Name").Value.ToString()}님은 인싸에요! \n 더 받아줄수 없다네요...", "창닫기", null);
                         return;
                     }
 
@@ -81,8 +81,8 @@ public class SearchBlock : MonoBehaviour
                         }
 
                         GameManager.OverlayUIManager.OpenSimpleInfoPopup(
-                            $"{text.text}님에게 친구신청과 \n약간의 [성의]를 보냈습니다.",
-                            "헉...!",
+                            $"{text.text}님에게 친구신청을 보냈어요! \n 이제 기다리는 일만 남았어요!",
+                            "창닫기",
                             null
                         );
 

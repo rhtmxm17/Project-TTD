@@ -110,6 +110,11 @@ public class RoomChangePUUI : BaseUI
                 }
 
                 Debug.Log("방 구매 성공!");
+                GameManager.OverlayUIManager.OpenSimpleInfoPopup(
+                    $"성공적으로 방이 구매되었습니다.",
+                    "창닫기",
+                    null
+                );
             });
         
         GetUI("BuyRoomButton").SetActive(false);
