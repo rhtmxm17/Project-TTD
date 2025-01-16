@@ -72,14 +72,14 @@ public class IdleReward : MonoBehaviour
         }
 
         // TODO: 시간*100골로 임시 계산
-        UserDataInt gold = GameManager.TableData.GetItemData(1).Number;
+        ItemData gold = GameManager.TableData.GetItemData(1);
 
         int reward = spanTime.Hours * 1000 + spanTime.Minutes * 100 + spanTime.Seconds * 10;
         rewardText.text = $"골드 {reward}수령";
         
         GameManager.UserData.StartUpdateStream()
             .SetDBTimestamp(lastRewardTime)
-            .SetDBValue(gold, gold.Value + reward)
+            .AddDBValue(gold.Number, reward)
             .Submit(result =>
             {
                 if (false == result)
@@ -89,8 +89,12 @@ public class IdleReward : MonoBehaviour
                 }
 
                 Debug.Log("방치 보상 수령 성공");
+                GameManager.OverlayUIManager.PopupItemGain(new List<ItemGain>()
+                {
+                    new ItemGain() { item = gold, gain = reward }
+                });
                 // 보상 수령 확인용 팝업 코루틴
-                StartCoroutine(RewardPopupCo());
+                // StartCoroutine(RewardPopupCo());
             });
 
         if (isIdleReward)

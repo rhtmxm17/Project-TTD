@@ -76,6 +76,11 @@ public class EggSpawner : MonoBehaviour
         {
             // TODO: 못받을때 할 행동들 추가적으로 있으면 작성
             Debug.Log("부화기 받기 실패.");
+            GameManager.OverlayUIManager.OpenSimpleInfoPopup(
+                $"부화기 받기 시간이 남았습니다.",
+                "창닫기",
+                null
+            );
         }
     }
 
