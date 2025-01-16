@@ -227,12 +227,43 @@ public class CharacterInfoController : BaseUI
         _rightEvolutionButton.onClick.AddListener(EvolutionNextCharacter);
         _prevButton.onClick.AddListener(DetailPreviousCharacter);
         _nextButton.onClick.AddListener(DetailNextCharacter);
-        _sortButton.onClick.AddListener(() => _characterSort.transform.GetChild(0).gameObject.SetActive(true));
+        _sortButton.onClick.AddListener(() =>
+        {
+            _characterSort.transform.GetChild(0).gameObject.SetActive(true);
+            
+            _characterFilter.transform.GetChild(0).gameObject.SetActive(false);
+            _characterFilter.transform.GetChild(1).gameObject.SetActive(false);
+            _characterFilter.transform.GetChild(2).gameObject.SetActive(false);
+        });
+        
         _sortingButton.onClick.AddListener(()=> _characterSort.SortingLayerEvent());
         
-        _elementFilterButton.onClick.AddListener(() => _characterFilter.transform.GetChild(0).gameObject.SetActive(true));
-        _roleFilterButton.onClick.AddListener(() => _characterFilter.transform.GetChild(1).gameObject.SetActive(true));
-        _dragonVeinFilterButton.onClick.AddListener(() =>_characterFilter.transform.GetChild(2).gameObject.SetActive(true));
+        _elementFilterButton.onClick.AddListener(() =>
+        {
+            _characterFilter.transform.GetChild(0).gameObject.SetActive(true);
+
+            _characterSort.transform.GetChild(0).gameObject.SetActive(false);
+            _characterFilter.transform.GetChild(1).gameObject.SetActive(false);
+            _characterFilter.transform.GetChild(2).gameObject.SetActive(false);
+        });
+        
+        _roleFilterButton.onClick.AddListener(() =>
+        {
+            _characterFilter.transform.GetChild(1).gameObject.SetActive(true);
+            
+            _characterSort.transform.GetChild(0).gameObject.SetActive(false);
+            _characterFilter.transform.GetChild(0).gameObject.SetActive(false);
+            _characterFilter.transform.GetChild(2).gameObject.SetActive(false);
+        });
+        
+        _dragonVeinFilterButton.onClick.AddListener(() =>
+        {
+            _characterFilter.transform.GetChild(2).gameObject.SetActive(true);
+            
+            _characterSort.transform.GetChild(0).gameObject.SetActive(false);
+            _characterFilter.transform.GetChild(0).gameObject.SetActive(false);
+            _characterFilter.transform.GetChild(1).gameObject.SetActive(false);
+        });
 
     }
 

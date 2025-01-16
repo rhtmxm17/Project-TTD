@@ -54,12 +54,36 @@ public class CharacterSort : MonoBehaviour
 
     private void SubscribeEvent()
     {
-        _characterSortUI.LevelSortButton.onClick.AddListener(() => SortEventFunc(SortType.LEVEL));
-        _characterSortUI.PowerLevelSortButton.onClick.AddListener(() => SortEventFunc(SortType.POWERLEVEL));
-        _characterSortUI.EnhanceLevelSortButton.onClick.AddListener(() => SortEventFunc(SortType.ENHANCELEVEL));
-        _characterSortUI.AttackPowerSortButton.onClick.AddListener(() => SortEventFunc(SortType.OFFENSIVEPOWER));
-        _characterSortUI.DefensePowerSortButton.onClick.AddListener(()=> SortEventFunc(SortType.DEFENSEIVEPOWER));
-        _characterSortUI.HealthPowerSortButton.onClick.AddListener(() => SortEventFunc(SortType.HEALTH)); 
+        _characterSortUI.LevelSortButton.onClick.AddListener(() =>
+        { 
+            SortEventFunc(SortType.LEVEL);
+            transform.GetChild(0).gameObject.SetActive(false);
+        }); 
+        _characterSortUI.PowerLevelSortButton.onClick.AddListener(() =>
+        {
+            SortEventFunc(SortType.POWERLEVEL);
+            transform.GetChild(0).gameObject.SetActive(false);
+        });
+        _characterSortUI.EnhanceLevelSortButton.onClick.AddListener(() =>
+        {
+            SortEventFunc(SortType.ENHANCELEVEL);
+            transform.GetChild(0).gameObject.SetActive(false);
+        });
+        _characterSortUI.AttackPowerSortButton.onClick.AddListener(() =>
+        {
+            SortEventFunc(SortType.OFFENSIVEPOWER);
+            transform.GetChild(0).gameObject.SetActive(false);
+        });
+        _characterSortUI.DefensePowerSortButton.onClick.AddListener(()=>
+        {
+            SortEventFunc(SortType.DEFENSEIVEPOWER);
+            transform.GetChild(0).gameObject.SetActive(false);
+        });
+        _characterSortUI.HealthPowerSortButton.onClick.AddListener(() =>
+        {
+            SortEventFunc(SortType.HEALTH);
+            transform.GetChild(0).gameObject.SetActive(false);
+        }); 
     }
 
     /// <summary>
