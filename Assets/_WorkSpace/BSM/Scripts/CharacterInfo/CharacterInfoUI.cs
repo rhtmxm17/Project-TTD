@@ -7,6 +7,9 @@ public class CharacterInfoUI : BaseUI
 {
     private readonly Sprite[] _enhanceResultIcons = new Sprite[3];
     public Sprite[] EnhanceResultIcons => _enhanceResultIcons;
+    public Sprite[] _elementIcons;
+    public Sprite[] _roleIcons;
+    public Sprite[] _dragonVeinIcons;
     
     //DetailTab
     [HideInInspector] public TextMeshProUGUI _levelText;
@@ -31,7 +34,10 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _levelYongGwaAmountText;
     [HideInInspector] public TextMeshProUGUI _skillNormalTitleText;
     [HideInInspector] public TextMeshProUGUI _skillSpecialTitleText;
-
+    [HideInInspector] public TextMeshProUGUI _ElemetTypeText;
+    [HideInInspector] public TextMeshProUGUI _roleTypeText;
+    [HideInInspector] public TextMeshProUGUI _dragonVeinTypeText;
+    
     [HideInInspector] public Image _elementIconImage;
     [HideInInspector] public Image _roleIconImage;
     [HideInInspector] public Image _dragonVeinIconImage;
@@ -103,9 +109,7 @@ public class CharacterInfoUI : BaseUI
     private Button _detailTabButton; 
     private Button _evolutionTabButton;
 
-    public TextMeshProUGUI _tempElemetTypeText;
-    public TextMeshProUGUI _tempRoleTypeText;
-    public TextMeshProUGUI _tempDragonVeinTypeText;
+  
     
     protected override void Awake()
     {
@@ -118,6 +122,8 @@ public class CharacterInfoUI : BaseUI
     private void Init()
     {
         _controller = transform.GetComponentInParent<CharacterInfoController>();
+        //TODO: 강화 결과 아이콘 수정 필요 -> 현재는 임시로 Resources로 불러오는데 추후에 이미지를 배열에 넣을 필요 o
+        
         _enhanceResultIcons[0] = Resources.Load<Sprite>("Sprites/Icon/White/Icon_White_128/Icon_White_128_Emoji_Smile_02");
         _enhanceResultIcons[1] = Resources.Load<Sprite>("Sprites/Icon/White/Icon_White_128/Icon_White_128_Emoji_Sad_02");
         _enhanceResultIcons[2] = Resources.Load<Sprite>("Sprites/Icon/White/Icon_White_128/Icon_White_128_Error_Png");
@@ -126,9 +132,9 @@ public class CharacterInfoUI : BaseUI
     private void UIBind()
     {
         //TODO: 임시 용 타입 UI 특성 지우기 -> 이미지로 변경 필요
-        _tempElemetTypeText = GetUI<TextMeshProUGUI>("ElementTypeText");
-        _tempRoleTypeText = GetUI<TextMeshProUGUI>("RoleTypeText");
-        _tempDragonVeinTypeText = GetUI<TextMeshProUGUI>("DragonVeinTypeText");
+        _ElemetTypeText = GetUI<TextMeshProUGUI>("ElementTypeText");
+        _roleTypeText = GetUI<TextMeshProUGUI>("RoleTypeText");
+        _dragonVeinTypeText = GetUI<TextMeshProUGUI>("DragonVeinTypeText");
         DetailTabUI();
         EnhanceTabUI();
         CommonUI();

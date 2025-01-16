@@ -354,12 +354,16 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController._infoUI._skillNormalDescText.text = _characterData.NormalSkillToolTip;
         _characterInfoController._infoUI._skillSpecialDescText.text = _characterData.SpecialSkillToolTip;
         
-        //TODO: 임시 텍스트 -> 속성 이미지로 변경 필요
-        ElementType tempElementType = (ElementType)_characterData.StatusTable.type;
-        RoleType tempRoleType = (RoleType)_characterData.StatusTable.roleType;
-        DragonVeinType tempDragonVeinType = (DragonVeinType)_characterData.StatusTable.dragonVeinType;
-
-        _characterInfoController._infoUI._tempElemetTypeText.text = tempElementType switch
+        //TODO: 역할군, 용맥 아이콘도 추가 필요
+        ElementType elementType = _characterData.StatusTable.type;
+        RoleType roleType = _characterData.StatusTable.roleType;
+        DragonVeinType dragonVeinType = _characterData.StatusTable.dragonVeinType;
+        
+        _characterInfoController._infoUI._elementIconImage.sprite = _characterInfoController._infoUI._elementIcons[(int)elementType - 1];
+        _characterInfoController._infoUI._roleIconImage.sprite =  _characterInfoController._infoUI._roleIcons[(int)roleType - 1];
+        _characterInfoController._infoUI._dragonVeinIconImage.sprite =  _characterInfoController._infoUI._dragonVeinIcons[(int)dragonVeinType - 1];
+        
+        _characterInfoController._infoUI._ElemetTypeText.text = elementType switch
         {
             ElementType.FIRE => "화룡",
             ElementType.WATER => "수룡",
@@ -369,7 +373,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             _ => throw new AggregateException("잘못됨")
         };
 
-        _characterInfoController._infoUI._tempRoleTypeText.text = tempRoleType switch
+        _characterInfoController._infoUI._roleTypeText.text = roleType switch
         {
             RoleType.ATTACKER => "공격형",
             RoleType.DEFENDER => "방어형",
@@ -377,7 +381,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             _ => throw new AggregateException("잘못")
         };
 
-        _characterInfoController._infoUI._tempDragonVeinTypeText.text = tempDragonVeinType switch
+        _characterInfoController._infoUI._dragonVeinTypeText.text = dragonVeinType switch
         {
             DragonVeinType.SINGLE => "단일",
             DragonVeinType.MULTI => "범위",
