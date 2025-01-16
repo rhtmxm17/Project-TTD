@@ -131,8 +131,6 @@ public class ExpStageManager : StageManager
             stream.SetDBDictionaryInnerValue(GameManager.UserData.PlayData.ExpDungeonClearRate, curLevel, resultLong);
         }
 
-        //여기부터
-
         List<CharacterData> chDataL = new List<CharacterData>(batchDictionary.Values);
         int randIdx = UnityEngine.Random.Range(0, chDataL.Count);
 
@@ -231,7 +229,7 @@ public class ExpStageManager : StageManager
 
                             }
                         },
-                        true, DataTableManager.Instance.GetItemData(9/*골드티켓*/).Number.Value > 0 && prevResultLong >= 100);
+                        true, DataTableManager.Instance.GetItemData(9/*골드티켓*/).Number.Value > 1 && (prevResultLong >= 100 || resultLong >= 100));
                 }
 
             }/*다음 스테이지 로직*/,
