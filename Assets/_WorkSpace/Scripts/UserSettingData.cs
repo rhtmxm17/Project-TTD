@@ -21,6 +21,8 @@ public class UserSettingData : SingletonScriptable<UserSettingData>
     [System.Serializable]
     public class SettingData
     {
+        [Range(0, 2)]
+        public int graphicQualityLevel = 1;
         [EnumNamedArray(typeof(AudioGroup)), Tooltip("음량 설정값")]
         public AudioVolume[] soundScale = new AudioVolume[SoundManager.AudioGroupCount];
     }
