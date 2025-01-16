@@ -28,29 +28,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private int _characterLevel = 1;
 
     private int _hp;
-
-    public int Hp
-    {
-        get => _hp;
-        set { _hp = value; }
-    }
-
     private int _atk;
-
-    public int Atk
-    {
-        get => _atk;
-        set { _atk = value; }
-    }
-
     private int _def;
-
-    public int Def
-    {
-        get => _def;
-        set { _def = value; }
-    }
-
     private int _powerLevel;
 
     public int PowerLevel
@@ -368,13 +347,10 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
  
         _characterInfoController._infoUI._skillAIconImage.sprite = _characterData.NormalSkillIcon;
         _characterInfoController._infoUI._skillBIconImage.sprite = _characterData.SpecialSkillIcon;
-
-        //TODO: 캐릭터 스킬 이름 데이터 가져오기
-        // _characterInfoController._infoUI._skillNormalTitleText.text = _characterData.NormalSkillName;
-        // _characterInfoController._infoUI._skillSpecialTitleText.text = _characterData.SpecialSkillName; 
         
-        _characterInfoController._infoUI._skillNormalTitleText.text = "미정";
-        _characterInfoController._infoUI._skillSpecialTitleText.text = "미정"; 
+        _characterInfoController._infoUI._skillNormalTitleText.text = _characterData.NormalSkillName;
+        _characterInfoController._infoUI._skillSpecialTitleText.text = _characterData.SpecialSkillName; 
+        
         _characterInfoController._infoUI._skillNormalDescText.text = _characterData.NormalSkillToolTip;
         _characterInfoController._infoUI._skillSpecialDescText.text = _characterData.SpecialSkillToolTip;
         

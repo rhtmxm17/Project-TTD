@@ -10,43 +10,24 @@ public class CharacterEnhance : MonoBehaviour
     private CharacterData _characterData;
 
     private bool _isSubscribe;
-
     private readonly int _maxEnhanceLevel = 10;
     private float _minEnhanceProbability = 0.9f;
     private float _enhanceProbability;
     private float _chance;
-
     private int _beforeEnhanceLevel;
     private int _afterEnhanceLevel;
-
     private int _beforeHp;
     private int _beforeAtk;
     private int _beforeDef;
-
     private int _afterHp;
     private int _afterAtk;
     private int _afterDef;
-
     private int _enhanceGoldCost;
     private int _enhanceDragonCandyCost;
-    
     private int _curCharacterToken;
     private int _selectedCommonMaterial;
-
-    public int SelectedCommonMaterial
-    {
-        get => _selectedCommonMaterial;
-        set => _selectedCommonMaterial = value;
-    }
-    
     private int _selectedCharacterMaterial;
 
-    public int SelectedCharacterMaterial
-    {
-        get => _selectedCharacterMaterial;
-        set => _selectedCharacterMaterial = value;
-    }
-    
     private EnhanceTokenType _curTokenType;
     
     /// <summary>
