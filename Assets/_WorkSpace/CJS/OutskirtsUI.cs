@@ -30,6 +30,11 @@ public class OutskirtsUI : MonoBehaviour
     public Button ReturnButton => childUIField.returnButton;
 
     /// <summary>
+    /// 설정 버튼
+    /// </summary>
+    public Button SettingButton => childUIField.settingButton;
+
+    /// <summary>
     /// 홈 버튼
     /// </summary>
     public Button HomeButton => childUIField.homeButton;
@@ -44,11 +49,14 @@ public class OutskirtsUI : MonoBehaviour
     /// </summary>
     public List<Button> MenuSceneButtons => childUIField.menuSceneButtons;
 
+    [SerializeField] SettingWindow settingWindowPrefab;
+
     [System.Serializable]
     private struct ChildUIField
     {
         public TMP_Text title;
         public Button returnButton;
+        public Button settingButton;
         public Button homeButton;
         public Button quickMoveMenuButton;
         public LayoutGroup quickMoveLayout;
@@ -67,6 +75,8 @@ public class OutskirtsUI : MonoBehaviour
         ReturnButton.onClick.AddListener(OnReturnButtonClicked);
         // 다른 팝업으로 가려졌을때는 동작하지 않아야 함
         //GameManager.Input.actions["Cancel"].started += OnReturnButtonClicked;
+
+        SettingButton.onClick.AddListener(() => GameManager.OverlayUIManager.PopupSettingWindow());
 
         // 홈 버튼에 씬 전환 등록
         HomeButton.onClick.AddListener(OnHomeButtonClicked);
