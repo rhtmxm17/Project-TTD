@@ -16,19 +16,18 @@ public class BossStageManager : StageManager, IDamageAddable
     Slider leftTimeBar;
 
     [Header("Reward UI")]
-    [SerializeField] ItemGainPopup itemGainPopupPrefab;
-    [SerializeField] TextMeshProUGUI newRecordText;
-
-    AdvencedPopupInCombatResult_Dungeon resultPopupInDungeon;
+    [SerializeField]
+    TextMeshProUGUI newCountText;
+    [SerializeField]
+    TextMeshProUGUI newScoreText;
+    [SerializeField]
+    TextMeshProUGUI prevScore;
+    [SerializeField]
+    TextMeshProUGUI curScore;
 
     float maxTimeLimit;
     float score;
 
-    protected override void Awake()
-    {
-        base.Awake();
-        resultPopupInDungeon = (AdvencedPopupInCombatResult_Dungeon)resultPopupWindow;
-    }
 
     protected override void StartGame()
     {
@@ -73,17 +72,20 @@ public class BossStageManager : StageManager, IDamageAddable
         IsCombatEnd = true;
         Debug.Log("타임 오버!");
         
-        RankApplier.ApplyRank("boss", UserData.myUid, GameManager.UserData.Profile.Name.Value, (long)(score + timeLimit), (isBestRecord, rankCount) =>
+        RankApplier.ApplyRank("boss", UserData.myUid, GameManager.UserData.Profile.Name.Value, (long)(score + timeLimit), (isBestRecord, bestScore, rankCount) =>
         {
 
             // 아이템 획득 팝업 + 확인 클릭시 메인 화면으로
             List<CharacterData> chDataL = new List<CharacterData>(batchDictionary.Values);
             int randIdx = UnityEngine.Random.Range(0, chDataL.Count);
 
-            newRecordText.gameObject.SetActive(isBestRecord);
+            newCountText.gameObject.SetActive(isBestRecord);
+            newScoreText.gameObject.SetActive(isBestRecord);
+            prevScore.text = bestScore.ToString();
+            curScore.text = ((long)(score + timeLimit)).ToString();
 
             resultPopupWindow.OpenDoubleButtonWithResult(//todo : 순위?
-                $"현재 등수 : {rankCount}",
+                $"",
                 null,
                 "확인", LoadPreviousScene,
                 "재도전", () => {
@@ -98,7 +100,7 @@ public class BossStageManager : StageManager, IDamageAddable
 
                 },
                 true, false,
-                ((long)(score + timeLimit)).ToString(), chDataL[randIdx].FaceIconSprite,
+                $"현재 등수: { rankCount }", chDataL[randIdx].FaceIconSprite,
                 AdvencedPopupInCombatResult.ColorType.VICTORY
             );
 
