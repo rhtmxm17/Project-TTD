@@ -18,8 +18,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private CharacterModel levelOne;
     private CharacterModel levelTwo;
     private CharacterModel levelThree;
-    private Vector3 modelPos = new Vector3(0f, -1f, 1f);
-    
+
     private TextMeshProUGUI _characterTypeText;
     private TextMeshProUGUI _characterListNameText;
     private Image _characterListImage;
@@ -293,16 +292,16 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     {
         if (_characterData.ModelPrefab != null && CharacterModels.Count == 0)
         {
-            levelOne = CreateModelPrefab(_characterData.ModelPrefab, modelPos, false);
+            levelOne = CreateModelPrefab(_characterData.ModelPrefab, _characterData.ModelPrefab.transform.position, false);
 
             if (levelOne.NextEvolveModel != null)
             {
-                levelTwo = CreateModelPrefab(levelOne.NextEvolveModel, modelPos, false);
+                levelTwo = CreateModelPrefab(levelOne.NextEvolveModel, levelOne.NextEvolveModel.transform.position, false);
             }
 
             if (levelTwo != null && levelTwo.NextEvolveModel != null)
             {
-                levelThree = CreateModelPrefab(levelTwo.NextEvolveModel, modelPos, false);
+                levelThree = CreateModelPrefab(levelTwo.NextEvolveModel, levelTwo.NextEvolveModel.transform.position, false);
             }
         }
         else if (CharacterModels != null && !CharacterModels[0].gameObject.activeSelf)
