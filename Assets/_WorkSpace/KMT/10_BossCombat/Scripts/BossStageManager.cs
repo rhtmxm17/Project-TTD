@@ -19,8 +19,16 @@ public class BossStageManager : StageManager, IDamageAddable
     [SerializeField] ItemGainPopup itemGainPopupPrefab;
     [SerializeField] TextMeshProUGUI newRecordText;
 
+    AdvencedPopupInCombatResult_Dungeon resultPopupInDungeon;
+
     float maxTimeLimit;
     float score;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        resultPopupInDungeon = (AdvencedPopupInCombatResult_Dungeon)resultPopupWindow;
+    }
 
     protected override void StartGame()
     {
