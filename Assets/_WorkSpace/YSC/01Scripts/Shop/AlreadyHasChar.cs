@@ -71,6 +71,7 @@ public class AlreadyHasChar : BaseUI
         if (currentEnhance == maxEnhance)
         {
             isMaxed = true;
+            warningText.text = "더이상 캐릭터를 강화 할 수 없습니다\n그래도구매하시겠습니까?\n용젤리가 지급됩니다.";
         }
         else isMaxed = false;
     }
