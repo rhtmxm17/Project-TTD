@@ -27,6 +27,7 @@ public class GraphicSettingPanel : MonoBehaviour
                 {
                     string from = GraphicsSettings.currentRenderPipeline.name;
                     QualitySettings.SetQualityLevel(qualityLevel);
+                    UserSettingData.Instance.Data.graphicQualityLevel = qualityLevel;
                     Debug.Log($"{from}->{GraphicsSettings.currentRenderPipeline.name}");
                 }
             });
