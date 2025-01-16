@@ -19,7 +19,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private CharacterModel levelTwo;
     private CharacterModel levelThree;
 
-    private TextMeshProUGUI _characterTypeText;
+    private TextMeshProUGUI _characterLevelText;
     private TextMeshProUGUI _characterListNameText;
     private Image _characterListImage;
     
@@ -456,18 +456,9 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// </summary>
     /// <param name="type"></param>
     /// <exception cref="AggregateException"></exception>
-    public void SetListTypeText(ElementType type)
+    public void SetListLevelText(int level)
     {
-        _characterTypeText.text = type switch
-        {
-            ElementType.NONE => "무속성",
-            ElementType.FIRE => "화룡",
-            ElementType.WATER => "수룡",
-            ElementType.WIND => "정룡",
-            ElementType.EARTH => "토룡",
-            ElementType.METAL => "진룡",
-            _ => throw new AggregateException("잘못된 타입")
-        };
+        _characterLevelText.text = $"Lv.{level}";
     }
     
     /// <summary>
@@ -487,8 +478,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     public void StartSetCharacterUI()
     { 
         _characterListImage = transform.GetChild(0).GetComponent<Image>();
-        _characterListNameText = transform.GetChild(1).GetComponent<TextMeshProUGUI>();
-        _characterTypeText = transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+        _characterListNameText = transform.GetChild(1).GetComponentInChildren<TextMeshProUGUI>();
+        _characterLevelText = transform.GetChild(2).GetComponentInChildren<TextMeshProUGUI>();
         OwnedObject = transform.GetChild(3).gameObject;
     }
 }

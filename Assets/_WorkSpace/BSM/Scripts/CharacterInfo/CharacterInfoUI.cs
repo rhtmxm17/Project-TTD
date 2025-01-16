@@ -31,7 +31,10 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _levelYongGwaAmountText;
     [HideInInspector] public TextMeshProUGUI _skillNormalTitleText;
     [HideInInspector] public TextMeshProUGUI _skillSpecialTitleText;
-    
+
+    [HideInInspector] public Image _elementIconImage;
+    [HideInInspector] public Image _roleIconImage;
+    [HideInInspector] public Image _dragonVeinIconImage;
     [HideInInspector] public Image _skillAIconImage;
     [HideInInspector] public Image _skillBIconImage;
     [HideInInspector] public Image _characterImage;
@@ -122,7 +125,7 @@ public class CharacterInfoUI : BaseUI
     
     private void UIBind()
     {
-        //TODO: 임시 용 타입 UI 특성 지우기
+        //TODO: 임시 용 타입 UI 특성 지우기 -> 이미지로 변경 필요
         _tempElemetTypeText = GetUI<TextMeshProUGUI>("ElementTypeText");
         _tempRoleTypeText = GetUI<TextMeshProUGUI>("RoleTypeText");
         _tempDragonVeinTypeText = GetUI<TextMeshProUGUI>("DragonVeinTypeText");
@@ -226,7 +229,10 @@ public class CharacterInfoUI : BaseUI
         _bonusLevelText = GetUI<TextMeshProUGUI>("BonusLevelText");
         _levelGoldAmountText = GetUI<TextMeshProUGUI>("LevelCoinAmountText");
         _levelYongGwaAmountText = GetUI<TextMeshProUGUI>("LevelYongGwaAmountText");
-
+        
+        _elementIconImage = GetUI<Image>("ElementIconImage");
+        _roleIconImage = GetUI<Image>("RoleIconImage");
+        _dragonVeinIconImage = GetUI<Image>("DragonVeinIconImage");
         _levelUpSpecialEffect = GetUI<Image>("LevelUpSpecialEffect");
         _levelUpNormalEffect = GetUI<Image>("LevelUpNormalEffect");
         _skillAIconImage = GetUI<Image>("SkillIconA");
