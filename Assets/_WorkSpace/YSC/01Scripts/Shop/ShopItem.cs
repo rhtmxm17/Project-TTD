@@ -175,7 +175,7 @@ public class ShopItem : BaseUI
 
 
 
-        /* 그냥여기서구매되는거는 따로해보기
+        /* NormalPurchase()로 이동
         // 가격
         ItemData itemGive = shopItemData.Price.item;
         if (null != itemGive && shopItemData.Price.item.Number.Value < shopItemData.Price.gain)
@@ -208,7 +208,6 @@ public class ShopItem : BaseUI
         */
 
 
-        // TODO: 네트워크 로딩 띄우기
     }
 
     // 갱신 효과 결과반환
@@ -229,7 +228,7 @@ public class ShopItem : BaseUI
         popupInstance.Title.text = "구매 성공!";
     }
 
-    public void CheckCharID()
+    public void CheckCharID() // 아이템/캐릭터 구별을위한 ID식별
     {
         int charItemData = shopItemData.Id;
         charItemData -= 200; // 상점캐릭터나열이 201...부터되있으니 200빼면 캐릭터ID랑 동일
@@ -243,7 +242,7 @@ public class ShopItem : BaseUI
          
     }
 
-    public void SoldOut()
+    public void SoldOut() // 매진: 아이템UI 
     {
         
         buyButtonText.text = "SOLD\nOUT";
@@ -292,6 +291,7 @@ public class ShopItem : BaseUI
         PurchasingPanel popupInstance = Instantiate(purchasingPanel, GameManager.PopupCanvas);
         popupInstance.transform.SetAsFirstSibling();
         popupInstance.SetItem(shopItemData);
+        popupInstance.AddItemPackage(shopItemData.Products);
     }
 
     private void OpenCharWarning()

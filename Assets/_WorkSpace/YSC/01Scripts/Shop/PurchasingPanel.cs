@@ -30,6 +30,8 @@ public class PurchasingPanel : BaseUI
     [SerializeField] private TMP_Text itemAmountText;       // (8) 아이템 수량 txt
     [SerializeField] private TMP_Text itemOwnText;          // (11) 보유량 txt
     [SerializeField] private TMP_Text currentNumberText;    // (16) 현재량 txt
+    [SerializeField] private TMP_Text itemDescriptionText;  // (없음) 아이템설명 txt : 패키지 설명할라고 그냥 넣음.
+    
     // 아이템 model 
     [SerializeField] private string itemName;        // (9) 상품명    
     [SerializeField] private int itemAmount;         // (8) 아이템 수량 
@@ -39,6 +41,10 @@ public class PurchasingPanel : BaseUI
     ShopPanel shopPanel;
     
     [SerializeField] ShopItem shopItem;
+
+    [Header("아이템리스트 보여주기용")]
+    [SerializeField] ItemGainCell itemGainCellPrefab;
+    [SerializeField] LayoutGroup layoutGroup;
     
     public ShopItemData shopItemData {get; private set;}
     
@@ -70,6 +76,7 @@ public class PurchasingPanel : BaseUI
         itemAmountText = GetUI<TMP_Text>("ItemAmountText");
         itemOwnText = GetUI<TMP_Text>("ItemOwnText");
         currentNumberText = GetUI<TMP_Text>("CurrentNumberText");
+        itemDescriptionText = GetUI<TMP_Text>("ItemDescriptionText");
         
         // 구매버튼
         purchaseButton.onClick.AddListener(OpenDoubleWarning);
@@ -110,6 +117,9 @@ public class PurchasingPanel : BaseUI
             remainCount = Mathf.FloorToInt((shopItemData.Price.item.Number.Value) / (shopItemData.Price.gain));
         }  //구매 한도 => 갖고있는 지불할 아이템 총량 / 아이템 가격 => 반내림
         itemAmountText.text = $"아이템 수량: {remainCount}";     //  (8) 아이템수량
+        
+        itemDescriptionText.text = data.Description.Replace("\\n", "\n"); // 아이템설명
+
     }
 
     public void UpdateInfo()
@@ -199,6 +209,22 @@ public class PurchasingPanel : BaseUI
         // this.shopItem.UpdateInfo(); // 이거 하면 창이 안닫힘
         // ClosePopup();
     }
+    
+    public void AddItemPackage(List<ItemGain> gain)
+    {
+        List<ItemGainCell> items = new List<ItemGainCell>();
+        foreach (ItemGain info in gain)
+        {
+            ItemGainCell cell = Instantiate(itemGainCellPrefab, layoutGroup.transform);
+
+            // 정보 출력칸 초기화
+            cell.SetItem(info.item, info.gain);
+            items.Add(cell);
+
+        }
+    }
+    
+    
 
     private void ClosePopup()
     {
