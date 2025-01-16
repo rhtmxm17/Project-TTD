@@ -370,7 +370,7 @@ public class LoginPanel : BaseUI
                 message = "유저 매칭이 잘못되었습니다.";
                 break;
             case AuthError.WeakPassword:
-                message = "너무 취약한 비밀번호입니다.";
+                message = "너무 취약한 비밀번호입니다.\n(6자이상)";
                 break;
             case AuthError.NoSignedInUser:
                 message = "가입된 유저가 아닙니다.";
