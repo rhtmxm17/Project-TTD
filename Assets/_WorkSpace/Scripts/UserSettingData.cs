@@ -22,7 +22,7 @@ public class UserSettingData : SingletonScriptable<UserSettingData>
     public class SettingData
     {
         [EnumNamedArray(typeof(AudioGroup)), Tooltip("음량 설정값")]
-        public float[] soundScale = new float[SoundManager.AudioGroupCount];
+        public AudioVolume[] soundScale = new AudioVolume[SoundManager.AudioGroupCount];
     }
 
     private void OnEnable()
