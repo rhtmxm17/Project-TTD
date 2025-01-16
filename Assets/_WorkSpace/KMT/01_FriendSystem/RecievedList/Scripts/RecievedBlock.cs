@@ -45,7 +45,7 @@ public class RecievedBlock : MonoBehaviour
         if (data.Child(UserData.myUid).HasChild("friends/friendList") &&
             data.Child(UserData.myUid).Child("friends/friendList").ChildrenCount >= FriendList.MAX_FRIEND_CNT)
         {
-            GameManager.OverlayUIManager.OpenSimpleInfoPopup($"친구가 너무 많아요! \n 친구좀 줄이고 오시죠", "앗 아아..", null);
+            GameManager.OverlayUIManager.OpenSimpleInfoPopup($"친구가 너무 많아요! \n 친구좀 줄이고 오시죠", "창닫기", null);
             isTransactionSuccess = false;
             return TransactionResult.Abort();
         }
@@ -54,7 +54,7 @@ public class RecievedBlock : MonoBehaviour
             data.Child(uid).Child("friends/friendList").ChildrenCount >= FriendList.MAX_FRIEND_CNT)
         {
             GameManager.OverlayUIManager.OpenSimpleInfoPopup(
-                $"{data.Child(uid).Child("Profile/Name").Value.ToString()}님은 인싸에요! \n 더 받아줄수 없다네요...", "비겁한 인싸녀석들...", null);
+                $"{data.Child(uid).Child("Profile/Name").Value.ToString()}님은 인싸에요! \n 더 받아줄수 없다네요...", "창닫기", null);
             isTransactionSuccess = false;
             return TransactionResult.Abort();
         }
@@ -72,8 +72,8 @@ public class RecievedBlock : MonoBehaviour
     void Accept()
     {
         GameManager.OverlayUIManager.OpenDoubleInfoPopup(
-            $"{nickname}님과 아는사이가 \n 되시는건가요?",
-            "누구시죠?", "넌 내 친구다...!",
+            $"{nickname}님과 친구가 \n 되시는건가요?",
+            "아니요", "네! 친구에요!",
             null, () => {
 
                 isTransactionSuccess = false;
@@ -111,8 +111,8 @@ public class RecievedBlock : MonoBehaviour
     {
 
         GameManager.OverlayUIManager.OpenDoubleInfoPopup(
-            $"{nickname}님의 친구요청을 \n 스팸메일함으로 보낼까요?",
-            "실수 실수~~", "광고 차단합니다~",
+            $"{nickname}님의 친구요청을 \n 거절할까요?",
+            "실수 실수~~", "거절해주세요",
             null, () =>
             {
                 Dictionary<string, object> updates = new Dictionary<string, object>
@@ -130,8 +130,8 @@ public class RecievedBlock : MonoBehaviour
                     }
 
                     GameManager.OverlayUIManager.OpenSimpleInfoPopup(
-                        $"{nickname}님의 \n 건방진 친구요청을 거절했어요!",
-                        "어딜 감히!",
+                        $"{nickname}님의 \n 친구요청을 거절했어요!",
+                        "창닫기",
                         null
                     );
 
