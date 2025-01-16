@@ -38,7 +38,7 @@ public static class DailyChecker
                         }
 
                         long curTime;
-                        long lastJoindDayCount = -1;
+                        long TodayDayCount = -1;
 
                         curTime = (long)t2.Result.Child("EnterTime").Value;
                         curTime += KOREA_OFFSET_9;//한국기준을 맞추기 위해 9시간을 더함
@@ -49,13 +49,14 @@ public static class DailyChecker
                         Debug.Log((curTime - BASE_TIME) + " : 경과시간");//25년 1월 1일 0시 0분 기준 경과시간 계산
                         Debug.Log((curTime - BASE_TIME) / ONE_DAY + " : 경과일수");//하루 밀리초로 나눔 => 25/1/1 00 : 00부터 몇일 지났는지 계산
 
-                        lastJoindDayCount = (curTime - BASE_TIME) / ONE_DAY;//마지막 접속 날짜 카운트 도출
+                        TodayDayCount = (curTime - BASE_TIME) / ONE_DAY;//마지막 접속 날짜 카운트 도출
+                        UserData.connectedDayCount = TodayDayCount;
 
                         //접속 기록이 있는경우.
                         if (t2.Result.HasChild("DayCount"))
                         {
                             //같은날에 이전 접속 기록이 있는 경우 false 콜백 호출
-                            if ((long)t2.Result.Child("DayCount").Value >= lastJoindDayCount)
+                            if ((long)t2.Result.Child("DayCount").Value >= TodayDayCount)
                             {
                                 callback?.Invoke(false);
                                 return;
@@ -63,21 +64,7 @@ public static class DailyChecker
                         }
 
                         //당일 첫 접속인경우 기록 및 true 콜백 호출
-                        BackendManager.AllUsersDataRef.Child(UserData.myUid)
-                            .Child("PlayData")
-                            .Child("DayCount")
-                            .SetValueAsync(lastJoindDayCount)
-                            .ContinueWithOnMainThread(t3 => {
-
-                                if (t3.IsCanceled || t3.IsFaulted)
-                                {
-                                    Debug.Log("접속기록 작성 실패");
-                                    return;
-                                }
-
-                                callback?.Invoke(true);
-
-                            });
+                        callback?.Invoke(true);
 
                     });
 
