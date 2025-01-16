@@ -6,7 +6,6 @@ using UnityEngine.Events;
 
 public class OverlayUIManager : SingletonBehaviour<OverlayUIManager>
 {
-    [SerializeField] ItemGainPopup itemGainPopupPrefab;
 
     [SerializeField] SimpleInfoUI simpleInfoUI;
     [SerializeField] DoubleInfoUI doubleInfoUI;
@@ -14,12 +13,23 @@ public class OverlayUIManager : SingletonBehaviour<OverlayUIManager>
     [SerializeField] AdvencedGainPopup advencedGainPopupUI;
 
     [Header("Popup By Instantiate")]
+    [SerializeField] ItemGainPopup itemGainPopupPrefab;
     [SerializeField] SimpleInfoUI simpleInfoUIPrefab;
+    [SerializeField] SettingWindow settingWindowPrefab;
 
 
     private void Awake()
     {
         RegisterSingleton(this);
+    }
+
+    /// <summary>
+    /// 설정 창을 엽니다
+    /// </summary>
+    /// <returns></returns>
+    public SettingWindow PopupSettingWindow()
+    {
+        return Instantiate(settingWindowPrefab, GameManager.PopupCanvas);
     }
 
     /// <summary>
