@@ -11,15 +11,31 @@ public class Teleport : Skill
     [Header("텔레포트 타깃으로부터 목적지 오프셋")]
     [SerializeField]
     Vector3 teleportOffset;
+    [SerializeField, Tooltip("선딜레이")] float preDelay;
+    [SerializeField, Tooltip("후딜레이")] float postDelay;
+
+    // 캐싱 데이터
+    private WaitForSeconds waitPreDelay;
+    private WaitForSeconds waitPostDelay;
+
+    private void OnEnable()
+    {
+        // 런타임 진입시 필요한 데이터 캐싱
+        waitPreDelay = new WaitForSeconds(preDelay);
+        waitPostDelay = new WaitForSeconds(postDelay);
+    }
 
     protected override IEnumerator SkillRoutineImplement(Combatable self, Combatable target)
     {
-        yield return null;
+        yield return waitPreDelay;
+        Debug.Log("<color=red>공격 나감!</color>");
 
         if (target != null && target.IsAlive)
         {
             self.transform.position = target.transform.position + teleportOffset;
         }
+
+        yield return waitPostDelay;
     }
 
 }

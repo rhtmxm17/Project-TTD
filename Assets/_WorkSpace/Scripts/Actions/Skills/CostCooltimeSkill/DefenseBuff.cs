@@ -13,17 +13,33 @@ public class DefenseBuff : Skill
     float defRate;
     [SerializeField]
     float duringTime;
+    [SerializeField, Tooltip("선딜레이")] float preDelay;
+    [SerializeField, Tooltip("후딜레이")] float postDelay;
+
+    // 캐싱 데이터
+    private WaitForSeconds waitPreDelay;
+    private WaitForSeconds waitPostDelay;
+
+    private void OnEnable()
+    {
+        // 런타임 진입시 필요한 데이터 캐싱
+        waitPreDelay = new WaitForSeconds(preDelay);
+        waitPostDelay = new WaitForSeconds(postDelay);
+    }
 
     protected override IEnumerator SkillRoutineImplement(Combatable self, Combatable target)
     {
-        yield return null;
+        yield return waitPreDelay;
+        Debug.Log("<color=red>공격 나감!</color>");
 
         if (target != null && target.IsAlive)
         {
             target.StartCoroutine(StartBufftimeCO(target, (int)(defRate * self.CurAttackPoint)));
-            //TODO : 후딜 추가?하기
-            //yield return new WaitForSeconds(5);
+
         }
+
+        yield return waitPostDelay;
+
     }
 
     IEnumerator StartBufftimeCO(Combatable target, int amount)

@@ -425,7 +425,6 @@ public class Combatable : MonoBehaviour
             Look(target.transform);
             yield return new WaitWhile(() => agent.pathPending);
             PlayAnimation("Walk");
-
             while (target != null && agent.remainingDistance > agent.stoppingDistance)
             {
                 if (time > trackTime)
@@ -438,7 +437,6 @@ public class Combatable : MonoBehaviour
                         agent.destination = target.transform.position;
                         Look(target.transform);
                         yield return new WaitWhile(() => agent.pathPending);
-                        PlayAnimation("Walk");
                     }
 
                 }
@@ -496,9 +494,8 @@ public class Combatable : MonoBehaviour
         while (target != null && target.IsAlive && range + target.CharacterSizeRadius > Vector3.Distance(target.transform.position, transform.position))
         {
             Look(target.transform);
-            StartCoroutine(baseAttack.SkillRoutine(this, target, null));//이것도 액션으로 관리?
             PlayAnimation("Attack");
-            yield return new WaitForSeconds(1);
+            yield return StartCoroutine(baseAttack.SkillRoutine(this, target, null));
         }
 
         StopCurActionCoroutine();
