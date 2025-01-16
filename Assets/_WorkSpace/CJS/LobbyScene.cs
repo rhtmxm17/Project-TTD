@@ -11,6 +11,7 @@ public class LobbyScene : MonoBehaviour
     private struct ChildUIField
     {
         public Button profileButton;
+        public Button settingButton;
         [EnumNamedArray(typeof(MenuType))]
         public List<Button> menuSceneButtons;
     }
@@ -19,6 +20,7 @@ public class LobbyScene : MonoBehaviour
     private void Awake()
     {
         childUIField.profileButton.onClick.AddListener(() => GameManager.Instance.LoadMenuScene(MenuType.PROFILE));
+        childUIField.settingButton.onClick.AddListener(() => GameManager.OverlayUIManager.PopupSettingWindow());
 
         for (int i = 0; i < childUIField.menuSceneButtons.Count; i++)
         {
