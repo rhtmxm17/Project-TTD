@@ -30,6 +30,10 @@ public class SoundSettingPanel : MonoBehaviour
         bgmSlider.value = GameManager.Sound.GetMixerScale(AudioGroup.BGM) * 100f;
         sfxSlider.value = GameManager.Sound.GetMixerScale(AudioGroup.SFX) * 100f;
 
+        masterMuteToggle.isOn = GameManager.Sound.GetMute(AudioGroup.MASTER);
+        bgmMuteToggle.isOn = GameManager.Sound.GetMute(AudioGroup.BGM);
+        sfxMuteToggle.isOn = GameManager.Sound.GetMute(AudioGroup.SFX);
+
         masterSlider.onValueChanged.AddListener(value => { valueChanged = true; targetGroup = AudioGroup.MASTER; });
         bgmSlider.onValueChanged.AddListener(value => { valueChanged = true; targetGroup = AudioGroup.BGM; });
         sfxSlider.onValueChanged.AddListener(value => { valueChanged = true; targetGroup = AudioGroup.SFX; });
