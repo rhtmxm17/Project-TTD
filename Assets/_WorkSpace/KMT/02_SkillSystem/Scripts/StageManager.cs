@@ -86,7 +86,7 @@ public class StageManager : MonoBehaviour
         }
     }
 
-    private void Awake()
+    protected virtual void Awake()
     {
         if (Instance == null)
         {

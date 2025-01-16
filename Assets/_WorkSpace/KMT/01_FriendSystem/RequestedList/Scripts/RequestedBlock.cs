@@ -40,7 +40,7 @@ public class RequestedBlock : MonoBehaviour
 
         GameManager.OverlayUIManager.OpenDoubleInfoPopup(
             $"{nickname}님에게 보낸 \n 친구요청을 취소할까요?",
-            "그대로 둬주세요.", "내!",
+            "그대로 둬주세요.", "네!",
             null, () => {
 
                 Dictionary<string, object> updates = new Dictionary<string, object>
@@ -59,7 +59,7 @@ public class RequestedBlock : MonoBehaviour
 
                     GameManager.OverlayUIManager.OpenSimpleInfoPopup(
                         $"{nickname}님에게 잘못보내신 \n 친구요청을 취소했어요!",
-                        "이게 맞지",
+                        "창닫기",
                         null
                     );
 
