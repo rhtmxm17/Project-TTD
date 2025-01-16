@@ -254,6 +254,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// </summary>
     private void SetInfoPopup()
     { 
+        _characterInfoController.PopupAllClose();
+        
         _characterInfoController.CurCharacterInfo = this;
         _characterInfoController.CurCharacterEnhance = _characterEnhance; 
         _characterInfoController.CurIndex = _characterInfoController._characterInfos.IndexOf(this);

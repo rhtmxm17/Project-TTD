@@ -189,7 +189,7 @@ public class CharacterInfoController : BaseUI
         DragonVeinFilterText = GetUI<TextMeshProUGUI>("DragonVeinFilterText");
         
     }
-
+ 
     private void SetVerticalScrollbar()
     {
         _verticalBar.value = 10;
@@ -266,7 +266,18 @@ public class CharacterInfoController : BaseUI
         });
 
     }
-
+    
+    /// <summary>
+    /// 열려있는 팝업 모두 종료
+    /// </summary>
+    public void PopupAllClose()
+    {
+        _characterSort.transform.GetChild(0).gameObject.SetActive(false);
+        _characterFilter.transform.GetChild(0).gameObject.SetActive(false);
+        _characterFilter.transform.GetChild(1).gameObject.SetActive(false);
+        _characterFilter.transform.GetChild(2).gameObject.SetActive(false);
+    }
+    
     /// <summary>
     /// 보유 캐릭터 리스트 업데이트
     /// </summary>
