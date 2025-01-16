@@ -39,6 +39,7 @@ public class AdvencedPopupInCombatResult : AdvencedGainPopup
     /// <param name="isCloseOnRightClicked">우측 버튼이 눌렸을 때 창을 닫을지의 여부</param>
     /// <param name="resultText">결과로 출력할 텍스트</param>
     /// <param name="characterSprite">결과로 출력할 이미지 스프라이트</param>
+    /// <param name="colorType">결과로 출력될 뒷배경의 타입</param>
     public void OpenDoubleButtonWithResult(in string headerText, List<ItemGain> gainItems, in string leftButtonText, UnityAction onLeftClickAction, in string rightButtonText, UnityAction onRightClickAction, bool isCloseOnLeftClicked, bool isCloseOnRightClicked,
                                  in string resultText, Sprite characterSprite, ColorType colorType)
     {

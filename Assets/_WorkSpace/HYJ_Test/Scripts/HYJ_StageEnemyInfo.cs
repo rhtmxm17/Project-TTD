@@ -8,6 +8,7 @@ public class HYJ_StageEnemyInfo : MonoBehaviour
     [SerializeField] private TMP_Text powerText;
     [SerializeField] GameObject monsterPrefab;
     private List<int> monsterList = new List<int>();
+    
     private void Start()
     {
         InitStageData();
@@ -33,8 +34,9 @@ public class HYJ_StageEnemyInfo : MonoBehaviour
                         iMonster.GetComponent<HYJ_MonsterInfo>().SetBoss();
                     }    
                 }
-                
             }
         }
+        
+        
     }
 }

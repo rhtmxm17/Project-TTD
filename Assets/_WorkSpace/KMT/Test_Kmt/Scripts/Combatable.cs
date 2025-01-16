@@ -7,8 +7,6 @@ using UniRx;
 using Unity.Mathematics;
 using UnityEngine.UI;
 using UnityEngine.AI;
-using Spine;
-using Unity.IO.LowLevel.Unsafe;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class Combatable : MonoBehaviour
@@ -160,7 +158,7 @@ public class Combatable : MonoBehaviour
 
         // 외형 생성
         characterModel = Instantiate(modelData, transform);
-        characterModel.transform.rotation = Quaternion.Euler(90, 0, 0);
+        characterModel.transform.RotateAround(this.transform.position, this.transform.right, 90f); // xz 평면에 놓이도록 조정
         CharacterSizeRadius = characterModel.ModelSize;
         characterModel.name = "Model";
         if (false == characterModel.TryGetComponent(out Animator animator))

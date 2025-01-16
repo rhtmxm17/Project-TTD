@@ -42,8 +42,8 @@ public class FriendBlock : MonoBehaviour
     void VisitFriend(Action<string> visitAction)
     {
         GameManager.OverlayUIManager.OpenDoubleInfoPopup(
-            $"{nickname}님의 방으로 \n 잠입하실건가요?",
-            "ㄴㄴㄴㄴㄴ", "ㄱㄱㄱㄱㄱ",
+            $"{nickname}님의 방으로 \n 놀러깔까요?",
+            "아니요", "예",
             null, () => visitAction.Invoke(uid));
     }
 
@@ -52,7 +52,7 @@ public class FriendBlock : MonoBehaviour
 
         GameManager.OverlayUIManager.OpenDoubleInfoPopup(
             $"{nickname}님과 더이상 \n 친구가 아닌가요...?",
-            "아뇨아뇨아뇨!", "그렇게 됐네요",
+            "잘못눌렀어요!", "그렇게 됐네요",
             null, () => 
             {
                 Dictionary<string, object> updates = new Dictionary<string, object>
@@ -71,7 +71,7 @@ public class FriendBlock : MonoBehaviour
 
                     GameManager.OverlayUIManager.OpenSimpleInfoPopup(
                         $"{nickname}님과 더이상 \n 친구가 아니게 되었어요...",
-                        "친구창 확보 조아써",
+                        "다음에 좋은 인연으로 다시 만나요",
                         null
                     );
 

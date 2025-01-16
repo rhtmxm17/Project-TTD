@@ -5,10 +5,10 @@ using UnityEngine.TextCore.Text;
 
 public class HYJ_UnitInfo : MonoBehaviour
 {
-    [SerializeField] private float unitPower;
-    [SerializeField] private int unitLevel;
-    [SerializeField] private  ElementType unitElementType;
-    [SerializeField] private RoleType unitRoleType;
+    [SerializeField] public float unitPower;
+    [SerializeField] public int unitLevel;
+    [SerializeField] public  ElementType unitElementType;
+    [SerializeField] public RoleType unitRoleType;
 
     public void InitUnitInfo(CharacterData characterData)
     {
