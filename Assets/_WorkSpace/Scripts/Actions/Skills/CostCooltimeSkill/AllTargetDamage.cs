@@ -26,6 +26,7 @@ public class AllTargetDamage : Skill
     protected override IEnumerator SkillRoutineImplement(Combatable self, Combatable target)
     {
         yield return waitPreDelay;
+        Debug.Log("<color=red>공격 나감!</color>");
 
         //도중 반복자 순회 오류 대체코드
         List<Combatable> dest = new List<Combatable>();

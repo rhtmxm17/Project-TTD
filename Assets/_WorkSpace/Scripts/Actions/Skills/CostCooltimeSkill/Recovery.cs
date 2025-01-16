@@ -14,12 +14,26 @@ public class Recovery : Skill
     float healMultiplier;
     [SerializeField]
     int duaringSec;
+    [SerializeField, Tooltip("선딜레이")] float preDelay;
+    [SerializeField, Tooltip("후딜레이")] float postDelay;
+
+    // 캐싱 데이터
+    private WaitForSeconds waitPreDelay;
+    private WaitForSeconds waitPostDelay;
+
+    private void OnEnable()
+    {
+        // 런타임 진입시 필요한 데이터 캐싱
+        waitPreDelay = new WaitForSeconds(preDelay);
+        waitPostDelay = new WaitForSeconds(postDelay);
+    }
 
     WaitForSeconds ticDelay = new WaitForSeconds(1);
 
     protected override IEnumerator SkillRoutineImplement(Combatable self, Combatable target)
     {
-        yield return null;
+        yield return waitPreDelay;
+        Debug.Log("<color=red>공격 나감!</color>");
 
         float healAmount = self.CurAttackPoint * healMultiplier / duaringSec;//수치 조정
 
@@ -27,6 +41,9 @@ public class Recovery : Skill
         {
             target.StartCoroutine(SkillRoutineImplement(target, healAmount));
         }
+
+        yield return waitPostDelay;
+
     }
 
     IEnumerator SkillRoutineImplement(Combatable target, float healAmountPerTic)
