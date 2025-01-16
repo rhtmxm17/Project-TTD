@@ -208,10 +208,10 @@ public class SignUpPanel : LoginPanel
                 message = "유효치않은 인증정보";
                 break;
             case AuthError.ProviderAlreadyLinked:
-                message = "15.";
+                message = "이미 연동된 계정입니다.";
                 break;
             case AuthError.NoSuchProvider:
-                message = "16.";
+                message = "제공되지 않는 연동방식입니다.";
                 break;
             case AuthError.UserTokenExpired:
                 message = "만료된 유저 토큰입니다";
@@ -223,164 +223,164 @@ public class SignUpPanel : LoginPanel
                 message = "잘못된 API키";
                 break;
             case AuthError.AppNotAuthorized:
-                message = "21.";
+                message = "권한이 없습니다.";
                 break;
             case AuthError.UserMismatch:
-                message = "22 ";
+                message = "유저 매칭이 잘못되었습니다.";
                 break;
             case AuthError.WeakPassword:
-                message = "23";
+                message = "너무 취약한 비밀번호입니다.";
                 break;
             case AuthError.NoSignedInUser:
-                message = "24";
+                message = "가입된 유저가 아닙니다.";
                 break;
             case AuthError.ExpiredActionCode:
-                message = "26.";
+                message = "만료된 세션 입니다.";
                 break;
             case AuthError.InvalidActionCode:
-                message = "27";
+                message = "유요치 않은 액션코드/세션 입니다.";
                 break;
             case AuthError.InvalidMessagePayload:
-                message = "28.";
+                message = "잘못된 메세지 페이로드 입니다.";
                 break;
             case AuthError.InvalidPhoneNumber:
-                message = "29.";
+                message = "유요하지 않은 번호입니다.";
                 break;
             case AuthError.MissingPhoneNumber:
-                message = "30.";
+                message = "전호번호가 누락되었습니다.";
                 break;
             case AuthError.InvalidRecipientEmail:
-                message = "31.";
+                message = "유효치않은 수신자 이메일입니다.";
                 break;
             case AuthError.InvalidSender:
-                message = "32.";
+                message = "유효하지 않은 송신자 입니다.";
                 break;
             case AuthError.InvalidVerificationCode:
-                message = "33.";
+                message = "유효하지 않은 인증코드 입니다.";
                 break;
             case AuthError.InvalidVerificationId:
-                message = "34.";
+                message = "유효치않은 인증아이디입니다.";
                 break;
             case AuthError.MissingVerificationCode:
-                message = "35.";
+                message = "인증코드가 누락되었습니다.";
                 break;
             case AuthError.MissingVerificationId:
-                message = "36.";
+                message = "인증아이디가 누락되었습니다.";
                 break;
             case AuthError.QuotaExceeded:
-                message = "39.";
+                message = "할당량이 초과되었습니다.";
                 break;
             case AuthError.RetryPhoneAuth:
-                message = "40.";
+                message = "번호 인증을 다시 시도하십시오.";
                 break;
             case AuthError.AppNotVerified:
-                message = "42. ";
+                message = "인증되지 않은 앱입니다. ";
                 break;
             case AuthError.AppVerificationFailed:
-                message = "43.";
+                message = "앱인증에 실패하였습니다.";
                 break;
             case AuthError.CaptchaCheckFailed:
-                message = "44.";
+                message = "당신은 로봇입니까? 로봇이아님을 인증하십쇼.";
                 break;
             case AuthError.InvalidAppCredential:
-                message = "45";
+                message = "올바른 접근방식이 아닙니다.";
                 break;
             case AuthError.MissingAppCredential:
-                message = "46.";
+                message = "인증되지 않은 접근입니다.";
                 break;
             case AuthError.InvalidClientId:
-                message = "47";
+                message = "잘못된 클라이언트입니다.";
                 break;
             case AuthError.InvalidContinueUri:
-                message = "48.";
+                message = "유효치 않은 ContinueURL입니다.";
                 break;
             case AuthError.MissingContinueUri:
-                message = "49 ";
+                message = "ContinueURL이 존재하지 않습니다.";
                 break;
             case AuthError.KeychainError:
-                message = "50";
+                message = "키체인 오류!";
                 break;
             case AuthError.MissingAppToken:
-                message = "51";
+                message = "앱에대한 토큰이 존재하지 않습니다.";
                 break;
             case AuthError.MissingIosBundleId:
-                message = "52.";
+                message = "IOS번들ID가 존재하지 않습니다.";
                 break;
             case AuthError.NotificationNotForwarded:
-                message = "53";
+                message = "알림이 전달되지 않았습니다.";
                 break;
             case AuthError.UnauthorizedDomain:
-                message = "54.";
+                message = "허용되지않은 도메인접근 입니다.";
                 break;
             case AuthError.WebContextAlreadyPresented:
-                message = "55.";
+                message = "이미 존재하는 웹컨텍스트입니다.";
                 break;
             case AuthError.WebContextCancelled:
-                message = "56.";
+                message = "웹컨텍스트가 취소 됐습니다.";
                 break;
             case AuthError.DynamicLinkNotActivated:
-                message = "57.";
+                message = "다이나믹 링크가 비활성화 됐습니다.";
                 break;
             case AuthError.Cancelled:
-                message = "58.";
+                message = "취소되었습니다.";
                 break;
             case AuthError.InvalidProviderId:
-                message = "59.";
+                message = "잘못된 아이디입니다.";
                 break;
             case AuthError.WebStorateUnsupported:
-                message = "61.";
+                message = "지원되지않는 웹 저장방식입니다.";
                 break;
             case AuthError.TenantIdMismatch:
-                message = "62.";
+                message = "GUID(Tenanat) 아이디가 일치 하지 않습니다.";
                 break;
             case AuthError.UnsupportedTenantOperation:
-                message = "63.";
+                message = "지원하지않는 클라이언트 실행입니다.";
                 break;
             case AuthError.InvalidLinkDomain:
-                message = "64.";
+                message = "유효하지않은 도메인링크입니다.";
                 break;
             case AuthError.RejectedCredential:
-                message = "65.";
+                message = "인증이 거부되었습니다.";
                 break;
             case AuthError.PhoneNumberNotFound:
-                message = "66. ";
+                message = "전화번호를 찾지 못하였습니다.";
                 break;
 
             case AuthError.InvalidTenantId:
-                message = "67.";
+                message = "유요하지 않은 GUID(TenantID)입니다.";
                 break;
             case AuthError.MissingClientIdentifier:
-                message = "68";
+                message = "클라이언트 식별이 되지않습니다.";
                 break;
             case AuthError.MissingMultiFactorSession:
-                message = "69.";
+                message = "MFA(Multi Factor Session)이 존재하지않습니다.";
                 break;
             case AuthError.MissingMultiFactorInfo:
-                message = "70.";
+                message = "MFA(Multi Factor Session)정보가 존재하지않습니다.";
                 break;
             case AuthError.InvalidMultiFactorSession:
-                message = "71.";
+                message = "유요하지않은 MFA(Multi Factor Session) 입니다.";
                 break;
             case AuthError.MultiFactorInfoNotFound:
-                message = "72";
+                message = "MFA(Multi Factor Session)정보를 찾을 수 없습니다.";
                 break;
             case AuthError.AdminRestrictedOperation:
-                message = "73.";
+                message = "관리자에 의해 제한되었습니다.";
                 break;
             case AuthError.UnverifiedEmail:
-                message = "74.";
+                message = "인증되지않은 이메일입니다.";
                 break;
             case AuthError.SecondFactorAlreadyEnrolled:
-                message = "75.";
+                message = "2단계 인증절차가 이미 등록되어있습니다.";
                 break;
             case AuthError.MaximumSecondFactorCountExceeded:
-                message = "76.";
+                message = "2단계 인증절차 제한수를 초과합니다";
                 break;
             case AuthError.UnsupportedFirstFactor:
-                message = "77.";
+                message = "지원하지않은 인증절차입니다.";
                 break;
             case AuthError.EmailChangeNeedsVerification:
-                message = "78.";
+                message = "이메일은 변경에 인증이 필요합니다.";
                 break;
         }
         return message;
