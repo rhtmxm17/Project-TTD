@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -6,6 +7,8 @@ using UnityEngine.UI;
 
 public class BossInfo : BaseUI
 {
+    [SerializeField] private List<Button> _buttons;
+    
     [SerializeField] private List<CharacterData> _bossData;
     [SerializeField] private string _bossDescription;
     
@@ -25,6 +28,11 @@ public class BossInfo : BaseUI
         base.Awake();
         Init();
         ButtonOnClickListener();
+    }
+
+    private void Update()
+    {
+        
     }
 
     private void Init()
@@ -48,15 +56,32 @@ public class BossInfo : BaseUI
             _bossInfoPanel.SetActive(true);
             SetBossInfo();
         });
-        _bossInfoCloseButton.onClick.AddListener(() => _bossInfoPanel.SetActive(false));
+        _bossInfoCloseButton.onClick.AddListener(() =>
+        {
+            _bossInfoPanel.SetActive(false);
+            ButtonReset();
+        });
     }
 
     private void SetBossInfo()
     {
+        foreach(Button btn in _buttons)
+        {
+            btn.interactable = false;
+        }
+        
         _bossElementIconImage.sprite = _bossData[0].FaceIconSprite;
         _bossDescText.text = _bossDescription;
         _skillAIcon.sprite = _bossData[0].NormalSkillIcon;
         _skillBIcon.sprite = _bossData[0].SpecialSkillIcon;
+    }
+
+    private void ButtonReset()
+    {
+        foreach(Button btn in _buttons)
+        {
+            btn.interactable = true;
+        }
     }
     
 }
