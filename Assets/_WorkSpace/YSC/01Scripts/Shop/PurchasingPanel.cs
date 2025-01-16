@@ -30,7 +30,7 @@ public class PurchasingPanel : BaseUI
     [SerializeField] private TMP_Text itemAmountText;       // (8) 아이템 수량 txt
     [SerializeField] private TMP_Text itemOwnText;          // (11) 보유량 txt
     [SerializeField] private TMP_Text currentNumberText;    // (16) 현재량 txt
-    [SerializeField] private TMP_Text itemDescriptionText;  // (없음) 아이템설명 txt : 패키지 설명할라고 그냥 넣음.
+   // [SerializeField] private TMP_Text itemDescriptionText;  // (없음) 아이템설명 txt : 패키지 설명할라고 그냥 넣음.
     
     // 아이템 model 
     [SerializeField] private string itemName;        // (9) 상품명    
@@ -76,7 +76,7 @@ public class PurchasingPanel : BaseUI
         itemAmountText = GetUI<TMP_Text>("ItemAmountText");
         itemOwnText = GetUI<TMP_Text>("ItemOwnText");
         currentNumberText = GetUI<TMP_Text>("CurrentNumberText");
-        itemDescriptionText = GetUI<TMP_Text>("ItemDescriptionText");
+       // itemDescriptionText = GetUI<TMP_Text>("ItemDescriptionText");
         
         // 구매버튼
         purchaseButton.onClick.AddListener(OpenDoubleWarning);
@@ -109,16 +109,55 @@ public class PurchasingPanel : BaseUI
         shopItemData = data;
         itemNameText.text = data.ShopItemName;
         itemImage.sprite = data.Sprite;
-        itemOwnText.text = $"현재 보유량: {shopItemData.Products[0].item.Number.Value}"; // (10) 보유량 //지금 친건 가격
+        
+        // 남은구매횟수
         remainCount = shopItemData.LimitedCount - shopItemData.Bought.Value; // 구매가능횟수 - 구매한 횟수
         
+        // 복수구매 숫자 조정
         if(isBulk)
         {   // 복수구매면 구매가능횟수 바꾸기 (소지중인 지불하는 아이템 총갯수 / 지불해야되는 아이템 가격 => 반내림)
             remainCount = Mathf.FloorToInt((shopItemData.Price.item.Number.Value) / (shopItemData.Price.gain));
         }  //구매 한도 => 갖고있는 지불할 아이템 총량 / 아이템 가격 => 반내림
+        
+        
+        // TODO: boolType 만들어서 패키지상품일떄만 tiemOwnText만 나오게하고 다른상품들은 기존대로 나오게 하기.
+        for (int i = 0; i < data.Products.Count; i++)
+        {
+            switch (i)
+            {
+                case 0:
+                    itemAmountText.gameObject.SetActive(true);
+                    itemOwnText.text = $"현재 보유량: {shopItemData.Products[i].item.Number.Value}";
+                    break;
+                case 1:
+                    itemAmountText.gameObject.SetActive(false);
+                    itemOwnText.text = $"현재 보유량:\n {shopItemData.Products[0].item.ItemName}: {shopItemData.Products[0].item.Number.Value}" +
+                                       $"\t{shopItemData.Products[1].item.ItemName}:{shopItemData.Products[1].item.Number.Value}";
+                    itemOwnText.fontSize = 30;
+                    break;
+                case 2:
+                    itemAmountText.gameObject.SetActive(false);
+                    itemOwnText.text = $"현재 보유량:\n {shopItemData.Products[0].item.ItemName}: {shopItemData.Products[0].item.Number.Value}" +
+                                       $"\n{shopItemData.Products[1].item.ItemName}:{shopItemData.Products[1].item.Number.Value}" +
+                                       $"\n{shopItemData.Products[2].item.ItemName}:{shopItemData.Products[2].item.Number.Value}";
+                    itemOwnText.fontSize = 24;
+                    break;
+                case 3:
+                    itemAmountText.gameObject.SetActive(false);
+                    itemOwnText.text = $"현재 보유량:\n {shopItemData.Products[0].item.ItemName}: {shopItemData.Products[0].item.Number.Value}" +
+                                       $"\n{shopItemData.Products[1].item.ItemName}:{shopItemData.Products[1].item.Number.Value}" +
+                                       $"\n{shopItemData.Products[2].item.ItemName}:{shopItemData.Products[2].item.Number.Value}"+
+                                       $"\n{shopItemData.Products[3].item.ItemName}:{shopItemData.Products[3].item.Number.Value}";;
+                    itemOwnText.fontSize = 18;
+                    break;
+            }
+        }
+        //itemOwnText.text = $"현재 보유량: {shopItemData.Products[0].item.Number.Value}"; // (10) 보유량 //지금 친건 가격
+        
         itemAmountText.text = $"아이템 수량: {remainCount}";     //  (8) 아이템수량
         
-        itemDescriptionText.text = data.Description.Replace("\\n", "\n"); // 아이템설명
+
+       // itemDescriptionText.text = data.Description.Replace("\\n", "\n"); // 아이템설명
 
     }
 
