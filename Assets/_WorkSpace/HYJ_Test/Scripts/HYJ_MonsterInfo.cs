@@ -18,7 +18,7 @@ public class HYJ_MonsterInfo : MonoBehaviour
         SetMonsterRace(monsterStatus.type);
         SetMonsterClass(monsterStatus.roleType);
         
-        levelText.text = monsterInfo.level.ToString();
+        levelText.text = "Lv." + monsterInfo.level.ToString();
         nameText.text = monsterInfo.character.Name;
     }
 

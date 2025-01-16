@@ -1,6 +1,7 @@
 using Firebase.Database;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -24,6 +25,7 @@ public class HYJ_SelectManager : MonoBehaviour
     [SerializeField] public GameObject CharacterSelectPanel; // 캐릭터 선택 창 
     [SerializeField] public GameObject CantPosUI; // 선택 불가 팝업 -> 5개 유닛이 이미 다 배치 되었을 때의 팝업
     [SerializeField] GameObject UnitChangeUI; // 유닛 변경 확인 팝업 -> 변경하시겠습니까?
+    [SerializeField] private TMP_Text userAndStagePower;    
     
     // 키 값은 위치 / 밸류 값은 유닛 고유번호;
     public Dictionary<int, int> battleInfo = new Dictionary<int, int>();
@@ -81,7 +83,8 @@ public class HYJ_SelectManager : MonoBehaviour
             }
         }
         
-        // ============= 편성 타일 생성 ===================
+        // ============= 유저 전투력 / 스테이지 전투력 ===================
+        updateBatchUnitsPower();
     }
 
     public void LookLog()
@@ -177,7 +180,49 @@ public class HYJ_SelectManager : MonoBehaviour
         {
             buttonsTransformList[i].GetComponent<HYJ_CharacterSelect>().RemoveBatch(i);
         }
-        //battleInfo.Clear();
-        Debug.Log("Reset?" + battleInfo.Count);
+        updateBatchUnitsPower();
+    }
+
+    public void ChangeAllBtnColorOff()
+    {
+        foreach (Transform btn in buttonsTransformList)
+        {
+            btn.GetComponent<HYJ_ChangeBtnColor>().ChangeBtnColor(false);
+            updateBatchUnitsPower();
+        }
+    }
+
+    public void updateBatchUnitsPower()
+    {
+        if (battleInfo.Count > 0)
+        {
+            batchUnitsPower = 0;
+            foreach (int infoKey in battleInfo.Keys)
+            {
+                batchUnitsPower += GameManager.TableData.GetCharacterData(battleInfo[infoKey]).PowerLevel;
+            }
+        }
+        else
+        {
+            batchUnitsPower = 0;
+        }
+        
+        StageData curStageData = GameManager.Instance.sceneChangeArgs.stageData;
+        foreach (var iWave in curStageData.Waves)
+        {
+            foreach (var iWaveMonster in iWave.monsters)
+            {
+                stagePower =
+                iWaveMonster.character.StatusTable.defensePointBase +
+                iWaveMonster.character.StatusTable.healthPointBase +
+                iWaveMonster.character.StatusTable.attackPointBase + 
+                (iWaveMonster.character.StatusTable.healthPointGrouth +
+                 iWaveMonster.character.StatusTable.attackPointGrowth +
+                 iWaveMonster.character.StatusTable.defensePointGrouth) 
+                * iWaveMonster.level;
+            }
+        }
+        
+        userAndStagePower.text = batchUnitsPower+ "/" + stagePower;
     }
 }
