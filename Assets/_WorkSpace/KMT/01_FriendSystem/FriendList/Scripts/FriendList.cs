@@ -116,18 +116,18 @@ public class FriendList : MonoBehaviour
 
                                             if (result)
                                             {
-                                                friendRoomText.text = $"{nickname}님의 방";
+                                                friendRoomText.text = $"[{nickname}]님의 방";
                                                 // 임시) 내방으로 돌아가기 버튼
                                                 returnRoomButton.SetActive(true);
                                                 // 뒤로가기 버튼 비활성
                                                 outskirtsUI.ReturnButton.enabled = false;
                                                 // 친구방 캐릭터 상호작용
                                                 characterInteract.isFriendRoom = true;
-                                                 VisitFriend(str, $"{nickname}님의 방이에요! \n 비싼 물건을 찾아보죠!", 
+                                                 VisitFriend(str, $"어서오세요! \n [{nickname}]님의 방이에요!", 
                                                      () => {
                                                          GameManager.OverlayUIManager.OpenSimpleInfoPopup(
-                                                              $"100골드정도는 가져가도 괜찮겠죠! \n (경찰이 오기까지 [{friendTicket.Number.Value}/10])",
-                                                              "ㄹㅇㄹㅇ",
+                                                              $"오늘 첫 방문의 의미로 100골드를 드립니다!  \n (앞으로 수령가능 : [{friendTicket.Number.Value}/10])",
+                                                              "와아~",
                                                               null
                                                         );
                                                      });
@@ -141,14 +141,14 @@ public class FriendList : MonoBehaviour
                                   }
                                   else
                                   {
-                                      friendRoomText.text = $"{nickname}님의 방";
+                                      friendRoomText.text = $"[{nickname}]님의 방";
                                       // 임시) 내방으로 돌아가기 버튼
                                       returnRoomButton.SetActive(true);
                                       // 뒤로가기 버튼 비활성
                                       outskirtsUI.ReturnButton.enabled = false;
                                       // 친구방 캐릭터 상호작용
                                       characterInteract.isFriendRoom = true;
-                                      VisitFriend(str, $"{nickname}님의 방이에요! \n 오늘은 이제 구경만 하도록 하죠.", null);
+                                      VisitFriend(str, $"[{nickname}]님의 방이에요! \n 오늘은 이제 구경만 하도록 하죠.", null);
                                   }
                               });
 
@@ -164,7 +164,7 @@ public class FriendList : MonoBehaviour
         friendPanel.SetActive(false);       // SHW
         GameManager.OverlayUIManager.OpenSimpleInfoPopup(
               popupText,
-              "....?",
+              "창닫기",
               closeWindowCallback
         );
     }
