@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HYJ_ListController : MonoBehaviour
+public class HYJ_ListFilterController : MonoBehaviour
 {
     [SerializeField] public Transform characterSelectContent;
     [SerializeField] public List<GameObject> unitInfos;
@@ -9,6 +9,7 @@ public class HYJ_ListController : MonoBehaviour
     // 필터 조절용 변수
     [SerializeField] private List<bool> filterList; 
     [SerializeField] HYJ_FilterBtnColor filterBtnColor;
+    [SerializeField] HYJ_SortController sortController;
     private bool isLevel;
     private bool isPower;
     public void InitUnitsList()
@@ -24,11 +25,6 @@ public class HYJ_ListController : MonoBehaviour
         }
     }
 
-    private void FilterRoleTypeList()
-    {
-        
-    }
-
     public void FilterElementTypeList(int typeNum)
     {
         switch (typeNum)
@@ -36,32 +32,32 @@ public class HYJ_ListController : MonoBehaviour
             case 0:
                 FilterElementTypeList2(ElementType.NONE, filterList[typeNum]);
                 filterList[typeNum] = !filterList[typeNum];
-                updateListAll();
+                UpdateListAll();
                 break;
             case 1:
                 FilterElementTypeList2(ElementType.FIRE, filterList[typeNum]);
                 filterList[typeNum] = !filterList[typeNum];
-                updateListOther();
+                UpdateListOther();
                 break;
             case 2:
                 FilterElementTypeList2(ElementType.WATER, filterList[typeNum]);
                 filterList[typeNum] = !filterList[typeNum];
-                updateListOther();
+                UpdateListOther();
                 break;
             case 3:
                 FilterElementTypeList2(ElementType.WIND, filterList[typeNum]);
                 filterList[typeNum] = !filterList[typeNum];
-                updateListOther();
+                UpdateListOther();
                 break;
             case 4:
                 FilterElementTypeList2(ElementType.EARTH, filterList[typeNum]);
                 filterList[typeNum] = !filterList[typeNum];
-                updateListOther();
+                UpdateListOther();
                 break;
             case 5:
                 FilterElementTypeList2(ElementType.METAL, filterList[typeNum]);
                 filterList[typeNum] = !filterList[typeNum];
-                updateListOther();
+                UpdateListOther();
                 break;
         }
         filterBtnColor.FilterBtnColorOn(filterList);
@@ -112,7 +108,7 @@ public class HYJ_ListController : MonoBehaviour
         }
     }
 
-    private void updateListAll()
+    private void UpdateListAll()
     {
         if (filterList[0])
         {
@@ -130,9 +126,9 @@ public class HYJ_ListController : MonoBehaviour
         }
     }
     
-    private void updateListOther()
+    private void UpdateListOther()
     {
-        int trueCondt = 0;
+        int trueCount = 0;
         for (int i = 1; i < 6; i++)
         {
             if (!filterList[i])
@@ -141,18 +137,23 @@ public class HYJ_ListController : MonoBehaviour
             }
             else
             {
-                trueCondt++;
+                trueCount++;
             }
         }
 
-        if (trueCondt == 5)
+        if (trueCount == 5)
         {
             filterList[0] = true;
         }
     }
-    
-    public void SortList()
+
+    public void SortListBtn(int sortType)
     {
-        
+        sortController.SortList(unitInfos,sortType);
+    }
+
+    public void ChangeSortListBtn()
+    {
+        sortController.ChangeSort(unitInfos);
     }
 }
