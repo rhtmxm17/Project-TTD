@@ -24,7 +24,7 @@ public class TargetDeadlyPercentageAlly : Targeting
     public override Combatable GetTarget(Combatable self)
     {
         Combatable result = null;
-        float minValue = 1f;
+        float minValue = 100f;
 
         foreach (Combatable allyUnit in self.Group.CharList)
         {
