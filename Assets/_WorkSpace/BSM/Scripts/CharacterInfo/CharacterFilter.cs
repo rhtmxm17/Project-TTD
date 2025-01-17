@@ -312,7 +312,7 @@ public class CharacterFilter : MonoBehaviour
         }
         else
         {
-            CharacterController.ElementFilterText.text = "전체";
+            CharacterController.ElementFilterText.text = "속성";
         }
         
         if (_roleFilterTypes.Count > 1)
@@ -331,7 +331,7 @@ public class CharacterFilter : MonoBehaviour
         }
         else
         {
-            CharacterController.RoleFilterText.text = "전체";
+            CharacterController.RoleFilterText.text = "역할";
         }
 
         if (_dragonVeinFilterTypes.Count > 1)
@@ -349,7 +349,7 @@ public class CharacterFilter : MonoBehaviour
         }
         else
         {
-            CharacterController.DragonVeinFilterText.text = "전체";
+            CharacterController.DragonVeinFilterText.text = "용맥";
         }
     }
 

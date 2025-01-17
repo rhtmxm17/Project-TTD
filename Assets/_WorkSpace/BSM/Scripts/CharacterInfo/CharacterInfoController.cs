@@ -9,6 +9,8 @@ using UnityEngine.UI;
 
 public class CharacterInfoController : BaseUI
 {
+    public List<CharacterData> CharacterDatas;
+    
     public Camera _renderCamera;
     public GameObject ModelParent;
     public List<Sprite> TokenIcons;
@@ -247,6 +249,11 @@ public class CharacterInfoController : BaseUI
         _characterSort.CurSortType = PlayerPrefs.HasKey("SortType") ? (SortType)PlayerPrefs.GetInt("SortType") : SortType.LEVEL;
         
         _characterInfos = GetComponentsInChildren<CharacterInfo>(true).ToList();
+
+        for (int i = 0; i < CharacterDatas.Count; i++)
+        {
+            _characterInfos[i]._CharacterData = CharacterDatas[i];
+        }
         
         for (int i = 0; i < _characterInfos.Count; i++)
         {
