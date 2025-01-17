@@ -20,6 +20,8 @@ public class SignUpPanel : LoginPanel
     [SerializeField] PopupContoller messagePopup;
 
 
+
+
    //  AuthError error = AuthError.EmailAlreadyInUse;
     private void Start()
     {
@@ -27,10 +29,11 @@ public class SignUpPanel : LoginPanel
         // 여기다 두니까 갑자기 밑에  "GetUI<Button>("SignUpConfirmButton").onClick.AddListener(SignUp);"
         // NullReferenceException: Object reference not set to an instance of an object 뜸
     }
-    private void OnEnable()
-    {
-        // Init();
-    }
+   // private void OnEnable()
+   // {
+   //     Init();
+   // }
+
     private void Init()
     {
         // UI_Binding
@@ -38,7 +41,7 @@ public class SignUpPanel : LoginPanel
         _signUpPWInputField = GetUI<TMP_InputField>("SignUpPWInputField");      // 비밀번호 입력란
         _pWConfirmInputField = GetUI<TMP_InputField>("PwConfirmInputField");    // 비번확인 입력란
         GetUI<Button>("SignUpConfirmButton").onClick.AddListener(SignUp);       // 회원가입 버튼.(가입기능)
-        GetUI<Button>("CloseButton").onClick.AddListener(()=>gameObject.SetActive(false));       // 나가기
+    //    GetUI<Button>("CloseButton").onClick.AddListener(()=>gameObject.SetActive(false));       // 나가기
         
     }
 
