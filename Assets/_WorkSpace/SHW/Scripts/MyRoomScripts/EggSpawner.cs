@@ -23,19 +23,12 @@ public class EggSpawner : MonoBehaviour
     // 코루틴 
     private Coroutine timerCoroutine;
 
-    private void Start()
-    {
-        // 보상 충전 소요시간
-        // 필요하면 나중에 변수화 해서 인스펙터에서 수정하도록 변경
-        span = new TimeSpan(rewardTime, rewardMinute, rewardSeconds);
-
-    }
-
     private void OnEnable() => StartEggTimer();
 
     private void StartEggTimer()
     {
         isEggComplete = false;
+        span = new TimeSpan(rewardTime, rewardMinute, rewardSeconds);
         lastEggTime = GameManager.UserData.PlayData.EggGainTimestamp;
         timerCoroutine = StartCoroutine(TimerTextCo());
         lastEggTime.onValueChanged += LastEggTime_onValueChanged;

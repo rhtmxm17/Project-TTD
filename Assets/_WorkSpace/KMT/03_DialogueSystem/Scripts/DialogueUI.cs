@@ -38,11 +38,14 @@ public class DialogueUI : BaseUI
     Dictionary<string, Sprite> emogiDict;
 
     DatabaseReference curUsersDialogueRef;
+    FirebaseAuth auth = BackendManager.Auth;
+    
+    // 내방일 경우 true
+    [SerializeField] public bool isMyroom = false;
 
     protected override void Awake()
     {
         base.Awake();
-        FirebaseAuth auth = BackendManager.Auth;
         curUid = auth.CurrentUser.UserId;
         input = GetUI<TMP_InputField>("ChatInput");
         sendBtn = GetUI<Button>("SendButton");
@@ -75,11 +78,17 @@ public class DialogueUI : BaseUI
         sendBtn.onClick.AddListener(SendMessage);
 
         nick = GameManager.UserData.Profile.Name.Value;
+        isMyroom = true;
 
     }
 
     private void OnEnable()
     {
+        // SHW)친구방에 채팅 후 다시 돌아왔을 때
+        if (isMyroom)
+        {
+            curUid = auth.CurrentUser.UserId;
+        }
         curUsersDialogueRef = GameManager.Database.RootReference.Child($"Users/{curUid}/dialogues");
         curUsersDialogueRef.ValueChanged += DialogueUpdated;
     }
@@ -224,7 +233,7 @@ public class DialogueUI : BaseUI
             {
                 curUsersDialogueRef.UpdateChildrenAsync(updateDataDic);
             }
-
+            
             StartCoroutine(AlineCO());
 
         });
@@ -235,7 +244,7 @@ public class DialogueUI : BaseUI
     {
         yield return new WaitForSeconds(0.2f);
         chatingList[maxChattingCnt].gameObject.SetActive(true);
-        chatingList[maxChattingCnt].SetMyChatBlock(" /n/n/n");
+        chatingList[maxChattingCnt].SetMyChatBlock("");
         yield return new WaitForSeconds(0.2f);
         chatingList[maxChattingCnt].gameObject.SetActive(false);
     }
