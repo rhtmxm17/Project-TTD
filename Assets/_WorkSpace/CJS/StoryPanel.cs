@@ -1,3 +1,4 @@
+using DG.Tweening;
 using Michsky.UI.ModernUIPack;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,7 +14,6 @@ public class StoryPanel : MonoBehaviour
     [Header("Prefabs")]
     [SerializeField] IndexedButton chapterButtonPrefab;
     [SerializeField] IndexedButton episodeButtonPrefab;
-    [SerializeField] SimpleInfoPopup episodeEnterPopupPrefab;
     [SerializeField] StoryDirector storyDirectorPrefab;
 
     [System.Serializable]
@@ -21,6 +21,7 @@ public class StoryPanel : MonoBehaviour
     {
         public Image mainImage;
         public RectTransform mainImageViewPort;
+        public SimpleInfoPopup episodeEnterPopupButton;
         public LayoutGroup chapterLayout;
         public LayoutGroup episodeLayout;
     }
@@ -31,10 +32,21 @@ public class StoryPanel : MonoBehaviour
     {
         public Sprite mainTexture;
         public string chapterName;
-        public List<StageData> episodeList;
+        public List<EpisodeInfo> episodeList;
+    }
+
+    [System.Serializable]
+    private class EpisodeInfo
+    {
+        public StageData episode;
+        public float focusScale = 1f;
+        [Tooltip("강조될 텍스처 위치")]public Vector2 focusPosition;
     }
 
     [SerializeField] List<ChapterInfo> chapterInfos;
+
+    private SimpleInfoPopup EpisodeEnterPopupButton => childUIField.episodeEnterPopupButton;
+    private Sprite defaultEpisodeSprite;
 
     private int selectedChapterIndex;
     private Vector2 chapterImageOffset;
@@ -57,6 +69,8 @@ public class StoryPanel : MonoBehaviour
         RectTransform rtMainImage = childUIField.mainImage.rectTransform;
         rtMainImage.anchorMin = rtMainImage.anchorMax = mainImageFocusPoint; // 에피소드 포커스용 앵커 수정
         rtMainImage.anchoredPosition = chapterImageOffset;
+
+        defaultEpisodeSprite = EpisodeEnterPopupButton.Image.sprite;
     }
 
     private void SelectChapter(int index)
@@ -80,16 +94,19 @@ public class StoryPanel : MonoBehaviour
         RectTransform rtMainImage = childUIField.mainImage.rectTransform;
         rtMainImage.anchoredPosition = chapterImageOffset;
 
+        // 에피소드 선택 버튼이 떠있다면 비활성화
+        EpisodeEnterPopupButton.gameObject.SetActive(false);
+
         for (int i = 0; i < selectedChapterInfo.episodeList.Count; i++)
         {
             IndexedButton buttonInstance = Instantiate(episodeButtonPrefab, childUIField.episodeLayout.transform);
-            buttonInstance.Text.text = selectedChapterInfo.episodeList[i].ButtonName;
+            buttonInstance.Text.text = selectedChapterInfo.episodeList[i].episode.ButtonName;
             buttonInstance.Id = i;
             buttonInstance.Button.onClick.AddListener(() => 
             {
                 // TODO: 에피소드 선택시 동작
                 Debug.Log($"에피소드 {buttonInstance.Text.text}선택됨");
-                OnChapterEpisodeButtonClicked(buttonInstance.Id);
+                OnChapterEpisodeButtonClicked(chapterInfos[selectedChapterIndex].episodeList[buttonInstance.Id]);
             });
 
             episodeButtonList.Add(buttonInstance.gameObject);
@@ -99,18 +116,28 @@ public class StoryPanel : MonoBehaviour
     /// <summary>
     /// 에피소드 목록에서 에피소드 버튼 클릭시 호출되는 함수
     /// </summary>
-    /// <param name="episodeIndex">해당 에피소드 번호</param>
-    private void OnChapterEpisodeButtonClicked(int episodeIndex)
+    /// <param name="episodeInfo">이 패널에서 사용하는 해당 에피소드 정보</param>
+    private void OnChapterEpisodeButtonClicked(EpisodeInfo episodeInfo)
     {
-        StageData episodeData = chapterInfos[selectedChapterIndex].episodeList[episodeIndex];
+        // 에피소드 이미지 포커스
+        RectTransform rtMainImage = childUIField.mainImage.rectTransform;
 
-        // 에피소드 정보 팝업 생성 및 정보 등록
-        SimpleInfoPopup popupInstance = Instantiate(episodeEnterPopupPrefab, GameManager.PopupCanvas);
-        popupInstance.Title.text = episodeData.StageName;
-        popupInstance.Description.text = episodeData.Description;
-        if (null != episodeData.SpriteImage) // null이라면 프리펩에 있는 스프라이트(기본값)를 그대로 사용
-            popupInstance.Image.sprite = episodeData.SpriteImage;
-        popupInstance.SubmitButton.onClick.AddListener(() => EnterEpisode(episodeData)); // 확인 버튼 클릭시 에피소드 진입 함수 호출
+        rtMainImage.DOAnchorPos(episodeInfo.focusPosition, 0.8f);
+        rtMainImage.DOScale(episodeInfo.focusScale, 0.8f);
+
+        StageData episodeData = episodeInfo.episode;
+
+        // 에피소드 정보 팝업 활성 및 정보 갱신
+        // 오버레이 팝업에서 내장 버튼으로 변경되서 구독, 해제가 좀 꼬임..
+        EpisodeEnterPopupButton.gameObject.SetActive(true);
+        EpisodeEnterPopupButton.Title.text = episodeData.StageName;
+        EpisodeEnterPopupButton.Description.text = episodeData.Description;
+        if (null == episodeData.SpriteImage) // null이라면 프리펩에 있는 스프라이트(기본값)를 그대로 사용
+            EpisodeEnterPopupButton.Image.sprite = defaultEpisodeSprite;
+        else
+            EpisodeEnterPopupButton.Image.sprite = episodeData.SpriteImage;
+        EpisodeEnterPopupButton.SubmitButton.onClick.RemoveAllListeners();
+        EpisodeEnterPopupButton.SubmitButton.onClick.AddListener(() => EnterEpisode(episodeData)); // 확인 버튼 클릭시 에피소드 진입 함수 호출
     }
 
     /// <summary>
