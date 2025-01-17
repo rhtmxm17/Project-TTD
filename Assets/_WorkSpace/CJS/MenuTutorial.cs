@@ -7,6 +7,9 @@ public class MenuTutorial : MonoBehaviour
 {
     enum TargetScene
     {
+        None,
+        Lobby,
+        Profile,
 
     }
 
