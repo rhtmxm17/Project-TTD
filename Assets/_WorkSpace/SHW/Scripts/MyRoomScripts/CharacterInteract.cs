@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,11 +30,16 @@ public class CharacterInteract : MonoBehaviour
     // 친구방 놀러감
     [SerializeField] public bool isFriendRoom;
     [SerializeField] public int friendRoomIndex;
+    
+    // 상호작용시 캐릭터 움직임
+    [SerializeField] private Image _gameObject;
 
     // 대화 활성화
     public void ClickCharacter()
     {
         if(talkCoroutine != null) return;
+
+        _gameObject.rectTransform.DOJumpAnchorPos(new Vector2(0,-94),100, 2, 1f);
         
         characterIndex = GameManager.UserData.Profile.MyroomCharaIdx.Value -1;
 
