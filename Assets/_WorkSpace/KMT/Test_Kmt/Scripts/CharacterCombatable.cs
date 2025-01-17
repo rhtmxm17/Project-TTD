@@ -31,6 +31,10 @@ public class CharacterCombatable : Combatable
     StatIncreaseBlock[] levelIncreasement = new StatIncreaseBlock[4];
     const int MAX_STAGE_LEVEL = 3;
 
+    //버튼의 이미지 참조
+    Image levelupSkillBtnImg;
+    Image secondSkillBtnImg;
+
     protected override void Awake()
     {
         base.Awake();
@@ -47,7 +51,6 @@ public class CharacterCombatable : Combatable
         {
             Debug.LogError($"캐릭터 데이터 등록이 선행되어야 함");
         }
-
         basicSkillButton.transform.GetChild(0).GetComponent<Image>().sprite = characterData.NormalSkillIcon;
         basicSkillButton.InitTargetingFunc(() => { return characterData.SkillDataSO.TargetingLogic.GetTarget(this) != null ? true : false; });
         basicSkillButton.GetComponent<Button>().onClick.AddListener(() => {
@@ -58,7 +61,8 @@ public class CharacterCombatable : Combatable
             PlayAnimation("Attack");
         });
 
-        secondSkillButton.transform.GetChild(0).GetComponent<Image>().sprite = characterData.SpecialSkillIcon;
+        secondSkillBtnImg = secondSkillButton.iconImg;
+        secondSkillBtnImg.sprite = characterModel.GetComponent<CharacterIcon>().skillIcon;
         secondSkillButton.InitTargetingFunc(() => { return characterData.SecondSkillDataSO.TargetingLogic.GetTarget(this) != null ? true : false; });
         secondSkillButton.SetSkillCooltime(characterData.StatusTable.SecondSkillCooldown);
         secondSkillButton.GetComponent<Button>().onClick.AddListener(() => {
@@ -78,6 +82,8 @@ public class CharacterCombatable : Combatable
         levelIncreasement[2] = new StatIncreaseBlock(maxHp.Value * 0.1f, attackPoint.Value * 0.1f, defense.Value * 0.1f, 1);
         levelIncreasement[3] = new StatIncreaseBlock(maxHp.Value * 0.15f, attackPoint.Value * 0.15f, defense.Value * 0.15f, 2);
 
+        levelupSkillBtnImg = levelupButton.iconImg;
+        levelupSkillBtnImg.sprite = characterModel.GetComponent<CharacterIcon>().skillIcon;
         levelupButton.GetComponent<Button>().onClick.AddListener(() => {
 
             if (!levelupButton.Interactable || !IsAlive || levelupButton.IsCooldown) { Debug.Log("사용 불가"); return; }
@@ -90,6 +96,10 @@ public class CharacterCombatable : Combatable
                 SetCharacterModel(characterModel.NextEvolveModel);
                 levelupButton.StartCooldown();
                 StageManager.Instance.UsePartyCost(levelIncreasement[stageLevel.Value + 1].needCost);
+
+                levelupSkillBtnImg.sprite = characterModel.GetComponent<CharacterIcon>().skillIcon;
+                secondSkillBtnImg.sprite = characterModel.GetComponent<CharacterIcon>().skillIcon;
+
                 LevelUp();
 
                 //애니메이션이나 쿨타임등의 행동 뒤에 돌려놓을것.

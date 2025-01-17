@@ -18,6 +18,9 @@ public class SecondSkillButton : MonoBehaviour
     [SerializeField]
     GameObject blackImg;
 
+    [field: SerializeField]
+    public Image iconImg { get; private set; }
+
     Coroutine skillCooldownCoroutine = null;
     float waitedCooltime = 0;
 
