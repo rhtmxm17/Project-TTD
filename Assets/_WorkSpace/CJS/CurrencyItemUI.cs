@@ -10,12 +10,12 @@ public class CurrencyItemUI : BaseUI
     [SerializeField] ItemData item;
 
     [Header("하위 UI")]
-    [SerializeField] RawImage rawImage;
+    [SerializeField] Image iconImage;
     [SerializeField] TMP_Text numberText;
 
     private void Start()
     {
-        rawImage.texture = item.SpriteImage.texture;
+        iconImage.sprite = item.SpriteImage;
     }
 
     private void OnEnable()

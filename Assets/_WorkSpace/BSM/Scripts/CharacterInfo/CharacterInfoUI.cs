@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class CharacterInfoUI : BaseUI
 {
     private readonly Sprite[] _enhanceResultIcons = new Sprite[3];
+    public Sprite[] ElementFrames;
     public Sprite[] EnhanceResultIcons => _enhanceResultIcons;
     public Sprite[] _elementIcons;
     public Sprite[] _roleIcons;
@@ -37,7 +38,8 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _ElemetTypeText;
     [HideInInspector] public TextMeshProUGUI _roleTypeText;
     [HideInInspector] public TextMeshProUGUI _dragonVeinTypeText;
-    
+
+    [HideInInspector] public Image _elementFrameImage;
     [HideInInspector] public Image _elementIconImage;
     [HideInInspector] public Image _roleIconImage;
     [HideInInspector] public Image _dragonVeinIconImage;
@@ -103,11 +105,12 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public Image _detailTabColor;
     [HideInInspector] public Image _enhanceTabColor;
     [HideInInspector] public Image _evolutionTabColor;
+    [HideInInspector] public Button _evolutionTabButton;
     
     private CharacterInfoController _controller;
     private Button _mileageCancelButton;
     private Button _detailTabButton; 
-    private Button _evolutionTabButton;
+    
 
   
     
@@ -187,6 +190,7 @@ public class CharacterInfoUI : BaseUI
         _amountCharacterTokenText = GetUI<TextMeshProUGUI>("AmountCharacterTokenText");
         _amountCommonTokenText = GetUI<TextMeshProUGUI>("AmountCommonTokenText");
 
+        _elementFrameImage = GetUI<Image>("ElementFrameImage");
         _autoTokenButton = GetUI<Button>("AutoTokenButton");
         _tokenInputField = GetUI<TMP_InputField>("TokenInputFiled");
         _enhanceTokenIcon = GetUI<Image>("TokenIconImage");

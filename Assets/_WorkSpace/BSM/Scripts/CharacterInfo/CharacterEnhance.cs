@@ -419,18 +419,6 @@ public class CharacterEnhance : MonoBehaviour
     private void Enhance()
     {
         if (_characterInfoController.CurCharacterEnhance != this) return;
-
-        if (_characterInfoController._infoUI._enhanceResultPopup.activeSelf)
-        {
-            _characterInfoController._infoUI._enhanceResultPopup.SetActive(false);
-            return;
-        }
-        
-        if (_characterInfoController._infoUI._mileageUsePopup.activeSelf)
-        {
-            _characterInfoController._infoUI._mileageUsePopup.SetActive(false);
-            return;
-        }
         
         //기본 강화 확률 + 추가 재료 강화 확률 > Probability 보다 크면 성공
         //아니면 실패
