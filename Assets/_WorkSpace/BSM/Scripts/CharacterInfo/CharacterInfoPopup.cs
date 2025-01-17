@@ -24,7 +24,10 @@ public class CharacterInfoPopup : MonoBehaviour
     {
         if (_characterInfoController.CurCharacterInfo != null)
         {
-            _characterInfoController.CurCharacterInfo.CharacterModels[ListIndex].gameObject.SetActive(false);
+            if (_characterInfoController.CurCharacterInfo.CharacterModels.Count > 0)
+            {
+                _characterInfoController.CurCharacterInfo.CharacterModels[ListIndex].gameObject.SetActive(false);
+            } 
         } 
         
         _characterInfoController.StartListSort();
