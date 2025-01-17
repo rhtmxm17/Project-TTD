@@ -24,10 +24,6 @@ struct StatIncreaseBlock
 public class CharacterCombatable : Combatable
 {
 
-    enum curState { WAITING, MOVING }
-
-    curState state = curState.MOVING;
-
     Vector3 originPos;
 
     ReactiveProperty<int> stageLevel = new ReactiveProperty<int>();
@@ -58,6 +54,7 @@ public class CharacterCombatable : Combatable
             if (!basicSkillButton.Interactable || !IsAlive) { Debug.Log("사용 불가");  return; }
             if (!OnSkillCommanded(characterData.SkillDataSO, 1)) { Debug.Log("스킬 타깃이 없음.  또는 더 큰 우선순위의 행동중, 또는 전투중이 아님  사용 취소"); basicSkillButton.DisplayNonTargetText(); return; }
             basicSkillButton.StartCoolDown(characterData.StatusTable.BasicSkillCooldown);//쿨타임을 매개변수로 전달.
+            state = curState.IDLE;
             PlayAnimation("Attack");
         });
 
@@ -69,6 +66,7 @@ public class CharacterCombatable : Combatable
             if (!secondSkillButton.LevelArrived) { Debug.Log("만랩이 아님, 사용 불가"); return; }
             if (!OnSkillCommanded(characterData.SecondSkillDataSO, 3)) { Debug.Log("스킬 타깃이 없음. 또는 더 큰 우선순위의 행동중, 또는 전투중이 아님  사용 취소"); return; }
                 secondSkillButton.StartCoolDown();
+                state = curState.IDLE;
                 PlayAnimation("Attack");
         });
 
@@ -94,7 +92,6 @@ public class CharacterCombatable : Combatable
                 StageManager.Instance.UsePartyCost(levelIncreasement[stageLevel.Value + 1].needCost);
                 LevelUp();
 
-                //TODO : 인터럽트 방지 우선순위가 필요하다면 우선순위를 돌려놓는 콜백을 추가하여 적용시킬 것.
                 //애니메이션이나 쿨타임등의 행동 뒤에 돌려놓을것.
                 curActionPriority = 0;
             }
@@ -144,14 +141,14 @@ public class CharacterCombatable : Combatable
     protected override void SetCharacterModel(CharacterModel modelData)
     {
         base.SetCharacterModel(modelData);
-        if (state == curState.WAITING)
+        if (state == curState.WAITING || state == curState.IDLE)
         {
-            PlayAnimation("Idle");
+            UnitAnimator.SetBool("StartWithIdle", true);
         }
-        else
+        /*else
         {
             PlayAnimation("Walk");
-        }
+        }*/
         characterModel.transform.rotation = Quaternion.Euler(-90, -90, -90);
     }
 
@@ -184,7 +181,7 @@ public class CharacterCombatable : Combatable
         yield return new WaitWhile(() => agent.pathPending);
 
         PlayAnimation("Walk");
-
+        state = curState.MOVING;
         Look(originPos);
 
         while (0.1f < agent.remainingDistance)

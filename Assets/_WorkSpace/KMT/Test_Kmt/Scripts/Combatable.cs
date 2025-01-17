@@ -35,6 +35,9 @@ public class Combatable : MonoBehaviour
     protected NavMeshAgent agent;
     protected CharacterModel characterModel;
 
+    protected enum curState { WAITING, MOVING, IDLE }
+    protected curState state = curState.MOVING;
+
     [Header("No Damage")]
     [SerializeField]
     protected bool IsNoDamage = false;
@@ -424,7 +427,13 @@ public class Combatable : MonoBehaviour
             agent.destination = target.transform.position;
             Look(target.transform);
             yield return new WaitWhile(() => agent.pathPending);
-            PlayAnimation("Walk");
+
+            if (target != null && agent.remainingDistance > agent.stoppingDistance)
+            {
+                state = curState.MOVING;
+                PlayAnimation("Walk");
+            }
+
             while (target != null && agent.remainingDistance > agent.stoppingDistance)
             {
                 if (time > trackTime)
@@ -494,6 +503,7 @@ public class Combatable : MonoBehaviour
         while (target != null && target.IsAlive && range + target.CharacterSizeRadius > Vector3.Distance(target.transform.position, transform.position))
         {
             Look(target.transform);
+            state = curState.IDLE;
             PlayAnimation("Attack");
             yield return StartCoroutine(baseAttack.SkillRoutine(this, target, null));
         }
