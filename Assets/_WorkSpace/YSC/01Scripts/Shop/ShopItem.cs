@@ -96,6 +96,11 @@ public class ShopItem : BaseUI
         {
             itemPriceText.text = "무료";
             materialImage = GetUI<Image>("MaterialImage");
+        } 
+        else if (data.Price.item.Id == 6)
+        {
+            itemPriceText.text = $" {data.Price.gain}원";
+            materialImage.sprite = data.Price.item.SpriteImage;
         }
         else
         {
