@@ -19,6 +19,9 @@ public class LevelupButton : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI levelText;
 
+    [field: SerializeField]
+    public Image iconImg { get; private set; }
+
     [Header("Text BG Color")]
     [SerializeField]
     Color defaultColor;

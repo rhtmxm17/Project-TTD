@@ -17,6 +17,9 @@ public class BasicSkillButton : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI levelText;
 
+    [field: SerializeField]
+    public Image iconImg {  get; private set; }
+
     Coroutine autoCoroutine = null;
     WaitForSeconds autoDelay = new WaitForSeconds(0.1f);
     Func<bool> isTargetExistFunc;
