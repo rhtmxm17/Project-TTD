@@ -178,8 +178,11 @@ public class UserProfileUI : BaseUI
         //  GetUI<TMP_Text>("Introduction").text = introduction;
         GetUI<TMP_Text>("ClearStage").text = $"클리어 스테이지:{clearchapter.ToString()}-{clearStage.ToString()}";
         GetUI<TMP_Text>("ClearStory").text = $"클리어 스토리:{clearStory}";
+        if(clearStory==null) GetUI<TMP_Text>("ClearStory").text = $"클리어 스토리:기록없음";
         GetUI<TMP_Text>("BestRank").text = $"최고 랭킹:{bestRank.ToString()}";
+        if(bestRank == 999) GetUI<TMP_Text>("BestRank").text = $"랭킹없음";
         GetUI<TMP_Text>("LastRank").text = $"최근 랭킹:{lastRank.ToString()}";
+        if(lastRank == 999) GetUI<TMP_Text>("LastRank").text = $"랭킹없음";
         GetUI<TMP_Text>("CP").text = $"총전투력:{CP.ToString()}";
         GetUI<TMP_Text>("AcquiredCharacter").text = $"{acquiredCharacter.ToString()}/9";
     }
