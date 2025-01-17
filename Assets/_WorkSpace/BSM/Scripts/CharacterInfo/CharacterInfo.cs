@@ -19,7 +19,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private CharacterModel levelTwo;
     private CharacterModel levelThree;
 
-    private TextMeshProUGUI _characterLevelText;
+    private TextMeshProUGUI _characterTypeText;
     private TextMeshProUGUI _characterListNameText;
     private Image _characterListImage;
     
@@ -254,8 +254,6 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// </summary>
     private void SetInfoPopup()
     { 
-        _characterInfoController.PopupAllClose();
-        
         _characterInfoController.CurCharacterInfo = this;
         _characterInfoController.CurCharacterEnhance = _characterEnhance; 
         _characterInfoController.CurIndex = _characterInfoController._characterInfos.IndexOf(this);
@@ -285,7 +283,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
                 levelThree = CreateModelPrefab(levelTwo.NextEvolveModel, levelTwo.NextEvolveModel.transform.position, false);
             }
         }
-        else if (CharacterModels != null && !CharacterModels[0].gameObject.activeSelf)
+        else if (CharacterModels.Count != 0 && !CharacterModels[0].gameObject.activeSelf)
         {
             CharacterModels[0].gameObject.SetActive(true);
         }
@@ -318,6 +316,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         _characterInfoController.UserYongGwa = _characterInfoController.UserYongGwaData.Value;
         CharacterStats();
         
+        _characterInfoController._infoUI._evolutionTabButton.interactable = CharacterModels.Count != 0;
+
         if (GameManager.UserData.HasCharacter(_characterData.Id))
         {
             SetCurrentCost();
@@ -360,7 +360,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         ElementType elementType = _characterData.StatusTable.type;
         RoleType roleType = _characterData.StatusTable.roleType;
         DragonVeinType dragonVeinType = _characterData.StatusTable.dragonVeinType;
-        
+
+        _characterInfoController._infoUI._elementFrameImage.sprite =  _characterInfoController._infoUI.ElementFrames[(int)elementType - 1];
         _characterInfoController._infoUI._elementIconImage.sprite = _characterInfoController._infoUI._elementIcons[(int)elementType - 1];
         _characterInfoController._infoUI._roleIconImage.sprite =  _characterInfoController._infoUI._roleIcons[(int)roleType - 1];
         _characterInfoController._infoUI._dragonVeinIconImage.sprite =  _characterInfoController._infoUI._dragonVeinIcons[(int)dragonVeinType - 1];
@@ -462,9 +463,17 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// </summary>
     /// <param name="type"></param>
     /// <exception cref="AggregateException"></exception>
-    public void SetListLevelText(int level)
+    public void SetListTypeText(ElementType type)
     {
-        _characterLevelText.text = $"Lv.{level}";
+        _characterTypeText.text = type switch
+        {
+            ElementType.FIRE => "화룡",
+            ElementType.WATER => "수룡",
+            ElementType.WIND => "정룡",
+            ElementType.EARTH => "토룡",
+            ElementType.METAL => "진룡",
+            _ => "무속성"
+        };
     }
     
     /// <summary>
@@ -485,7 +494,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     { 
         _characterListImage = transform.GetChild(0).GetComponent<Image>();
         _characterListNameText = transform.GetChild(1).GetComponentInChildren<TextMeshProUGUI>();
-        _characterLevelText = transform.GetChild(2).GetComponentInChildren<TextMeshProUGUI>();
+        _characterTypeText = transform.GetChild(2).GetComponentInChildren<TextMeshProUGUI>();
         OwnedObject = transform.GetChild(3).gameObject;
     }
 }

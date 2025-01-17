@@ -139,8 +139,8 @@ public class CharacterSort : MonoBehaviour
                        _sortCharacterInfos[i].PowerLevel = (int)ownedData.PowerLevel;
                        _sortCharacterInfos[j].PowerLevel = (int)unOwnedData.PowerLevel;
                        
-                       _sortCharacterInfos[i].SetListLevelText(ownedData.Level.Value);
-                       _sortCharacterInfos[j].SetListLevelText(unOwnedData.Level.Value);
+                       _sortCharacterInfos[i].SetListTypeText(ownedData.StatusTable.type);
+                       _sortCharacterInfos[j].SetListTypeText(unOwnedData.StatusTable.type);
                        
                        _sortCharacterInfos[i].SetListImage(ownedData.FaceIconSprite);
                        _sortCharacterInfos[j].SetListImage(unOwnedData.FaceIconSprite);
@@ -193,7 +193,7 @@ public class CharacterSort : MonoBehaviour
             _sortCharacterInfos[i + ownedCount]._CharacterData = characterInfos[i];
             _sortCharacterInfos[i + ownedCount].SetListNameText(characterInfos[i].Name);
             _sortCharacterInfos[i + ownedCount].PowerLevel = (int)characterInfos[i].PowerLevel;
-            _sortCharacterInfos[i + ownedCount].SetListLevelText(characterInfos[i].Level.Value);
+            _sortCharacterInfos[i + ownedCount].SetListTypeText(characterInfos[i].StatusTable.type);
             _sortCharacterInfos[i + ownedCount].SetListImage(characterInfos[i].FaceIconSprite);
             _sortCharacterInfos[i + ownedCount].OwnedObject.SetActive(active);
             CharacterInfoController._characterFilter.CheckObject(_sortCharacterInfos[i + ownedCount], i + ownedCount); 
