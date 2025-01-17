@@ -7,17 +7,20 @@ public class HYJ_StageEnemyInfo : MonoBehaviour
     [SerializeField] TMP_Text stageNameText;
     [SerializeField] private TMP_Text powerText;
     [SerializeField] GameObject monsterPrefab;
-    private List<int> monsterList = new List<int>();
+    private List<int> monsterList;
     
     private void Start()
     {
         InitStageData();
     }
 
+    /// <summary>
+    /// 스테이지 정보 초기 설정(스테이지 이름, 몬스터와 아이템 정보)
+    /// </summary>
     private void InitStageData()
     {
         StageData curStageData = GameManager.Instance.sceneChangeArgs.stageData;
-        stageNameText.text = curStageData.StageName;
+        stageNameText.text = curStageData.StageName;//스테이지 이름 표기
 
         foreach (var iWave in curStageData.Waves)
         {

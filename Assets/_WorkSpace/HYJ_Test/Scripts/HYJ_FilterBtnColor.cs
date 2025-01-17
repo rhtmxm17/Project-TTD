@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class HYJ_FilterBtnColor : MonoBehaviour
 {
-    private Color onColor = Color.white;
+    private Color onColor = Color.white; // 필터가 켜져 있을때 색상
     private Color offColor = Color.gray;
     [SerializeField] List<Image> elementImages;
     

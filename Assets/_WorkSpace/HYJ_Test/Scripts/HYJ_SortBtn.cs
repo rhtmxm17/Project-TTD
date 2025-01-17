@@ -7,6 +7,9 @@ public class HYJ_SortBtn : MonoBehaviour
     [SerializeField] TMP_Text curSortBtnText;
     [SerializeField] HYJ_ListFilterController listFilterController;
     
+    /// <summary>
+    /// 유닛 선택창 리스트 정렬버튼
+    /// </summary>
     public void ChangeCurSortBtnText()
     {
         curSortBtnText.text = btnText.text;
