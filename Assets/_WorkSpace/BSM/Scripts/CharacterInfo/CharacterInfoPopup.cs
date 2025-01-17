@@ -1,20 +1,43 @@
 using UnityEngine;
 
-public class CharacterInfoPopup : MonoBehaviour
+public class CharacterInfoPopup : BaseUI
 {
-    private CharacterInfoController _characterInfoController;
-    
     [HideInInspector] public int ListIndex;
     
+    private CharacterInfoController _characterInfoController;
+
+    private GameObject _bonusPopup;
+    private GameObject _tokenPopup;
+    private GameObject _enhanceResultPopup;
+    private GameObject _mileageUsePopup;
     
-    private void Awake()
+    
+    
+    
+    protected override void Awake()
+    {
+        base.Awake();
+        Init();
+    }
+
+    private void Init()
     {
         _characterInfoController = GetComponentInParent<CharacterInfoController>();
+        _bonusPopup = GetUI("BonusPopup");
+        _tokenPopup = GetUI("EnhanceTokenPopup");
+        _enhanceResultPopup = GetUI("EnhanceResultPopup");
+        _mileageUsePopup = GetUI("MileageUsePopup");
     }
     
     private void OnDisable()
     {
         InfoPopupClose();
+        
+        if(_bonusPopup.activeSelf) _bonusPopup.SetActive(false);
+        
+        if(_enhanceResultPopup.activeSelf) _enhanceResultPopup.SetActive(false);
+        
+        if(_mileageUsePopup.activeSelf) _mileageUsePopup.SetActive(false);
     }
 
     /// <summary>
