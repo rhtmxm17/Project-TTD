@@ -41,6 +41,13 @@ public class MyRankSetter : MonoBehaviour
                             }
 
                             rankBlock.SetCounter((int)task2.Result.ChildrenCount);
+                            GameManager.UserData.StartUpdateStream()
+                                .SetDBValue(GameManager.UserData.Profile.Rank, (int)task2.Result.ChildrenCount)
+                                .Submit(result =>
+                                {
+                                    if (false == result)
+                                        Debug.Log($"요청 전송에 실패함");
+                                });
 
                             rankBlock.SetBlockInfo(task.Result.Child(UserData.myUid).Child("nickname").Value.ToString(),
                             (long)task.Result.Child(UserData.myUid).Child("score").Value);

@@ -158,6 +158,7 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
         public UserDataInt IconIndex { get; private set; } = new UserDataInt($"Profile/IconIndex");
         public UserDataInt Level { get; private set; } = new UserDataInt($"Profile/Level", 1);
         public UserDataString Introduction { get; private set; } = new UserDataString($"Profile/Introduction", "소개문 없음");
+        public UserDataInt Rank { get; private set; } = new UserDataInt($"Profile/Rank", 999);
 
 
         public UserDataInt MyroomBgIdx { get; private set; } = new UserDataInt($"Profile/roomBG", 0);
@@ -281,6 +282,7 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
             this.Profile.Level.SetValueWithDataSnapshot(userData);
             this.Profile.IconIndex.SetValueWithDataSnapshot(userData);
             this.Profile.Introduction.SetValueWithDataSnapshot(userData);
+            this.Profile.Rank.SetValueWithDataSnapshot(userData);
 
             this.Profile.MyroomBgIdx.SetValueWithDataSnapshot(userData);
             this.Profile.MyroomCharaIdx.SetValueWithDataSnapshot(userData);
@@ -422,6 +424,7 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
             otherProfile.IconIndex.SetValueWithDataSnapshot(profileSnapshot);
             otherProfile.Level.SetValueWithDataSnapshot(profileSnapshot);
             otherProfile.Introduction.SetValueWithDataSnapshot(profileSnapshot);
+            otherProfile.Rank.SetValueWithDataSnapshot(profileSnapshot);
 
             otherProfile.MyroomBgIdx.SetValueWithDataSnapshot(profileSnapshot);
             otherProfile.MyroomCharaIdx.SetValueWithDataSnapshot(profileSnapshot);
