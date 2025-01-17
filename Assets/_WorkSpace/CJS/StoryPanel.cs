@@ -2,11 +2,14 @@ using Michsky.UI.ModernUIPack;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class StoryPanel : MonoBehaviour
 {
+    [SerializeField, Tooltip("에피소드 선택시 집중 대상이 놓일 위치, 좌하단 0 ~ 우상단 1")] Vector2 mainImageFocusPoint;
+
     [Header("Prefabs")]
     [SerializeField] IndexedButton chapterButtonPrefab;
     [SerializeField] IndexedButton episodeButtonPrefab;
@@ -17,6 +20,7 @@ public class StoryPanel : MonoBehaviour
     private struct ChildUIField
     {
         public Image mainImage;
+        public RectTransform mainImageViewPort;
         public LayoutGroup chapterLayout;
         public LayoutGroup episodeLayout;
     }
@@ -33,6 +37,7 @@ public class StoryPanel : MonoBehaviour
     [SerializeField] List<ChapterInfo> chapterInfos;
 
     private int selectedChapterIndex;
+    private Vector2 chapterImageOffset;
 
     private List<GameObject> episodeButtonList = new List<GameObject>();
 
@@ -46,6 +51,12 @@ public class StoryPanel : MonoBehaviour
             buttonInstance.Id = i;
             buttonInstance.Button.onClick.AddListener(() => SelectChapter(buttonInstance.Id));
         }
+
+        chapterImageOffset = childUIField.mainImageViewPort.rect.size * (Vector2.one * 0.5f - mainImageFocusPoint);
+        childUIField.mainImage.SetNativeSize();
+        RectTransform rtMainImage = childUIField.mainImage.rectTransform;
+        rtMainImage.anchorMin = rtMainImage.anchorMax = mainImageFocusPoint; // 에피소드 포커스용 앵커 수정
+        rtMainImage.anchoredPosition = chapterImageOffset;
     }
 
     private void SelectChapter(int index)
@@ -63,7 +74,11 @@ public class StoryPanel : MonoBehaviour
         // 선택된 챕터에 따라 UI 셋팅
         ChapterInfo selectedChapterInfo = chapterInfos[index];
 
+        // 배경 이미지 셋팅
         childUIField.mainImage.sprite = selectedChapterInfo.mainTexture;
+        childUIField.mainImage.SetNativeSize();
+        RectTransform rtMainImage = childUIField.mainImage.rectTransform;
+        rtMainImage.anchoredPosition = chapterImageOffset;
 
         for (int i = 0; i < selectedChapterInfo.episodeList.Count; i++)
         {
