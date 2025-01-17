@@ -17,21 +17,21 @@ public class UserProfileUI : BaseUI
     FirebaseAuth auth = BackendManager.Auth;
 
     // 가져오고 써야할 데이터들
-   private string nickName; // 닉네임
-   private int iconIndex;   // 아이콘 인덱스
-   private int UID; // UID?
-   private int level; // 레벨
-   private int CP; // 전투력 합계
-   private string introduction; // 자기소개문구
-   private int acquiredCharacter; // 캐릭터 보유 수
-   private int stage; // 스테이지 클리어 진도
-   private int lastRank; // 이전 레이드 순위
-   private int bestRank; // 역대 최고 랭킹
+    private string nickName; // 닉네임
+    private int iconIndex;   // 아이콘 인덱스
+    private int UID; // UID?
+    private int level; // 레벨
+    private float CP; // 전투력 합계
+    private string introduction; // 자기소개문구
+    private int acquiredCharacter; // 캐릭터 보유 수
+    private int stage; // 스테이지 클리어 진도
+    private int lastRank; // 이전 레이드 순위
+    private int bestRank; // 역대 최고 랭킹
 
     public UnityEvent OnChangeProfile;
    
-   // (임시) 아이콘 설정용 이미지
-   [SerializeField] Sprite[] iconSprites;
+    // (임시) 아이콘 설정용 이미지
+    [SerializeField] Sprite[] iconSprites;
     
     private void Start()
     {
@@ -118,8 +118,8 @@ public class UserProfileUI : BaseUI
         introduction = GameManager.UserData.Profile.Introduction.Value; // 자기소개(사용안함)
         
         // 클리어 정보
-        // 스토리던
         // 일일던전
+        // 스토리던
         // 스토리 진행도
         
         // 레이드 정보
@@ -127,9 +127,13 @@ public class UserProfileUI : BaseUI
         bestRank = GameManager.UserData.Profile.Rank.Value;              // 최고 랭킹
         
         // 보유 캐릭터
+        acquiredCharacter = GameManager.UserData.HaveCharacterIdxList.Count;  // 획득 캐릭터 수 acquired
         // 총 전투력 cp
-        // 획득 캐릭터 수 acquired
-        
+        for (int i = 0; i < acquiredCharacter; i++)
+        {
+            // 수치 맞는지 확인 필요..ㅠㅠ
+            CP += GameManager.TableData.GetCharacterData(GameManager.UserData.HaveCharacterIdxList[i]).PowerLevel;
+        }
 
         GameManager.UserData.Profile.IconIndex.onValueChanged += OnProfileImageUpdated;
         OnProfileImageUpdated(0);
@@ -152,8 +156,10 @@ public class UserProfileUI : BaseUI
         GetUI<TMP_Text>("Edit Window Name Text").text = nickName;
         GetUI<TMP_Text>("Level").text = level.ToString();
         //  GetUI<TMP_Text>("Introduction").text = introduction;
-        GetUI<TMP_Text>("BestRank").text = bestRank.ToString();
-        GetUI<TMP_Text>("LastRank").text = lastRank.ToString();
+        GetUI<TMP_Text>("BestRank").text = $"최고 랭킹:{bestRank.ToString()}";
+        GetUI<TMP_Text>("LastRank").text = $"최근 랭킹:{lastRank.ToString()}";
+        GetUI<TMP_Text>("CP").text = $"총전투력:{CP.ToString()}";
+        GetUI<TMP_Text>("AcquiredCharacter").text = $"{acquiredCharacter.ToString()}/9";
     }
 
     /// <summary>
