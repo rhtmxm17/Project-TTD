@@ -32,6 +32,9 @@ public class LoginPanel : BaseUI
     [SerializeField] GameObject findPWPanel;
     [SerializeField] private TMP_InputField resetPWInputField;
     
+    // 우상단 모서리에 무슨창인지 나오는텍스트
+    [SerializeField] protected TMP_Text loginText;
+    
     void Start()
     {
         Init();
@@ -43,8 +46,14 @@ public class LoginPanel : BaseUI
         GetUI<Button>("LoginButton").onClick.AddListener(EmailLogin);
         // Email가입 버튼
         GetUI<Button>("SignUpButton").onClick.AddListener(() => Open("SignUpPanel"));
+        GetUI<Button>("SignUpCloseButton").onClick.AddListener(() => Close("SignUpPanel"));
+        
         // Email 인증 버튼
         GetUI<Button>("EmailAuthButton").onClick.AddListener(() => Open("EmailAuthPopup"));
+        
+        // 우상단 모서리 텍스트
+        loginText = GetUI<TMP_Text>("LoginText");
+        
         
        // GetUI<TMP_Text>("EmailText").text = "이메일을 입력하세요.";
        // GetUI<TMP_Text>("PwText").text = "비밀번호를 입력하세요.";
@@ -71,6 +80,9 @@ public class LoginPanel : BaseUI
         
     }
     
+    /// <summary>
+    /// 이메일 로그인 기능
+    /// </summary>
     public void EmailLogin()
     {
     
@@ -201,6 +213,9 @@ public class LoginPanel : BaseUI
     }
 
 
+    /// <summary>
+    /// 비밀번호 초기화 기능
+    /// </summary>
     public void ResetPW()
     {
         string email = resetPWInputField.text;
@@ -256,11 +271,13 @@ public class LoginPanel : BaseUI
     {
         Debug.Log($"{name} 패널을 엽니다");
         GetUI(name).SetActive(true);
+        loginText.gameObject.SetActive(false);
     }
     public void Close(string name)
     {
         Debug.Log($"{name} 패널을 닫습니다");
-        GetUI(name).SetActive(false);
+        GetUI(name).SetActive(false);;
+        loginText.gameObject.SetActive(true);
     }
     
      #region 에러관련
