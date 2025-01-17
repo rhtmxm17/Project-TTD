@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Firebase.Database;
 using System;
+using System.Collections.ObjectModel;
 
 public class UserDataManager : SingletonBehaviour<UserDataManager>
 {
@@ -16,6 +17,7 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
 
     [NonSerialized]
     List<int> haveCharacterIdxList = new List<int>();
+    public ReadOnlyCollection<int> HaveCharacterIdxList => haveCharacterIdxList.AsReadOnly();
 
     /// <summary>
     /// 캐릭터를 가지고있는지 여부 반환
