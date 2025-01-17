@@ -180,7 +180,7 @@ public class StageManager : MonoBehaviour
         while (true)
         {
             PartyCost = Math.Clamp(PartyCost + Time.deltaTime / 3, 0, MaxPartyCost);
-            costText.text = PartyCost.ToString();
+            costText.text = ((int)PartyCost).ToString();
             costSlider.value = PartyCost / MaxPartyCost;
             yield return null;
         }
@@ -190,7 +190,7 @@ public class StageManager : MonoBehaviour
     {
         PartyCost = Math.Clamp(PartyCost + amount, 0, MaxPartyCost);
         costSlider.value = PartyCost / MaxPartyCost;
-        costText.text = PartyCost.ToString();
+        costText.text = ((int)PartyCost).ToString();
     }
     public void UsePartyCost(float cost)
     {
@@ -202,7 +202,7 @@ public class StageManager : MonoBehaviour
 
         PartyCost -= cost;
         costSlider.value = PartyCost / MaxPartyCost;
-        costText.text = PartyCost.ToString();
+        costText.text = ((int)PartyCost).ToString();
     }
 
     void AddWaveText()
@@ -413,7 +413,7 @@ public class StageManager : MonoBehaviour
         StartCoroutine(StartPartyCostCO());
 
         costSlider.value = 0;
-        costText.text = PartyCost.ToString();
+        costText.text = ((int)PartyCost).ToString();
 
         StartCoroutine(FirstWaveSetCO());
 

@@ -164,6 +164,11 @@ public class Combatable : MonoBehaviour
         characterModel.transform.RotateAround(this.transform.position, this.transform.right, 90f); // xz 평면에 놓이도록 조정
         CharacterSizeRadius = characterModel.ModelSize;
         characterModel.name = "Model";
+        if (characterModel.HpBarYOffset > 0)
+        {
+            hpSlider.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, characterModel.HpBarYOffset);
+        }
+
         if (false == characterModel.TryGetComponent(out Animator animator))
         {
             animator = characterModel.GetComponentInChildren<Animator>();

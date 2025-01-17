@@ -9,4 +9,7 @@ public class CharacterModel : MonoBehaviour
 
     [field: SerializeField]
     public float ModelSize { get; private set; } = 2f;
+
+    [field: SerializeField]
+    public float HpBarYOffset { get; private set; } = -1;
 }

@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Firebase.Auth;
+using Firebase.Database;
+using Firebase.Extensions;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -10,23 +13,27 @@ using UnityEngine.Events;
 public class UserProfileUI : BaseUI
 {
     [SerializeField] OutskirtsUI outskirtsUI;
+    
+    FirebaseAuth auth = BackendManager.Auth;
 
     // 가져오고 써야할 데이터들
-   private string nickName; // 닉네임
-   private int iconIndex;   // 아이콘 인덱스
-   private int UID; // UID?
-   private int level; // 레벨
-   private int CP; // 전투력 합계
-   private string introduction; // 자기소개문구
-   private int acquiredCharacter; // 캐릭터 보유 수
-   private string stage; // 스테이지 클리어 진도
-   private int lastRank; // 이전 레이드 순위
-   private int bestRank; // 역대 최고 랭킹
+    private string nickName; // 닉네임
+    private int iconIndex;   // 아이콘 인덱스
+    private int UID; // UID?
+    private int level; // 레벨
+    private float CP; // 전투력 합계
+    private string introduction; // 자기소개문구
+    private int acquiredCharacter; // 캐릭터 보유 수
+    private int clearStage; // 스테이지 클리어 진도
+    private int clearchapter; // 스테이지 클리어 진도
+    private string clearStory; // 스테이지 클리어 진도
+    private int lastRank; // 이전 레이드 순위
+    private int bestRank; // 역대 최고 랭킹
 
     public UnityEvent OnChangeProfile;
    
-   // (임시) 아이콘 설정용 이미지
-   [SerializeField] Sprite[] iconSprites;
+    // (임시) 아이콘 설정용 이미지
+    [SerializeField] Sprite[] iconSprites;
     
     private void Start()
     {
@@ -50,6 +57,7 @@ public class UserProfileUI : BaseUI
         {
             // 여기서 기존의 데이터를 불러오도록
             LoadData();
+            changeStageText();
             // 불러온 데이터 UI 적용
             SetUI();
         }
@@ -61,12 +69,10 @@ public class UserProfileUI : BaseUI
         GameManager.UserData.Profile.IconIndex.onValueChanged -= OnProfileImageUpdated;
     }
 
-    /*private void OnEnable()
+    private void OnEnable()
     {
-        // 데이터 변동이 있을때 데이터를 새로 갱신 
-        // FIXME: 다른 데이터의 갱신이 없어서 이게 되는지 안되는지도 잘 모르겠음...이벤트 시스템을 잘 못써서...
-        OnChangeProfile.AddListener(LoadData);
-    }*/
+        LoadData();
+    }
 
     /// <summary>
     /// UI 바인딩
@@ -110,9 +116,44 @@ public class UserProfileUI : BaseUI
         // TODO: 불러올 데이터가 null 인경우에 대한 예외처리 필요
         
         // 데이터 불러오기
-        nickName = GameManager.UserData.Profile.Name.Value;
-        level = GameManager.UserData.Profile.Level.Value;
-        introduction = GameManager.UserData.Profile.Introduction.Value;
+        nickName = GameManager.UserData.Profile.Name.Value;             // 닉네임
+        level = GameManager.UserData.Profile.Level.Value;               // 레벨
+        introduction = GameManager.UserData.Profile.Introduction.Value; // 자기소개(사용안함)
+        
+        // 클리어 정보
+        // 일일던전
+        // 스토리던
+        for (int i = 1; i < 300; i++)
+        {
+            if (GameManager.TableData.GetStageData(i).ClearCount.Value == 0)
+            {
+              break;
+            }
+            clearStage = i;
+        }
+        // 스토리 진행도
+        for (int i = 10001; i < 10100; i++)
+        {
+            if (GameManager.TableData.GetStageData(i).ClearCount.Value == 0)
+            {
+                break;
+            }
+
+            clearStory = GameManager.TableData.GetStageData(i).name;
+        }
+        
+        // 레이드 정보
+        lastRank = GameManager.UserData.Profile.Rank.Value;              // 마지막 랭킹
+        bestRank = GameManager.UserData.Profile.Rank.Value;              // 최고 랭킹
+        
+        // 보유 캐릭터
+        acquiredCharacter = GameManager.UserData.HaveCharacterIdxList.Count;  // 획득 캐릭터 수 acquired
+        // 총 전투력 cp
+        for (int i = 0; i < acquiredCharacter; i++)
+        {
+            // 수치 맞는지 확인 필요..ㅠㅠ
+            CP += GameManager.TableData.GetCharacterData(GameManager.UserData.HaveCharacterIdxList[i]).PowerLevel;
+        }
 
         GameManager.UserData.Profile.IconIndex.onValueChanged += OnProfileImageUpdated;
         OnProfileImageUpdated(0);
@@ -134,7 +175,16 @@ public class UserProfileUI : BaseUI
         GetUI<TMP_Text>("Nickname").text = nickName;
         GetUI<TMP_Text>("Edit Window Name Text").text = nickName;
         GetUI<TMP_Text>("Level").text = level.ToString();
-        GetUI<TMP_Text>("Introduction").text = introduction;
+        //  GetUI<TMP_Text>("Introduction").text = introduction;
+        GetUI<TMP_Text>("ClearStage").text = $"클리어 스테이지:{clearchapter.ToString()}-{clearStage.ToString()}";
+        GetUI<TMP_Text>("ClearStory").text = $"클리어 스토리:{clearStory}";
+        if(clearStory==null) GetUI<TMP_Text>("ClearStory").text = $"클리어 스토리:기록없음";
+        GetUI<TMP_Text>("BestRank").text = $"최고 랭킹:{bestRank.ToString()}";
+        if(bestRank == 999) GetUI<TMP_Text>("BestRank").text = $"랭킹없음";
+        GetUI<TMP_Text>("LastRank").text = $"최근 랭킹:{lastRank.ToString()}";
+        if(lastRank == 999) GetUI<TMP_Text>("LastRank").text = $"랭킹없음";
+        GetUI<TMP_Text>("CP").text = $"총전투력:{CP.ToString()}";
+        GetUI<TMP_Text>("AcquiredCharacter").text = $"{acquiredCharacter.ToString()}/9";
     }
 
     /// <summary>
@@ -198,9 +248,11 @@ public class UserProfileUI : BaseUI
         GetUI(_name).SetActive(false);
     }
     
-    // 프로필 아이콘& 대표캐릭터 변경
-    private void SetMainCharacter()
+    // 스테이지 변환
+    private void changeStageText()
     {
-        
+        clearchapter =clearStage/ 10;
+        clearchapter += 1;
+        clearStage %=10;
     }
 }

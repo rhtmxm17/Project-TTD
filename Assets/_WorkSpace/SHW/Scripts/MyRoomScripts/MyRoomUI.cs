@@ -19,6 +19,8 @@ public class MyRoomUI : BaseUI
     [SerializeField] TMP_Text roomName;
     // 캐릭터 상호작용
     [SerializeField] CharacterInteract characterInteract;
+    // 채팅창 내방 확인용
+    [SerializeField] DialogueUI dialogueUI;
 
     private void Start()
     {
@@ -134,7 +136,8 @@ public class MyRoomUI : BaseUI
         GetUI("TimerBox").SetActive(true);
         GetUI("SpawnerButton").SetActive(true);
         GetUI("ReturnMyRoomButton").SetActive(false);
-        // GetUI("Dictionary").SetActive(true);
+        // 채팅용
+        dialogueUI.isMyroom = true;
         // 뒤로가기 버튼 비활성
         outskirtsUI.ReturnButton.enabled = true;
         // 캐릭터 상호작용 되돌리기

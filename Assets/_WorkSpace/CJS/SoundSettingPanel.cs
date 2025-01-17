@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -15,6 +16,9 @@ public class SoundSettingPanel : MonoBehaviour
     [SerializeField] Toggle masterMuteToggle;
     [SerializeField] Toggle bgmMuteToggle;
     [SerializeField] Toggle sfxMuteToggle;
+    [SerializeField] TMP_Text masterSoundText;
+    [SerializeField] TMP_Text bgmSoundText;
+    [SerializeField] TMP_Text sfxSoundText;
 
     private AudioGroup targetGroup;
     private bool valueChanged = false;
@@ -29,14 +33,32 @@ public class SoundSettingPanel : MonoBehaviour
         masterSlider.value = GameManager.Sound.GetMixerScale(AudioGroup.MASTER) * 100f;
         bgmSlider.value = GameManager.Sound.GetMixerScale(AudioGroup.BGM) * 100f;
         sfxSlider.value = GameManager.Sound.GetMixerScale(AudioGroup.SFX) * 100f;
+        masterSoundText.text = ((int)masterSlider.value).ToString();
+        bgmSoundText.text = ((int)bgmSlider.value).ToString();
+        sfxSoundText.text = ((int)sfxSlider.value).ToString();
 
         masterMuteToggle.isOn = GameManager.Sound.GetMute(AudioGroup.MASTER);
         bgmMuteToggle.isOn = GameManager.Sound.GetMute(AudioGroup.BGM);
         sfxMuteToggle.isOn = GameManager.Sound.GetMute(AudioGroup.SFX);
 
-        masterSlider.onValueChanged.AddListener(value => { valueChanged = true; targetGroup = AudioGroup.MASTER; });
-        bgmSlider.onValueChanged.AddListener(value => { valueChanged = true; targetGroup = AudioGroup.BGM; });
-        sfxSlider.onValueChanged.AddListener(value => { valueChanged = true; targetGroup = AudioGroup.SFX; });
+        masterSlider.onValueChanged.AddListener(value =>
+        {
+            valueChanged = true;
+            targetGroup = AudioGroup.MASTER;
+            masterSoundText.text = ((int)value).ToString();
+        });
+        bgmSlider.onValueChanged.AddListener(value =>
+        {
+            valueChanged = true;
+            targetGroup = AudioGroup.BGM;
+            bgmSoundText.text = ((int)value).ToString();
+        });
+        sfxSlider.onValueChanged.AddListener(value => 
+        {
+            valueChanged = true;
+            targetGroup = AudioGroup.SFX;
+            sfxSoundText.text = ((int)value).ToString();
+        });
 
         masterMuteToggle.onValueChanged.AddListener(value => GameManager.Sound.SetMute(AudioGroup.MASTER, value));
         bgmMuteToggle.onValueChanged.AddListener(value => GameManager.Sound.SetMute(AudioGroup.BGM, value));

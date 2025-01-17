@@ -35,6 +35,7 @@ public class MyroomInitializer : MonoBehaviour
     public void InitRoom(string destUid)
     {
         dialogueUI.SetCurVisitUID(destUid);
+        dialogueUI.isMyroom = false;
 
         UserDataManager.Instance.GetOtherUserProfileAsync(destUid, (profile) =>
         {
