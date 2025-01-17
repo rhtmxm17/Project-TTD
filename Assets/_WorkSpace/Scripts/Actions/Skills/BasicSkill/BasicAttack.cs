@@ -25,7 +25,7 @@ public class BasicAttack : Skill
     {
         yield return waitPreDelay;
 
-        Debug.Log("<color=red>공격 나감!</color>");
+        self.PlayAttckSnd();
 
         // 실제로 공격이 적용되는 구간
         if (target != null && target.IsAlive)

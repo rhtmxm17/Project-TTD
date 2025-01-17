@@ -2267,6 +2267,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8074729010155407273, guid: 1e8894e6d1868884e8cb127a80b75318,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8757926611598679846, guid: 1e8894e6d1868884e8cb127a80b75318,
         type: 3}
       propertyPath: m_Name
@@ -2626,6 +2631,7 @@ GameObject:
   - component: {fileID: 1944650728}
   - component: {fileID: 1944650726}
   - component: {fileID: 1944650727}
+  - component: {fileID: 1944650729}
   m_Layer: 0
   m_Name: StageManager
   m_TagString: GameController
@@ -2705,6 +2711,20 @@ MonoBehaviour:
   costSlider: {fileID: 1860170010}
   wavesText: {fileID: 1860170008}
   leftTimeBar: {fileID: 1860170007}
+--- !u!114 &1944650729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1944650723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44f2806551de2eb4abba221e876e0e6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damagedParticle: {fileID: 1973670758879344316, guid: 3f8d0e328523f59429cc1cf4304ebf7b,
+    type: 3}
 --- !u!1001 &1961403690
 PrefabInstance:
   m_ObjectHideFlags: 0

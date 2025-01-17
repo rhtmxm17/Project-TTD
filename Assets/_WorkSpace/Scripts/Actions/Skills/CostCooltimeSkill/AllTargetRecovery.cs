@@ -31,7 +31,8 @@ public class AllTargetRecovery : Skill
     protected override IEnumerator SkillRoutineImplement(Combatable self, Combatable target)
     {
         yield return waitPreDelay;
-        Debug.Log("<color=red>공격 나감!</color>");
+
+        self.PlayAttckSnd();
 
         float healAmount = self.CurAttackPoint * healMultiplier / duaringSec;
 
@@ -51,7 +52,7 @@ public class AllTargetRecovery : Skill
 
         for (int i = 0; i < duaringSec; i++)
         {
-            target.Healed(healAmountPerTic);
+            target.HealedByRecovery(healAmountPerTic);
             yield return ticDelay;
         }
     }

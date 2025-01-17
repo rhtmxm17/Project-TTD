@@ -16,6 +16,7 @@ public class StageManager : MonoBehaviour
     public float PartyCost { get; private set; } = 0;
     public bool IsInChangeWave { get; private set; } = true;
     public DamageDisplayer DamageDisplayer { get; private set; }
+    public DamagedEffect DamagedEffectDisplayer { get; private set; }
 
     [SerializeField] protected StageData stageData;
     public StageData stageDataOnLoad { get; protected set; }
@@ -92,6 +93,7 @@ public class StageManager : MonoBehaviour
         {
             Instance = this;
             DamageDisplayer = GetComponent<DamageDisplayer>();
+            DamagedEffectDisplayer = GetComponent<DamagedEffect>();
         }
         else
             Destroy(gameObject);

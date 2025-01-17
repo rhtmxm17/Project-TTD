@@ -35,6 +35,8 @@ public class CharacterCombatable : Combatable
     Image levelupSkillBtnImg;
     Image secondSkillBtnImg;
 
+    AudioClip attackAudioSnd;
+
     protected override void Awake()
     {
         base.Awake();
@@ -99,6 +101,7 @@ public class CharacterCombatable : Combatable
 
                 levelupSkillBtnImg.sprite = characterModel.GetComponent<CharacterIcon>().skillIcon;
                 secondSkillBtnImg.sprite = characterModel.GetComponent<CharacterIcon>().skillIcon;
+                attackAudioSnd = characterModel.GetComponent<AttackSnd>().AttackSound;
 
                 LevelUp();
 
@@ -111,6 +114,9 @@ public class CharacterCombatable : Combatable
         onDeadEvent.AddListener(basicSkillButton.OffSkillButton);
         onDeadEvent.AddListener(secondSkillButton.OffSkillButton);
         onDeadEvent.AddListener(levelupButton.OffSkillButtonOnDead);
+
+        //공격 사운드 지정.
+        attackAudioSnd = characterModel.GetComponent<AttackSnd>().AttackSound;
 
         stageLevel.Subscribe((x) => {
 
@@ -155,10 +161,7 @@ public class CharacterCombatable : Combatable
         {
             UnitAnimator.SetBool("StartWithIdle", true);
         }
-        /*else
-        {
-            PlayAnimation("Walk");
-        }*/
+
         characterModel.transform.rotation = Quaternion.Euler(-90, -90, -90);
     }
 
@@ -221,6 +224,11 @@ public class CharacterCombatable : Combatable
             attackPoint.Value += levelIncreasement[stageLevel.Value].atkIncrease;
             defense.Value += levelIncreasement[stageLevel.Value].defIncrease;
         }
+    }
+
+    public override void PlayAttckSnd()
+    {
+        GameManager.Sound.PlaySFX(attackAudioSnd);
     }
 
 }

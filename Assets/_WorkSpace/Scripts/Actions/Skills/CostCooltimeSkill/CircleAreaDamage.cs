@@ -29,7 +29,8 @@ public class CircleAreaDamage : Skill
         Vector3 pos = target.transform.position;
 
         yield return waitPreDelay;
-        Debug.Log("<color=red>공격 나감!</color>");
+
+        self.PlayAttckSnd();
 
         if (target != null)
             pos = target.transform.position;
