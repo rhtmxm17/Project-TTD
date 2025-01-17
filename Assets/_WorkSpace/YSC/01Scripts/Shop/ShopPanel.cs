@@ -22,7 +22,7 @@ public class ShopPanel : BaseUI
     // [SerializeField] SimpleInfoPopup shopPopupPrefab;
 
     // 상점이름, 추후에 상점종류많아지면 열고 닫을때 교체
-    [SerializeField] TMP_Text shopNameText;
+  //  [SerializeField] TMP_Text shopNameText;
 
     [Header("현제 상점 표시관련")]
     [SerializeField] Button tabButton;
@@ -50,7 +50,7 @@ public class ShopPanel : BaseUI
     private void Init()
     {
         // 상점이름
-        shopNameText = GetUI<TMP_Text>("ShopNameText");
+       // shopNameText = GetUI<TMP_Text>("ShopNameText");
 
         // 상점템 리스트 갱신
         ListUpItems();

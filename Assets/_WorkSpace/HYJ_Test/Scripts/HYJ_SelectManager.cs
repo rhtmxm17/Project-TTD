@@ -27,6 +27,7 @@ public class HYJ_SelectManager : MonoBehaviour
     [SerializeField] GameObject UnitChangeUI; // 유닛 변경 확인 팝업 -> 변경하시겠습니까?
     [SerializeField] private TMP_Text userAndStagePower;    
     
+    
     // 키 값은 위치 / 밸류 값은 유닛 고유번호;
     public Dictionary<int, int> battleInfo = new Dictionary<int, int>();
 
@@ -73,12 +74,14 @@ public class HYJ_SelectManager : MonoBehaviour
             var obj = Instantiate(batchButtonPrefab, batchWindow);
             buttonsTransformList.Add(obj.transform);
             obj.InitDataPosBtn(i, CharacterSelectPanel, CantPosUI);
-
+            
             foreach (StageData.BuffInfo checkBuff in curStageBuff)
             {
                 if (checkBuff.tileIndex == i)
                 {
                     obj.GetComponent<HYJ_BtnBuff>().BuffInput(checkBuff.type);
+                  //  SetBuffEffect(checkBuff.type);
+                    
                 }
             }
         }
@@ -225,4 +228,7 @@ public class HYJ_SelectManager : MonoBehaviour
         
         userAndStagePower.text = batchUnitsPower+ "/" + stagePower;
     }
+    
+    
+    
 }

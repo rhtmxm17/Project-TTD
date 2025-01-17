@@ -9,6 +9,7 @@ using UnityEngine.UI;
 
 public class CharacterInfoController : BaseUI
 {
+    public Camera _renderCamera;
     public GameObject ModelParent;
     public List<Sprite> TokenIcons;
     
@@ -37,7 +38,11 @@ public class CharacterInfoController : BaseUI
     [HideInInspector] public int CurIndex = 0;
     private int _evolutionIndex;
     
-    private List<int> _holdingCharactersIndex = new List<int>();
+    private (Vector3, float) _evolutionRender;
+    private Vector3 _dulkPos = new Vector3(0.3f, 1.6f, -10f);
+    private Vector3 _nepewPos = new Vector3(0.3f, 2f, -10f);
+    private Vector3 _sunnyPos = new Vector3(0, 1.5f, -10f);
+    private Vector3 _commonPos = new Vector3(0, 1f, -10f);
 
     private CharacterInfoPopup _characterInfoPopupCs;
     private CharacterSort _characterSort;
@@ -131,6 +136,7 @@ public class CharacterInfoController : BaseUI
     }
     
     private GridLayoutGroup _gridLayout;
+    private Scrollbar _verticalBar;
     
     protected override void Awake()
     {
@@ -138,21 +144,10 @@ public class CharacterInfoController : BaseUI
         Init();
         ButtonOnClickEvent();
         GetUserMaterials();
-        RatiPaddingModify(); 
-    }
-
-    private void RatiPaddingModify()
-    {
-        float ratio = (float)Screen.width / Screen.height;
-        _gridLayout.padding.left = (Mathf.Floor(ratio * 10f) / 10f) switch
-        {
-            2.4f => 180,
-            2.7f => 165,
-            1.7f => 125,
-            _ => 50
-        };
-    }
-
+        RatioPaddingModify();
+        SetVerticalScrollbar();
+    } 
+    
     private void OnEnable()
     { 
         UpdateCharacterList(); 
@@ -166,6 +161,7 @@ public class CharacterInfoController : BaseUI
         _infoPopup = GetUI("InfoPopup");
         _characterUIPanel = GetUI("CharacterUIPanel");
 
+        _verticalBar = GetUI<Scrollbar>("Scrollbar Vertical");
         _gridLayout = GetUI<GridLayoutGroup>("Content");
         
         //Sort, Filter GetBind
@@ -193,7 +189,24 @@ public class CharacterInfoController : BaseUI
         DragonVeinFilterText = GetUI<TextMeshProUGUI>("DragonVeinFilterText");
         
     }
-
+ 
+    private void SetVerticalScrollbar()
+    {
+        _verticalBar.value = 10;
+    }
+    
+    private void RatioPaddingModify()
+    {
+        float ratio = (float)Screen.width / Screen.height;
+        _gridLayout.padding.left = (Mathf.Floor(ratio * 10f) / 10f) switch
+        {
+            2.4f => 180,
+            2.7f => 165,
+            1.7f => 125,
+            _ => 50
+        };
+    }
+    
     /// <summary>
     /// 현재 유저가 보유한 골드 가져옴
     /// </summary>
@@ -214,15 +227,57 @@ public class CharacterInfoController : BaseUI
         _rightEvolutionButton.onClick.AddListener(EvolutionNextCharacter);
         _prevButton.onClick.AddListener(DetailPreviousCharacter);
         _nextButton.onClick.AddListener(DetailNextCharacter);
-        _sortButton.onClick.AddListener(() => _characterSort.transform.GetChild(0).gameObject.SetActive(true));
+        _sortButton.onClick.AddListener(() =>
+        {
+            _characterSort.transform.GetChild(0).gameObject.SetActive(true);
+            
+            _characterFilter.transform.GetChild(0).gameObject.SetActive(false);
+            _characterFilter.transform.GetChild(1).gameObject.SetActive(false);
+            _characterFilter.transform.GetChild(2).gameObject.SetActive(false);
+        });
+        
         _sortingButton.onClick.AddListener(()=> _characterSort.SortingLayerEvent());
         
-        _elementFilterButton.onClick.AddListener(() => _characterFilter.transform.GetChild(0).gameObject.SetActive(true));
-        _roleFilterButton.onClick.AddListener(() => _characterFilter.transform.GetChild(1).gameObject.SetActive(true));
-        _dragonVeinFilterButton.onClick.AddListener(() =>_characterFilter.transform.GetChild(2).gameObject.SetActive(true));
+        _elementFilterButton.onClick.AddListener(() =>
+        {
+            _characterFilter.transform.GetChild(0).gameObject.SetActive(true);
+
+            _characterSort.transform.GetChild(0).gameObject.SetActive(false);
+            _characterFilter.transform.GetChild(1).gameObject.SetActive(false);
+            _characterFilter.transform.GetChild(2).gameObject.SetActive(false);
+        });
+        
+        _roleFilterButton.onClick.AddListener(() =>
+        {
+            _characterFilter.transform.GetChild(1).gameObject.SetActive(true);
+            
+            _characterSort.transform.GetChild(0).gameObject.SetActive(false);
+            _characterFilter.transform.GetChild(0).gameObject.SetActive(false);
+            _characterFilter.transform.GetChild(2).gameObject.SetActive(false);
+        });
+        
+        _dragonVeinFilterButton.onClick.AddListener(() =>
+        {
+            _characterFilter.transform.GetChild(2).gameObject.SetActive(true);
+            
+            _characterSort.transform.GetChild(0).gameObject.SetActive(false);
+            _characterFilter.transform.GetChild(0).gameObject.SetActive(false);
+            _characterFilter.transform.GetChild(1).gameObject.SetActive(false);
+        });
 
     }
-
+    
+    /// <summary>
+    /// 열려있는 팝업 모두 종료
+    /// </summary>
+    public void PopupAllClose()
+    {
+        _characterSort.transform.GetChild(0).gameObject.SetActive(false);
+        _characterFilter.transform.GetChild(0).gameObject.SetActive(false);
+        _characterFilter.transform.GetChild(1).gameObject.SetActive(false);
+        _characterFilter.transform.GetChild(2).gameObject.SetActive(false);
+    }
+    
     /// <summary>
     /// 보유 캐릭터 리스트 업데이트
     /// </summary>
@@ -322,8 +377,21 @@ public class CharacterInfoController : BaseUI
         }
         
         CurCharacterInfo.CharacterModels[_characterInfoPopupCs.ListIndex].gameObject.SetActive(_curInfoTabType.Equals(InfoTabType.EVOLUTION));
+        
         _evolutionIndex = 0;
+        
         _characterInfoPopupCs.ListIndex = _evolutionIndex;
+        
+        _evolutionRender = CurCharacterInfo._CharacterData.Name switch
+        {
+            "덜크" => (_dulkPos, 20f),
+            "네퓨" => (_nepewPos, 28f),
+            "하트핑" =>  (_sunnyPos, 20f),
+            "써니" => (_sunnyPos, 20f),
+            _ => (_commonPos, 13f)
+        };
+
+        RenderCamera(_evolutionRender.Item1, _evolutionRender.Item2); 
         EvolutionCharacterUI();
         
         //강화 탭 등록한 토큰 개수 UI
@@ -376,7 +444,7 @@ public class CharacterInfoController : BaseUI
         
         EvolutionCharacterUI();
     }
-    
+
     /// <summary>
     /// 진화 캐릭터 노출 조건
     /// </summary>
@@ -385,6 +453,12 @@ public class CharacterInfoController : BaseUI
         _leftEvolutionButton.gameObject.SetActive(_evolutionIndex != 0);
         _rightEvolutionButton.gameObject.SetActive(_evolutionIndex != CurCharacterInfo.CharacterModels.Count - 1);
         _evolutionText.text = $"진화 Lv.{_evolutionIndex + 1}";
+    }
+
+    private void RenderCamera(Vector3 pos, float angle)
+    {
+        _renderCamera.transform.position = pos;
+        _renderCamera.fieldOfView = angle;
     }
     
 }

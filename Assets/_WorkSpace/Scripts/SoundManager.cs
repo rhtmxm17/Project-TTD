@@ -34,8 +34,7 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     {
         // 음량 기본값 설정
         // 플레이어 로컬 설정 파일을 만든다면 여기서 입력
-        UserSettingData.Instance.LoadSetting();
-
+        Debug.Log($"불러온 설정 정보에서 사운드 초기화");
         UpdateMixer(AudioGroup.MASTER);
         UpdateMixer(AudioGroup.BGM);
         UpdateMixer(AudioGroup.SFX);

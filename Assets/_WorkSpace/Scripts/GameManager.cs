@@ -50,6 +50,13 @@ public class GameManager : SingletonBehaviour<GameManager>
         RegisterSingleton(this);
         DontDestroyOnLoad(this);
         Input = GetComponent<PlayerInput>();
+
+        Debug.Log($"설정 정보 불러오기");
+        UserSettingData.Instance.LoadSetting();
+
+        Debug.Log($"불러온 설정 정보로 그래픽 설정");
+        QualitySettings.SetQualityLevel(UserSettingData.Instance.Data.graphicQualityLevel);
+        Debug.Log($"GetQualityLevel: {QualitySettings.GetQualityLevel()}");
     }
 
     #region 짧은 로딩

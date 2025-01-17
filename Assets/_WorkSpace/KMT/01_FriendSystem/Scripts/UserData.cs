@@ -7,4 +7,6 @@ public static class UserData
     public static string myUid => BackendManager.CurrentUserDataRef.Key;
     public static string myNickname => GameManager.UserData.Profile.Name.Value;
 
+    public static long connectedDayCount = -1;
+
 }

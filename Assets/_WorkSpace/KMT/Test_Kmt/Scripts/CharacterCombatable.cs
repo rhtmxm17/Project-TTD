@@ -58,6 +58,7 @@ public class CharacterCombatable : Combatable
             if (!basicSkillButton.Interactable || !IsAlive) { Debug.Log("사용 불가");  return; }
             if (!OnSkillCommanded(characterData.SkillDataSO, 1)) { Debug.Log("스킬 타깃이 없음.  또는 더 큰 우선순위의 행동중, 또는 전투중이 아님  사용 취소"); basicSkillButton.DisplayNonTargetText(); return; }
             basicSkillButton.StartCoolDown(characterData.StatusTable.BasicSkillCooldown);//쿨타임을 매개변수로 전달.
+            PlayAnimation("Attack");
         });
 
         secondSkillButton.transform.GetChild(0).GetComponent<Image>().sprite = characterData.SpecialSkillIcon;
@@ -68,6 +69,7 @@ public class CharacterCombatable : Combatable
             if (!secondSkillButton.LevelArrived) { Debug.Log("만랩이 아님, 사용 불가"); return; }
             if (!OnSkillCommanded(characterData.SecondSkillDataSO, 3)) { Debug.Log("스킬 타깃이 없음. 또는 더 큰 우선순위의 행동중, 또는 전투중이 아님  사용 취소"); return; }
                 secondSkillButton.StartCoolDown();
+                PlayAnimation("Attack");
         });
 
         characterModel.transform.localRotation = Quaternion.Euler(new Vector3(-90, -90, -90));

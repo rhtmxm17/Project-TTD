@@ -53,6 +53,7 @@ public class DailyBonus : MonoBehaviour
 
 
         updateChain.SetDBValue<object>("friends/visitedList", null);
+        updateChain.SetDBValue("PlayData/DayCount", UserData.connectedDayCount);
 
         updateChain
             .Submit((result) =>

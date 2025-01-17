@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Firebase.Database;
 using System;
+using System.Collections.ObjectModel;
 
 public class UserDataManager : SingletonBehaviour<UserDataManager>
 {
@@ -16,6 +17,7 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
 
     [NonSerialized]
     List<int> haveCharacterIdxList = new List<int>();
+    public ReadOnlyCollection<int> HaveCharacterIdxList => haveCharacterIdxList.AsReadOnly();
 
     /// <summary>
     /// 캐릭터를 가지고있는지 여부 반환
@@ -168,6 +170,7 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
     public class GamePlayData
     {
         public const int MaxRoomIndex = 5;
+        public const int MaxTutorialDone = 5;
 
         public UserDataDateTime EggGainTimestamp { get; private set; } = new UserDataDateTime("PlayData/EggGainTimestamp");
         public UserDataDateTime IdleRewardTimestamp { get; private set; } = new UserDataDateTime("PlayData/IdleRewardTimestamp");
@@ -181,11 +184,21 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
 
         public List<UserDataInt> HasRoom = new List<UserDataInt>(MaxRoomIndex);
 
+        /// <summary>
+        /// 각 번호의 튜토리얼 완료 여부
+        /// </summary>
+        public List<UserDataInt> TutorialDone = new List<UserDataInt>(MaxRoomIndex);
+
         public GamePlayData()
         {
             for (int i = 0; i < MaxRoomIndex; i++)
             {
                 HasRoom.Add(new UserDataInt($"PlayData/HasRoom/{i}"));
+            }
+
+            for (int i = 0; i < MaxRoomIndex; i++)
+            {
+                TutorialDone.Add(new UserDataInt($"PlayData/TutorialDone/{i}"));
             }
         }
     }

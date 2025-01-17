@@ -13,10 +13,24 @@ public class AllTargetAttackBuff : Skill
     float atkRate;
     [SerializeField]
     float duringTime;
+    [SerializeField, Tooltip("선딜레이")] float preDelay = 0.25f;
+    [SerializeField, Tooltip("후딜레이")] float postDelay = 0.75f;
+
+    // 캐싱 데이터
+    private WaitForSeconds waitPreDelay;
+    private WaitForSeconds waitPostDelay;
+
+    private void OnEnable()
+    {
+        // 런타임 진입시 필요한 데이터 캐싱
+        waitPreDelay = new WaitForSeconds(preDelay);
+        waitPostDelay = new WaitForSeconds(postDelay);
+    }
 
     protected override IEnumerator SkillRoutineImplement(Combatable self, Combatable target)
     {
-        yield return null;
+        yield return waitPreDelay;
+        Debug.Log("<color=red>공격 나감!</color>");
 
         foreach (Combatable friendlyTarget in self.Group.CharList)
         {
@@ -25,6 +39,8 @@ public class AllTargetAttackBuff : Skill
                 friendlyTarget.StartCoroutine(StartBufftimeCO(friendlyTarget, (int)(atkRate * self.CurAttackPoint)));
             }
         }
+
+        yield return waitPostDelay;
 
     }
 

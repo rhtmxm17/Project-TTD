@@ -26,9 +26,10 @@ public class SingleTargetDamage : Skill
     protected override IEnumerator SkillRoutineImplement(Combatable self, Combatable target)
     {
         yield return waitPreDelay;
-        
+        Debug.Log("<color=red>공격 나감!</color>");
+
         // 실제로 공격이 적용되는 구간
-        if(target != null && target.IsAlive)
+        if (target != null && target.IsAlive)
             target.Damaged(self.CurAttackPoint * atkMultiplier, self.igDefenseRate, self.characterData.StatusTable.type); // 타겟에게 데미지 적용
         
         // 히트스캔 이펙트 추가

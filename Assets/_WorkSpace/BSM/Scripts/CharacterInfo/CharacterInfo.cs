@@ -18,9 +18,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private CharacterModel levelOne;
     private CharacterModel levelTwo;
     private CharacterModel levelThree;
-    private Vector3 modelPos = new Vector3(0f, -1f, 1f);
-    
-    private TextMeshProUGUI _characterTypeText;
+
+    private TextMeshProUGUI _characterLevelText;
     private TextMeshProUGUI _characterListNameText;
     private Image _characterListImage;
     
@@ -29,29 +28,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     private int _characterLevel = 1;
 
     private int _hp;
-
-    public int Hp
-    {
-        get => _hp;
-        set { _hp = value; }
-    }
-
     private int _atk;
-
-    public int Atk
-    {
-        get => _atk;
-        set { _atk = value; }
-    }
-
     private int _def;
-
-    public int Def
-    {
-        get => _def;
-        set { _def = value; }
-    }
-
     private int _powerLevel;
 
     public int PowerLevel
@@ -82,6 +60,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         set { _characterData = value; }
     }
 
+    private Coroutine _levelUpNormalEffectCo;
+    private Coroutine _levelUpSpecialEffectCo;
     private CharacterEnhance _characterEnhance;
     
     private int _characterLevelUpGoldCost;
@@ -134,9 +114,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             .SetDBValue(_characterInfoController.UserYongGwaData, _characterInfoController.UserYongGwaData.Value - _characterLevelUpYongGwaCost)
             .Submit(LevelUpSuccess);
     }
-
-    private Coroutine _levelUpNormalEffectCo;
-    private Coroutine _levelUpSpecialEffectCo;
+    
     /// <summary>
     /// 레벨업 결과
     /// </summary>
@@ -184,9 +162,9 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
                 _characterInfoController._infoUI._bonusPopup.SetActive(true);
                 _characterInfoController._infoUI._bonusLevelText.text = $"{_characterLevel}레벨 달성!";
 
-                int atk = (int)(((_characterData.StatusTable.attackPointBase + _characterData.StatusTable.attackPointGrowth) * _characterLevel) * (1f + 0.1f * _characterData.Enhancement.Value));
-                int def = (int)(((_characterData.StatusTable.defensePointBase + _characterData.StatusTable.defensePointGrouth) * _characterLevel) * (1f + 0.1f * _characterData.Enhancement.Value));
-                int hp = (int)(((_characterData.StatusTable.healthPointBase + _characterData.StatusTable.healthPointGrouth) * _characterLevel) * (1f + 0.1f * _characterData.Enhancement.Value));
+                int atk = (int)((_characterData.StatusTable.attackPointBase + _characterData.StatusTable.attackPointGrowth * _characterLevel) * (1f + 0.1f * _characterData.Enhancement.Value));
+                int def = (int)((_characterData.StatusTable.defensePointBase + _characterData.StatusTable.defensePointGrouth * _characterLevel) * (1f + 0.1f * _characterData.Enhancement.Value));
+                int hp = (int)((_characterData.StatusTable.healthPointBase + _characterData.StatusTable.healthPointGrouth * _characterLevel) * (1f + 0.1f * _characterData.Enhancement.Value));
                 
                 //레벨업 전 정보
                 _characterInfoController._infoUI._beforeBonusAtkText.text =
@@ -276,6 +254,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// </summary>
     private void SetInfoPopup()
     { 
+        _characterInfoController.PopupAllClose();
+        
         _characterInfoController.CurCharacterInfo = this;
         _characterInfoController.CurCharacterEnhance = _characterEnhance; 
         _characterInfoController.CurIndex = _characterInfoController._characterInfos.IndexOf(this);
@@ -293,16 +273,16 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     {
         if (_characterData.ModelPrefab != null && CharacterModels.Count == 0)
         {
-            levelOne = CreateModelPrefab(_characterData.ModelPrefab, modelPos, false);
+            levelOne = CreateModelPrefab(_characterData.ModelPrefab, _characterData.ModelPrefab.transform.position, false);
 
             if (levelOne.NextEvolveModel != null)
             {
-                levelTwo = CreateModelPrefab(levelOne.NextEvolveModel, modelPos, false);
+                levelTwo = CreateModelPrefab(levelOne.NextEvolveModel, levelOne.NextEvolveModel.transform.position, false);
             }
 
             if (levelTwo != null && levelTwo.NextEvolveModel != null)
             {
-                levelThree = CreateModelPrefab(levelTwo.NextEvolveModel, modelPos, false);
+                levelThree = CreateModelPrefab(levelTwo.NextEvolveModel, levelTwo.NextEvolveModel.transform.position, false);
             }
         }
         else if (CharacterModels != null && !CharacterModels[0].gameObject.activeSelf)
@@ -369,19 +349,23 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
  
         _characterInfoController._infoUI._skillAIconImage.sprite = _characterData.NormalSkillIcon;
         _characterInfoController._infoUI._skillBIconImage.sprite = _characterData.SpecialSkillIcon;
-
-        //TODO: 캐릭터 스킬 이름 데이터 가져오기
-        _characterInfoController._infoUI._skillNormalTitleText.text = "미정";
-        _characterInfoController._infoUI._skillSpecialTitleText.text = "미정"; 
+        
+        _characterInfoController._infoUI._skillNormalTitleText.text = _characterData.NormalSkillName;
+        _characterInfoController._infoUI._skillSpecialTitleText.text = _characterData.SpecialSkillName; 
+        
         _characterInfoController._infoUI._skillNormalDescText.text = _characterData.NormalSkillToolTip;
         _characterInfoController._infoUI._skillSpecialDescText.text = _characterData.SpecialSkillToolTip;
         
-        //TODO: 임시 텍스트 -> 속성 이미지로 변경 필요
-        ElementType tempElementType = (ElementType)_characterData.StatusTable.type;
-        RoleType tempRoleType = (RoleType)_characterData.StatusTable.roleType;
-        DragonVeinType tempDragonVeinType = (DragonVeinType)_characterData.StatusTable.dragonVeinType;
-
-        _characterInfoController._infoUI._tempElemetTypeText.text = tempElementType switch
+        //TODO: 역할군, 용맥 아이콘도 추가 필요
+        ElementType elementType = _characterData.StatusTable.type;
+        RoleType roleType = _characterData.StatusTable.roleType;
+        DragonVeinType dragonVeinType = _characterData.StatusTable.dragonVeinType;
+        
+        _characterInfoController._infoUI._elementIconImage.sprite = _characterInfoController._infoUI._elementIcons[(int)elementType - 1];
+        _characterInfoController._infoUI._roleIconImage.sprite =  _characterInfoController._infoUI._roleIcons[(int)roleType - 1];
+        _characterInfoController._infoUI._dragonVeinIconImage.sprite =  _characterInfoController._infoUI._dragonVeinIcons[(int)dragonVeinType - 1];
+        
+        _characterInfoController._infoUI._ElemetTypeText.text = elementType switch
         {
             ElementType.FIRE => "화룡",
             ElementType.WATER => "수룡",
@@ -391,7 +375,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             _ => throw new AggregateException("잘못됨")
         };
 
-        _characterInfoController._infoUI._tempRoleTypeText.text = tempRoleType switch
+        _characterInfoController._infoUI._roleTypeText.text = roleType switch
         {
             RoleType.ATTACKER => "공격형",
             RoleType.DEFENDER => "방어형",
@@ -399,7 +383,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
             _ => throw new AggregateException("잘못")
         };
 
-        _characterInfoController._infoUI._tempDragonVeinTypeText.text = tempDragonVeinType switch
+        _characterInfoController._infoUI._dragonVeinTypeText.text = dragonVeinType switch
         {
             DragonVeinType.SINGLE => "단일",
             DragonVeinType.MULTI => "범위",
@@ -478,18 +462,9 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// </summary>
     /// <param name="type"></param>
     /// <exception cref="AggregateException"></exception>
-    public void SetListTypeText(ElementType type)
+    public void SetListLevelText(int level)
     {
-        _characterTypeText.text = type switch
-        {
-            ElementType.NONE => "무속성",
-            ElementType.FIRE => "화룡",
-            ElementType.WATER => "수룡",
-            ElementType.WIND => "정룡",
-            ElementType.EARTH => "토룡",
-            ElementType.METAL => "진룡",
-            _ => throw new AggregateException("잘못된 타입")
-        };
+        _characterLevelText.text = $"Lv.{level}";
     }
     
     /// <summary>
@@ -509,8 +484,8 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     public void StartSetCharacterUI()
     { 
         _characterListImage = transform.GetChild(0).GetComponent<Image>();
-        _characterListNameText = transform.GetChild(1).GetComponent<TextMeshProUGUI>();
-        _characterTypeText = transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+        _characterListNameText = transform.GetChild(1).GetComponentInChildren<TextMeshProUGUI>();
+        _characterLevelText = transform.GetChild(2).GetComponentInChildren<TextMeshProUGUI>();
         OwnedObject = transform.GetChild(3).gameObject;
     }
 }

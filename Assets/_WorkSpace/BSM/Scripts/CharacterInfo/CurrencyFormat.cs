@@ -23,9 +23,9 @@ public static class CurrencyFormat
             {
                 int n = st.Length % 3;
         
-                n = n == 0 ? 4 : n;
+                n = n == 0 ? 3 : n;
         
-                st = st.Substring(0, n); 
+                st = $"{st.Substring(0, n)}.{st.Substring(n, 2)}"; 
                 st += symbol[i];
                 break;
             } 
