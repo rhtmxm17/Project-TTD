@@ -42,6 +42,16 @@ public class Combatable : MonoBehaviour
     [SerializeField]
     protected bool IsNoDamage = false;
 
+    [Header("Effects")]
+    [SerializeField]
+    protected ParticleSystem atkBuffEffect;
+    [SerializeField]
+    protected ParticleSystem defBuffEffect;
+    [SerializeField]
+    protected ParticleSystem healBuffEffect;
+    [SerializeField]
+    protected ParticleSystem recovBuffEffect;
+
     [Header("TestParams")]
     [SerializeField]
     public float igDefenseRate;
@@ -216,6 +226,27 @@ public class Combatable : MonoBehaviour
         healAmount = afterHp - healAmount;
         StageManager.Instance.DamageDisplayer.PlayTextDisplay(healAmount, false, transform.position + Vector3.forward * CharacterSizeRadius * 3);
 
+        healBuffEffect.Play();
+        hp.Value = afterHp;
+
+    }
+
+    public void HealedByRecovery(float amount)
+    {
+        if (!IsAlive)
+        {
+            Debug.Log("이미 죽은 대상.");
+            return;
+        }
+
+        float healAmount = hp.Value;
+
+        float afterHp = MathF.Min(MaxHp.Value, hp.Value + amount);
+
+        healAmount = afterHp - healAmount;
+        StageManager.Instance.DamageDisplayer.PlayTextDisplay(healAmount, false, transform.position + Vector3.forward * CharacterSizeRadius * 3);
+
+        recovBuffEffect.Play();
         hp.Value = afterHp;
 
     }
@@ -252,6 +283,16 @@ public class Combatable : MonoBehaviour
         {
             atkBuffAmount = Math.Max(atkBuffAmount, amount);
         }
+
+        if (atkBuffAmount != 0)
+        {
+            atkBuffEffect.gameObject.SetActive(true);
+        }
+        else
+        {
+            atkBuffEffect.gameObject.SetActive(false);
+        }
+
     }
 
     /// <summary>
@@ -277,6 +318,15 @@ public class Combatable : MonoBehaviour
         foreach (int amount in defBuffList)
         {
             defBuffAmount = Math.Max(defBuffAmount, amount);
+        }
+
+        if (defBuffAmount != 0)
+        {
+            defBuffEffect.gameObject.SetActive(true);
+        }
+        else
+        {
+            defBuffEffect.gameObject.SetActive(false);
         }
     }
 
@@ -314,6 +364,7 @@ public class Combatable : MonoBehaviour
         }
         onDamagedEvent?.Invoke(damage);
         StageManager.Instance.DamageDisplayer.PlayTextDisplay(damage, true, transform.position + Vector3.forward * CharacterSizeRadius * 3);
+        StageManager.Instance.DamagedEffectDisplayer.PlayDamagedParticle(transform.position, 0);
 
         if (hp.Value < 0)
         {
@@ -377,6 +428,11 @@ public class Combatable : MonoBehaviour
     public virtual void SetStateToMoving()
     {
     }
+
+    public virtual void PlayAttckSnd()
+    { 
+    } 
+
     public void PlayAnimation(in string animationTriggerName)
     {
         UnitAnimator.SetTrigger(animationTriggerName);

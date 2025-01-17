@@ -11,7 +11,7 @@ public class ObjectPool<T> where T : Component
     Stack<T> poolStack = new Stack<T>();
     T objPrefab = null;
 
-    public ObjectPool(T objPrefab, int count = 10)
+    public ObjectPool(T objPrefab, bool initActivate, int count = 10)
     { 
         poolStack = new Stack<T>();
         this.objPrefab = objPrefab;
@@ -19,7 +19,7 @@ public class ObjectPool<T> where T : Component
         for (int i = 0; i < count; i++)
         {
             T obj = Object.Instantiate(objPrefab);
-            obj.gameObject.SetActive(false);
+            obj.gameObject.SetActive(initActivate);
             poolStack.Push(obj);
         }
     }
@@ -48,7 +48,7 @@ public class DamageDisplayer : MonoBehaviour
     ObjectPool<DamageTextObj> textPool;
     private void Awake()
     {
-        textPool = new ObjectPool<DamageTextObj>(damageTextObjPrefab);
+        textPool = new ObjectPool<DamageTextObj>(damageTextObjPrefab, false);
     }
 
 

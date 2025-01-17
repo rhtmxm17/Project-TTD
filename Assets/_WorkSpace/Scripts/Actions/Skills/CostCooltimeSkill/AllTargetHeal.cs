@@ -26,7 +26,8 @@ public class AllTargetHeal : Skill
     protected override IEnumerator SkillRoutineImplement(Combatable self, Combatable target)
     {
         yield return waitPreDelay;
-        Debug.Log("<color=red>공격 나감!</color>");
+
+        self.PlayAttckSnd();
 
         if (self.Group != null)
         {
