@@ -8,7 +8,12 @@ public class HYJ_StageEnemyInfo : MonoBehaviour
     [SerializeField] private TMP_Text powerText;
     [SerializeField] GameObject monsterPrefab;
     private List<int> monsterList;
-    
+
+    private void Awake()
+    {
+        monsterList = new List<int>();
+    }
+
     private void Start()
     {
         InitStageData();
