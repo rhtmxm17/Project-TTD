@@ -24,7 +24,9 @@ public class UserProfileUI : BaseUI
     private float CP; // 전투력 합계
     private string introduction; // 자기소개문구
     private int acquiredCharacter; // 캐릭터 보유 수
-    private int stage; // 스테이지 클리어 진도
+    private int clearStage; // 스테이지 클리어 진도
+    private int clearchapter; // 스테이지 클리어 진도
+    private string clearStory; // 스테이지 클리어 진도
     private int lastRank; // 이전 레이드 순위
     private int bestRank; // 역대 최고 랭킹
 
@@ -55,6 +57,7 @@ public class UserProfileUI : BaseUI
         {
             // 여기서 기존의 데이터를 불러오도록
             LoadData();
+            changeStageText();
             // 불러온 데이터 UI 적용
             SetUI();
         }
@@ -120,7 +123,24 @@ public class UserProfileUI : BaseUI
         // 클리어 정보
         // 일일던전
         // 스토리던
+        for (int i = 1; i < 300; i++)
+        {
+            if (GameManager.TableData.GetStageData(i).ClearCount.Value == 0)
+            {
+              break;
+            }
+            clearStage = i;
+        }
         // 스토리 진행도
+        for (int i = 10001; i < 10100; i++)
+        {
+            if (GameManager.TableData.GetStageData(i).ClearCount.Value == 0)
+            {
+                break;
+            }
+
+            clearStory = GameManager.TableData.GetStageData(i).name;
+        }
         
         // 레이드 정보
         lastRank = GameManager.UserData.Profile.Rank.Value;              // 마지막 랭킹
@@ -156,6 +176,8 @@ public class UserProfileUI : BaseUI
         GetUI<TMP_Text>("Edit Window Name Text").text = nickName;
         GetUI<TMP_Text>("Level").text = level.ToString();
         //  GetUI<TMP_Text>("Introduction").text = introduction;
+        GetUI<TMP_Text>("ClearStage").text = $"클리어 스테이지:{clearchapter.ToString()}-{clearStage.ToString()}";
+        GetUI<TMP_Text>("ClearStory").text = $"클리어 스토리:{clearStory}";
         GetUI<TMP_Text>("BestRank").text = $"최고 랭킹:{bestRank.ToString()}";
         GetUI<TMP_Text>("LastRank").text = $"최근 랭킹:{lastRank.ToString()}";
         GetUI<TMP_Text>("CP").text = $"총전투력:{CP.ToString()}";
@@ -223,9 +245,11 @@ public class UserProfileUI : BaseUI
         GetUI(_name).SetActive(false);
     }
     
-    // 프로필 아이콘& 대표캐릭터 변경
-    private void SetMainCharacter()
+    // 스테이지 변환
+    private void changeStageText()
     {
-        
+        clearchapter =clearStage/ 10;
+        clearchapter += 1;
+        clearStage %=10;
     }
 }
