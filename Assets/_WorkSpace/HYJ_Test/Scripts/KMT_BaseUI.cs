@@ -4,13 +4,11 @@ using UnityEngine;
 
 public class KMT_BaseUI : BaseUI
 {
-
     [SerializeField] HYJ_CharacterSelect buttonPrefab;
-    [SerializeField] HYJ_ListController listController;
+    [SerializeField] HYJ_ListFilterController listController;
     Transform buttonsParent;
     HYJ_SelectManager selectManager;// 필터/&정렬용 리스트
     GameObject unitChangePanel;
-
     DatabaseReference userUidRef;
 
     private void Start()
@@ -23,8 +21,6 @@ public class KMT_BaseUI : BaseUI
         unitChangePanel = GetUI<Transform>("UnitChangePanel").gameObject;
 
         SettingMyCharacters();
-        
-        
     }
 
     private void SettingMyCharacters()
@@ -37,20 +33,15 @@ public class KMT_BaseUI : BaseUI
             }
 
             Debug.Log("가져온 보유 캐릭터 수"+task.Result.ChildrenCount);
-
             DataSnapshot snapshot = task.Result;
 
             foreach (DataSnapshot chInfo in snapshot.Children)
             {
                 HYJ_CharacterSelect button = Instantiate(buttonPrefab, buttonsParent);
                 int.TryParse(chInfo.Key, out int parsd);
-                //Debug.Log("TP" + int.TryParse(chInfo.Key,out int Parsd));
-                //int.TryParse(chInfo.ket, out int Parsd);
-                //Debug.Log(Parsd);
                 button.InitDataUnitBtn(selectManager, parsd, unitChangePanel);
             }
             listController.InitUnitsList();
         });
-        
     }
 }

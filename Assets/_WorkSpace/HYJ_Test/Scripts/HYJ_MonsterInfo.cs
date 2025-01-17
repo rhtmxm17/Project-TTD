@@ -11,57 +11,73 @@ public class HYJ_MonsterInfo : MonoBehaviour
     [SerializeField] TMP_Text levelText;
     [SerializeField] TMP_Text nameText;
 
+    /// <summary>
+    /// 몬스터 정보 초기설정
+    /// </summary>
+    /// <param name="monsterInfo"></param>
     public void InitMonsterData(StageData.MonsterInfo monsterInfo)
     {
         CharacterData.Status monsterStatus = monsterInfo.character.StatusTable;
         monsterImage.GetComponent<Image>().sprite = monsterInfo.character.FaceIconSprite;
-        SetMonsterRace(monsterStatus.type);
-        SetMonsterClass(monsterStatus.roleType);
+        SetMonsterRace(monsterStatus.type);//몬스터 속성 표기
+        SetMonsterClass(monsterStatus.roleType);//몬스터 역할군 표기
         
         levelText.text = "Lv." + monsterInfo.level.ToString();
         nameText.text = monsterInfo.character.Name;
     }
 
+    /// <summary>
+    /// 몬스터 속성 표기
+    /// </summary>
+    /// <param name="monsterElementType"></param>
     private void SetMonsterRace(ElementType monsterElementType)
     {
+        //FixMe:현재는 색상으로 표현하고있는데 다른 표현법이 생기면 변경
+        Image raceImg = raceImage.GetComponent<Image>(); 
         switch (monsterElementType.ToString())
         {
             case "NONE" :
-                raceImage.GetComponent<Image>().color = Color.white;
+                raceImg.color = Color.white;
                 break;
             case "EARTH" :
-                raceImage.GetComponent<Image>().color = Color.green;
+                raceImg.color = Color.green;
                 break;
             case "WATER" :
-                raceImage.GetComponent<Image>().color = Color.blue;
+                raceImg.color = Color.blue;
                 break;
             case "METAL" :
-                raceImage.GetComponent<Image>().color = Color.yellow;
+                raceImg.color = Color.yellow;
                 break;
             case "WOOD" :
-                raceImage.GetComponent<Image>().color = Color.gray;
+                raceImg.color = Color.gray;
                 break;
             case "FIRE" :
-                raceImage.GetComponent<Image>().color = Color.red;
+                raceImg.color = Color.red;
                 break;
         }
     }
 
+    /// <summary>
+    /// 몬스터 역할군 표기
+    /// </summary>
+    /// <param name="monsterRoleType"></param>
     private void SetMonsterClass(RoleType monsterRoleType)
     {
+        //FixMe:현재는 색상으로 표현하고있는데 다른 표현법이 생기면 변경
+        Image classImg = classImage.GetComponent<Image>();
         switch (monsterRoleType.ToString())
         {
             case "NONE" :
-                classImage.GetComponent<Image>().color = Color.white;
+                classImg.color = Color.white;
                 break;
             case "ATTACKER" :
-                classImage.GetComponent<Image>().color = Color.red;
+                classImg.color = Color.red;
                 break;
             case "DEFENDER" :
-                classImage.GetComponent<Image>().color = Color.blue;
+                classImg.color = Color.blue;
                 break;
             case "SUPPORTER" :
-                classImage.GetComponent<Image>().color = Color.green;
+                classImg.color = Color.green;
                 break;
         }
     }

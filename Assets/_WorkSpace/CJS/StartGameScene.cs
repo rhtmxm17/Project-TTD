@@ -84,7 +84,7 @@ public class StartGameScene : MonoBehaviour
                 long uid = 0;
                 if (null == task.Result.Value || 0 == (uid = (long)task.Result.Value))
                 {
-                    childUIField.uidText.text = "UID를 찾을 수 없음";
+                    childUIField.uidText.text = "UID CANNOT BE FOUND";
                 }
                 else
                 {

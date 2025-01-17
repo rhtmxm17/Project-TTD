@@ -8,6 +8,9 @@ public class HYJ_StageItemInfo : MonoBehaviour
         InitStageItemInfo();
     }
 
+    /// <summary>
+    /// 스테이지 아이템 정보
+    /// </summary>
     private void InitStageItemInfo()
     {
         StageData curStageData = GameManager.Instance.sceneChangeArgs.stageData;

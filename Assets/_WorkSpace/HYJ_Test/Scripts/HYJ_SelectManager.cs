@@ -34,6 +34,7 @@ public class HYJ_SelectManager : MonoBehaviour
     // 배치한 캐릭터 전투력 표시용
     private float batchUnitsPower;
     private float stagePower;
+    
     private void Start()
     {
         enterStageButton.onClick.AddListener(LoadBattleScene);
@@ -87,20 +88,14 @@ public class HYJ_SelectManager : MonoBehaviour
         }
         
         // ============= 유저 전투력 / 스테이지 전투력 ===================
-        updateBatchUnitsPower();
+        UpdateBatchUnitsPower();
     }
 
-    public void LookLog()
-    {
-        DatabaseReference baseref = BackendManager.CurrentUserDataRef;
-
-        SaveBatch(result =>
-        {
-            Debug.Log($"요청 결과:{result}");
-        });
-    }
-
-    private void SaveBatch(UnityAction<bool> onCompleteCallback) // 배치 저장
+    /// <summary>
+    /// 배치 저장
+    /// </summary>
+    /// <param name="onCompleteCallback"></param>
+    private void SaveBatch(UnityAction<bool> onCompleteCallback) 
     {
         Dictionary<string, long> updates = new Dictionary<string, long>();
         foreach (var pair in battleInfo)
@@ -113,12 +108,15 @@ public class HYJ_SelectManager : MonoBehaviour
             .Submit(onCompleteCallback);
     }
 
+    /// <summary>
+    /// 전투시작 버튼
+    /// </summary>
     public void LoadBattleScene()
     {
         // 전투 시작
         if (battleInfo.Count < 1)
         {
-            // TODO : 팝업창 만들어서 하나 이상의 캐릭터를 배치해야 시작할 수 있다고 알려주기
+            //FixMe: 팝업창 만들어서 하나 이상의 캐릭터를 배치해야 시작할 수 있다고 알려주기
             Debug.Log("하나 이상의 캐릭터를 배치해야 게임을 시작할 수 있습니다.");
         }
         else
@@ -137,11 +135,10 @@ public class HYJ_SelectManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 스테이지 진입 취소시 동작
+    /// 뒤로가기
     /// </summary>
     public void OnCancelEnterStage()
     {
-        // 뒤로가기(배치 창 닫기)
         SaveBatch(result =>
         {
             if (false == result)
@@ -152,21 +149,24 @@ public class HYJ_SelectManager : MonoBehaviour
         });
     }
 
-    public void AddPosBtnImage()
+    public void AddPosBtn()
     {
         buttonsTransformList[curPos].GetComponent<HYJ_CharacterSelect>().AddBatch(curPos,curUnitIndex);
     }
     
-    public void ResetPosBtnImage()
+    public void ResetPosBtn()
     {
         buttonsTransformList[curPos].GetComponent<HYJ_CharacterSelect>().RemoveBatch(curPos);
     }
 
-    public void ChangePosBtnImage()
+    /// <summary>
+    /// 유닛 변경 확인 버튼
+    /// </summary>
+    public void ChangePosBtn()
     {
         if (battleInfo.ContainsKey(curPos))
         {
-            ResetPosBtnImage();
+            ResetPosBtn();
         }
         
         int curUnitIndexsPos = battleInfo.FirstOrDefault(x => x.Value == curUnitIndex).Key;
@@ -177,26 +177,36 @@ public class HYJ_SelectManager : MonoBehaviour
         CharacterSelectPanel.SetActive(false);
     }
 
+    /// <summary>
+    /// 배치 초기화
+    /// </summary>
     public void ResetBatch()
     {
         for (int i = 0; i < buttonCnt; i++)
         {
             buttonsTransformList[i].GetComponent<HYJ_CharacterSelect>().RemoveBatch(i);
         }
-        updateBatchUnitsPower();
+        UpdateBatchUnitsPower();
     }
 
+    /// <summary>
+    /// 배치 버튼 색상 초기화
+    /// </summary>
     public void ChangeAllBtnColorOff()
     {
         foreach (Transform btn in buttonsTransformList)
         {
             btn.GetComponent<HYJ_ChangeBtnColor>().ChangeBtnColor(false);
-            updateBatchUnitsPower();
+            UpdateBatchUnitsPower();
         }
     }
 
-    public void updateBatchUnitsPower()
+    /// <summary>
+    /// 배치 유닛 전투력 업데이트
+    /// </summary>
+    private void UpdateBatchUnitsPower()
     {
+        //배치 유닛 전투력 계산
         if (battleInfo.Count > 0)
         {
             batchUnitsPower = 0;
@@ -210,25 +220,29 @@ public class HYJ_SelectManager : MonoBehaviour
             batchUnitsPower = 0;
         }
         
+        //스테이지 전투력 계산
         StageData curStageData = GameManager.Instance.sceneChangeArgs.stageData;
         foreach (var iWave in curStageData.Waves)
         {
             foreach (var iWaveMonster in iWave.monsters)
             {
+                CharacterData.Status monsterStatus = iWaveMonster.character.StatusTable;
                 stagePower =
-                iWaveMonster.character.StatusTable.defensePointBase +
-                iWaveMonster.character.StatusTable.healthPointBase +
-                iWaveMonster.character.StatusTable.attackPointBase + 
-                (iWaveMonster.character.StatusTable.healthPointGrouth +
-                 iWaveMonster.character.StatusTable.attackPointGrowth +
-                 iWaveMonster.character.StatusTable.defensePointGrouth) 
+                    monsterStatus.defensePointBase + monsterStatus.healthPointBase + monsterStatus.attackPointBase + 
+                (monsterStatus.healthPointGrouth + monsterStatus.attackPointGrowth + monsterStatus.defensePointGrouth) 
                 * iWaveMonster.level;
             }
         }
         
+        //배치 유닛 전투력&스테이지 전투력 표기
         userAndStagePower.text = batchUnitsPower+ "/" + stagePower;
+        if (batchUnitsPower < stagePower)
+        {
+            userAndStagePower.color = Color.red;
+        }
+        else
+        {
+            userAndStagePower.color = Color.green;
+        }
     }
-    
-    
-    
 }

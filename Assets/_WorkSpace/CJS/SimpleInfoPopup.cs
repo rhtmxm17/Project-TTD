@@ -9,6 +9,8 @@ using UnityEngine.UI;
 /// </summary>
 public class SimpleInfoPopup : MonoBehaviour
 {
+    [SerializeField] bool dontDestroyOnClick;
+
     public Button BackgroundButton => initFields.backgroundButton;
     public Button SubmitButton => initFields.submitButton;
     public TMP_Text Title => initFields.title;
@@ -29,7 +31,10 @@ public class SimpleInfoPopup : MonoBehaviour
 
     private void Awake()
     {
-        BackgroundButton.onClick.AddListener(() => Destroy(this.gameObject));
-        SubmitButton.onClick.AddListener(() => Destroy(this.gameObject));
+        if (false == dontDestroyOnClick)
+        {
+            BackgroundButton?.onClick.AddListener(() => Destroy(this.gameObject));
+            SubmitButton.onClick.AddListener(() => Destroy(this.gameObject));
+        }
     }
 }
