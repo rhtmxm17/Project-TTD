@@ -22,7 +22,7 @@ public class DamagedEffect : MonoBehaviour
     public void PlayDamagedParticle(Vector3 position, float range)
     {
         ParticleSystem item = damagedPool.GetItem();
-        item.transform.position = position;
+        item.transform.position = position + new Vector3(Random.Range(-range, range), position.y, Random.Range(-range, range));
         StartCoroutine(DamagedEffectCO(item));
     }
 

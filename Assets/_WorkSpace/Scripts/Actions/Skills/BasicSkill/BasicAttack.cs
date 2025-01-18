@@ -7,8 +7,6 @@ using UnityEngine;
 public class BasicAttack : Skill
 {
     [SerializeField] float atkMultiplier = 1f;
-    [SerializeField, Tooltip("선딜레이")] float preDelay = 0.25f;
-    [SerializeField, Tooltip("후딜레이")] float postDelay = 0.75f;
 
     // 캐싱 데이터
     private WaitForSeconds waitPreDelay;

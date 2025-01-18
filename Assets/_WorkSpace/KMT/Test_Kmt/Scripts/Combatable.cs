@@ -364,7 +364,7 @@ public class Combatable : MonoBehaviour
         }
         onDamagedEvent?.Invoke(damage);
         StageManager.Instance.DamageDisplayer.PlayTextDisplay(damage, true, transform.position + Vector3.forward * CharacterSizeRadius * 3);
-        StageManager.Instance.DamagedEffectDisplayer.PlayDamagedParticle(transform.position, 0);
+        StageManager.Instance.DamagedEffectDisplayer.PlayDamagedParticle(transform.position, characterModel.ModelSize * 0.5f);
 
         if (hp.Value < 0)
         {
