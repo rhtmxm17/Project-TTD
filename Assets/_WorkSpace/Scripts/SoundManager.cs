@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
 public enum AudioGroup { MASTER, BGM, SFX }
 
@@ -13,6 +14,7 @@ public struct AudioVolume
     public float scale;
 }
 
+[RequireComponent(typeof(BGMDictionary))]
 public class SoundManager : SingletonBehaviour<SoundManager>
 {
     public const int AudioGroupCount = 3;
@@ -21,6 +23,8 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     [SerializeField] AudioSource bgmSource;
     [SerializeField] AudioSource sfxSource;
 
+    BGMDictionary bgmDictionary;
+
     private static readonly string[] paramNames = { "Master", "BGM", "SFX" };
 
     private AudioVolume[] MixerVolume => UserSettingData.Instance.Data.soundScale;
@@ -28,6 +32,9 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     private void Awake()
     {
         RegisterSingleton(this);
+        bgmDictionary = GetComponent<BGMDictionary>();
+
+        SceneManager.sceneLoaded += (_1, _2) => { StopBGM(); };
     }
 
     private void Start()
@@ -54,9 +61,25 @@ public class SoundManager : SingletonBehaviour<SoundManager>
         bgmSource.Play();
     }
 
+    /// <summary>
+    /// BGM을 재생
+    /// </summary>
+    /// <param name="bgmType">재생할 오디오 클립의 종류</param>
+    /// <param name="volumeScale">음량 배율</param>
+    public void PlayBGM(BGMType bgmType, float volumeScale = 1f)
+    {
+        AudioClip audio = bgmDictionary.GetAudioClip(bgmType);
+        if (bgmSource.clip == audio || audio == null) return;
+        StopBGM();
+        bgmSource.clip = audio;
+        bgmSource.volume = volumeScale;
+        bgmSource.Play();
+    }
+
     public void StopBGM()
     {
         bgmSource.Stop();
+        bgmSource.clip = null;
     }
 
     /// <summary>
