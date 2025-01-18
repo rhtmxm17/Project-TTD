@@ -40,6 +40,12 @@ public class LoginPanel : BaseUI
         Init();
     }
 
+    private void OnDisable()
+    {
+        loginIDInputField.text = "";
+        loginPWInputField.text = "";
+    }
+
     private void Init()
     {
         // 로그인 Button
