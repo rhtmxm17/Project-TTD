@@ -113,7 +113,7 @@ public class UserProfileUI : BaseUI
             SetName();
         });
         // 대표캐릭터 변경팝업
-        GetUI<Button>("ProfileCharacter").onClick.AddListener(() => OpenPopup("CharacterChangePopup"));
+        GetUI<Button>("ProfileIconButton").onClick.AddListener(() => OpenPopup("CharacterChangePopup"));
         GetUI<Button>("CloseChangeCharacter").onClick.AddListener(() => ClosePopup("CharacterChangePopup"));
         
         // DB랑 연관없이 인스펙터만으로 설정하는 부분 추가적인 작성이 필요햠
@@ -175,8 +175,8 @@ public class UserProfileUI : BaseUI
     private void OnProfileImageUpdated(long _/*unused*/)
     {
         iconIndex = GameManager.UserData.Profile.IconIndex.Value;
-        GetUI<Image>("Image").sprite = IconSprites[iconIndex];
-        GetUI<Image>("ProfileCharacter").sprite = IconSprites[iconIndex];
+        GetUI<Image>("ProfileIcon").sprite = IconSprites[iconIndex];
+        GetUI<Image>("ProfileIconButton").sprite = IconSprites[iconIndex];
     }
 
     /// <summary>
