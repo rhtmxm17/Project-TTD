@@ -44,7 +44,8 @@ public class TauntSelf : Skill
         yield return null;
         target.AddTauntCount();
         yield return new WaitForSeconds(duaringTime);
-        target.RemoveTauntCount();
+        if (target != null && target.IsAlive)
+            target.RemoveTauntCount();
 
     }
 }

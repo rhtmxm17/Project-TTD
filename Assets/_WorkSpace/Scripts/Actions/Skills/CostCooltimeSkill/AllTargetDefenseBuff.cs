@@ -48,6 +48,7 @@ public class AllTargetDefenseBuff : Skill
         yield return null;
         target.AddDefBuff(amount);
         yield return new WaitForSeconds(duringTime);
-        target.RemoveDefBuff(amount);
+        if(target != null && target.IsAlive)
+            target.RemoveDefBuff(amount);
     }
 }
