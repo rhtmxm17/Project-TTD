@@ -28,6 +28,7 @@ public class ShopPanel : BaseUI
     [SerializeField] Button tabButton;
     [SerializeField] Material selectedMaterial;
     [SerializeField] TMP_Text shopChatText;
+    [SerializeField] GameObject shopIndicator; // 활성화된 상점 표시해주는 아이콘
     
     private List<ShopItem> shopItemsList;
     
@@ -40,10 +41,12 @@ public class ShopPanel : BaseUI
     private void OnEnable()
     {
         tabButton.GetComponent<Image>().material = selectedMaterial;
+        shopIndicator.SetActive(true);
     }
     private void OnDisable()
     {
         tabButton.GetComponent<Image>().material = null;
+        shopIndicator.SetActive(false);
     }
 
 
