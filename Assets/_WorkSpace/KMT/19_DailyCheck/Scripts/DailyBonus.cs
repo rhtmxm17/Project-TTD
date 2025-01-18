@@ -16,21 +16,22 @@ public class DailyBonus : MonoBehaviour
         ItemData goldTicket = DataTableManager.Instance.GetItemData(9/*골드티켓*/);
         ItemData friendTicket = DataTableManager.Instance.GetItemData(10/*친구방문 보상 수령 카운트*/);
         
-     //   #region 상점아이템 일일리셋
-     //   // 상점아이템 구매횟수 갱신될 아이템 가져오기
-     //   ShopItemData[] chargeToekn = new ShopItemData[11];
-     //   chargeToekn[0] = DataTableManager.Instance.GetShopItemData(2);
-     //   chargeToekn[1]= DataTableManager.Instance.GetShopItemData(3);
-     //   chargeToekn[3]= DataTableManager.Instance.GetShopItemData(4);
-     //   chargeToekn[3]= DataTableManager.Instance.GetShopItemData(5);
-     //   chargeToekn[4]= DataTableManager.Instance.GetShopItemData(6);
-     //   chargeToekn[5]= DataTableManager.Instance.GetShopItemData(7);
-     //   chargeToekn[6]= DataTableManager.Instance.GetShopItemData(8);
-     //   chargeToekn[7]= DataTableManager.Instance.GetShopItemData(9);
-     //   chargeToekn[8] = DataTableManager.Instance.GetShopItemData(10);
-     //   chargeToekn[9] = DataTableManager.Instance.GetShopItemData(11);
-     //   chargeToekn[10] = DataTableManager.Instance.GetShopItemData(12);
-     //   #endregion
+        
+        // 머리가 일단 잘 안돌아가고 있고 다른것도 해야되니 대충
+        #region 상점아이템 일일리셋
+        ShopItemData lvTocken = DataTableManager.Instance.GetShopItemData(2);
+        ShopItemData genTocken = DataTableManager.Instance.GetShopItemData(3);
+        ShopItemData dragonCandy1 = DataTableManager.Instance.GetShopItemData(4);
+        ShopItemData dragonCandy2 = DataTableManager.Instance.GetShopItemData(5);
+        ShopItemData dragonCandy3 = DataTableManager.Instance.GetShopItemData(6);
+        ShopItemData dragonCandy4 = DataTableManager.Instance.GetShopItemData(7);
+        ShopItemData dragonCandy5 = DataTableManager.Instance.GetShopItemData(8);
+        ShopItemData dragonCandy6 = DataTableManager.Instance.GetShopItemData(9);
+        ShopItemData dragonCandy7 = DataTableManager.Instance.GetShopItemData(10);
+        ShopItemData dragonCandy8 = DataTableManager.Instance.GetShopItemData(11);
+        ShopItemData dragonCandy9 = DataTableManager.Instance.GetShopItemData(12);
+        #endregion
+       
 
         UserDataManager.UpdateDbChain updateChain = GameManager.UserData.StartUpdateStream();
 
@@ -53,6 +54,23 @@ public class DailyBonus : MonoBehaviour
 
         if(friendTicket.Number.Value < 10)
             updateChain.SetDBValue(friendTicket.Number, REFILL_FriendTicket_COUNT);
+        
+        if (lvTocken.Bought.Value != 0)
+            updateChain.SetDBValue(lvTocken.Bought, 0);
+        if (genTocken.Bought.Value != 0)
+            updateChain.SetDBValue(genTocken.Bought, 0);
+        if (dragonCandy1.Bought.Value != 0) updateChain.SetDBValue(dragonCandy1.Bought, 0);
+        if (dragonCandy2.Bought.Value != 0) updateChain.SetDBValue(dragonCandy2.Bought, 0);
+        if (dragonCandy3.Bought.Value != 0) updateChain.SetDBValue(dragonCandy3.Bought, 0);
+        if (dragonCandy4.Bought.Value != 0) updateChain.SetDBValue(dragonCandy4.Bought, 0);
+        if (dragonCandy5.Bought.Value != 0) updateChain.SetDBValue(dragonCandy5.Bought, 0);
+        if (dragonCandy6.Bought.Value != 0) updateChain.SetDBValue(dragonCandy6.Bought, 0);
+        if (dragonCandy7.Bought.Value != 0) updateChain.SetDBValue(dragonCandy7.Bought, 0);
+        if (dragonCandy8.Bought.Value != 0) updateChain.SetDBValue(dragonCandy8.Bought, 0);
+        if (dragonCandy9.Bought.Value != 0) updateChain.SetDBValue(dragonCandy9.Bought, 0);
+
+
+        
         
         /// 상점아이템 구매횟수 초기화 추가
         // 구매횟수가 최대수치보다 작거나 같으면, 회숫 0으로 변경
@@ -82,18 +100,3 @@ public class DailyBonus : MonoBehaviour
             });
     }
 }
-
-
-/* 안쓰는거 일단 킵
- *      ShopItemData enTocken = DataTableManager.Instance.GetShopItemData(1);
-        ShopItemData lvTocken = DataTableManager.Instance.GetShopItemData(2);
-        ShopItemData genTocken = DataTableManager.Instance.GetShopItemData(3);
-
-        if (enTocken.Bought.Value != 0)
-            updateChain.SetDBValue(enTocken.Bought, 0);
-        if (lvTocken.Bought.Value != 0)
-            updateChain.SetDBValue(lvTocken.Bought, 0);
-        if (genTocken.Bought.Value != 0)
-            updateChain.SetDBValue(genTocken.Bought, 0);
-
- */
