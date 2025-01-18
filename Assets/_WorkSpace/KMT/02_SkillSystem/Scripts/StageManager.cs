@@ -175,6 +175,7 @@ public class StageManager : MonoBehaviour
 
     }
 
+    public void StartCameraShake() => combatCamera.Shake();
     public void StartGameOnSceneLoaded() => StartGame();
 
     IEnumerator StartPartyCostCO()
