@@ -13,7 +13,8 @@ using UnityEngine.Events;
 public class UserProfileUI : BaseUI
 {
     [SerializeField] OutskirtsUI outskirtsUI;
-    
+    [SerializeField] ProfileIconList profileIconList;
+
     FirebaseAuth auth = BackendManager.Auth;
 
     // 가져오고 써야할 데이터들
@@ -33,7 +34,8 @@ public class UserProfileUI : BaseUI
     public UnityEvent OnChangeProfile;
    
     // (임시) 아이콘 설정용 이미지
-    [SerializeField] Sprite[] iconSprites;
+    private Sprite[] IconSprites => profileIconList.IconList;
+
     
     private void Start()
     {
@@ -163,8 +165,8 @@ public class UserProfileUI : BaseUI
     private void OnProfileImageUpdated(long _/*unused*/)
     {
         iconIndex = GameManager.UserData.Profile.IconIndex.Value;
-        GetUI<Image>("Image").sprite = iconSprites[iconIndex];
-        GetUI<Image>("ProfileCharacter").sprite = iconSprites[iconIndex];
+        GetUI<Image>("Image").sprite = IconSprites[iconIndex];
+        GetUI<Image>("ProfileCharacter").sprite = IconSprites[iconIndex];
     }
 
     /// <summary>
