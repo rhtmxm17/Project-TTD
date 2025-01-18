@@ -307,10 +307,15 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
             this.PlayData.ExpDungeonClearRate.SetValueWithDataSnapshot(userData);
             this.PlayData.EnforceDungeonClearRate.SetValueWithDataSnapshot(userData);
 
-            foreach (var hasroom in this.PlayData.HasRoom)
+            foreach (var userDataValue in this.PlayData.HasRoom)
             {
-                hasroom.SetValueWithDataSnapshot(userData);
+                userDataValue.SetValueWithDataSnapshot(userData);
             }
+            foreach (var userDataValue in this.PlayData.TutorialDone)
+            {
+                userDataValue.SetValueWithDataSnapshot(userData);
+            }
+            
 
             // 캐릭터 데이터 로딩
             if (userData.HasChild("Characters"))
