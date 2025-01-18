@@ -50,7 +50,7 @@ public class CharacterInfoController : BaseUI
     private CharacterSort _characterSort;
 
     private TextMeshProUGUI _evolutionText;
-    private TextMeshProUGUI _sortingText;
+    private Image _sortingImage;
     
     private Button _leftEvolutionButton;
     private Button _rightEvolutionButton;
@@ -185,7 +185,7 @@ public class CharacterInfoController : BaseUI
         SortButtonText = _sortButton.GetComponentInChildren<TextMeshProUGUI>();
 
         _evolutionText = GetUI<TextMeshProUGUI>("EvolutionText");
-        _sortingText = GetUI<TextMeshProUGUI>("SortingButtonText");
+        _sortingImage = GetUI<Image>("SortingButtonImage");
         ElementFilterText = GetUI<TextMeshProUGUI>("ElementFilterText"); 
         RoleFilterText = GetUI<TextMeshProUGUI>("RoleFilterText");
         DragonVeinFilterText = GetUI<TextMeshProUGUI>("DragonVeinFilterText");
@@ -262,7 +262,7 @@ public class CharacterInfoController : BaseUI
 
         _characterSort._sortCharacterInfos= _characterInfos;
         _characterSort.CharacterInfoController = this;
-        _characterSort.SortingText = _sortingText;
+        _characterSort.SortingImage = _sortingImage;
         _characterFilter._filterCharacterInfos = _characterInfos;
         _characterFilter.CharacterController = this;
         StartListSort();
