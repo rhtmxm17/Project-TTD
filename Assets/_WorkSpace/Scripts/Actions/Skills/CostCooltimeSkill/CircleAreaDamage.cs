@@ -10,8 +10,6 @@ public class CircleAreaDamage : Skill
 {
     [SerializeField] float atkMultiplier = 1f;
     [SerializeField] float areaRadius = 1f;
-    [SerializeField, Tooltip("선딜레이")] float preDelay;
-    [SerializeField, Tooltip("후딜레이")] float postDelay;
 
     // 캐싱 데이터
     private WaitForSeconds waitPreDelay;
