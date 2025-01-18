@@ -21,11 +21,11 @@ public class HYJ_MonsterInfo : MonoBehaviour
         monsterImage.GetComponent<Image>().sprite = monsterInfo.character.FaceIconSprite;
         SetMonsterRace(monsterStatus.type);//몬스터 속성 표기
         SetMonsterClass(monsterStatus.roleType);//몬스터 역할군 표기
-        
-        levelText.text = "Lv." + monsterInfo.level.ToString();
+
+        levelText.text = $"Lv.{monsterInfo.level}";
         nameText.text = monsterInfo.character.Name;
     }
-
+    
     /// <summary>
     /// 몬스터 속성 표기
     /// </summary>

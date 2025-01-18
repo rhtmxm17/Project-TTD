@@ -66,7 +66,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
         characterImage.GetComponent<Image>().sprite = chData.FaceIconSprite;
         
         //표기 설정
-        levelText.text = chData.Level.Value.ToString(); // 레벨
+        levelText.text = $"Lv.{chData.Level.Value}"; // 레벨
         nameText.text = chData.Name; // 유닛 이름
         raceText.text = chData.StatusTable.type.ToString(); // 종족
         classText.text = chData.StatusTable.roleType.ToString(); // 역할군
@@ -112,62 +112,33 @@ public class HYJ_CharacterSelect : MonoBehaviour
     public void SelectUnit()
     {
         SelectM.curUnitIndex = unitIndex; //선택한 유닛을 저장
-        if (CheckPos(SelectM.curPos)) // 선택한 위치에 유닛이 배치되어 있을 경우
+
+        if (SelectM.battleInfo.ContainsKey(SelectM.curPos)) // 선택한 위치가 이미 저장되어 있을 경우 = 유닛이 이미 존재할 경우
         {
-            if (CheckUnitPos(SelectM.curUnitIndex)) // 선택한 위치에 선택된 유닛이 이미 배치되어 있는 경우
+            if (SelectM.battleInfo[SelectM.curPos] == SelectM.curUnitIndex) // 저장된 유닛이 현재 유닛일 경우
             {
-                Debug.Log("이미 이 위치에 해당 유닛이 배치되어 있습니다.");
+                Debug.Log("현재 위치에 이미 배치되어 있는 유닛입니다.");
             }
-            else // 선택한 위치에 선택한 유닛이 다른 위치에 배치되어 있는 경우
+            else if(SelectM.battleInfo[SelectM.curPos] != SelectM.curUnitIndex)
             {
+                Debug.Log("aaaaaaa");
                 UnitChangeUI.SetActive(true);
             }
         }
-        else // 선택한 위치에 유닛이 배치되어 있지 않은 경우
+        else
         {
-            if (CheckUnit(SelectM.curUnitIndex)) // 선택한 유닛이 다른 위치에 배치된 경우
+            //현재 선택한 유닛이 다른 곳에 배치되어 있을 때
+            if (SelectM.battleInfo.ContainsValue(SelectM.curUnitIndex))
             {
                 UnitChangeUI.SetActive(true);
             }
-            else // 선택한 유닛이 어느 위치에도 배치되지 않은 경우
+            else
             {
                 SelectM.GetComponent<HYJ_SelectManager>().AddPosBtn();
                 SelectM.CharacterSelectPanel.SetActive(false);
                 SelectM.ChangeAllBtnColorOff();
             }
         }
-    }
-
-    /// <summary>
-    /// 선택한 유닛이 이미 배치되어 있는지 판별
-    /// </summary>
-    /// <param name="unitIndex">배치되어 있는지 판별할 유닛의 고유 번호</param> 
-    /// <returns>true:배치되어 있음, false:배치되어 있지않음</returns>
-    private bool CheckUnit(int unitIndex)
-    {
-        if (SelectM.battleInfo.ContainsValue(unitIndex))
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    /// <summary>
-    /// 유닛 고유 번호를 갖고 있는 위치 존재 여부 확인
-    /// </summary>
-    /// <param name="unitIndex"></param>
-    /// <returns>true:존재, false:없음</returns>
-    private bool CheckUnitPos(int unitIndex)
-    {
-        // 딕셔너리 밸류값(유닛 고유번호)를 갖고 있는 키 값을 찾기
-        unitIndex = SelectM.battleInfo.FirstOrDefault(x => x.Value == SelectM.curUnitIndex).Key;
-        
-        if (unitIndex == SelectM.curPos)// 이미 해당 위치에 선택한 유닛이 배치되어 있을 경우
-        {
-            return true;
-        }
-        return false;
     }
 
     /// <summary>
