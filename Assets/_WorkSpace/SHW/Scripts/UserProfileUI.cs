@@ -12,8 +12,12 @@ using UnityEngine.Events;
 
 public class UserProfileUI : BaseUI
 {
-    [SerializeField] OutskirtsUI outskirtsUI;
     [SerializeField] ProfileIconList profileIconList;
+    [SerializeField] SetUserIcon iconSelectButtonPrefab;
+
+    [Header("Child UI")]
+    [SerializeField] OutskirtsUI outskirtsUI;
+    [SerializeField] RectTransform iconSelectLayoutGroup;
 
     FirebaseAuth auth = BackendManager.Auth;
 
@@ -64,6 +68,12 @@ public class UserProfileUI : BaseUI
             SetUI();
         }
 
+        for (int i = 0; i < profileIconList.IconList.Length; i++)
+        {
+            var buttonInstance = Instantiate(iconSelectButtonPrefab, iconSelectLayoutGroup);
+            buttonInstance.IconSprite = profileIconList.IconList[i];
+            buttonInstance.IconIndex = i;
+        }
     }
 
     private void OnDestroy()
