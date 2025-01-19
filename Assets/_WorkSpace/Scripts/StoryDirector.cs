@@ -9,7 +9,10 @@ using UnityEngine.Rendering.Universal;
 using UnityEngine.Events;
 using static StoryDirectingData;
 
-// FIXME : 완성 후 전체적으로 리펙토링 및 수정 필요
+/// <summary>
+/// 지정된 데이터로 스토리를 재생하는 클래스<br/>
+/// 전투 씬 등에서 덮어씌우는 출력 상황을 위해 timeScale에 독립적으로(realtime 기반) 작동하도록 할 것
+/// </summary>
 public class StoryDirector : BaseUI
 {
     /// <summary>
@@ -88,7 +91,7 @@ public class StoryDirector : BaseUI
     /// <summary>
     /// 오토플레이 모드시 대사 출력 완료 후 대기시간
     /// </summary>
-    private YieldInstruction autoPlayDelay = new WaitForSeconds(1f);
+    private WaitForSecondsRealtime autoPlayDelay = new WaitForSecondsRealtime(1f);
 
     /// <summary>
     /// 등장 인물 목록
@@ -227,12 +230,15 @@ public class StoryDirector : BaseUI
         // 대사 출력
         dialogueText.text = ""; // 앞전 스크립트 제거
         dialogueText.alignment = isNaration ? TextAlignmentOptions.Center : TextAlignmentOptions.Left; // 나레이션: 가운데, 대사: 왼쪽
-        playingDialougeTween = dialogueText.DOText(dialogue.Script, dialogue.Script.Length * 0.05f * dialogue.timeMult, true, ScrambleMode.None).SetEase(Ease.Linear);
+        playingDialougeTween = dialogueText
+                .DOText(dialogue.Script, dialogue.Script.Length * 0.05f * dialogue.timeMult, true, ScrambleMode.None) // 텍스트 한글자씩 재생
+                .SetEase(Ease.Linear) // 선형 속도로
+                .SetUpdate(true); // realtime으로
         playingDialougeTween.onComplete += OnDialougeTweenComleted;
 
         // 카메라 이동, 줌인아웃
-        directingCamera.transform.DOLocalMove((dialogue.CameraPosition - new Vector2(10f, 5f)) * 2f, dialogue.CamereaTransitionTime);
-        directingCamera.DOOrthoSize(dialogue.CameraSize * 10f, dialogue.CamereaTransitionTime);
+        directingCamera.transform.DOLocalMove((dialogue.CameraPosition - new Vector2(10f, 5f)) * 2f, dialogue.CamereaTransitionTime).SetUpdate(true);
+        directingCamera.DOOrthoSize(dialogue.CameraSize * 10f, dialogue.CamereaTransitionTime).SetUpdate(true);
 
         // 사운드 출력
         if (null != dialogue.Bgm)
