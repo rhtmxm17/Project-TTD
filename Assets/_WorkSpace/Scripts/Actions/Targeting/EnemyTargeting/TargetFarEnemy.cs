@@ -31,6 +31,9 @@ public class TargetFarEnemy : Targeting
 
         foreach (Combatable enemyUnit in self.Group.Enemy.CharList)
         {
+            if (enemyUnit.IsTaunt)
+                return enemyUnit;
+
             float sqrMagnitude = Vector3.SqrMagnitude(self.transform.position - enemyUnit.transform.position);
             if (maxSqrMagnitude < sqrMagnitude)
             {

@@ -15,7 +15,7 @@ public class HYJ_RewardItemInfo : MonoBehaviour
     public void InitRewardItemInfo(ItemGain itemGain)
     {
         itemImage.GetComponent<Image>().sprite = itemGain.item.SpriteImage;
-        itemAmountText.text = itemGain.gain.ToString();
+        itemAmountText.text = $"x{itemGain.gain}";
         itemNameText.text = itemGain.item.ItemName;
     }
 }

@@ -2,18 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 /// <summary>
-/// 단일 대상에게 공격력 버프를 주는 스킬
+/// 본인에게 도발을 거는 스킬
 /// </summary>
-[CreateAssetMenu(menuName = "ScriptableObjects/Skill/SingleTargetAttackBuff")]
-public class AttackBuff : Skill
+[CreateAssetMenu(menuName = "ScriptableObjects/Skill/TauntSelf")]
+public class TauntSelf : Skill
 {
-    [Header("공격 배율")]
+    [Header("지속시간")]
     [SerializeField]
-    float atkRate;
-    [SerializeField]
-    float duringTime;
+    float duaringTime;
 
     // 캐싱 데이터
     private WaitForSeconds waitPreDelay;
@@ -32,22 +29,23 @@ public class AttackBuff : Skill
 
         self.PlayAttckSnd();
 
+
         if (target != null && target.IsAlive)
         {
-            target.StartCoroutine(StartBufftimeCO(target, (int)(atkRate * self.CurAttackPoint)));
-
+            target.StartCoroutine(TauntSkillCO(target));
         }
 
         yield return waitPostDelay;
+
     }
 
-    IEnumerator StartBufftimeCO(Combatable target, int amount)
+    IEnumerator TauntSkillCO(Combatable target)
     {
         yield return null;
-        target.AddAtkBuff(amount);
-        yield return new WaitForSeconds(duringTime);
+        target.AddTauntCount();
+        yield return new WaitForSeconds(duaringTime);
         if (target != null && target.IsAlive)
-            target.RemoveAtkBuff(amount);
-    }
+            target.RemoveTauntCount();
 
+    }
 }
