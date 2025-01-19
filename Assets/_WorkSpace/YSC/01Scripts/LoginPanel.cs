@@ -40,6 +40,12 @@ public class LoginPanel : BaseUI
         Init();
     }
 
+    private void OnDisable()
+    {
+        loginIDInputField.text = "";
+        loginPWInputField.text = "";
+    }
+
     private void Init()
     {
         // 로그인 Button
@@ -131,8 +137,8 @@ public class LoginPanel : BaseUI
                 AuthResult result = task.Result;
                 Debug.Log($"User signed in successfully: {result.User.DisplayName} ({result.User.UserId})");
                 CheckUserInfo();
-                warningPopup.SetActive(true);   
-                warningText.text = "로그인 성공~!";
+               // warningPopup.SetActive(true);   
+               // warningText.text = "로그인 성공~!";
             });
     }
 

@@ -23,7 +23,7 @@ public class DoubleCheckPopup : BaseUI
     
     private void Start()
     {
-        input = GameManager.Input;
+      //  input = GameManager.Input;
        
     }
 
@@ -33,25 +33,31 @@ public class DoubleCheckPopup : BaseUI
 
         GetUI<Button>("LogOutButton").onClick.AddListener(SignOut);
     }
+
+    void OnDisable()
+    {
+        Destroy(gameObject);
+    }
         
 
     private void Update()
     {
         // 팝업의 외부를 터치할 경우 화면을 닫는 시스템
-        if(input.actions["Click"].WasPressedThisFrame())
-        {
-            if (EventSystem.current.currentSelectedGameObject == true) 
-                return;
-      
-            Debug.Log("화면 클릭 & 팝업 종료");
-            popup.SetActive(false);
-        }
+      //  if(input.actions["Click"].WasPressedThisFrame())
+      //  {
+      //      if (EventSystem.current.currentSelectedGameObject == true) 
+      //          return;
+      //
+      //      Debug.Log("화면 클릭 & 팝업 종료");
+      //      popup.SetActive(false);
+      //  }
     }
     public void SignOut()
     {
         Debug.Log("LogOut 하였습니다.");
         BackendManager.Auth.SignOut();
         //TODO: DB관련???
+        Destroy(gameObject);
     }
 
 }
