@@ -25,6 +25,7 @@ public class HYJ_SelectManager : MonoBehaviour
     [SerializeField] public GameObject CharacterSelectPanel; // 캐릭터 선택 창 
     [SerializeField] public GameObject CantPosUI; // 선택 불가 팝업 -> 5개 유닛이 이미 다 배치 되었을 때의 팝업
     [SerializeField] GameObject UnitChangeUI; // 유닛 변경 확인 팝업 -> 변경하시겠습니까?
+    [SerializeField] GameObject cantStartUI;
     [SerializeField] private TMP_Text userAndStagePower;    
     
     
@@ -81,8 +82,6 @@ public class HYJ_SelectManager : MonoBehaviour
                 if (checkBuff.tileIndex == i)
                 {
                     obj.GetComponent<HYJ_BtnBuff>().BuffInput(checkBuff.type);
-                  //  SetBuffEffect(checkBuff.type);
-                    
                 }
             }
         }
@@ -118,6 +117,7 @@ public class HYJ_SelectManager : MonoBehaviour
         {
             //FixMe: 팝업창 만들어서 하나 이상의 캐릭터를 배치해야 시작할 수 있다고 알려주기
             Debug.Log("하나 이상의 캐릭터를 배치해야 게임을 시작할 수 있습니다.");
+            cantStartUI.SetActive(true);
         }
         else
         {
@@ -227,22 +227,30 @@ public class HYJ_SelectManager : MonoBehaviour
             foreach (var iWaveMonster in iWave.monsters)
             {
                 CharacterData.Status monsterStatus = iWaveMonster.character.StatusTable;
-                stagePower =
+                stagePower +=
                     monsterStatus.defensePointBase + monsterStatus.healthPointBase + monsterStatus.attackPointBase + 
                 (monsterStatus.healthPointGrouth + monsterStatus.attackPointGrowth + monsterStatus.defensePointGrouth) 
                 * iWaveMonster.level;
             }
         }
         
+        
         //배치 유닛 전투력&스테이지 전투력 표기
-        userAndStagePower.text = batchUnitsPower+ "/" + stagePower;
         if (batchUnitsPower < stagePower)
         {
-            userAndStagePower.color = Color.red;
+            userAndStagePower.text =
+                $"<color=white>적 전투력</color>\n<color=red>{stagePower}</color>\n<color=white>내 전투력</color>\n<color=red>{batchUnitsPower}</color>";
         }
         else
         {
-            userAndStagePower.color = Color.green;
+            userAndStagePower.text =
+                $"<color=white>적 전투력</color>\n<color=green>{stagePower}</color>\n<color=white>내 전투력</color>\n<color=green>{batchUnitsPower}</color>";
+        }
+        
+
+        if (GameManager.Instance.sceneChangeArgs.stageType == StageType.BOSS)
+        {
+            userAndStagePower.text = $"{batchUnitsPower}/?????";
         }
     }
 }

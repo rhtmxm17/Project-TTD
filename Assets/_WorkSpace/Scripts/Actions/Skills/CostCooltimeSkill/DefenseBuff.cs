@@ -13,8 +13,6 @@ public class DefenseBuff : Skill
     float defRate;
     [SerializeField]
     float duringTime;
-    [SerializeField, Tooltip("선딜레이")] float preDelay;
-    [SerializeField, Tooltip("후딜레이")] float postDelay;
 
     // 캐싱 데이터
     private WaitForSeconds waitPreDelay;
@@ -48,6 +46,7 @@ public class DefenseBuff : Skill
         yield return null;
         target.AddDefBuff(amount);
         yield return new WaitForSeconds(duringTime);
-        target.RemoveDefBuff(amount);
+        if (target != null && target.IsAlive)
+            target.RemoveDefBuff(amount);
     }
 }

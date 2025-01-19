@@ -35,6 +35,7 @@ public class Combatable : MonoBehaviour
     protected NavMeshAgent agent;
     protected CharacterModel characterModel;
 
+    public bool IsTaunt { get; private set; } = false;
     protected enum curState { WAITING, MOVING, IDLE }
     protected curState state = curState.MOVING;
 
@@ -51,6 +52,8 @@ public class Combatable : MonoBehaviour
     protected ParticleSystem healBuffEffect;
     [SerializeField]
     protected ParticleSystem recovBuffEffect;
+    [SerializeField]
+    protected GameObject tauntEffect;
 
     [Header("TestParams")]
     [SerializeField]
@@ -330,6 +333,34 @@ public class Combatable : MonoBehaviour
         }
     }
 
+    //도발 버프 영역.
+
+    int tauntBuffCount = 0;
+
+    public void AddTauntCount()
+    {
+        tauntBuffCount++;
+        ReCalcTauntCount();
+    }
+    public void RemoveTauntCount()
+    {
+        tauntBuffCount--;
+        ReCalcTauntCount();
+    }
+    void ReCalcTauntCount()
+    {
+        if (tauntBuffCount <= 0)
+        {
+            tauntEffect.SetActive(false);
+            IsTaunt = false;
+        }
+        else
+        {
+            tauntEffect.SetActive(true);
+            IsTaunt = true;
+        }
+    }
+
     public void StatusBuffed(StatusBuffType type, float value)
     {
         switch (type)
@@ -364,7 +395,7 @@ public class Combatable : MonoBehaviour
         }
         onDamagedEvent?.Invoke(damage);
         StageManager.Instance.DamageDisplayer.PlayTextDisplay(damage, true, transform.position + Vector3.forward * CharacterSizeRadius * 3);
-        StageManager.Instance.DamagedEffectDisplayer.PlayDamagedParticle(transform.position, 0);
+        StageManager.Instance.DamagedEffectDisplayer.PlayDamagedParticle(transform.position, characterModel.ModelSize * 0.5f);
 
         if (hp.Value < 0)
         {
@@ -567,6 +598,7 @@ public class Combatable : MonoBehaviour
             state = curState.IDLE;
             PlayAnimation("Attack");
             yield return StartCoroutine(baseAttack.SkillRoutine(this, target, null));
+            target = baseAttack.TargetingLogic.GetTarget(this);
         }
 
         StopCurActionCoroutine();

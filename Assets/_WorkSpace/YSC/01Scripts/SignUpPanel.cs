@@ -29,6 +29,13 @@ public class SignUpPanel : LoginPanel
         // 여기다 두니까 갑자기 밑에  "GetUI<Button>("SignUpConfirmButton").onClick.AddListener(SignUp);"
         // NullReferenceException: Object reference not set to an instance of an object 뜸
     }
+
+    void OnDisable()
+    {
+        _signUpIDInputField.text = "";
+        _signUpPWInputField.text = "";
+        _pWConfirmInputField.text = "";
+    }
    // private void OnEnable()
    // {
    //     Init();

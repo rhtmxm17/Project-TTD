@@ -72,6 +72,7 @@ public class CharacterCombatable : Combatable
             if (!secondSkillButton.LevelArrived) { Debug.Log("만랩이 아님, 사용 불가"); return; }
             if (!OnSkillCommanded(characterData.SecondSkillDataSO, 3)) { Debug.Log("스킬 타깃이 없음. 또는 더 큰 우선순위의 행동중, 또는 전투중이 아님  사용 취소"); return; }
                 secondSkillButton.StartCoolDown();
+                StartCoroutine(CameraShakeCO(characterData.SecondSkillDataSO.PreDelay));
                 state = curState.IDLE;
                 PlayAnimation("Attack");
         });
@@ -141,12 +142,20 @@ public class CharacterCombatable : Combatable
         //=============HP 게이지 위치 조정==================
 
         RectTransform hpBarRect = hpSlider.GetComponent<RectTransform>();
-        hpSlider.transform.SetParent(secondSkillButton.transform);
+        hpSlider.transform.SetParent(levelupButton.transform);
         hpBarRect.anchoredPosition = new Vector3(0, -100, 5);
         hpBarRect.sizeDelta = new Vector2(140, 60);
-        hpBarRect.rotation = Quaternion.identity;
+        Debug.Log(hpBarRect.rotation);
+        hpBarRect.localRotation = Quaternion.identity;
+        Debug.Log(hpBarRect.rotation);
         hpBarRect.localScale = Vector3.one;
 
+    }
+
+    IEnumerator CameraShakeCO(float preDelayTime)
+    { 
+        yield return new WaitForSeconds(preDelayTime);
+        StageManager.Instance.StartCameraShake();
     }
     public override void StartCombat(CombManager againstL)
     {

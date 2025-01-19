@@ -1,9 +1,5 @@
 using DG.Tweening;
-using Michsky.UI.ModernUIPack;
-using System.Collections;
 using System.Collections.Generic;
-using TMPro;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -40,7 +36,7 @@ public class StoryPanel : MonoBehaviour
     {
         public StageData episode;
         public float focusScale = 1f;
-        [Tooltip("강조될 텍스처 위치")]public Vector2 focusPosition;
+        [Tooltip("강조될 텍스처 위치")] public Vector2 focusPosition;
     }
 
     [SerializeField] List<ChapterInfo> chapterInfos;
@@ -102,7 +98,7 @@ public class StoryPanel : MonoBehaviour
             IndexedButton buttonInstance = Instantiate(episodeButtonPrefab, childUIField.episodeLayout.transform);
             buttonInstance.Text.text = selectedChapterInfo.episodeList[i].episode.ButtonName;
             buttonInstance.Id = i;
-            buttonInstance.Button.onClick.AddListener(() => 
+            buttonInstance.Button.onClick.AddListener(() =>
             {
                 // TODO: 에피소드 선택시 동작
                 Debug.Log($"에피소드 {buttonInstance.Text.text}선택됨");

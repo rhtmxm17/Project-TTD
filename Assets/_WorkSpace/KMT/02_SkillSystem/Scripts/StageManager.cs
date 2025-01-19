@@ -175,6 +175,7 @@ public class StageManager : MonoBehaviour
 
     }
 
+    public void StartCameraShake() => combatCamera.Shake();
     public void StartGameOnSceneLoaded() => StartGame();
 
     IEnumerator StartPartyCostCO()
@@ -420,6 +421,8 @@ public class StageManager : MonoBehaviour
         StartCoroutine(FirstWaveSetCO());
 
         leftTimeText.text = "웨이브 대기중...";
+
+        GameManager.Sound.PlayBGM(BGMType.TEST1);//TODO : BGMTYPE이 뒷배경 종류와 매핑된 매핑 클래스 제작 필요
 
     }
 

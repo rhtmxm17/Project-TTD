@@ -11,8 +11,6 @@ public class Heal : Skill
     [Header("디버그용 힐 수치, 나중에는 캐릭터 수치로 추가")]
     [SerializeField]
     float healRate;
-    [SerializeField, Tooltip("선딜레이")] float preDelay;
-    [SerializeField, Tooltip("후딜레이")] float postDelay;
 
     // 캐싱 데이터
     private WaitForSeconds waitPreDelay;

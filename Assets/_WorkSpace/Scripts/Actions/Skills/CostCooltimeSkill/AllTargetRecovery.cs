@@ -13,8 +13,6 @@ public class AllTargetRecovery : Skill
     float healMultiplier;
     [SerializeField]
     int duaringSec;
-    [SerializeField, Tooltip("선딜레이")] float preDelay;
-    [SerializeField, Tooltip("후딜레이")] float postDelay;
 
     // 캐싱 데이터
     private WaitForSeconds waitPreDelay;
@@ -52,7 +50,8 @@ public class AllTargetRecovery : Skill
 
         for (int i = 0; i < duaringSec; i++)
         {
-            target.HealedByRecovery(healAmountPerTic);
+            if (target != null && target.IsAlive)
+                target.HealedByRecovery(healAmountPerTic);
             yield return ticDelay;
         }
     }

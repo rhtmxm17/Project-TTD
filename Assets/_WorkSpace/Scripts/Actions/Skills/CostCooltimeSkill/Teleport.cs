@@ -11,8 +11,6 @@ public class Teleport : Skill
     [Header("텔레포트 타깃으로부터 목적지 오프셋")]
     [SerializeField]
     Vector3 teleportOffset;
-    [SerializeField, Tooltip("선딜레이")] float preDelay;
-    [SerializeField, Tooltip("후딜레이")] float postDelay;
 
     // 캐싱 데이터
     private WaitForSeconds waitPreDelay;

@@ -12,8 +12,13 @@ using UnityEngine.Events;
 
 public class UserProfileUI : BaseUI
 {
+    [SerializeField] ProfileIconList profileIconList;
+    [SerializeField] SetUserIcon iconSelectButtonPrefab;
+
+    [Header("Child UI")]
     [SerializeField] OutskirtsUI outskirtsUI;
-    
+    [SerializeField] RectTransform iconSelectLayoutGroup;
+
     FirebaseAuth auth = BackendManager.Auth;
 
     // 가져오고 써야할 데이터들
@@ -24,16 +29,17 @@ public class UserProfileUI : BaseUI
     private float CP; // 전투력 합계
     private string introduction; // 자기소개문구
     private int acquiredCharacter; // 캐릭터 보유 수
-    private int clearStage; // 스테이지 클리어 진도
+    private StageData clearStage; // 스테이지 클리어 진도
     private int clearchapter; // 스테이지 클리어 진도
-    private string clearStory; // 스테이지 클리어 진도
+    private StageData clearStory; // 스토리 클리어 진도
     private int lastRank; // 이전 레이드 순위
     private int bestRank; // 역대 최고 랭킹
 
     public UnityEvent OnChangeProfile;
    
     // (임시) 아이콘 설정용 이미지
-    [SerializeField] Sprite[] iconSprites;
+    private Sprite[] IconSprites => profileIconList.IconList;
+
     
     private void Start()
     {
@@ -57,11 +63,16 @@ public class UserProfileUI : BaseUI
         {
             // 여기서 기존의 데이터를 불러오도록
             LoadData();
-            changeStageText();
             // 불러온 데이터 UI 적용
             SetUI();
         }
 
+        for (int i = 0; i < profileIconList.IconList.Length; i++)
+        {
+            var buttonInstance = Instantiate(iconSelectButtonPrefab, iconSelectLayoutGroup);
+            buttonInstance.IconSprite = profileIconList.IconList[i];
+            buttonInstance.IconIndex = i;
+        }
     }
 
     private void OnDestroy()
@@ -101,7 +112,7 @@ public class UserProfileUI : BaseUI
             SetName();
         });
         // 대표캐릭터 변경팝업
-        GetUI<Button>("ProfileCharacter").onClick.AddListener(() => OpenPopup("CharacterChangePopup"));
+        GetUI<Button>("ProfileIconButton").onClick.AddListener(() => OpenPopup("CharacterChangePopup"));
         GetUI<Button>("CloseChangeCharacter").onClick.AddListener(() => ClosePopup("CharacterChangePopup"));
         
         // DB랑 연관없이 인스펙터만으로 설정하는 부분 추가적인 작성이 필요햠
@@ -125,21 +136,23 @@ public class UserProfileUI : BaseUI
         // 스토리던
         for (int i = 1; i < 300; i++)
         {
-            if (GameManager.TableData.GetStageData(i).ClearCount.Value == 0)
+            StageData stage = GameManager.TableData.GetStageData(i);
+            if ((stage == null) || stage.ClearCount.Value == 0)
             {
-              break;
+                break;
             }
-            clearStage = i;
+            clearStage = stage;
         }
         // 스토리 진행도
         for (int i = 10001; i < 10100; i++)
         {
-            if (GameManager.TableData.GetStageData(i).ClearCount.Value == 0)
+            StageData stage = GameManager.TableData.GetStageData(i);
+            if ((stage == null) || stage.ClearCount.Value == 0)
             {
                 break;
             }
 
-            clearStory = GameManager.TableData.GetStageData(i).name;
+            clearStory = stage;
         }
         
         // 레이드 정보
@@ -163,8 +176,8 @@ public class UserProfileUI : BaseUI
     private void OnProfileImageUpdated(long _/*unused*/)
     {
         iconIndex = GameManager.UserData.Profile.IconIndex.Value;
-        GetUI<Image>("Image").sprite = iconSprites[iconIndex];
-        GetUI<Image>("ProfileCharacter").sprite = iconSprites[iconIndex];
+        GetUI<Image>("ProfileIcon").sprite = IconSprites[iconIndex];
+        GetUI<Image>("ProfileIconButton").sprite = IconSprites[iconIndex];
     }
 
     /// <summary>
@@ -176,9 +189,11 @@ public class UserProfileUI : BaseUI
         GetUI<TMP_Text>("Edit Window Name Text").text = nickName;
         GetUI<TMP_Text>("Level").text = level.ToString();
         //  GetUI<TMP_Text>("Introduction").text = introduction;
-        GetUI<TMP_Text>("ClearStage").text = $"클리어 스테이지:{clearchapter.ToString()}-{clearStage.ToString()}";
-        GetUI<TMP_Text>("ClearStory").text = $"클리어 스토리:{clearStory}";
+        GetUI<TMP_Text>("ClearStage").text = (clearStage == null) ?
+            "클리어 한 스테이지 없음" :
+            $"클리어 스테이지:{clearStage.ButtonName})";
         if(clearStory==null) GetUI<TMP_Text>("ClearStory").text = $"클리어 스토리:기록없음";
+        else GetUI<TMP_Text>("ClearStory").text = $"클리어 스토리:{clearStory.ButtonName}";
         GetUI<TMP_Text>("BestRank").text = $"최고 랭킹:{bestRank.ToString()}";
         if(bestRank == 999) GetUI<TMP_Text>("BestRank").text = $"랭킹없음";
         GetUI<TMP_Text>("LastRank").text = $"최근 랭킹:{lastRank.ToString()}";
@@ -246,13 +261,5 @@ public class UserProfileUI : BaseUI
     private void ClosePopup(string _name)
     {
         GetUI(_name).SetActive(false);
-    }
-    
-    // 스테이지 변환
-    private void changeStageText()
-    {
-        clearchapter =clearStage/ 10;
-        clearchapter += 1;
-        clearStage %=10;
     }
 }
