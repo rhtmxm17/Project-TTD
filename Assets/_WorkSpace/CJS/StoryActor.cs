@@ -30,7 +30,7 @@ public class StoryActor : MonoBehaviour
                 transition.ColorMultiply,
                 transition.ColorMultiply,
                 transition.Active ? 1f : 0f),
-            transition.Time);
+            transition.Time).SetUpdate(true);
 
 
         // 반전 및 크기
@@ -48,8 +48,8 @@ public class StoryActor : MonoBehaviour
         else
         {
             // 선형 이동
-            movementTransform.DOAnchorMin(transition.Position * 0.1f, transition.Time);
-            movementTransform.DOAnchorMax(transition.Position * 0.1f, transition.Time);
+            movementTransform.DOAnchorMin(transition.Position * 0.1f, transition.Time).SetUpdate(true);
+            movementTransform.DOAnchorMax(transition.Position * 0.1f, transition.Time).SetUpdate(true);
         }
 
         // 트랜지션 연출
@@ -66,24 +66,34 @@ public class StoryActor : MonoBehaviour
                     .Append(transitionTransform.DOAnchorPos(Vector2.zero, transition.Time * 0.25f))
                     .Append(transitionTransform.DOAnchorPos(Vector2.up * 100f, transition.Time * 0.25f))
                     .Append(transitionTransform.DOAnchorPos(Vector2.zero, transition.Time * 0.25f))
-                    ;
+                    .SetUpdate(true);
                 break;
             case TransitionType.SHAKE:
                 DOTween.Sequence()
-                    .Append(transitionTransform.DOShakeAnchorPos(3f,100f,10,90f,false,false))
-                    ;
+                    .Append(transitionTransform.DOShakeAnchorPos(transition.Time, 100f, 10, 90f, false, false))
+                    .SetUpdate(true);
+                break;
+            case TransitionType.SHAKE_HORIZONTAL:
+                DOTween.Sequence()
+                    .Append(transitionTransform.DOShakeAnchorPos(transition.Time, new Vector2(100f, 0f)))
+                    .SetUpdate(true);
+                break;
+            case TransitionType.SPIRAL:
+                DOTween.Sequence()
+                    .Append(transitionTransform.DOSpiral(transition.Time, null, SpiralMode.ExpandThenContract, 1f, transition.Time * 0.01f))
+                    .SetUpdate(true);
                 break;
             case TransitionType.UPSIZE:
                 DOTween.Sequence()
                     // 점차 확대 크기 임의 조정(현재 1.5배)(크기,확대속도)
-                    .Append(transitionTransform.DOScale(2f,3f))
-                    ;
+                    .Append(transitionTransform.DOScale(2f, transition.Time))
+                    .SetUpdate(true);
                 break;
             case TransitionType.DOWNSIZE:
                 DOTween.Sequence()
                     // 점차 축소 크기 임의 조정(현재 0.5배)(크기,축소속도)
-                    .Append(transitionTransform.DOScale(0.5f,3f))
-                    ;
+                    .Append(transitionTransform.DOScale(0.5f,transition.Time))
+                    .SetUpdate(true);
                 break;
             default:
                 Debug.LogWarning("정의되지 않은 트랜지션 타입");
