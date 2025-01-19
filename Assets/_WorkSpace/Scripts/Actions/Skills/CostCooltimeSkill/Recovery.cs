@@ -14,7 +14,10 @@ public class Recovery : Skill
     float healMultiplier;
     [SerializeField]
     int duaringSec;
-
+    // 스킬이펙트
+    [SerializeField] ParticleSystem hitEffect;
+    
+    
     // 캐싱 데이터
     private WaitForSeconds waitPreDelay;
     private WaitForSeconds waitPostDelay;
@@ -39,6 +42,10 @@ public class Recovery : Skill
         if (target != null && target.IsAlive)
         {
             target.StartCoroutine(SkillRoutineImplement(target, healAmount));
+            if (hitEffect != null)
+            {
+                Instantiate(hitEffect, target.transform.position, Quaternion.Euler(90,90,90));
+            }
         }
 
         yield return waitPostDelay;
@@ -52,7 +59,14 @@ public class Recovery : Skill
         for (int i = 0; i < duaringSec; i++)
         {
             if (target != null && target.IsAlive)
+            {
                 target.HealedByRecovery(healAmountPerTic);
+                if (hitEffect != null)
+                {
+                    Instantiate(hitEffect, target.transform.position, target.transform.rotation);
+                }
+            }
+            
             yield return ticDelay;
         }
     }

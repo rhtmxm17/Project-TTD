@@ -38,7 +38,7 @@ public class TauntSelf : Skill
             target.StartCoroutine(TauntSkillCO(target));
             if (hitEffect != null)
             {
-                Instantiate(hitEffect, target.transform.position, target.transform.rotation);
+                Instantiate(hitEffect, target.transform.position, Quaternion.Euler(90,90,90));
             }
         }
 

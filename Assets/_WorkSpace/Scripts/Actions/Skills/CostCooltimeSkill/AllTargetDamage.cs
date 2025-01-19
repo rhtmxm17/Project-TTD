@@ -45,7 +45,7 @@ public class AllTargetDamage : Skill
                     {
                         float rndX = Random.Range(-5, 15);
                         float rndZ = Random.Range(-1, 2);
-                        Instantiate(hitEffect, new Vector3(rndX,4,rndZ), target.transform.rotation);
+                        Instantiate(hitEffect, new Vector3(rndX,4,rndZ), Quaternion.Euler(90,90,90));
                         // TODO: ricochet(피격효과) 나온는 위치에서 나오게 하면될거같은데 지금 잘모르겠음
                         
                         

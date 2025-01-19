@@ -10,7 +10,9 @@ public class CircleAreaDamage : Skill
 {
     [SerializeField] float atkMultiplier = 1f;
     [SerializeField] float areaRadius = 1f;
-
+    // 스킬이펙트
+    [SerializeField] ParticleSystem hitEffect;
+    
     // 캐싱 데이터
     private WaitForSeconds waitPreDelay;
     private WaitForSeconds waitPostDelay;
@@ -45,6 +47,10 @@ public class CircleAreaDamage : Skill
                     Vector2.SqrMagnitude(enemy.transform.position - pos) < areaRadius * areaRadius)//원형범위 적 판정
                 {
                     dest.Add(enemy);
+                    if (hitEffect != null)
+                    {
+                        Instantiate(hitEffect, target.transform.position, Quaternion.Euler(90,90,90));
+                    }
                     //enemy.Damaged(self.AttackPoint.Value * atkMultiplier, self.igDefenseRate, self.characterData.StatusTable.type); // 타겟에게 데미지 적용
                 }
             }

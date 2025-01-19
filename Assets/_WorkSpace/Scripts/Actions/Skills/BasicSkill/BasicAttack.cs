@@ -33,7 +33,7 @@ public class BasicAttack : Skill
             target.Damaged(self.CurAttackPoint, self.igDefenseRate, self.characterData.StatusTable.type); // 타겟에게 데미지 적용
             if (hitEffect != null)
             {
-                Instantiate(hitEffect, target.transform.position, target.transform.rotation);
+                Instantiate(hitEffect, target.transform.position, Quaternion.Euler(90,90,90));
             }
         }
         yield return waitPostDelay;
