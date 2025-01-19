@@ -13,7 +13,7 @@ public class CharacterEnhance : MonoBehaviour
     private readonly int _maxEnhanceLevel = 10;
     private float _minEnhanceProbability = 0.9f;
     private float _enhanceProbability;
-    private float _chance;
+    private float _successProbability;
     private int _beforeEnhanceLevel;
     private int _afterEnhanceLevel;
     private int _beforeHp;
@@ -29,6 +29,9 @@ public class CharacterEnhance : MonoBehaviour
     private int _selectedCharacterMaterial;
 
     private EnhanceTokenType _curTokenType;
+    private Color color = new Color(0.9882353f, 1f, 0.6196079f);
+    private float[] _decreaseRate = { 0, 0.05f, 0.05f, 0.1f, 0.05f, 0.05f, 0.05f, 0.15f, 0.1f, 0.1f };
+    private float _cumulativeProbability;
     
     /// <summary>
     /// 0.0f ~ 1.0f 범위 마일리지
@@ -42,7 +45,8 @@ public class CharacterEnhance : MonoBehaviour
         set
         {
             _sliderValue = value;
-
+        
+            //TODO: Slider 컬러 값 변경 필요
             if (_sliderValue >= 1f)
             {
                 _characterInfoController._infoUI._mileageSlider.transform.GetChild(1).GetComponentInChildren<Image>().color = Color.cyan;
@@ -420,24 +424,26 @@ public class CharacterEnhance : MonoBehaviour
     {
         if (_characterInfoController.CurCharacterEnhance != this) return;
         
-        //기본 강화 확률 + 추가 재료 강화 확률 > Probability 보다 크면 성공
-        //아니면 실패
-        //TODO: 프로토타입 이후 확률 수정 필요 
-        //현재 임시로 강화 레벨에 따라 최소 강화 확률 조정 중
-
-        //최소 확률 > 임시 70%
-        _minEnhanceProbability = (_maxEnhanceLevel - 7) * 0.1f;
-
-        //강화 성공 확률
-        _enhanceProbability = GetProbability(Random.Range(_minEnhanceProbability + ((_beforeEnhanceLevel + 0.1f) * 0.1f), 0.9f));
-
-        //0.2 ~ 
-        _chance = GetProbability(Random.Range(0.2f, _enhanceProbability + 0.05f));
-        _chance = Mathf.Clamp(_chance, 0.01f, 1f);
-
-        Debug.Log($"성공 최소 확률:{_enhanceProbability} / 나의 확률 :{_chance}");
+        //누적 확률
+        _cumulativeProbability = 0f;
         
-        if (_chance >= _enhanceProbability)
+        //최소 확률 > 90%
+        _minEnhanceProbability = 0.1f;
+
+        for (int i = 0; i <= _characterData.Enhancement.Value; i++)
+        {
+            _cumulativeProbability += _decreaseRate[i];
+        }
+        
+        //강화 성공 확률
+        _enhanceProbability = _minEnhanceProbability + GetProbability(_cumulativeProbability);
+
+        //0 ~ 1f 사이
+        _successProbability = GetProbability(Random.Range(0f, 1f)); 
+
+        //Debug.Log($"누적확률:{_cumulativeProbability} / 성공 확률:{_enhanceProbability} / 나의 확률 :{_successProbability}");
+        
+        if (_successProbability > _enhanceProbability)
         {  
             DragonCandyDataUpdate(1, true);
         }
@@ -477,7 +483,7 @@ public class CharacterEnhance : MonoBehaviour
 
         _curTokenType = EnhanceTokenType.NONE;
         _characterInfoController.UserCharacterToken = GameManager.TableData.GetItemData(_characterInfoController.CurCharacterInfo._CharacterData.EnhanceItemID).Number.Value;
-        
+
         TokenCountTextUpdate();
         ResultPopup($"+{_characterData.Enhancement.Value} 강화에 성공하셨습니다.", _characterInfoController._infoUI.EnhanceResultIcons[0]);
         CharacterStats();
@@ -499,13 +505,17 @@ public class CharacterEnhance : MonoBehaviour
         _curTokenType = EnhanceTokenType.NONE;
         _characterInfoController.UserCharacterToken = GameManager.TableData.GetItemData(_characterInfoController.CurCharacterInfo._CharacterData.EnhanceItemID).Number.Value;
         
+        
         TokenCountTextUpdate();
         ResultPopup($"+{_characterData.Enhancement.Value + 1} 강화에 실패하셨습니다. \n 마일리지 적립 +10%", _characterInfoController._infoUI.EnhanceResultIcons[1]);
         CharacterStats();
         UpdateInfo();
         EnhanceCheck();
+        
+        
         //TODO: 마일리지 누적 값 수정 필요
         MileageUpdate(_characterData.EnhanceMileagePerMill.Value + 100);
+        _characterInfoController._infoUI._sliderFillImage.pixelsPerUnitMultiplier += _characterData.EnhanceMileagePerMill.Value * 0.01f;
     }
 
     /// <summary>
@@ -566,6 +576,7 @@ public class CharacterEnhance : MonoBehaviour
                 MileageUpdate(0);
                 _characterInfoController._infoUI._mileageUseButton.interactable = false;
                 _characterInfoController._infoUI._mileageUsePopup.SetActive(false);
+                _characterInfoController._infoUI._sliderFillImage.pixelsPerUnitMultiplier = 1;
             });
     }
 
@@ -619,9 +630,9 @@ public class CharacterEnhance : MonoBehaviour
     private void EnhanceCheck()
     {
         //TODO: 활성화/비활성화 조건 수정 필요 현재는 테스트로 임시 ~
-        _characterInfoController._infoUI._enhanceCoinText.color = _characterInfoController.UserGold >= _enhanceGoldCost ? Color.white : Color.red;
+        _characterInfoController._infoUI._enhanceCoinText.color = _characterInfoController.UserGold >= _enhanceGoldCost ? color : Color.red;
         _characterInfoController._infoUI._enhanceMaterialText.color =
-            _characterInfoController.UserDragonCandy >= _enhanceDragonCandyCost ? Color.white : Color.red;
+            _characterInfoController.UserDragonCandy >= _enhanceDragonCandyCost ? color : Color.red;
         
         _characterInfoController._infoUI._enhanceButton.interactable =
             _enhanceDragonCandyCost == (_selectedCharacterMaterial + _selectedCommonMaterial)&&
@@ -641,6 +652,7 @@ public class CharacterEnhance : MonoBehaviour
         _characterInfoController._infoUI._mileageSlider.value = _mileage;
         _characterInfoController._infoUI._mileageUseButton.interactable = _mileage >= 1f;
         SliderValue = _mileage;
+        _characterInfoController._infoUI._sliderFillImage.pixelsPerUnitMultiplier = _mileage * 10f;
         SetEnhanceCost();
         EnhanceCheck();
     }
