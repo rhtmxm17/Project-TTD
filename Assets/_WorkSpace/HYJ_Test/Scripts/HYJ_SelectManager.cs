@@ -234,15 +234,23 @@ public class HYJ_SelectManager : MonoBehaviour
             }
         }
         
+        
         //배치 유닛 전투력&스테이지 전투력 표기
-        userAndStagePower.text = batchUnitsPower+ "/" + stagePower;
         if (batchUnitsPower < stagePower)
         {
-            userAndStagePower.color = Color.red;
+            userAndStagePower.text =
+                $"<color=white>적 전투력</color>\n<color=red>{stagePower}</color>\n<color=white>내 전투력</color>\n<color=red>{batchUnitsPower}</color>";
         }
         else
         {
-            userAndStagePower.color = Color.green;
+            userAndStagePower.text =
+                $"<color=white>적 전투력</color>\n<color=green>{stagePower}</color>\n<color=white>내 전투력</color>\n<color=green>{batchUnitsPower}</color>";
+        }
+        
+
+        if (GameManager.Instance.sceneChangeArgs.stageType == StageType.BOSS)
+        {
+            userAndStagePower.text = $"{batchUnitsPower}/?????";
         }
     }
 }
