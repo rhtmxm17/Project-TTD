@@ -51,11 +51,11 @@ public class CharacterEnhance : MonoBehaviour
             //TODO: Slider 컬러 값 변경 필요
             if (_sliderValue >= 1f)
             {
-                _characterInfoController._infoUI._mileageSlider.transform.GetChild(1).GetComponentInChildren<Image>().sprite = _characterInfoController._infoUI._siliderFillSprites[1];
+                _characterInfoController._infoUI._sliderFillImage.sprite = _characterInfoController._infoUI._siliderFillSprites[1];
             }
             else
             {
-                _characterInfoController._infoUI._mileageSlider.transform.GetChild(1).GetComponentInChildren<Image>().sprite = _characterInfoController._infoUI._siliderFillSprites[0];
+                _characterInfoController._infoUI._sliderFillImage.sprite = _characterInfoController._infoUI._siliderFillSprites[0];
             } 
         }
     }
@@ -405,7 +405,7 @@ public class CharacterEnhance : MonoBehaviour
             _characterInfoController._infoUI._enhanceMaterialText.text = "-";
             
             _characterInfoController._infoUI._mileageUseButton.interactable = false;
-            _characterInfoController._infoUI._mileageSlider.value = 1f;
+            SliderValue = 1f;
         }
         else
         {
@@ -537,9 +537,19 @@ public class CharacterEnhance : MonoBehaviour
                     ResultPopup("마일리지 적립 실패 \n 사유 : 네트워크 오류", _characterInfoController._infoUI.EnhanceResultIcons[2]);
                     return;
                 }
-                _characterInfoController._infoUI._mileageSlider.value = _mileage;
-                _characterInfoController._infoUI._mileageUseButton.interactable = _mileage >= 1f;
-                SliderValue = _mileage; 
+                 
+                if (_characterData.Enhancement.Value >= 10)
+                {
+                    SliderValue = 1f;
+                    _characterInfoController._infoUI._sliderFillImage.pixelsPerUnitMultiplier = 15;
+                    _characterInfoController._infoUI._mileageValueText.text = "-"; 
+                }
+                else
+                {
+                    _characterInfoController._infoUI._mileageSlider.value = _mileage;
+                    _characterInfoController._infoUI._mileageUseButton.interactable = _mileage >= 1f;
+                    SliderValue = _mileage; 
+                } 
             });
     }
 
@@ -674,6 +684,7 @@ public class CharacterEnhance : MonoBehaviour
         {
             _characterInfoController._infoUI._mileageSlider.value = 1f;
             _characterInfoController._infoUI._mileageValueText.text = "-";
+            _characterInfoController._infoUI._sliderFillImage.pixelsPerUnitMultiplier = 15;
         }
         
         SetEnhanceCost();

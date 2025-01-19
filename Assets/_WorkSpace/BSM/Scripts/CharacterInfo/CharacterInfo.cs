@@ -162,9 +162,9 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
                 _characterInfoController._infoUI._bonusPopup.SetActive(true);
                 _characterInfoController._infoUI._bonusLevelText.text = $"{_characterLevel}레벨 달성!";
 
-                int atk = (int)((_characterData.StatusTable.attackPointBase + _characterData.StatusTable.attackPointGrowth * _characterLevel) * (1f + 0.1f * _characterData.Enhancement.Value));
-                int def = (int)((_characterData.StatusTable.defensePointBase + _characterData.StatusTable.defensePointGrouth * _characterLevel) * (1f + 0.1f * _characterData.Enhancement.Value));
-                int hp = (int)((_characterData.StatusTable.healthPointBase + _characterData.StatusTable.healthPointGrouth * _characterLevel) * (1f + 0.1f * _characterData.Enhancement.Value));
+                int atk = (int)((_characterData.StatusTable.attackPointBase + _characterData.StatusTable.attackPointGrowth * _characterLevel) * (1f + 0.05f * _characterData.Enhancement.Value));
+                int def = (int)((_characterData.StatusTable.defensePointBase + _characterData.StatusTable.defensePointGrouth * _characterLevel) * (1f + 0.05f * _characterData.Enhancement.Value));
+                int hp = (int)((_characterData.StatusTable.healthPointBase + _characterData.StatusTable.healthPointGrouth * _characterLevel) * (1f + 0.05f * _characterData.Enhancement.Value));
                 
                 //레벨업 전 정보
                 _characterInfoController._infoUI._beforeBonusAtkText.text =
