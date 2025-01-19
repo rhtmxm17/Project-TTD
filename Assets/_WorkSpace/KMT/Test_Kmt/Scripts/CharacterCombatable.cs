@@ -142,10 +142,12 @@ public class CharacterCombatable : Combatable
         //=============HP 게이지 위치 조정==================
 
         RectTransform hpBarRect = hpSlider.GetComponent<RectTransform>();
-        hpSlider.transform.SetParent(secondSkillButton.transform);
+        hpSlider.transform.SetParent(levelupButton.transform);
         hpBarRect.anchoredPosition = new Vector3(0, -100, 5);
         hpBarRect.sizeDelta = new Vector2(140, 60);
-        hpBarRect.rotation = Quaternion.identity;
+        Debug.Log(hpBarRect.rotation);
+        hpBarRect.localRotation = Quaternion.identity;
+        Debug.Log(hpBarRect.rotation);
         hpBarRect.localScale = Vector3.one;
 
     }

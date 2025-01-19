@@ -32,6 +32,8 @@ public class StoryDirectingData : ScriptableObject, ITsvSheetParseable
         NORMAL, // 선형적 이동
         BOUNCE, // 통통
         SHAKE, // 부들부들
+        SHAKE_HORIZONTAL, // 부들수평
+        SPIRAL,
         UPSIZE, // 확대
         DOWNSIZE, // 축소
     }
@@ -317,7 +319,7 @@ public class StoryDirectingData : ScriptableObject, ITsvSheetParseable
                     }
                     else
                     {
-                        Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.TRANSITION]}");
+                        Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:int, 입력된 데이터:{cells[(int)Column.TRANSITION]}");
                         continue;
                     }
 

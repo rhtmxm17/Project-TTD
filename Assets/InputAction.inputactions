@@ -352,12 +352,21 @@
                 },
                 {
                     "name": "Touch",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "82a4cb72-2db2-4814-848d-0e954df12079",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "Touch",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "ScreenEffect",
+                    "type": "Value",
+                    "id": "01a69587-99eb-494e-a017-6e7f52b24eb8",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -705,21 +714,10 @@
                 {
                     "name": "",
                     "id": "dca22e9c-6d18-429e-ad77-1786e4dbf671",
-                    "path": "<Touchscreen>/Press",
+                    "path": "<Touchscreen>/primaryTouch",
                     "interactions": "",
                     "processors": "",
                     "groups": "Touch",
-                    "action": "Touch",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "0ea5a9b1-a381-4ed3-b711-39ff9ba9366c",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
                     "action": "Touch",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -798,6 +796,17 @@
                     "processors": "",
                     "groups": "XR",
                     "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4a9a2591-0dcd-46d1-82d3-08a3f3285a02",
+                    "path": "<Touchscreen>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ScreenEffect",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

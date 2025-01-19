@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class OverlayUIManager : SingletonBehaviour<OverlayUIManager>
 {
@@ -17,10 +18,13 @@ public class OverlayUIManager : SingletonBehaviour<OverlayUIManager>
     [SerializeField] SimpleInfoUI simpleInfoUIPrefab;
     [SerializeField] SettingWindow settingWindowPrefab;
 
+    Canvas canvas;
 
     private void Awake()
     {
         RegisterSingleton(this);
+        canvas = GetComponent<Canvas>();
+        SceneManager.sceneLoaded += (_1, _2) => { canvas.worldCamera = Camera.main; };
     }
 
     /// <summary>
