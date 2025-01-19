@@ -32,11 +32,13 @@ public class CharacterEnhance : MonoBehaviour
     private Color color = new Color(0.9882353f, 1f, 0.6196079f);
     private float[] _decreaseRate = { 0, 0.05f, 0.05f, 0.1f, 0.05f, 0.05f, 0.05f, 0.15f, 0.1f, 0.1f };
     private float _cumulativeProbability;
+
+    private int[] _increaseMileage = { 1, 1, 2, 2, 4, 6, 7, 8, 12, 14 };
     
     /// <summary>
     /// 0.0f ~ 1.0f 범위 마일리지
     /// </summary>
-    private float _mileage => Mathf.Clamp(_characterData.EnhanceMileagePerMill.Value * 0.001f, 0f, 1f);
+    private float _mileage => Mathf.Clamp(_characterData.EnhanceMileagePerMill.Value * 0.01f, 0f, 1f);
 
     private float _sliderValue;
     private float SliderValue
@@ -390,7 +392,7 @@ public class CharacterEnhance : MonoBehaviour
     private void AfterEnhance()
     {
         _afterEnhanceLevel = (_beforeEnhanceLevel + 1);
-        _characterInfoController._infoUI._afterMax.SetActive(_beforeEnhanceLevel >= 10);
+        _characterInfoController._infoUI._afterMax.SetActive(_characterData.Enhancement.Value >= 10 && _characterInfoController.CurInfoTabType == InfoTabType.ENHANCE);
         _characterInfoController._infoUI._beforeMax.SetActive(_beforeEnhanceLevel < 10 && _characterInfoController.CurInfoTabType == InfoTabType.ENHANCE);
 
         if (_afterEnhanceLevel > 10)
@@ -514,7 +516,7 @@ public class CharacterEnhance : MonoBehaviour
         
         
         //TODO: 마일리지 누적 값 수정 필요
-        MileageUpdate(_characterData.EnhanceMileagePerMill.Value + 100);
+        MileageUpdate(_characterData.EnhanceMileagePerMill.Value + _increaseMileage[_characterData.Enhancement.Value]);
         _characterInfoController._infoUI._sliderFillImage.pixelsPerUnitMultiplier += _characterData.EnhanceMileagePerMill.Value * 0.01f;
     }
 

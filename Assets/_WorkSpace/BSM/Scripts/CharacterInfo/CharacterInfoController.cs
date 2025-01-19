@@ -374,7 +374,8 @@ public class CharacterInfoController : BaseUI
         UserDragonCandy = UserDragonCandyData.Value;
         UserCharacterToken = GameManager.TableData.GetItemData(CurCharacterInfo._CharacterData.EnhanceItemID).Number.Value;
         
-        _infoUI._beforeMax.SetActive(_curInfoTabType.Equals(InfoTabType.ENHANCE));
+        _infoUI._beforeMax.SetActive(CurCharacterInfo._CharacterData.Enhancement.Value < 10 && _curInfoTabType.Equals(InfoTabType.ENHANCE));
+        _infoUI._afterMax.SetActive(CurCharacterInfo._CharacterData.Enhancement.Value >= 10 && CurInfoTabType == InfoTabType.ENHANCE);
         _nextButton.gameObject.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
         _prevButton.gameObject.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL));
         _characterUIPanel.SetActive(_curInfoTabType.Equals(InfoTabType.DETAIL) || _curInfoTabType.Equals(InfoTabType.ENHANCE));
