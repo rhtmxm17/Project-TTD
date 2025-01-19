@@ -1,4 +1,3 @@
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -39,8 +38,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
         characterSelectPanel = CharacterSelectPanel;
         this.CantPosUI = CantPosUI;
         posNum = posIdx;
-        
-        transform.GetComponentInChildren<TextMeshProUGUI>().text = posIdx.ToString();
+        //transform.GetComponentInChildren<TextMeshProUGUI>().text = posIdx.ToString();
         
         if (CheckPos(posNum))
         {
