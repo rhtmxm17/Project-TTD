@@ -46,6 +46,9 @@ public class PurchasingPanel : BaseUI
     [SerializeField] ItemGainCell itemGainCellPrefab;
     [SerializeField] LayoutGroup layoutGroup;
     
+    // 구매효과
+    [SerializeField] ParticleSystem buyEffect; 
+    
     public ShopItemData shopItemData {get; private set;}
     
     bool isBulk => shopItemData.IsMany;
@@ -199,6 +202,10 @@ public class PurchasingPanel : BaseUI
         ClosePopup();
 
         dbUpdateStream.Submit(OnComplete);
+        
+        // 구매 효과
+        Instantiate(buyEffect, Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0f)), Quaternion.identity);
+
 
     }
 
