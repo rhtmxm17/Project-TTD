@@ -51,12 +51,11 @@ public class CharacterEnhance : MonoBehaviour
             //TODO: Slider 컬러 값 변경 필요
             if (_sliderValue >= 1f)
             {
-                _characterInfoController._infoUI._mileageSlider.transform.GetChild(1).GetComponentInChildren<Image>().color = Color.cyan;
+                _characterInfoController._infoUI._mileageSlider.transform.GetChild(1).GetComponentInChildren<Image>().sprite = _characterInfoController._infoUI._siliderFillSprites[1];
             }
             else
             {
-                _characterInfoController._infoUI._mileageSlider.transform.GetChild(1).GetComponentInChildren<Image>()
-                    .color = new Color(0.6f, 0.05f, 0.15f);
+                _characterInfoController._infoUI._mileageSlider.transform.GetChild(1).GetComponentInChildren<Image>().sprite = _characterInfoController._infoUI._siliderFillSprites[0];
             } 
         }
     }
@@ -380,7 +379,7 @@ public class CharacterEnhance : MonoBehaviour
 
         SetEnhanceCost();
 
-        _characterInfoController._infoUI._beforeUpGradeText.text = $"+{_beforeEnhanceLevel} 현재 능력치";
+        //_characterInfoController._infoUI._beforeUpGradeText.text = $"+{_beforeEnhanceLevel} 현재 능력치";
         _characterInfoController._infoUI._beforeAtkText.text = $"공격력 {_beforeAtk}";
         _characterInfoController._infoUI._beforeDefText.text = $"방어력 {_beforeDef}";
         _characterInfoController._infoUI._beforeHpText.text = $"체력 {_beforeHp}";
@@ -404,6 +403,9 @@ public class CharacterEnhance : MonoBehaviour
 
             _characterInfoController._infoUI._enhanceCoinText.text = "-";
             _characterInfoController._infoUI._enhanceMaterialText.text = "-";
+            
+            _characterInfoController._infoUI._mileageUseButton.interactable = false;
+            _characterInfoController._infoUI._mileageSlider.value = 1f;
         }
         else
         {
@@ -412,10 +414,10 @@ public class CharacterEnhance : MonoBehaviour
             _afterAtk = Convert.ToInt32(_characterData.AttackPointLeveled * (1f + 0.1f * _afterEnhanceLevel) / (1f + 0.1f * (_characterData.Enhancement.Value)));
             _afterDef = Convert.ToInt32(_characterData.DefensePointLeveled * (1f + 0.1f * _afterEnhanceLevel) / (1f + 0.1f * (_characterData.Enhancement.Value)));
 
-            _characterInfoController._infoUI._afterUpGradeText.text = $"+{_afterEnhanceLevel} 강화 후 능력치";
-            _characterInfoController._infoUI._afterHpText.text = $"체력 {_afterHp}";
-            _characterInfoController._infoUI._afterAtkText.text = $"공격력 {_afterAtk}";
-            _characterInfoController._infoUI._afterDefText.text = $"방어력 {_afterDef}";
+            //_characterInfoController._infoUI._afterUpGradeText.text = $"+{_afterEnhanceLevel} 강화 후 능력치";
+            _characterInfoController._infoUI._afterHpText.text = _afterHp.ToString();
+            _characterInfoController._infoUI._afterAtkText.text = _afterAtk.ToString();
+            _characterInfoController._infoUI._afterDefText.text = _afterDef.ToString();
         }
     }
 
@@ -632,12 +634,20 @@ public class CharacterEnhance : MonoBehaviour
     private void EnhanceCheck()
     {
         //TODO: 활성화/비활성화 조건 수정 필요 현재는 테스트로 임시 ~
-        _characterInfoController._infoUI._enhanceCoinText.color = _characterInfoController.UserGold >= _enhanceGoldCost ? color : Color.red;
-        _characterInfoController._infoUI._enhanceMaterialText.color =
-            _characterInfoController.UserDragonCandy >= _enhanceDragonCandyCost ? color : Color.red;
+
+        if (_characterData.Enhancement.Value >= 10)
+        {
+            _characterInfoController._infoUI._enhanceCoinText.color = Color.white;
+            _characterInfoController._infoUI._enhanceMaterialText.color = Color.white;
+        }
+        else
+        { 
+            _characterInfoController._infoUI._enhanceCoinText.color = _characterInfoController.UserGold >= _enhanceGoldCost ? color : Color.red;
+            _characterInfoController._infoUI._enhanceMaterialText.color = _characterInfoController.UserDragonCandy >= _enhanceDragonCandyCost ? color : Color.red;
+        }
         
         _characterInfoController._infoUI._enhanceButton.interactable =
-            _enhanceDragonCandyCost == (_selectedCharacterMaterial + _selectedCommonMaterial)&&
+            _enhanceDragonCandyCost == (_selectedCharacterMaterial + _selectedCommonMaterial) &&
             _beforeEnhanceLevel < _maxEnhanceLevel &&
             _characterInfoController.UserGold >= _enhanceGoldCost &&
             _characterInfoController.UserDragonCandy >= _enhanceDragonCandyCost;
@@ -652,9 +662,20 @@ public class CharacterEnhance : MonoBehaviour
         _characterInfoController.CurCharacterEnhance = this;
         _characterData = characterData;
         _characterInfoController._infoUI._mileageSlider.value = _mileage;
-        _characterInfoController._infoUI._mileageUseButton.interactable = _mileage >= 1f;
+        _characterInfoController._infoUI._mileageUseButton.interactable = _mileage >= 1f && characterData.Enhancement.Value < 10;
         SliderValue = _mileage;
         _characterInfoController._infoUI._sliderFillImage.pixelsPerUnitMultiplier = _mileage * 10f;
+        
+        _characterInfoController._infoUI._autoTokenButton.interactable = characterData.Enhancement.Value < 10;
+        _characterInfoController._infoUI._characterTokenButton.interactable = characterData.Enhancement.Value < 10;
+        _characterInfoController._infoUI._commonTokenButton.interactable = characterData.Enhancement.Value < 10;
+
+        if (characterData.Enhancement.Value >= 10)
+        {
+            _characterInfoController._infoUI._mileageSlider.value = 1f;
+            _characterInfoController._infoUI._mileageValueText.text = "-";
+        }
+        
         SetEnhanceCost();
         EnhanceCheck();
     }
