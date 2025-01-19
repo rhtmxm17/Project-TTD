@@ -227,7 +227,7 @@ public class HYJ_SelectManager : MonoBehaviour
             foreach (var iWaveMonster in iWave.monsters)
             {
                 CharacterData.Status monsterStatus = iWaveMonster.character.StatusTable;
-                stagePower =
+                stagePower +=
                     monsterStatus.defensePointBase + monsterStatus.healthPointBase + monsterStatus.attackPointBase + 
                 (monsterStatus.healthPointGrouth + monsterStatus.attackPointGrowth + monsterStatus.defensePointGrouth) 
                 * iWaveMonster.level;
