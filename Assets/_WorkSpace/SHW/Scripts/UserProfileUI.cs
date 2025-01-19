@@ -199,7 +199,7 @@ public class UserProfileUI : BaseUI
         GetUI<TMP_Text>("LastRank").text = $"최근 랭킹:{lastRank.ToString()}";
         if(lastRank == 999) GetUI<TMP_Text>("LastRank").text = $"랭킹없음";
         GetUI<TMP_Text>("CP").text = $"총전투력:{CP.ToString()}";
-        GetUI<TMP_Text>("AcquiredCharacter").text = $"{acquiredCharacter.ToString()}/9";
+        GetUI<TMP_Text>("AcquiredCharacter").text = $"소유캐릭터 : {acquiredCharacter.ToString()}/9";
     }
 
     /// <summary>
