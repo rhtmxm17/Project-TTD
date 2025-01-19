@@ -8,6 +8,9 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "ScriptableObjects/Skill/TauntSelf")]
 public class TauntSelf : Skill
 {
+    // 스킬이펙트
+    [SerializeField] ParticleSystem hitEffect;
+    
     [Header("지속시간")]
     [SerializeField]
     float duaringTime;
@@ -33,6 +36,10 @@ public class TauntSelf : Skill
         if (target != null && target.IsAlive)
         {
             target.StartCoroutine(TauntSkillCO(target));
+            if (hitEffect != null)
+            {
+                Instantiate(hitEffect, target.transform.position, target.transform.rotation);
+            }
         }
 
         yield return waitPostDelay;
