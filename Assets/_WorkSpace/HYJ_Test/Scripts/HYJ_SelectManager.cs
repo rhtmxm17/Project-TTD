@@ -239,12 +239,12 @@ public class HYJ_SelectManager : MonoBehaviour
         if (batchUnitsPower < stagePower)
         {
             userAndStagePower.text =
-                $"<color=white>적 전투력</color>\n<color=red>{stagePower}</color>\n<color=white>내 전투력</color>\n<color=red>{batchUnitsPower}</color>";
+                $"<color=white>적 전투력</color>\n<color=red>{(int)stagePower}</color>\n<color=white>내 전투력</color>\n<color=red>{(int)batchUnitsPower}</color>";
         }
         else
         {
             userAndStagePower.text =
-                $"<color=white>적 전투력</color>\n<color=green>{stagePower}</color>\n<color=white>내 전투력</color>\n<color=green>{batchUnitsPower}</color>";
+                $"<color=white>적 전투력</color>\n<color=green>{(int)stagePower}</color>\n<color=white>내 전투력</color>\n<color=green>{(int)batchUnitsPower}</color>";
         }
         
 
