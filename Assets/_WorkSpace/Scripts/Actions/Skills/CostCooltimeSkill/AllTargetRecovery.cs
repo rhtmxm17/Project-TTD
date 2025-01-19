@@ -50,7 +50,8 @@ public class AllTargetRecovery : Skill
 
         for (int i = 0; i < duaringSec; i++)
         {
-            target.HealedByRecovery(healAmountPerTic);
+            if (target != null && target.IsAlive)
+                target.HealedByRecovery(healAmountPerTic);
             yield return ticDelay;
         }
     }

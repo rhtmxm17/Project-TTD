@@ -31,6 +31,9 @@ public class TargetLeftMostEnemy : Targeting
 
         foreach (Combatable enemyUnit in self.Group.Enemy.CharList)
         {
+            if (enemyUnit.IsTaunt)
+                return enemyUnit;
+
             float enemyDist = Vector3.Dot(enemyUnit.transform.position, Vector3.left);
 
             if (distance < enemyDist)

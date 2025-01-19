@@ -46,7 +46,8 @@ public class AttackBuff : Skill
         yield return null;
         target.AddAtkBuff(amount);
         yield return new WaitForSeconds(duringTime);
-        target.RemoveAtkBuff(amount);
+        if (target != null && target.IsAlive)
+            target.RemoveAtkBuff(amount);
     }
 
 }
