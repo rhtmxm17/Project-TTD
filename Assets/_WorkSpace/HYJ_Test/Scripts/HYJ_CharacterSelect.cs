@@ -68,7 +68,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
         nameText.text = chData.Name; // 유닛 이름
         raceText.text = chData.StatusTable.type.ToString(); // 종족
         classText.text = chData.StatusTable.roleType.ToString(); // 역할군
-        powerText.text = chData.PowerLevel.ToString(); // 전투력
+        powerText.text = $"{(int)chData.PowerLevel}"; // 전투력
         
         unitInfoScript.InitUnitInfo(chData);
     }
