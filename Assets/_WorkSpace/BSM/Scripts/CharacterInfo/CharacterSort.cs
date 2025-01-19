@@ -2,14 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro; 
-using UnityEngine; 
+using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 
 public class CharacterSort : MonoBehaviour
 {
     [HideInInspector] public CharacterInfoController CharacterInfoController;
     [HideInInspector] public List<CharacterInfo> _sortCharacterInfos;
-    [HideInInspector] public TextMeshProUGUI SortingText;
+    [HideInInspector] public Image SortingImage;
    
     [HideInInspector] public List<CharacterData> _ownedCharacters;
     [HideInInspector] public List<CharacterData> _unOwnedCharacters;
@@ -111,7 +113,7 @@ public class CharacterSort : MonoBehaviour
         if(_ownedCharacters.Count > 0) _ownedCharacters.Clear();
         if(_unOwnedCharacters.Count > 0) _unOwnedCharacters.Clear();
         
-       SortingText.text = _isSorting ? "↓" : "↑";
+       SortingImage.transform.rotation = _isSorting ? Quaternion.Euler(0,0,0) : Quaternion.Euler(0,0,180);
        
        if (!_isStart)
        {

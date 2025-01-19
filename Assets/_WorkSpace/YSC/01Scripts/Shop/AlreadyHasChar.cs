@@ -21,6 +21,8 @@ public class AlreadyHasChar : BaseUI
     [SerializeField] Button purchaseButton;
     // 경고메세지
     [SerializeField] TMP_Text warningText;
+    // 아이템이름 텍스트
+    [SerializeField] TMP_Text itemNameText;
     
     public ShopItemData shopItemData { get; private set; }
 
@@ -39,15 +41,16 @@ public class AlreadyHasChar : BaseUI
 
     private void Init()
     {
-        bgCancelButton = GetUI<Button>("CharWarningBG");
+        bgCancelButton = GetUI<Button>("CharWarningBG");        // 외각 나가기 버튼
         bgCancelButton.onClick.AddListener(OnPopupOKButtonClicked);
-        cancelButton = GetUI<Button>("CancelButton");
+        cancelButton = GetUI<Button>("CancelButton");           // 취소 버튼(나가기)
         cancelButton.onClick.AddListener(OnPopupOKButtonClicked);
-        exitButton = GetUI<Button>("ExitButton");
+        exitButton = GetUI<Button>("ExitButton");               // 나가기버튼
         exitButton.onClick.AddListener(OnPopupOKButtonClicked);
-        purchaseButton = GetUI<Button>("PurchaseButton");
-        purchaseButton.onClick.AddListener(Purchase);
-        warningText = GetUI<TMP_Text>("WarningText");
+        purchaseButton = GetUI<Button>("PurchaseButton");       // 구매버튼
+        purchaseButton.onClick.AddListener(Purchase);               
+        warningText = GetUI<TMP_Text>("WarningText");           // 경고 텍스트
+        itemNameText = GetUI<TMP_Text>("ItemNameText");         // 아이템 이름 텍스트
         
         // TODO: 아이템 정보는 만들때 받아와야함
       //  CheckMaxEnhance();

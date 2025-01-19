@@ -79,6 +79,7 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _amountCommonTokenText;
     
     [HideInInspector] public Slider _mileageSlider;
+    [HideInInspector] public Image _sliderFillImage;
     [HideInInspector] public GameObject _beforeMax;
     [HideInInspector] public GameObject _afterMax;
     [HideInInspector] public GameObject _enhanceResultPopup;
@@ -190,6 +191,7 @@ public class CharacterInfoUI : BaseUI
         _amountCharacterTokenText = GetUI<TextMeshProUGUI>("AmountCharacterTokenText");
         _amountCommonTokenText = GetUI<TextMeshProUGUI>("AmountCommonTokenText");
 
+        _sliderFillImage = GetUI<Image>("MileageFill");
         _elementFrameImage = GetUI<Image>("ElementFrameImage");
         _autoTokenButton = GetUI<Button>("AutoTokenButton");
         _tokenInputField = GetUI<TMP_InputField>("TokenInputFiled");
