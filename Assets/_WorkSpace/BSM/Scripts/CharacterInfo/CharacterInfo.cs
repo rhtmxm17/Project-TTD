@@ -162,28 +162,30 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
                 _characterInfoController._infoUI._bonusPopup.SetActive(true);
                 _characterInfoController._infoUI._bonusLevelText.text = $"{_characterLevel}레벨 달성!";
 
-                int atk = (int)((_characterData.StatusTable.attackPointBase + _characterData.StatusTable.attackPointGrowth * _characterLevel) * (1f + 0.1f * _characterData.Enhancement.Value));
-                int def = (int)((_characterData.StatusTable.defensePointBase + _characterData.StatusTable.defensePointGrouth * _characterLevel) * (1f + 0.1f * _characterData.Enhancement.Value));
-                int hp = (int)((_characterData.StatusTable.healthPointBase + _characterData.StatusTable.healthPointGrouth * _characterLevel) * (1f + 0.1f * _characterData.Enhancement.Value));
-                
-                //레벨업 전 정보
+                // 레벨당 성장치
+                float EnhancementGrouth = 1f + 0.1f * _characterData.Enhancement.Value; // 강화 증폭 배율
+                float atkBonused = (int)(_characterData.StatusTable.attackPointGrowth * EnhancementGrouth);
+                float defBonused = (int)(_characterData.StatusTable.defensePointGrouth * EnhancementGrouth);
+                float hpBonused = (int)(_characterData.StatusTable.healthPointGrouth * EnhancementGrouth);
+
+                //레벨업 전 정보 (6레벨 분량 성장치 차감)
                 _characterInfoController._infoUI._beforeBonusAtkText.text =
-                    $"공격력 {atk}";
+                    $"공격력 {(int)(_characterData.AttackPointLeveled - 6f * atkBonused)}";
                 _characterInfoController._infoUI._beforeBonusDefText.text =
-                    $"방어력 {def}";
+                    $"방어력 {(int)(_characterData.DefensePointLeveled - 6f * defBonused)}";
                 _characterInfoController._infoUI._beforeBonusHpText.text =
-                    $"체력 {hp}";
-                    
-                //TODO: 레벨업 스탯 임시 보정 -> Data도 수정 필요
-                //레벨업 후 정보
+                    $"체력 {(int)(_characterData.HpPointLeveled - 6f * hpBonused)}";
+                
+                //레벨업 후 정보 (5레벨 분량 성장치 차감 + 5레벨 분량 성장치)
                 _characterInfoController._infoUI._afterBonusAtkText.text =
-                    $"공격력 {atk + ((_characterLevel / 10) * 10)} + {((_characterLevel / 10) * 10)}";
+                    $"공격력 {(int)(_characterData.AttackPointLeveled - 5f * atkBonused)} + {(int)(5f * atkBonused)}";
 
                 _characterInfoController._infoUI._afterBonusDefText.text =
-                    $"방어력 {def + ((_characterLevel / 10) * 10)} + {((_characterLevel / 10) * 10)}";
+                    $"방어력 {(int)(_characterData.DefensePointLeveled - 5f * defBonused)} + {(int)(5f * defBonused)}";
                 
                 _characterInfoController._infoUI._afterBonusHpText.text =
-                    $"체력 {hp + ((_characterLevel / 10) * 10)} + {((_characterLevel / 10) * 10)}";
+                    $"체력 {(int)(_characterData.HpPointLeveled - 5f * hpBonused)} + {(int)(5f * hpBonused)}";
+
             } 
         }
     }
