@@ -7,9 +7,12 @@ using UnityEngine.UI;
 
 public class LobbyScene : MonoBehaviour
 {
+    [SerializeField] ProfileIconList profileIconList;
     [System.Serializable]
     private struct ChildUIField
     {
+        public TMP_Text profileText;
+        public Image profileIcon;
         public Button profileButton;
         public Button settingButton;
         [EnumNamedArray(typeof(MenuType))]
@@ -19,6 +22,9 @@ public class LobbyScene : MonoBehaviour
 
     private void Awake()
     {
+        childUIField.profileText.text = GameManager.UserData.Profile.Name.Value;
+        childUIField.profileIcon.sprite = profileIconList.IconList[GameManager.UserData.Profile.IconIndex.Value];
+
         childUIField.profileButton.onClick.AddListener(() => GameManager.Instance.LoadMenuScene(MenuType.PROFILE));
         childUIField.settingButton.onClick.AddListener(() => GameManager.OverlayUIManager.PopupSettingWindow());
 

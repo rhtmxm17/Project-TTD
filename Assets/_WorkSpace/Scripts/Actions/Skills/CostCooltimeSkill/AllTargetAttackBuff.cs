@@ -13,8 +13,6 @@ public class AllTargetAttackBuff : Skill
     float atkRate;
     [SerializeField]
     float duringTime;
-    [SerializeField, Tooltip("선딜레이")] float preDelay = 0.25f;
-    [SerializeField, Tooltip("후딜레이")] float postDelay = 0.75f;
 
     // 캐싱 데이터
     private WaitForSeconds waitPreDelay;
@@ -50,6 +48,7 @@ public class AllTargetAttackBuff : Skill
         yield return null;
         target.AddAtkBuff(amount);
         yield return new WaitForSeconds(duringTime);
-        target.RemoveAtkBuff(amount);
+        if(target != null && target.IsAlive)
+            target.RemoveAtkBuff(amount);
     }
 }

@@ -12,8 +12,13 @@ using UnityEngine.Events;
 
 public class UserProfileUI : BaseUI
 {
+    [SerializeField] ProfileIconList profileIconList;
+    [SerializeField] SetUserIcon iconSelectButtonPrefab;
+
+    [Header("Child UI")]
     [SerializeField] OutskirtsUI outskirtsUI;
-    
+    [SerializeField] RectTransform iconSelectLayoutGroup;
+
     FirebaseAuth auth = BackendManager.Auth;
 
     // 가져오고 써야할 데이터들
@@ -33,7 +38,8 @@ public class UserProfileUI : BaseUI
     public UnityEvent OnChangeProfile;
    
     // (임시) 아이콘 설정용 이미지
-    [SerializeField] Sprite[] iconSprites;
+    private Sprite[] IconSprites => profileIconList.IconList;
+
     
     private void Start()
     {
@@ -62,6 +68,12 @@ public class UserProfileUI : BaseUI
             SetUI();
         }
 
+        for (int i = 0; i < profileIconList.IconList.Length; i++)
+        {
+            var buttonInstance = Instantiate(iconSelectButtonPrefab, iconSelectLayoutGroup);
+            buttonInstance.IconSprite = profileIconList.IconList[i];
+            buttonInstance.IconIndex = i;
+        }
     }
 
     private void OnDestroy()
@@ -101,7 +113,7 @@ public class UserProfileUI : BaseUI
             SetName();
         });
         // 대표캐릭터 변경팝업
-        GetUI<Button>("ProfileCharacter").onClick.AddListener(() => OpenPopup("CharacterChangePopup"));
+        GetUI<Button>("ProfileIconButton").onClick.AddListener(() => OpenPopup("CharacterChangePopup"));
         GetUI<Button>("CloseChangeCharacter").onClick.AddListener(() => ClosePopup("CharacterChangePopup"));
         
         // DB랑 연관없이 인스펙터만으로 설정하는 부분 추가적인 작성이 필요햠
@@ -163,8 +175,8 @@ public class UserProfileUI : BaseUI
     private void OnProfileImageUpdated(long _/*unused*/)
     {
         iconIndex = GameManager.UserData.Profile.IconIndex.Value;
-        GetUI<Image>("Image").sprite = iconSprites[iconIndex];
-        GetUI<Image>("ProfileCharacter").sprite = iconSprites[iconIndex];
+        GetUI<Image>("ProfileIcon").sprite = IconSprites[iconIndex];
+        GetUI<Image>("ProfileIconButton").sprite = IconSprites[iconIndex];
     }
 
     /// <summary>

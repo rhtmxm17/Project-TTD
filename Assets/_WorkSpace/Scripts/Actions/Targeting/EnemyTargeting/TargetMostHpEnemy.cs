@@ -27,6 +27,9 @@ public class TargetMostHpEnemy : Targeting
 
         foreach (Combatable enemy in self.Group.Enemy.CharList)
         {
+            if (enemy.IsTaunt)
+                return enemy;
+
             float hpPercentage = enemy.Hp.Value / enemy.MaxHp.Value;
             if (maxValue < hpPercentage)
             {
