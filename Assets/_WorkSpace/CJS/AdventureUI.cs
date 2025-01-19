@@ -37,7 +37,8 @@ public class AdventureUI : BaseUI
         {
             GameObject buttonHolder = new GameObject($"_{i}", typeof(RectTransform));
             buttonHolder.GetComponent<RectTransform>().SetParent(stageButtonGroup.transform);
-
+            buttonHolder.transform.localScale = Vector3.one;
+            
             IndexedButton instance = Instantiate(stageButtonPrefab, buttonHolder.transform);
             RectTransform rt = instance.GetComponent<RectTransform>();
             rt.anchorMin = rt.anchorMax = Vector2.one * 0.5f;
@@ -87,6 +88,7 @@ public class AdventureUI : BaseUI
         {
             GameObject buttonHolder = new GameObject($"_{idx}", typeof(RectTransform));
             buttonHolder.GetComponent<RectTransform>().SetParent(stageButtonGroup.transform);
+            buttonHolder.transform.localScale = Vector3.one;
 
             IndexedButton instance = Instantiate(stageButtonPrefab, buttonHolder.transform);
             RectTransform rt = instance.GetComponent<RectTransform>();

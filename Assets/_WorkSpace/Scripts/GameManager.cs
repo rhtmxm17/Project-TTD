@@ -45,6 +45,7 @@ public class GameManager : SingletonBehaviour<GameManager>
         Instantiate(Resources.Load<GameManager>("GameManager"));
     }
 
+
     private void Awake()
     {
         RegisterSingleton(this);
