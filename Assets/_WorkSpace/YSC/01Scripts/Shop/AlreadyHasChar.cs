@@ -24,6 +24,9 @@ public class AlreadyHasChar : BaseUI
     // 아이템이름 텍스트
     [SerializeField] TMP_Text itemNameText;
     
+    // 구매효과
+    [SerializeField] ParticleSystem buyEffect;
+    
     public ShopItemData shopItemData { get; private set; }
 
     [Header("강화수치 관련")]
@@ -120,6 +123,8 @@ public class AlreadyHasChar : BaseUI
         }
 
         dbUpdateStream.Submit(OnComplete); // 등록된 갱신 요청 전송
+        // 구매 효과
+        Instantiate(buyEffect, Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0f)), Quaternion.identity);
     }
     
     private void OnComplete(bool result)

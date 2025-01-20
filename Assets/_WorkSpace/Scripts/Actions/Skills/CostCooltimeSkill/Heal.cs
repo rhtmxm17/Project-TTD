@@ -11,7 +11,10 @@ public class Heal : Skill
     [Header("디버그용 힐 수치, 나중에는 캐릭터 수치로 추가")]
     [SerializeField]
     float healRate;
+    // 스킬이펙트
+    [SerializeField] ParticleSystem hitEffect;
 
+    
     // 캐싱 데이터
     private WaitForSeconds waitPreDelay;
     private WaitForSeconds waitPostDelay;
@@ -32,6 +35,10 @@ public class Heal : Skill
         if (target != null && target.IsAlive)
         {
             target.Healed(healRate * self.CurAttackPoint);
+            if (hitEffect != null)
+            {
+                Instantiate(hitEffect, target.transform.position, Quaternion.Euler(90,90,90));
+            }
 
         }
 
