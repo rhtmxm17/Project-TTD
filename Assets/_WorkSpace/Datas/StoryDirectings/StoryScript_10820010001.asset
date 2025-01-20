@@ -438,7 +438,7 @@ MonoBehaviour:
     CameraSize: 1
     CamereaTransitionTime: 0.5
     Bgm: {fileID: 0}
-    Sfx: {fileID: 8300000, guid: 4bf9cd9994e71c7479247a8dd4ea802b, type: 3}
+    Sfx: {fileID: 8300000, guid: befbd25039fc77a43836eb586ac71ac5, type: 3}
     BackgroundSprite: {fileID: 0}
   - Loaction: 
     Speaker: "\uC0E4\uBBF8\uB974"
@@ -502,7 +502,7 @@ MonoBehaviour:
     CameraSize: 1
     CamereaTransitionTime: 0.5
     Bgm: {fileID: 0}
-    Sfx: {fileID: 8300000, guid: 4bf9cd9994e71c7479247a8dd4ea802b, type: 3}
+    Sfx: {fileID: 8300000, guid: befbd25039fc77a43836eb586ac71ac5, type: 3}
     BackgroundSprite: {fileID: 0}
   - Loaction: 
     Speaker: "\uC0E4\uBBF8\uB974"
@@ -671,8 +671,8 @@ MonoBehaviour:
       \uD558\uB294\uAD70\uC694.)"
     timeMult: 1
     Transitions:
-    - StandingImageId: 2
-      Active: 0
+    - StandingImageId: 1
+      Active: 1
       Flip: 0
       ColorMultiply: 1
       Position: {x: 10.5, y: 5}
@@ -827,18 +827,6 @@ MonoBehaviour:
     CameraSize: 1
     CamereaTransitionTime: 0.5
     Bgm: {fileID: 8300000, guid: e5f0ecb6f3523fc409c95530dad0ddfd, type: 3}
-    Sfx: {fileID: 0}
-    BackgroundSprite: {fileID: 0}
-  - Loaction: 
-    Speaker: "\uC0E4\uBBF8\uB974"
-    Script: "\uC4F8 \uB9CC\uD558\uB2E4\uACE0 \uD574\uC57C \uD558\uB098."
-    timeMult: 1
-    Transitions: []
-    Effects: []
-    CameraPosition: {x: 10, y: 5}
-    CameraSize: 1
-    CamereaTransitionTime: 0.5
-    Bgm: {fileID: 0}
     Sfx: {fileID: 0}
     BackgroundSprite: {fileID: 0}
   - Loaction: 
@@ -1073,7 +1061,8 @@ MonoBehaviour:
     BackgroundSprite: {fileID: 0}
   - Loaction: 
     Speaker: "\uC0E4\uBBF8\uB974"
-    Script: "(\uD3C9\uC18C\uB77C\uBA74 \uAC70\uC808\uD558\uACA0\uC9C0\uB9CC.)"
+    Script: "(\uD3C9\uC18C\uB77C\uBA74 \uAC70\uC808\uD558\uACA0\uC9C0\uB9CC, \uC774\uBC88\uC5D4
+      \uC870\uAE08 \uD765\uBBF8\uB86D\uAD70\uC694)"
     timeMult: 1
     Transitions:
     - StandingImageId: 2
@@ -1092,18 +1081,6 @@ MonoBehaviour:
       Scale: 1
       Type: 1
       Time: 0.5
-    Effects: []
-    CameraPosition: {x: 10, y: 5}
-    CameraSize: 1
-    CamereaTransitionTime: 0.5
-    Bgm: {fileID: 0}
-    Sfx: {fileID: 0}
-    BackgroundSprite: {fileID: 0}
-  - Loaction: 
-    Speaker: "\uC0E4\uBBF8\uB974"
-    Script: "(\uC774\uBC88\uC5D4 \uC870\uAE08 \uD765\uBBF8\uB86D\uAD70\uC694.)"
-    timeMult: 1
-    Transitions: []
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -1336,7 +1313,10 @@ MonoBehaviour:
       Scale: 1.5
       Type: 1
       Time: 0.5
-    Effects: []
+    Effects:
+    - Effect: {fileID: 2782562690393339995, guid: 1dbfde142d7671c45981f7675f9a779a,
+        type: 3}
+      Position: {x: 10.5, y: 3}
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
     CamereaTransitionTime: 0.5

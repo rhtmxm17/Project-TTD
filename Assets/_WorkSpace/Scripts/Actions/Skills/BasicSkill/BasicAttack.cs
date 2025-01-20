@@ -7,6 +7,8 @@ using UnityEngine;
 public class BasicAttack : Skill
 {
     [SerializeField] float atkMultiplier = 1f;
+    // 스킬이펙트
+    [SerializeField] ParticleSystem hitEffect;
 
     // 캐싱 데이터
     private WaitForSeconds waitPreDelay;
@@ -27,8 +29,13 @@ public class BasicAttack : Skill
 
         // 실제로 공격이 적용되는 구간
         if (target != null && target.IsAlive)
+        {
             target.Damaged(self.CurAttackPoint, self.igDefenseRate, self.characterData.StatusTable.type); // 타겟에게 데미지 적용
-
+            if (hitEffect != null)
+            {
+                Instantiate(hitEffect, target.transform.position, Quaternion.Euler(90,90,90));
+            }
+        }
         yield return waitPostDelay;
     }
 

@@ -14,6 +14,8 @@ public class AttackBuff : Skill
     float atkRate;
     [SerializeField]
     float duringTime;
+    // 스킬이펙트
+    [SerializeField] ParticleSystem hitEffect;
 
     // 캐싱 데이터
     private WaitForSeconds waitPreDelay;
@@ -35,6 +37,10 @@ public class AttackBuff : Skill
         if (target != null && target.IsAlive)
         {
             target.StartCoroutine(StartBufftimeCO(target, (int)(atkRate * self.CurAttackPoint)));
+            if (hitEffect != null)
+            {
+                Instantiate(hitEffect, target.transform.position, Quaternion.Euler(90,90,90));
+            }
 
         }
 

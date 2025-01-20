@@ -47,7 +47,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
     }
 
     /// <summary>
-    /// 유닛 선택 버튼
+    /// 유닛 선택 버튼 초기 설정
     /// </summary>
     /// <param name="manager"></param>사용되는 중앙 매니저
     /// <param name="unitIdx"></param>유닛 고유 번호
@@ -66,8 +66,43 @@ public class HYJ_CharacterSelect : MonoBehaviour
         //표기 설정
         levelText.text = $"Lv.{chData.Level.Value}"; // 레벨
         nameText.text = chData.Name; // 유닛 이름
-        raceText.text = chData.StatusTable.type.ToString(); // 종족
-        classText.text = chData.StatusTable.roleType.ToString(); // 역할군
+        switch (chData.StatusTable.type)
+        {
+            case ElementType.NONE:
+                raceText.text = "무속성";
+                break;
+            case ElementType.FIRE:
+                raceText.text = "화룡";
+                break;
+            case ElementType.WATER:
+                raceText.text = "수룡";
+                break;
+            case ElementType.WIND:
+                raceText.text = "정룡";
+                break;
+            case ElementType.EARTH:
+                raceText.text = "토룡";
+                break;
+            case ElementType.METAL:
+                raceText.text = "진룡";
+                break;
+        }
+
+        switch (chData.StatusTable.roleType)
+        {
+            case RoleType.NONE:
+                classText.text = "";
+                break;
+            case RoleType.ATTACKER:
+                classText.text = "공격형";
+                break;
+            case RoleType.DEFENDER:
+                classText.text = "방어형";
+                break;
+            case RoleType.SUPPORTER:
+                classText.text = "지원형";
+                break;
+        }
         powerText.text = $"{(int)chData.PowerLevel}"; // 전투력
         
         unitInfoScript.InitUnitInfo(chData);
@@ -117,7 +152,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
             {
                 Debug.Log("현재 위치에 이미 배치되어 있는 유닛입니다.");
             }
-            else if(SelectM.battleInfo[SelectM.curPos] != SelectM.curUnitIndex)
+            else if(SelectM.battleInfo[SelectM.curPos] != SelectM.curUnitIndex) 
             {
                 Debug.Log("aaaaaaa");
                 UnitChangeUI.SetActive(true);
@@ -162,15 +197,12 @@ public class HYJ_CharacterSelect : MonoBehaviour
     }
 
     /// <summary>
-    /// 음.. 이미지를 생성 삭제하는게 아니라 위치 버튼에 유닛용 이미지가 있어서 그걸 바꾸는 방식
-    ///     1. 이미지를 바꾼다.
-    ///     2. 이미지를 원래대로 만든다.
+    /// 캐릭터 이미지 설정
     /// </summary>
     /// <param name="isOn">true면 캐릭터 이미지로 변경, false면 초기화</param>
     /// <param name="unitIdx">변경할 캐릭터 이미지의 캐릭터 고유 번호</param>
     private void SetBtnChImage(bool isOn,int unitIdx)
     { 
-        //FixMe:GetComponet 사용보단 필드로 넣거나 캐싱하도록 변경
         Image posBtnImg = posBTNImage.GetComponent<Image>();
         Color color = posBTNImage.GetComponent<Image>().color;
         if (isOn)

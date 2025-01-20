@@ -40,7 +40,7 @@ public class DailyBonus : MonoBehaviour
         List<ItemGain> gainList = new List<ItemGain>()
         {
             new ItemGain() { item = DataTableManager.Instance.GetItemData(1), gain = 5000 }, // 5000 골드
-            new ItemGain() { item = DataTableManager.Instance.GetItemData(2), gain = 10 }, // 10 용젤리
+            new ItemGain() { item = DataTableManager.Instance.GetItemData(4), gain = 100 }, // 100 용철석  (이전:10 용젤리)
         };
 
         foreach (ItemGain gain in gainList)

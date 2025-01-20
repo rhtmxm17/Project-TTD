@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Android;
 
 /// <summary>
 /// 준비 동작 후 즉발로 모든 적에게 피해를 입히는 샘플
@@ -9,7 +10,9 @@ using UnityEngine;
 public class AllTargetDamage : Skill
 {
     [SerializeField] float atkMultiplier = 1f;
-
+    // 스킬이펙트
+    [SerializeField] ParticleSystem hitEffect;
+    
     // 캐싱 데이터
     private WaitForSeconds waitPreDelay;
     private WaitForSeconds waitPostDelay;
@@ -36,7 +39,25 @@ public class AllTargetDamage : Skill
             {
                 // 실제로 공격이 적용되는 구간
                 if (enemy != null && enemy.IsAlive)
+                {
                     dest.Add(enemy);
+                    if (hitEffect != null)
+                    {
+                        float rndX = Random.Range(-5, 15);
+                        float rndZ = Random.Range(-1, 2);
+                        var parentNode = self.Group.Enemy.CharList;
+                        int enemyCount = parentNode.Count;
+                        if (enemyCount <= 2)
+                        {
+                            // 적이 많을때에는 대충 랜덤위치에서 뽑아도 맞는데 한두마리 있을때 가끔 이상한데에 나옴
+                            Instantiate(hitEffect, enemy.transform.position, Quaternion.Euler(90,90,90));
+                        }
+                        Instantiate(hitEffect, new Vector3(rndX,4,rndZ), Quaternion.Euler(90,90,90));
+                        // TODO: ricochet(피격효과) 나온는 위치에서 나오게 하면될거같은데 지금 잘모르겠음
+                        
+                        
+                    }
+                }
                     //enemy.Damaged(self.AttackPoint.Value * atkMultiplier, self.igDefenseRate, self.characterData.StatusTable.type); // 타겟에게 데미지 적용
             }
         }

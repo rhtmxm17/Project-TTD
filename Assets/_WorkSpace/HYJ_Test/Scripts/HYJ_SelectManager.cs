@@ -28,7 +28,6 @@ public class HYJ_SelectManager : MonoBehaviour
     [SerializeField] GameObject cantStartUI;
     [SerializeField] private TMP_Text userAndStagePower;    
     
-    
     // 키 값은 위치 / 밸류 값은 유닛 고유번호;
     public Dictionary<int, int> battleInfo = new Dictionary<int, int>();
 
@@ -164,15 +163,21 @@ public class HYJ_SelectManager : MonoBehaviour
     /// </summary>
     public void ChangePosBtn()
     {
-        if (battleInfo.ContainsKey(curPos))
+        if (battleInfo.ContainsKey(curPos)) //현재 위치에 배치되어 있는 유닛이 있을 경우 > 해당 유닛을 해제
         {
+            Debug.Log("1111111");
             ResetPosBtn();
         }
         
-        int curUnitIndexsPos = battleInfo.FirstOrDefault(x => x.Value == curUnitIndex).Key;
-        buttonsTransformList[curUnitIndexsPos].GetComponent<HYJ_CharacterSelect>().RemoveBatch(curUnitIndexsPos);
-        buttonsTransformList[curPos].GetComponent<HYJ_CharacterSelect>().AddBatch(curPos, curUnitIndex);
+        if(battleInfo.ContainsValue(curUnitIndex))
+        {
+            int curUnitIndexsPos = battleInfo.FirstOrDefault(x => x.Value == curUnitIndex).Key;
+            Debug.Log($"현재 선택한 유닛의 위치{curUnitIndexsPos}");
+            buttonsTransformList[curUnitIndexsPos].GetComponent<HYJ_CharacterSelect>().RemoveBatch(curUnitIndexsPos);
+        }
         
+        buttonsTransformList[curPos].GetComponent<HYJ_CharacterSelect>().AddBatch(curPos, curUnitIndex);
+        Debug.Log($"현재 선택한 유닛의 위치{curPos}");
         UnitChangeUI.SetActive(false);
         CharacterSelectPanel.SetActive(false);
     }
@@ -206,6 +211,7 @@ public class HYJ_SelectManager : MonoBehaviour
     /// </summary>
     private void UpdateBatchUnitsPower()
     {
+        stagePower = 0;
         //배치 유닛 전투력 계산
         if (battleInfo.Count > 0)
         {

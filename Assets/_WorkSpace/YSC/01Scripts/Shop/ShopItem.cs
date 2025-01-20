@@ -44,6 +44,9 @@ public class ShopItem : BaseUI
 
     [SerializeField] private ShopPopupController shopPopup;
     
+    // 구매효과
+    [SerializeField] ParticleSystem buyEffect; 
+    
     // TODO: bool is여러개살수있음
     
     /* DailyBonus.cs 스크립트에 하루 5회 구매할 수 있는거 관련 코드들 있음.
@@ -280,7 +283,8 @@ public class ShopItem : BaseUI
         }
 
         dbUpdateStream.Submit(OnComplete); // 등록된 갱신 요청 전송
-        
+        Instantiate(buyEffect, Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0f)), Quaternion.identity);
+
         // TODO: 네트워크 로딩 띄우기
 
     }
