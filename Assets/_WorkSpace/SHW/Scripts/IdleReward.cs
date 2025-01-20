@@ -98,7 +98,7 @@ public class IdleReward : MonoBehaviour
         ItemGain goldGain = new ItemGain()
         {
             item = GameManager.TableData.GetItemData(1),
-            gain = timeRewardMult * (150 + 10 * clearedStages) // 분당 골드: 150 + 10 * 스테이지
+            gain = timeRewardMult * (150 + 15 * clearedStages) // 분당 골드: 150 + 15 * 스테이지
         };
 
         ItemGain yonggwaGain = new ItemGain()
