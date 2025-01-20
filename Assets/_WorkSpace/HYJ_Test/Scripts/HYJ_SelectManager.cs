@@ -256,7 +256,17 @@ public class HYJ_SelectManager : MonoBehaviour
 
         if (GameManager.Instance.sceneChangeArgs.stageType == StageType.BOSS)
         {
-            userAndStagePower.text = $"{batchUnitsPower}/?????";
+            //userAndStagePower.text = $"적 전투력\n?????\n내 전투력\n{(int)batchUnitsPower}";
+            if (batchUnitsPower < stagePower)
+            {
+                userAndStagePower.text =
+                    $"<color=white>적 전투력</color>\n<color=red>?????</color>\n<color=white>내 전투력</color>\n<color=red>{(int)batchUnitsPower}</color>";
+            }
+            else
+            {
+                userAndStagePower.text =
+                    $"<color=white>적 전투력</color>\n<color=green>?????</color>\n<color=white>내 전투력</color>\n<color=green>{(int)batchUnitsPower}</color>";
+            }
         }
     }
 }
