@@ -12,6 +12,7 @@ public class OverlayUIManager : SingletonBehaviour<OverlayUIManager>
     [SerializeField] DoubleInfoUI doubleInfoUI;
 
     [SerializeField] AdvencedGainPopup advencedGainPopupUI;
+    [SerializeField] MenuPopup menuPopupUI;
 
     [Header("Popup By Instantiate")]
     [SerializeField] ItemGainPopup itemGainPopupPrefab;
@@ -34,6 +35,14 @@ public class OverlayUIManager : SingletonBehaviour<OverlayUIManager>
     public SettingWindow PopupSettingWindow()
     {
         return Instantiate(settingWindowPrefab, GameManager.PopupCanvas);
+    }
+
+    /// <summary>
+    /// 타이틀로 이동, 치트 토글이 가능한 메뉴를 엽니다
+    /// </summary>
+    public void PopupMenuWindow()
+    {
+        menuPopupUI.gameObject.SetActive(true);
     }
 
     /// <summary>

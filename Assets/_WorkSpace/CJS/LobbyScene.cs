@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class LobbyScene : MonoBehaviour
@@ -15,6 +16,7 @@ public class LobbyScene : MonoBehaviour
         public Image profileIcon;
         public Button profileButton;
         public Button settingButton;
+        public Button menuButton;
         [EnumNamedArray(typeof(MenuType))]
         public List<Button> menuSceneButtons;
     }
@@ -27,6 +29,7 @@ public class LobbyScene : MonoBehaviour
 
         childUIField.profileButton.onClick.AddListener(() => GameManager.Instance.LoadMenuScene(MenuType.PROFILE));
         childUIField.settingButton.onClick.AddListener(() => GameManager.OverlayUIManager.PopupSettingWindow());
+        childUIField.menuButton.onClick.AddListener(() => GameManager.OverlayUIManager.PopupMenuWindow());
 
         for (int i = 0; i < childUIField.menuSceneButtons.Count; i++)
         {
