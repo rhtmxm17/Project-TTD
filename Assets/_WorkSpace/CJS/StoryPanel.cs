@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class StoryPanel : MonoBehaviour
 {
+
+    [SerializeField, Tooltip("열린 챕터 저장용 구분자")] UserSettingData.StoryChapterType chpaterType;
+
     [SerializeField, Tooltip("에피소드 선택시 집중 대상이 놓일 위치, 좌하단 0 ~ 우상단 1")] Vector2 mainImageFocusPoint;
 
     [Header("Prefabs")]
@@ -67,12 +70,28 @@ public class StoryPanel : MonoBehaviour
         rtMainImage.anchoredPosition = chapterImageOffset;
 
         defaultEpisodeSprite = EpisodeEnterPopupButton.Image.sprite;
+
+
+        if (chpaterType == UserSettingData.StoryChapterType.NONE)
+        {
+            SelectChapter(0);
+        }
+        else
+        {
+            SelectChapter(UserSettingData.Instance.Data.storyChapter[(int)chpaterType]);
+        }
     }
 
     private void SelectChapter(int index)
     {
         Debug.Log($"챕터 선택됨:{index}");
         selectedChapterIndex = index;
+
+        if (chpaterType != UserSettingData.StoryChapterType.NONE)
+        {
+            UserSettingData.Instance.Data.storyChapter[(int)chpaterType] = index;
+            UserSettingData.Instance.SaveSetting();
+        }
 
         // 기존 챕터의 UI 정리
         foreach (GameObject button in episodeButtonList)

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class CanvasSwitch : MonoBehaviour
 {
+    [SerializeField] UserSettingData.PanelType panelType;
     [SerializeField] OpenableUIBase mainWindow;
 
     [SerializeField] List<TabSet> windowList;
@@ -20,6 +21,11 @@ public class CanvasSwitch : MonoBehaviour
     private void Awake()
     {
         InitBackButtons();
+
+        if (panelType != UserSettingData.PanelType.NONE)
+        {
+            SelectWindow(windowList[UserSettingData.Instance.Data.openedPanel[(int)panelType]].tabWindow);
+        }
     }
 
     private void InitBackButtons()
@@ -40,13 +46,25 @@ public class CanvasSwitch : MonoBehaviour
 
     public void SelectWindow(OpenableUIBase myWindow)
     {
-        foreach (TabSet tab in windowList)
+        for (int i = 0; i < windowList.Count; i++)
         {
+            TabSet tab = windowList[i];
+
             if (tab.tabWindow == myWindow)
+            {
                 tab.tabWindow.OpenWindow();
+
+                if (panelType != UserSettingData.PanelType.NONE)
+                {
+                    // 열린 패널 번호를 저장
+                    UserSettingData.Instance.Data.openedPanel[(int)panelType] = i;
+                    UserSettingData.Instance.SaveSetting();
+                }
+            }
             else
                 tab.tabWindow.CloseWindow();
         }
+
     }
     
 }
