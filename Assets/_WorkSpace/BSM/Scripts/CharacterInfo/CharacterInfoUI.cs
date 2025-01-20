@@ -12,6 +12,8 @@ public class CharacterInfoUI : BaseUI
     public Sprite[] _roleIcons;
     public Sprite[] _dragonVeinIcons;
     public Sprite[] _siliderFillSprites = new Sprite[2];
+   
+    
     
     private Color _tabPressColor = new Color(0.56f, 0.56f, 0.56f);
     
@@ -137,7 +139,6 @@ public class CharacterInfoUI : BaseUI
 
         _siliderFillSprites[0] = Resources.Load<Sprite>("Sprites/Bar/Bar_Player_Fill_Blue");
         _siliderFillSprites[1] = Resources.Load<Sprite>("Sprites/Bar/Bar_Player_Fill_Green");
-
     }
     
     private void UIBind()
@@ -260,7 +261,7 @@ public class CharacterInfoUI : BaseUI
 
         _bonusExitButton = GetUI<Button>("BonusExitButton");
         _levelUpButton = GetUI<Button>("LevelUpButton");
-
+        
         _amountGroup = GetUI("AmountTextGroup");
         _bonusPopup = GetUI("BonusPopup");
         _materialGroup = GetUI("MaterialTextGroup");

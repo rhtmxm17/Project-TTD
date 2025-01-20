@@ -14,6 +14,11 @@ public class CharacterInfoController : BaseUI
     public Camera _renderCamera;
     public GameObject ModelParent;
     public List<Sprite> TokenIcons;
+    public ParticleSystem[] _particleSystems;
+    public ParticleSystem _levelUpNormalEffect;
+    public ParticleSystem _levelUpSpecialEffect;
+    public ParticleSystem _enhanceNormalEffect;
+    public ParticleSystem _enhanceSpecialEffect;
     
     [HideInInspector] public CharacterInfoUI _infoUI;
     [HideInInspector] public List<CharacterInfo> _characterInfos;
@@ -66,6 +71,7 @@ public class CharacterInfoController : BaseUI
     private GameObject _detailTab;
     private GameObject _enhanceTab;
     private GameObject _evolutionTab;
+    private GameObject _statsGroup;
     
     private SortType _lastSortType;
     private InfoTabType _curInfoTabType;
@@ -148,6 +154,7 @@ public class CharacterInfoController : BaseUI
         GetUserMaterials();
         RatioPaddingModify();
         SetVerticalScrollbar();
+        CreateParticle();
     } 
     
     private void OnEnable()
@@ -162,7 +169,8 @@ public class CharacterInfoController : BaseUI
         _evolutionTab = GetUI("EvolutionTab");
         _infoPopup = GetUI("InfoPopup");
         _characterUIPanel = GetUI("CharacterUIPanel");
-
+        _statsGroup = GetUI("StatsTextGroup");
+        
         _verticalBar = GetUI<Scrollbar>("Scrollbar Vertical");
         _gridLayout = GetUI<GridLayoutGroup>("Content");
         
@@ -207,6 +215,28 @@ public class CharacterInfoController : BaseUI
             1.7f => 125,
             _ => 50
         };
+    }
+    
+    /// <summary>
+    /// 레벨업, 강화 이펙트 생성
+    /// </summary>
+    private void CreateParticle()
+    {
+        _levelUpNormalEffect = Instantiate(_particleSystems[0], _statsGroup.transform);
+        _levelUpNormalEffect.transform.localPosition = new Vector3(_levelUpNormalEffect.transform.localPosition.x, _levelUpNormalEffect.transform.localPosition.y + 60f, 1f);
+        _levelUpNormalEffect.transform.localScale = new Vector3(100f, 100f, 1f);
+        
+        _levelUpSpecialEffect = Instantiate(_particleSystems[1], _statsGroup.transform);
+        _levelUpSpecialEffect.transform.localPosition = new Vector3(-450f, -150f, 1f);
+        _levelUpSpecialEffect.transform.localScale = new Vector3(250f, 100f, 1f);
+
+        _enhanceNormalEffect = Instantiate(_particleSystems[0], _enhanceTab.transform);
+        _enhanceNormalEffect.transform.localPosition = new Vector3(-550f, 0f, 1f);
+        _enhanceNormalEffect.transform.localScale = new Vector3(100f, 100f, 1f);
+        
+        _enhanceSpecialEffect = Instantiate(_particleSystems[1], _enhanceTab.transform);
+        _enhanceSpecialEffect.transform.localPosition = new Vector3(-578f, 25f, 1f);
+        _enhanceSpecialEffect.transform.localScale = new Vector3(130f, 100f, 1f);
     }
     
     /// <summary>
@@ -357,7 +387,7 @@ public class CharacterInfoController : BaseUI
         _evolutionRender = CurCharacterInfo._CharacterData.Name switch
         {
             "덜크" => (_dulkPos, 20f),
-            "네퓨" => (_nepewPos, 28f),
+            "네뷰" => (_nepewPos, 28f),
             "하트핑" =>  (_sunnyPos, 20f),
             "써니" => (_sunnyPos, 20f),
             _ => (_commonPos, 13f)
