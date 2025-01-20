@@ -296,9 +296,12 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         DragonVeinType dragonVeinType = _characterData.StatusTable.dragonVeinType;
 
         _characterInfoController._infoUI._elementFrameImage.sprite =  _characterInfoController._infoUI.ElementFrames[(int)elementType - 1];
-        _characterInfoController._infoUI._elementIconImage.sprite = _characterInfoController._infoUI._elementIcons[(int)elementType - 1];
-        _characterInfoController._infoUI._roleIconImage.sprite =  _characterInfoController._infoUI._roleIcons[(int)roleType - 1];
-        _characterInfoController._infoUI._dragonVeinIconImage.sprite =  _characterInfoController._infoUI._dragonVeinIcons[(int)dragonVeinType - 1];
+        _characterInfoController._infoUI._roleFrameImage.sprite =  _characterInfoController._infoUI.RoleFrames[(int)roleType - 1];
+        _characterInfoController._infoUI._dragonVeinFrameImage.sprite = _characterInfoController._infoUI.DragonVeinFrames[(int)dragonVeinType - 1];
+        
+        _characterInfoController._infoUI._elementIconImage.sprite = _characterInfoController._infoUI.ElementIcons[(int)elementType - 1];
+        _characterInfoController._infoUI._roleIconImage.sprite =  _characterInfoController._infoUI.RoleIcons[(int)roleType - 1];
+        _characterInfoController._infoUI._dragonVeinIconImage.sprite =  _characterInfoController._infoUI.DragonVeinIcons[(int)dragonVeinType - 1];
         
         _characterInfoController._infoUI._ElemetTypeText.text = elementType switch
         {

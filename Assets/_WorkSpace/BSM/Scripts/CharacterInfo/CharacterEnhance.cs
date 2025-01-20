@@ -54,11 +54,11 @@ public class CharacterEnhance : MonoBehaviour
             //TODO: Slider 컬러 값 변경 필요
             if (_sliderValue >= 1f)
             {
-                _characterInfoController._infoUI._sliderFillImage.sprite = _characterInfoController._infoUI._siliderFillSprites[1];
+                _characterInfoController._infoUI._sliderFillImage.sprite = _characterInfoController._infoUI.SliderFillSprites[1];
             }
             else
             {
-                _characterInfoController._infoUI._sliderFillImage.sprite = _characterInfoController._infoUI._siliderFillSprites[0];
+                _characterInfoController._infoUI._sliderFillImage.sprite = _characterInfoController._infoUI.SliderFillSprites[0];
             } 
         }
     }
@@ -493,7 +493,7 @@ public class CharacterEnhance : MonoBehaviour
     {
         if (!result)
         {
-            ResultPopup("강화 실패 \n 사유 : 네트워크 오류", _characterInfoController._infoUI.EnhanceResultIcons[2]);
+            ResultPopup("강화 실패 \n 사유 : 네트워크 오류");
             return;
         }
 
@@ -508,12 +508,11 @@ public class CharacterEnhance : MonoBehaviour
         else if (_curEnhanceType == EnhanceType.MILEAGE)
         {
             _characterInfoController._enhanceSpecialEffect.Play();
-            Debug.Log("코루틴 시작");
             _effectCo = StartCoroutine(EnhanceEffectTimer());
         }
         
         TokenCountTextUpdate();
-        ResultPopup($"+{_characterData.Enhancement.Value} 강화에 성공하셨습니다.", _characterInfoController._infoUI.EnhanceResultIcons[0]);
+        ResultPopup($"+{_characterData.Enhancement.Value} 강화에 성공하셨습니다.");
         CharacterStats();
         UpdateInfo();
         EnhanceCheck();
@@ -527,8 +526,6 @@ public class CharacterEnhance : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        
-        Debug.Log("루프 벗어남");
         _characterInfoController._enhanceSpecialEffect.Stop(); 
     }
     
@@ -539,7 +536,7 @@ public class CharacterEnhance : MonoBehaviour
     {
         if (!result)
         {
-            ResultPopup("강화 실패 \n 사유 : 네트워크 오류", _characterInfoController._infoUI.EnhanceResultIcons[2]);
+            ResultPopup("강화 실패 \n 사유 : 네트워크 오류");
             return;
         }
 
@@ -548,13 +545,10 @@ public class CharacterEnhance : MonoBehaviour
         
         
         TokenCountTextUpdate();
-        ResultPopup($"+{_characterData.Enhancement.Value + 1} 강화에 실패하셨습니다. \n 마일리지 적립 +10%", _characterInfoController._infoUI.EnhanceResultIcons[1]);
+        ResultPopup($"+{_characterData.Enhancement.Value + 1} 강화에 실패하셨습니다. \n 마일리지 적립 +{_increaseMileage[_characterData.Enhancement.Value]}%");
         CharacterStats();
         UpdateInfo();
         EnhanceCheck();
-        
-        
-        //TODO: 마일리지 누적 값 수정 필요
         MileageUpdate(_characterData.EnhanceMileagePerMill.Value + _increaseMileage[_characterData.Enhancement.Value]);
         _characterInfoController._infoUI._sliderFillImage.pixelsPerUnitMultiplier += _characterData.EnhanceMileagePerMill.Value * 0.01f;
     }
@@ -571,7 +565,7 @@ public class CharacterEnhance : MonoBehaviour
             {
                 if (!result)
                 {
-                    ResultPopup("마일리지 적립 실패 \n 사유 : 네트워크 오류", _characterInfoController._infoUI.EnhanceResultIcons[2]);
+                    ResultPopup("마일리지 적립 실패 \n 사유 : 네트워크 오류");
                     return;
                 }
                  
@@ -594,11 +588,10 @@ public class CharacterEnhance : MonoBehaviour
     /// 강화 결과 팝업
     /// </summary>
     /// <param name="text">안내 문구</param>
-    private void ResultPopup(string text, Sprite sprite)
+    private void ResultPopup(string text)
     {
         _characterInfoController._infoUI._enhanceResultPopup.SetActive(true);
         _characterInfoController._infoUI._enhanceResultText.text = text;
-        _characterInfoController._infoUI._enhanceResultIcon.sprite = sprite;
     }
 
     /// <summary>
@@ -619,7 +612,6 @@ public class CharacterEnhance : MonoBehaviour
         
         if (_effectCo != null)
         {
-            Debug.Log("스탑 호출");
             StopCoroutine(_effectCo);
             _effectCo = null;
         }
