@@ -10,8 +10,8 @@ public class CharacterInfoPopup : BaseUI
     private GameObject _tokenPopup;
     private GameObject _enhanceResultPopup;
     private GameObject _mileageUsePopup;
-    
-    
+
+    private Color _tabPressColor = new Color(0.56f, 0.56f, 0.56f);
     
     
     protected override void Awake()
@@ -54,7 +54,7 @@ public class CharacterInfoPopup : BaseUI
         } 
         
         _characterInfoController.StartListSort();
-        _characterInfoController._infoUI._detailTabColor.color = Color.cyan;
+        _characterInfoController._infoUI._detailTabColor.color = _tabPressColor;
         _characterInfoController._infoUI._enhanceTabColor.color = Color.white;
         _characterInfoController._infoUI._evolutionTabColor.color = Color.white;
         _characterInfoController.CurInfoTabType = InfoTabType.DETAIL;

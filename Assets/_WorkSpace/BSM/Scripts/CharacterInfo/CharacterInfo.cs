@@ -163,7 +163,7 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
                 _characterInfoController._infoUI._bonusLevelText.text = $"{_characterLevel}레벨 달성!";
 
                 // 레벨당 성장치
-                float EnhancementGrouth = 1f + 0.1f * _characterData.Enhancement.Value; // 강화 증폭 배율
+                float EnhancementGrouth = 1f + 0.05f * _characterData.Enhancement.Value; // 강화 증폭 배율
                 float atkBonused = (int)(_characterData.StatusTable.attackPointGrowth * EnhancementGrouth);
                 float defBonused = (int)(_characterData.StatusTable.defensePointGrouth * EnhancementGrouth);
                 float hpBonused = (int)(_characterData.StatusTable.healthPointGrouth * EnhancementGrouth);
@@ -273,16 +273,16 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     {
         if (_characterData.ModelPrefab != null && CharacterModels.Count == 0)
         {
-            levelOne = CreateModelPrefab(_characterData.ModelPrefab, _characterData.ModelPrefab.transform.position, false);
+            levelOne = CreateModelPrefab(_characterData.ModelPrefab, false);
 
             if (levelOne.NextEvolveModel != null)
             {
-                levelTwo = CreateModelPrefab(levelOne.NextEvolveModel, levelOne.NextEvolveModel.transform.position, false);
+                levelTwo = CreateModelPrefab(levelOne.NextEvolveModel, false);
             }
 
             if (levelTwo != null && levelTwo.NextEvolveModel != null)
             {
-                levelThree = CreateModelPrefab(levelTwo.NextEvolveModel, levelTwo.NextEvolveModel.transform.position, false);
+                levelThree = CreateModelPrefab(levelTwo.NextEvolveModel, false);
             }
         }
         else if (CharacterModels.Count != 0 && !CharacterModels[0].gameObject.activeSelf)
@@ -299,9 +299,9 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// <param name="scale">생성될 크기</param>
     /// <param name="active">활성화 여부</param>
     /// <returns></returns>
-    private CharacterModel CreateModelPrefab(CharacterModel model, Vector3 pos, bool active)
+    private CharacterModel CreateModelPrefab(CharacterModel model, bool active)
     {
-        model = Instantiate(model, pos, Quaternion.identity, _characterInfoController.ModelParent.transform);
+        model = Instantiate(model, _characterInfoController.ModelParent.transform);
         model.gameObject.SetActive(active);
         CharacterModels.Add(model);
         return model;

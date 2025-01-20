@@ -11,6 +11,9 @@ public class CharacterInfoUI : BaseUI
     public Sprite[] _elementIcons;
     public Sprite[] _roleIcons;
     public Sprite[] _dragonVeinIcons;
+    public Sprite[] _siliderFillSprites = new Sprite[2];
+    
+    private Color _tabPressColor = new Color(0.56f, 0.56f, 0.56f);
     
     //DetailTab
     [HideInInspector] public TextMeshProUGUI _levelText;
@@ -131,6 +134,10 @@ public class CharacterInfoUI : BaseUI
         _enhanceResultIcons[0] = Resources.Load<Sprite>("Sprites/Icon/White/Icon_White_128/Icon_White_128_Emoji_Smile_02");
         _enhanceResultIcons[1] = Resources.Load<Sprite>("Sprites/Icon/White/Icon_White_128/Icon_White_128_Emoji_Sad_02");
         _enhanceResultIcons[2] = Resources.Load<Sprite>("Sprites/Icon/White/Icon_White_128/Icon_White_128_Error_Png");
+
+        _siliderFillSprites[0] = Resources.Load<Sprite>("Sprites/Bar/Bar_Player_Fill_Blue");
+        _siliderFillSprites[1] = Resources.Load<Sprite>("Sprites/Bar/Bar_Player_Fill_Green");
+
     }
     
     private void UIBind()
@@ -275,9 +282,9 @@ public class CharacterInfoUI : BaseUI
     private void TabButtonClick(InfoTabType tabType)
     {
         _controller.CurInfoTabType = tabType;
-        _detailTabColor.color = _controller.CurInfoTabType == InfoTabType.DETAIL ? Color.cyan : Color.white;
-        _enhanceTabColor.color = _controller.CurInfoTabType == InfoTabType.ENHANCE ? Color.cyan : Color.white;
-        _evolutionTabColor.color = _controller.CurInfoTabType == InfoTabType.EVOLUTION ? Color.cyan : Color.white;
+        _detailTabColor.color = _controller.CurInfoTabType == InfoTabType.DETAIL ? _tabPressColor : Color.white;
+        _enhanceTabColor.color = _controller.CurInfoTabType == InfoTabType.ENHANCE ? _tabPressColor : Color.white;
+        _evolutionTabColor.color = _controller.CurInfoTabType == InfoTabType.EVOLUTION ? _tabPressColor : Color.white;
         
     }
 
