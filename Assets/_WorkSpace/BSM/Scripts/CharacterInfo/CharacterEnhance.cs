@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -66,6 +67,10 @@ public class CharacterEnhance : MonoBehaviour
     public UnityAction OnBeforeEnhance;
     public UnityAction OnAfterEnhance;
     private Coroutine _effectCo;
+    private Coroutine _faceEffectCo;
+    
+    private string[] _failTalk = { "실", "수", "해", "서 ", "미", "안", "해", "요", ".", "." };
+    private string[] _successTalk = { "성", "공!", "\n", "어", "때", "요?", " 저", " 잘", "했", "죠?" };
     
     private void Awake()
     {
@@ -195,7 +200,6 @@ public class CharacterEnhance : MonoBehaviour
             _selectedCharacterMaterial = 0;
             SetTextInputField(_selectedCharacterMaterial);
             _characterInfoController._infoUI._tokenPopupTitleText.text = "용사탕 등록";
-            //TODO: 캐릭터 전용 토큰 아이콘 등록 필요
             _characterInfoController._infoUI._enhanceTokenIcon.sprite = _characterInfoController.TokenIcons[0];
         }
         else if (_curTokenType == EnhanceTokenType.COMMON_TOKEN)
@@ -511,6 +515,11 @@ public class CharacterEnhance : MonoBehaviour
             _effectCo = StartCoroutine(EnhanceEffectTimer());
         }
         
+        //TODO: FaceIcon 노출
+        _characterInfoController._infoUI._faceIconImage.sprite = _characterInfoController._infoUI.FaceIcons[0];
+        
+        _faceEffectCo = StartCoroutine(FaceIconRoutine(_characterInfoController._infoUI._faceIconImage, _characterInfoController._infoUI._speechBubbleImage, true));
+        
         TokenCountTextUpdate();
         ResultPopup($"+{_characterData.Enhancement.Value} 강화에 성공하셨습니다.");
         CharacterStats();
@@ -518,6 +527,49 @@ public class CharacterEnhance : MonoBehaviour
         EnhanceCheck();
     }
 
+    private IEnumerator FaceIconRoutine(Image faceIcon, Image bubble, bool isResult)
+    {
+        float elapsedTime = 0f;
+        int index = 0;
+        
+        Color color = faceIcon.color;
+        
+        while (elapsedTime < 0.2f)
+        {
+            elapsedTime += Time.deltaTime;
+
+            color = new Color(color.r, color.g, color.b, elapsedTime * 5f);
+            faceIcon.color = color;
+            bubble.color = color;
+               
+            yield return null;
+        }
+
+        Color textColor = _characterInfoController._infoUI._speechText.color;
+        
+        _characterInfoController._infoUI._speechText.color = new Color(textColor.r, textColor.g, textColor.b, 1f);
+        _characterInfoController._infoUI._speechText.text = "";
+        
+        while (true)
+        {
+            if (isResult)
+            {
+                _characterInfoController._infoUI._speechText.text += _successTalk[index++];
+                yield return new WaitForSeconds(0.1f);
+
+                if (index >= _successTalk.Length) break;
+            }
+            else
+            {
+                _characterInfoController._infoUI._speechText.text += _failTalk[index++];
+                yield return new WaitForSeconds(0.1f);
+
+                if (index >= _failTalk.Length) break;
+            }
+            
+        } 
+    }
+    
     private IEnumerator EnhanceEffectTimer()
     {
         float elapsedTime = 0f;
@@ -543,6 +595,10 @@ public class CharacterEnhance : MonoBehaviour
         _curTokenType = EnhanceTokenType.NONE;
         _characterInfoController.UserCharacterToken = GameManager.TableData.GetItemData(_characterInfoController.CurCharacterInfo._CharacterData.EnhanceItemID).Number.Value;
         
+        _characterInfoController._infoUI._faceIconImage.sprite = _characterInfoController._infoUI.FaceIcons[1];
+        
+        _faceEffectCo = StartCoroutine(FaceIconRoutine(_characterInfoController._infoUI._faceIconImage, _characterInfoController._infoUI._speechBubbleImage, false));
+
         
         TokenCountTextUpdate();
         ResultPopup($"+{_characterData.Enhancement.Value + 1} 강화에 실패하셨습니다. \n 마일리지 적립 +{_increaseMileage[_characterData.Enhancement.Value]}%");

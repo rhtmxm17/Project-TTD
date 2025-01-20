@@ -10,7 +10,10 @@ public class CharacterInfoUI : BaseUI
     
     [Header("상세 탭 속성 아이콘")] [Tooltip("FIRE - WATER - WIND - EARTH - METAL")]
     public Sprite[] ElementIcons;
-    
+
+    [Header("강화 결과 캐릭터 이미지")] 
+    public Sprite[] FaceIcons;
+     
     private Sprite[] _roleFrames = new Sprite[3];
     private Sprite[] _dragonVeinFrames = new Sprite[2];
     private Sprite[] _roleIcons = new Sprite[3];
@@ -93,7 +96,10 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public TextMeshProUGUI _amountGoldText;
     [HideInInspector] public TextMeshProUGUI _amountCharacterTokenText;
     [HideInInspector] public TextMeshProUGUI _amountCommonTokenText;
+    [HideInInspector] public TextMeshProUGUI _speechText;
     
+    [HideInInspector] public Image _faceIconImage;
+    [HideInInspector] public Image _speechBubbleImage;
     [HideInInspector] public Slider _mileageSlider;
     [HideInInspector] public Image _sliderFillImage;
     [HideInInspector] public GameObject _beforeMax;
@@ -163,7 +169,6 @@ public class CharacterInfoUI : BaseUI
     
     private void UIBind()
     {
-        //TODO: 임시 용 타입 UI 특성 지우기 -> 이미지로 변경 필요
         _ElemetTypeText = GetUI<TextMeshProUGUI>("ElementTypeText");
         _roleTypeText = GetUI<TextMeshProUGUI>("RoleTypeText");
         _dragonVeinTypeText = GetUI<TextMeshProUGUI>("DragonVeinTypeText");
@@ -217,7 +222,10 @@ public class CharacterInfoUI : BaseUI
         _amountGoldText = GetUI<TextMeshProUGUI>("AmountGoldText");
         _amountCharacterTokenText = GetUI<TextMeshProUGUI>("AmountCharacterTokenText");
         _amountCommonTokenText = GetUI<TextMeshProUGUI>("AmountCommonTokenText");
+        _speechText = GetUI<TextMeshProUGUI>("SpeechText");
 
+        _faceIconImage = GetUI<Image>("FaceIcon");
+        _speechBubbleImage = GetUI<Image>("SpeechBubble");
         _sliderFillImage = GetUI<Image>("MileageFill");
         _elementFrameImage = GetUI<Image>("ElementFrameImage");
         _autoTokenButton = GetUI<Button>("AutoTokenButton");
@@ -294,7 +302,16 @@ public class CharacterInfoUI : BaseUI
         _enhanceTabButton.onClick.AddListener(() => TabButtonClick(InfoTabType.ENHANCE));
         _evolutionTabButton.onClick.AddListener(() => TabButtonClick(InfoTabType.EVOLUTION));
         
-        _enhanceResultConfirm.onClick.AddListener(()=> _enhanceResultPopup.SetActive(false));
+        _enhanceResultConfirm.onClick.AddListener(()=>
+        {
+            //TODO: FaceIcon 비활성화
+            Color textColor = _speechText.color;
+            
+            _faceIconImage.color = new Color(1,1,1, 0);
+            _speechBubbleImage.color = new Color(1, 1, 1, 0);
+            _speechText.color = new Color(textColor.r, textColor.g, textColor.b, 0);
+            _enhanceResultPopup.SetActive(false);
+        });
         _mileageUseButton.onClick.AddListener(MileageUsePopupException);
         _mileageCancelButton.onClick.AddListener(() => _mileageUsePopup.SetActive(false));
         _tokenCancelButton.onClick.AddListener(() => _enhanceTokenPopup.SetActive(false));
