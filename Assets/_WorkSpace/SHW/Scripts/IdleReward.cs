@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class IdleReward : MonoBehaviour
 {
+    [Header("초기화 필드")]
     [SerializeField] private bool isIdleReward;
     [SerializeField] private TMP_Text timeText;
     // 보상 팝업 관련
@@ -64,22 +65,54 @@ public class IdleReward : MonoBehaviour
     // 보상의 받는 부분
     public void GetReward()
     {
-        // 보상을 언제든 받을 수 있기에 받을때 한번 코루틴 초기화?
+        // 분당 (골드150+용과1) + 스테이지 * (골드10+용과1)
+
+        // 마지막 보상 수령으로부터 지난 분 수
+        int timeRewardMult = (int)spanTime.TotalMinutes;
+
+        if (timeRewardMult <= 0)
+        {
+            Debug.Log("아직 보상이 충전되지 않음");
+            return;
+        }
+
+        // 보상 수령 전 코루틴 정지
         if (timerCoroutine != null)
         {
             StopCoroutine(timerCoroutine);
             timerCoroutine = null;
         }
 
-        // TODO: 시간*100골로 임시 계산
-        ItemData gold = GameManager.TableData.GetItemData(1);
+        // 클리어 한 스테이지 수
+        int clearedStages = 0;
+        for (int i = 1; true; i++)
+        {
+            StageData stage = GameManager.TableData.GetStageData(i);
+            if ((stage == null) || stage.ClearCount.Value == 0)
+            {
+                break;
+            }
+            clearedStages++;
+        }
 
-        int reward = spanTime.Hours * 1000 + spanTime.Minutes * 100 + spanTime.Seconds * 10;
-        rewardText.text = $"골드 {reward}수령";
+        ItemGain goldGain = new ItemGain()
+        {
+            item = GameManager.TableData.GetItemData(1),
+            gain = timeRewardMult * (150 + 10 * clearedStages) // 분당 골드: 150 + 10 * 스테이지
+        };
+
+        ItemGain yonggwaGain = new ItemGain()
+        {
+            item = GameManager.TableData.GetItemData(5),
+            gain = timeRewardMult * (1 + clearedStages) // 분당 용과: 1 + 1 * 스테이지
+        };
+
+        rewardText.text = $"{timeRewardMult}분치 보상 수령";
         
         GameManager.UserData.StartUpdateStream()
             .SetDBTimestamp(lastRewardTime)
-            .AddDBValue(gold.Number, reward)
+            .AddDBValue(goldGain.item.Number, goldGain.gain)
+            .AddDBValue(yonggwaGain.item.Number, yonggwaGain.gain)
             .Submit(result =>
             {
                 if (false == result)
@@ -91,7 +124,7 @@ public class IdleReward : MonoBehaviour
                 Debug.Log("방치 보상 수령 성공");
                 GameManager.OverlayUIManager.PopupItemGain(new List<ItemGain>()
                 {
-                    new ItemGain() { item = gold, gain = reward }
+                    goldGain, yonggwaGain
                 });
                 // 보상 수령 확인용 팝업 코루틴
                 // StartCoroutine(RewardPopupCo());
@@ -114,10 +147,13 @@ public class IdleReward : MonoBehaviour
     {
         WaitForSeconds wait1Sec = new WaitForSeconds(1f);
         TimeSpan maxTimer = new TimeSpan(rewardHour, rewardMinute, rewardSecond);
+
+        // 마지막 보상 수령 시점(초 단위 제거)
+        DateTime laseReward = lastRewardTime.Value.AddSeconds(-lastRewardTime.Value.Second);
         while (true)
         {
             // 시간 타이머 관련 및 여기서 코루틴 정지 및 시간 정리 해야함
-            spanTime = DateTime.Now - lastRewardTime.Value;
+            spanTime = DateTime.Now - laseReward;
             timeText.text = $"{spanTime.Hours}:{spanTime.Minutes}:{spanTime.Seconds}";
             
             // 지난 시간이 최대시간에 도달할 경우

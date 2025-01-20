@@ -75,14 +75,16 @@ public class CharacterData : ScriptableObject, ITsvRowParseable
     public int Id => id;
 
     public string Name => name;
-    
-    private int BonusStats => Level.Value % 10 == 0 ? ((Level.Value / 10) * 10) : 0;
-    
-    public float AttackPointLeveled => ((statusTable.attackPointBase + statusTable.attackPointGrowth * Level.Value) * (1f + 0.05f * Enhancement.Value)) + BonusStats;
 
-    public float HpPointLeveled => ((statusTable.healthPointBase + statusTable.healthPointGrouth * Level.Value) * (1f + 0.05f * Enhancement.Value)) + BonusStats;
+    public const int BonusGrouthLevel = 5;
+    
+    private int BonusGrouth => (Level.Value / 10) * BonusGrouthLevel;
+    
+    public float AttackPointLeveled => ((statusTable.attackPointBase + statusTable.attackPointGrowth * (Level.Value + BonusGrouth)) * (1f + 0.05f * Enhancement.Value));
 
-    public float DefensePointLeveled => ((statusTable.defensePointBase + statusTable.defensePointGrouth * Level.Value) * (1f + 0.05f * Enhancement.Value)) + BonusStats;
+    public float HpPointLeveled => ((statusTable.healthPointBase + statusTable.healthPointGrouth * (Level.Value + BonusGrouth)) * (1f + 0.05f * Enhancement.Value));
+
+    public float DefensePointLeveled => ((statusTable.defensePointBase + statusTable.defensePointGrouth * (Level.Value + BonusGrouth)) * (1f + 0.05f * Enhancement.Value));
 
     public float PowerLevel => (AttackPointLeveled + HpPointLeveled + DefensePointLeveled);
     
