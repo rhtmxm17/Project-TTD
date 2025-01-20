@@ -170,21 +170,21 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
 
                 //레벨업 전 정보 (6레벨 분량 성장치 차감)
                 _characterInfoController._infoUI._beforeBonusAtkText.text =
-                    $"공격력 {(int)(_characterData.AttackPointLeveled - 6f * atkBonused)}";
+                    $"공격력 {(int)(_characterData.AttackPointLeveled - (1f + (1f + CharacterData.BonusGrouthLevel)) * atkBonused)}";
                 _characterInfoController._infoUI._beforeBonusDefText.text =
-                    $"방어력 {(int)(_characterData.DefensePointLeveled - 6f * defBonused)}";
+                    $"방어력 {(int)(_characterData.DefensePointLeveled - (1f + CharacterData.BonusGrouthLevel) * defBonused)}";
                 _characterInfoController._infoUI._beforeBonusHpText.text =
-                    $"체력 {(int)(_characterData.HpPointLeveled - 6f * hpBonused)}";
+                    $"체력 {(int)(_characterData.HpPointLeveled - (1f + CharacterData.BonusGrouthLevel) * hpBonused)}";
                 
                 //레벨업 후 정보 (5레벨 분량 성장치 차감 + 5레벨 분량 성장치)
                 _characterInfoController._infoUI._afterBonusAtkText.text =
-                    $"공격력 {(int)(_characterData.AttackPointLeveled - 5f * atkBonused)} + {(int)(5f * atkBonused)}";
+                    $"공격력 {(int)(_characterData.AttackPointLeveled - CharacterData.BonusGrouthLevel * atkBonused)} + {(int)(CharacterData.BonusGrouthLevel * atkBonused)}";
 
                 _characterInfoController._infoUI._afterBonusDefText.text =
-                    $"방어력 {(int)(_characterData.DefensePointLeveled - 5f * defBonused)} + {(int)(5f * defBonused)}";
+                    $"방어력 {(int)(_characterData.DefensePointLeveled - CharacterData.BonusGrouthLevel * defBonused)} + {(int)(CharacterData.BonusGrouthLevel * defBonused)}";
                 
                 _characterInfoController._infoUI._afterBonusHpText.text =
-                    $"체력 {(int)(_characterData.HpPointLeveled - 5f * hpBonused)} + {(int)(5f * hpBonused)}";
+                    $"체력 {(int)(_characterData.HpPointLeveled - CharacterData.BonusGrouthLevel * hpBonused)} + {(int)(CharacterData.BonusGrouthLevel * hpBonused)}";
 
             } 
         }

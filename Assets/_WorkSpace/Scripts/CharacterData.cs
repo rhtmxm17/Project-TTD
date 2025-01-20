@@ -75,8 +75,10 @@ public class CharacterData : ScriptableObject, ITsvRowParseable
     public int Id => id;
 
     public string Name => name;
+
+    public const int BonusGrouthLevel = 5;
     
-    private int BonusGrouth => (Level.Value / 10) * 5; // 10레벨마다 5레벨 분량의 성장치 추가
+    private int BonusGrouth => (Level.Value / 10) * BonusGrouthLevel;
     
     public float AttackPointLeveled => ((statusTable.attackPointBase + statusTable.attackPointGrowth * (Level.Value + BonusGrouth)) * (1f + 0.1f * Enhancement.Value));
 
