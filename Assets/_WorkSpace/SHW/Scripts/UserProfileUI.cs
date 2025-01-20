@@ -191,7 +191,7 @@ public class UserProfileUI : BaseUI
         //  GetUI<TMP_Text>("Introduction").text = introduction;
         GetUI<TMP_Text>("ClearStage").text = (clearStage == null) ?
             "클리어 한 스테이지 없음" :
-            $"클리어 스테이지:{clearStage.ButtonName})";
+            $"클리어 스테이지:{clearStage.ButtonName}";
         if(clearStory==null) GetUI<TMP_Text>("ClearStory").text = $"클리어 스토리:기록없음";
         else GetUI<TMP_Text>("ClearStory").text = $"클리어 스토리:{clearStory.ButtonName}";
         GetUI<TMP_Text>("BestRank").text = $"최고 랭킹:{bestRank.ToString()}";
