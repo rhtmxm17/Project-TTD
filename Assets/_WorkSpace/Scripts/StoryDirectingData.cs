@@ -176,7 +176,7 @@ public class StoryDirectingData : ScriptableObject, ITsvSheetParseable
                 }
                 else if (false == float.TryParse(cells[(int)Column.TIME_MULT], out parsed.timeMult))
                 {
-                    Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.TIME_MULT]}");
+                    Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터라인:{line}");
                 }
 
                 // BGM
@@ -196,7 +196,7 @@ public class StoryDirectingData : ScriptableObject, ITsvSheetParseable
                 }
                 else if (false == float.TryParse(cells[(int)Column.FOCUS_X], out parsed.CameraPosition.x))
                 {
-                    Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.FOCUS_X]}");
+                    Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터라인:{line}");
                 }
 
                 // FOCUS_Y
@@ -207,7 +207,7 @@ public class StoryDirectingData : ScriptableObject, ITsvSheetParseable
                 }
                 else if (false == float.TryParse(cells[(int)Column.FOCUS_Y], out parsed.CameraPosition.y))
                 {
-                    Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.FOCUS_Y]}");
+                    Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터라인:{line}");
                 }
 
                 // ZOOM
@@ -218,7 +218,7 @@ public class StoryDirectingData : ScriptableObject, ITsvSheetParseable
                 }
                 else if (false == float.TryParse(cells[(int)Column.ZOOM], out parsed.CameraSize))
                 {
-                    Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.ZOOM]}");
+                    Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터라인:{line}");
                 }
 
                 // TIME
@@ -228,7 +228,7 @@ public class StoryDirectingData : ScriptableObject, ITsvSheetParseable
                 }
                 else if (false == float.TryParse(cells[(int)Column.TIME], out parsed.CamereaTransitionTime))
                 {
-                    Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.TIME]}");
+                    Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터라인:{line}");
                     continue;
                 }
 
@@ -279,21 +279,21 @@ public class StoryDirectingData : ScriptableObject, ITsvSheetParseable
                     }
                     else if (false == float.TryParse(cells[(int)Column.COLOR_MULT], out parsedTransition.ColorMultiply))
                     {
-                        Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.COLOR_MULT]}");
+                        Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터라인:{line}");
                         continue;
                     }
 
                     // POS_X
                     if (false == float.TryParse(cells[(int)Column.POS_X], out parsedTransition.Position.x))
                     {
-                        Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.POS_X]}");
+                        Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터라인:{line}");
                         continue;
                     }
 
                     // POS_Y
                     if (false == float.TryParse(cells[(int)Column.POS_Y], out parsedTransition.Position.y))
                     {
-                        Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.POS_Y]}");
+                        Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터라인:{line}");
                         continue;
                     }
 
@@ -304,7 +304,7 @@ public class StoryDirectingData : ScriptableObject, ITsvSheetParseable
                     }
                     else if (false == float.TryParse(cells[(int)Column.SCALE], out parsedTransition.Scale))
                     {
-                        Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.SCALE]}");
+                        Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터라인:{line}");
                         continue;
                     }
 
@@ -319,7 +319,7 @@ public class StoryDirectingData : ScriptableObject, ITsvSheetParseable
                     }
                     else
                     {
-                        Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:int, 입력된 데이터:{cells[(int)Column.TRANSITION]}");
+                        Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:int, 입력된 데이터라인:{line}");
                         continue;
                     }
 
@@ -330,7 +330,7 @@ public class StoryDirectingData : ScriptableObject, ITsvSheetParseable
                     }
                     else if (false == float.TryParse(cells[(int)Column.TIME], out parsedTransition.Time))
                     {
-                        Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.TIME]}");
+                        Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터라인:{line}");
                         continue;
                     }
 
@@ -345,21 +345,21 @@ public class StoryDirectingData : ScriptableObject, ITsvSheetParseable
                     parsedEffect.Effect = SearchAsset.SearchPrefabAsset<StoryEffect>(effectKey);
                     if (parsedEffect.Effect == null)
                     {
-                        Debug.LogWarning($"이펙트 데이터를 찾지 못함, 입력된 데이터:{effectKey}");
+                        Debug.LogWarning($"이펙트 데이터를 찾지 못함, 입력된 데이터라인:{line}");
                         continue;
                     }
 
                     // POS_X
                     if (false == float.TryParse(cells[(int)Column.POS_X], out parsedEffect.Position.x))
                     {
-                        Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.POS_X]}");
+                        Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터라인:{line}");
                         continue;
                     }
 
                     // POS_Y
                     if (false == float.TryParse(cells[(int)Column.POS_Y], out parsedEffect.Position.y))
                     {
-                        Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터:{cells[(int)Column.POS_Y]}");
+                        Debug.LogWarning($"잘못된 자료형이 입력됨(요구사항:float, 입력된 데이터라인:{line}");
                         continue;
                     }
                     // 파싱된 이펙트 정보를 현재 대사에 등록
