@@ -5,13 +5,24 @@ using UnityEngine.UI;
 
 public class CharacterInfoUI : BaseUI
 {
-    private readonly Sprite[] _enhanceResultIcons = new Sprite[3];
-    public Sprite[] ElementFrames;
-    public Sprite[] EnhanceResultIcons => _enhanceResultIcons;
-    public Sprite[] _elementIcons;
-    public Sprite[] _roleIcons;
-    public Sprite[] _dragonVeinIcons;
-    public Sprite[] _siliderFillSprites = new Sprite[2];
+    [Header("상세 탭 속성 프레임")] [Tooltip("FIRE - WATER - WIND - EARTH - METAL")]
+    public Sprite[] ElementFrames; 
+    
+    [Header("상세 탭 속성 아이콘")] [Tooltip("FIRE - WATER - WIND - EARTH - METAL")]
+    public Sprite[] ElementIcons;
+    
+    private Sprite[] _roleFrames = new Sprite[3];
+    private Sprite[] _dragonVeinFrames = new Sprite[2];
+    private Sprite[] _roleIcons = new Sprite[3];
+    private Sprite[] _dragonVeinIcons = new Sprite[2];
+    private Sprite[] _sliderFillSprites = new Sprite[2];
+
+    public Sprite[] RoleFrames => _roleFrames;
+    public Sprite[] DragonVeinFrames => _dragonVeinFrames;
+    public Sprite[] RoleIcons => _roleIcons;
+    public Sprite[] DragonVeinIcons => _dragonVeinIcons;
+    public Sprite[] SliderFillSprites => _sliderFillSprites;
+    
     
     private Color _tabPressColor = new Color(0.56f, 0.56f, 0.56f);
     
@@ -44,7 +55,9 @@ public class CharacterInfoUI : BaseUI
 
     [HideInInspector] public Image _elementFrameImage;
     [HideInInspector] public Image _elementIconImage;
+    [HideInInspector] public Image _roleFrameImage;
     [HideInInspector] public Image _roleIconImage;
+    [HideInInspector] public Image _dragonVeinFrameImage;
     [HideInInspector] public Image _dragonVeinIconImage;
     [HideInInspector] public Image _skillAIconImage;
     [HideInInspector] public Image _skillBIconImage;
@@ -87,7 +100,6 @@ public class CharacterInfoUI : BaseUI
     [HideInInspector] public GameObject _afterMax;
     [HideInInspector] public GameObject _enhanceResultPopup;
     [HideInInspector] public TextMeshProUGUI _enhanceResultText;
-    [HideInInspector] public Image _enhanceResultIcon;
     [HideInInspector] public Button _enhanceResultConfirm;
     [HideInInspector] public Button _enhanceButton;
     [HideInInspector] public Button _mileageUseButton;
@@ -129,14 +141,23 @@ public class CharacterInfoUI : BaseUI
     private void Init()
     {
         _controller = transform.GetComponentInParent<CharacterInfoController>();
-        //TODO: 강화 결과 아이콘 수정 필요 -> 현재는 임시로 Resources로 불러오는데 추후에 이미지를 배열에 넣을 필요 o
-        
-        _enhanceResultIcons[0] = Resources.Load<Sprite>("Sprites/Icon/White/Icon_White_128/Icon_White_128_Emoji_Smile_02");
-        _enhanceResultIcons[1] = Resources.Load<Sprite>("Sprites/Icon/White/Icon_White_128/Icon_White_128_Emoji_Sad_02");
-        _enhanceResultIcons[2] = Resources.Load<Sprite>("Sprites/Icon/White/Icon_White_128/Icon_White_128_Error_Png");
 
-        _siliderFillSprites[0] = Resources.Load<Sprite>("Sprites/Bar/Bar_Player_Fill_Blue");
-        _siliderFillSprites[1] = Resources.Load<Sprite>("Sprites/Bar/Bar_Player_Fill_Green");
+        _sliderFillSprites[0] = Resources.Load<Sprite>("Sprites/Bar/Bar_Player_Fill_Blue");
+        _sliderFillSprites[1] = Resources.Load<Sprite>("Sprites/Bar/Bar_Player_Fill_Green");
+
+        _roleFrames[0] = Resources.Load<Sprite>("Sprites/Frame/Frame_Type2_07");
+        _roleFrames[1] = Resources.Load<Sprite>("Sprites/Frame/Frame_Type2_03");
+        _roleFrames[2] = Resources.Load<Sprite>("Sprites/Frame/Frame_Type2_06");
+        _roleIcons[0] = Resources.Load<Sprite>("Sprites/Icon/White/Icon_White_64/Icon_White_64_Sword_01");
+        _roleIcons[1] = Resources.Load<Sprite>("Sprites/Icon/White/Icon_White_64/Icon_White_64_Top");
+        _roleIcons[2] = Resources.Load<Sprite>("Sprites/Icon/White/Icon_White_64/Icon_White_64_Star_02");
+        
+        
+        _dragonVeinFrames[0] = Resources.Load<Sprite>("Sprites/Frame/Frame_Type1_05");
+        _dragonVeinFrames[1] = Resources.Load<Sprite>("Sprites/Frame/Frame_Type1_04");
+        _dragonVeinIcons[0] = Resources.Load<Sprite>("Sprites/Icon/White/Icon_White_64/Icon_White_64_Sword_03");
+        _dragonVeinIcons[1] = Resources.Load<Sprite>("Sprites/Icon/White/Icon_White_64/Icon_White_64_Battle");
+
 
     }
     
@@ -184,7 +205,6 @@ public class CharacterInfoUI : BaseUI
         _afterAtkText = GetUI<TextMeshProUGUI>("AfterAtkText");
         _afterDefText = GetUI<TextMeshProUGUI>("AfterDefText");
         _enhanceResultText = GetUI<TextMeshProUGUI>("EnhanceResultText");
-        _enhanceResultIcon = GetUI<Image>("EnhanceResultImage");
         _mileageValueText = GetUI<TextMeshProUGUI>("MileageValueText");
         _afterMaxHpText = GetUI<TextMeshProUGUI>("AfterMaxHpText");
         _afterMaxAtkText = GetUI<TextMeshProUGUI>("AfterMaxAtkText");
@@ -248,7 +268,9 @@ public class CharacterInfoUI : BaseUI
         _bonusLevelText = GetUI<TextMeshProUGUI>("BonusLevelText");
         _levelGoldAmountText = GetUI<TextMeshProUGUI>("LevelCoinAmountText");
         _levelYongGwaAmountText = GetUI<TextMeshProUGUI>("LevelYongGwaAmountText");
-        
+
+        _roleFrameImage = GetUI<Image>("RoleBox");
+        _dragonVeinFrameImage = GetUI<Image>("DragonVeinBox");
         _elementIconImage = GetUI<Image>("ElementIconImage");
         _roleIconImage = GetUI<Image>("RoleIconImage");
         _dragonVeinIconImage = GetUI<Image>("DragonVeinIconImage");
@@ -260,7 +282,7 @@ public class CharacterInfoUI : BaseUI
 
         _bonusExitButton = GetUI<Button>("BonusExitButton");
         _levelUpButton = GetUI<Button>("LevelUpButton");
-
+        
         _amountGroup = GetUI("AmountTextGroup");
         _bonusPopup = GetUI("BonusPopup");
         _materialGroup = GetUI("MaterialTextGroup");
