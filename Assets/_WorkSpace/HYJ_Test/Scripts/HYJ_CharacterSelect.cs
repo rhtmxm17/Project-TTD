@@ -66,8 +66,43 @@ public class HYJ_CharacterSelect : MonoBehaviour
         //표기 설정
         levelText.text = $"Lv.{chData.Level.Value}"; // 레벨
         nameText.text = chData.Name; // 유닛 이름
-        raceText.text = chData.StatusTable.type.ToString(); // 종족
-        classText.text = chData.StatusTable.roleType.ToString(); // 역할군
+        switch (chData.StatusTable.type)
+        {
+            case ElementType.NONE:
+                raceText.text = "무속성";
+                break;
+            case ElementType.FIRE:
+                raceText.text = "화룡";
+                break;
+            case ElementType.WATER:
+                raceText.text = "수룡";
+                break;
+            case ElementType.WIND:
+                raceText.text = "정룡";
+                break;
+            case ElementType.EARTH:
+                raceText.text = "토룡";
+                break;
+            case ElementType.METAL:
+                raceText.text = "진룡";
+                break;
+        }
+
+        switch (chData.StatusTable.roleType)
+        {
+            case RoleType.NONE:
+                classText.text = "";
+                break;
+            case RoleType.ATTACKER:
+                classText.text = "공격형";
+                break;
+            case RoleType.DEFENDER:
+                classText.text = "방어형";
+                break;
+            case RoleType.SUPPORTER:
+                classText.text = "지원형";
+                break;
+        }
         powerText.text = $"{(int)chData.PowerLevel}"; // 전투력
         
         unitInfoScript.InitUnitInfo(chData);
