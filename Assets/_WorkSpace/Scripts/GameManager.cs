@@ -36,7 +36,18 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     public static RectTransform PopupCanvas => Instance.popupCanvas;
 
+    public bool IsCheatMode
+    {
+        get => isCheatMode;
+        set
+        {
+            isCheatMode = value;
+            Debug.Log($"치트 모드 설정됨:{isCheatMode}");
+        }
+    }
+
     [SerializeField] RectTransform popupCanvas;
+    [SerializeField] bool isCheatMode;
 
     // GameManager 싱글톤 프리팹 생성
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]

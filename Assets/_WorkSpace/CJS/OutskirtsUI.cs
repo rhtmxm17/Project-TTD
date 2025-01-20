@@ -35,6 +35,11 @@ public class OutskirtsUI : MonoBehaviour
     public Button SettingButton => childUIField.settingButton;
 
     /// <summary>
+    /// 설정 버튼
+    /// </summary>
+    public Button MenuButton => childUIField.menuButton;
+
+    /// <summary>
     /// 홈 버튼
     /// </summary>
     public Button HomeButton => childUIField.homeButton;
@@ -57,6 +62,7 @@ public class OutskirtsUI : MonoBehaviour
         public TMP_Text title;
         public Button returnButton;
         public Button settingButton;
+        public Button menuButton;
         public Button homeButton;
         public Button quickMoveMenuButton;
         public LayoutGroup quickMoveLayout;
@@ -77,6 +83,8 @@ public class OutskirtsUI : MonoBehaviour
         //GameManager.Input.actions["Cancel"].started += OnReturnButtonClicked;
 
         SettingButton.onClick.AddListener(() => GameManager.OverlayUIManager.PopupSettingWindow());
+
+        MenuButton.onClick.AddListener(() => GameManager.OverlayUIManager.PopupMenuWindow());
 
         // 홈 버튼에 씬 전환 등록
         HomeButton.onClick.AddListener(OnHomeButtonClicked);
