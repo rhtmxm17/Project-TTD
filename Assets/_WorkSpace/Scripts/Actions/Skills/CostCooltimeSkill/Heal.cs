@@ -37,7 +37,7 @@ public class Heal : Skill
             target.Healed(healRate * self.CurAttackPoint);
             if (hitEffect != null)
             {
-                Instantiate(hitEffect, target.transform.position, target.transform.rotation);
+                Instantiate(hitEffect, target.transform.position, Quaternion.Euler(90,90,90));
             }
 
         }
