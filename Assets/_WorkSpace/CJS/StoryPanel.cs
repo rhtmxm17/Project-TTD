@@ -104,6 +104,7 @@ public class StoryPanel : MonoBehaviour
                 Debug.Log($"에피소드 {buttonInstance.Text.text}선택됨");
                 OnChapterEpisodeButtonClicked(chapterInfos[selectedChapterIndex].episodeList[buttonInstance.Id]);
             });
+            buttonInstance.Button.interactable = selectedChapterInfo.episodeList[i].episode.IsOpened;
 
             episodeButtonList.Add(buttonInstance.gameObject);
         }
@@ -195,6 +196,9 @@ public class StoryPanel : MonoBehaviour
                     ItemGainPopup popupInstance = GameManager.OverlayUIManager.PopupItemGain(episodeData.Reward);
                     popupInstance.Title.text = "에피소드 클리어!";
                 }
+
+                // 챕터 버튼 새로고침
+                SelectChapter(selectedChapterIndex);
             });
         }
     }
