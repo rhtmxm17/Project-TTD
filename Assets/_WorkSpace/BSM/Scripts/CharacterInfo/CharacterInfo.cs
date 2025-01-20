@@ -273,16 +273,16 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     {
         if (_characterData.ModelPrefab != null && CharacterModels.Count == 0)
         {
-            levelOne = CreateModelPrefab(_characterData.ModelPrefab, _characterData.ModelPrefab.transform.position, false);
+            levelOne = CreateModelPrefab(_characterData.ModelPrefab, false);
 
             if (levelOne.NextEvolveModel != null)
             {
-                levelTwo = CreateModelPrefab(levelOne.NextEvolveModel, levelOne.NextEvolveModel.transform.position, false);
+                levelTwo = CreateModelPrefab(levelOne.NextEvolveModel, false);
             }
 
             if (levelTwo != null && levelTwo.NextEvolveModel != null)
             {
-                levelThree = CreateModelPrefab(levelTwo.NextEvolveModel, levelTwo.NextEvolveModel.transform.position, false);
+                levelThree = CreateModelPrefab(levelTwo.NextEvolveModel, false);
             }
         }
         else if (CharacterModels.Count != 0 && !CharacterModels[0].gameObject.activeSelf)
@@ -299,9 +299,9 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
     /// <param name="scale">생성될 크기</param>
     /// <param name="active">활성화 여부</param>
     /// <returns></returns>
-    private CharacterModel CreateModelPrefab(CharacterModel model, Vector3 pos, bool active)
+    private CharacterModel CreateModelPrefab(CharacterModel model, bool active)
     {
-        model = Instantiate(model, pos, Quaternion.identity, _characterInfoController.ModelParent.transform);
+        model = Instantiate(model, _characterInfoController.ModelParent.transform);
         model.gameObject.SetActive(active);
         CharacterModels.Add(model);
         return model;

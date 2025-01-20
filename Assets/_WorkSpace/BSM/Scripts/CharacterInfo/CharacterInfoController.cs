@@ -430,7 +430,7 @@ public class CharacterInfoController : BaseUI
 
     private void RenderCamera(Vector3 pos, float angle)
     {
-        _renderCamera.transform.position = pos;
+        _renderCamera.transform.localPosition = pos;
         _renderCamera.fieldOfView = angle;
     }
     
