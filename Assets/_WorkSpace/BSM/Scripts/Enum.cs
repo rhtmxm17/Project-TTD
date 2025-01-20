@@ -90,3 +90,9 @@ public enum EnhanceTokenType
 {
     NONE, CHARACTER_TOKEN, COMMON_TOKEN, AUTO
 }
+
+[System.Serializable]
+public enum EnhanceType
+{
+    NONE, ENHANCE, MILEAGE
+}

@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -28,6 +30,7 @@ public class CharacterEnhance : MonoBehaviour
     private int _selectedCommonMaterial;
     private int _selectedCharacterMaterial;
 
+    private EnhanceType _curEnhanceType;
     private EnhanceTokenType _curTokenType;
     private Color color = new Color(0.9882353f, 1f, 0.6196079f);
     private float[] _decreaseRate = { 0, 0.05f, 0.05f, 0.1f, 0.05f, 0.05f, 0.05f, 0.15f, 0.1f, 0.1f };
@@ -51,17 +54,18 @@ public class CharacterEnhance : MonoBehaviour
             //TODO: Slider 컬러 값 변경 필요
             if (_sliderValue >= 1f)
             {
-                _characterInfoController._infoUI._sliderFillImage.sprite = _characterInfoController._infoUI._siliderFillSprites[1];
+                _characterInfoController._infoUI._sliderFillImage.sprite = _characterInfoController._infoUI.SliderFillSprites[1];
             }
             else
             {
-                _characterInfoController._infoUI._sliderFillImage.sprite = _characterInfoController._infoUI._siliderFillSprites[0];
+                _characterInfoController._infoUI._sliderFillImage.sprite = _characterInfoController._infoUI.SliderFillSprites[0];
             } 
         }
     }
     
     public UnityAction OnBeforeEnhance;
     public UnityAction OnAfterEnhance;
+    private Coroutine _effectCo;
     
     private void Awake()
     {
@@ -87,9 +91,17 @@ public class CharacterEnhance : MonoBehaviour
         if (_isSubscribe) return;
         _isSubscribe = true;
 
-        _characterInfoController._infoUI._enhanceButton.onClick.AddListener(Enhance);
+        _characterInfoController._infoUI._enhanceButton.onClick.AddListener(()=>
+        {
+            _curEnhanceType = EnhanceType.ENHANCE;
+            Enhance();
+        });
         _characterInfoController._infoUI._mileageSlider.onValueChanged.AddListener(value => MileageValueChange(value));
-        _characterInfoController._infoUI._mileageUseConfirmButton.onClick.AddListener(UseMileage);
+        _characterInfoController._infoUI._mileageUseConfirmButton.onClick.AddListener(() =>
+        {
+            _curEnhanceType = EnhanceType.MILEAGE;
+            UseMileage();
+        });
         _characterInfoController._infoUI._characterTokenButton.onClick.AddListener(()=> EnhanceTokenSetUp(EnhanceTokenType.CHARACTER_TOKEN));
         _characterInfoController._infoUI._commonTokenButton.onClick.AddListener(()=> EnhanceTokenSetUp(EnhanceTokenType.COMMON_TOKEN));
          
@@ -427,7 +439,7 @@ public class CharacterEnhance : MonoBehaviour
     private void Enhance()
     {
         if (_characterInfoController.CurCharacterEnhance != this) return;
-        
+         
         //누적 확률
         _cumulativeProbability = 0f;
         
@@ -481,20 +493,42 @@ public class CharacterEnhance : MonoBehaviour
     {
         if (!result)
         {
-            ResultPopup("강화 실패 \n 사유 : 네트워크 오류", _characterInfoController._infoUI.EnhanceResultIcons[2]);
+            ResultPopup("강화 실패 \n 사유 : 네트워크 오류");
             return;
         }
 
         _curTokenType = EnhanceTokenType.NONE;
         _characterInfoController.UserCharacterToken = GameManager.TableData.GetItemData(_characterInfoController.CurCharacterInfo._CharacterData.EnhanceItemID).Number.Value;
+        
 
+        if (_curEnhanceType == EnhanceType.ENHANCE)
+        {
+            _characterInfoController._enhanceNormalEffect.Play();
+        }
+        else if (_curEnhanceType == EnhanceType.MILEAGE)
+        {
+            _characterInfoController._enhanceSpecialEffect.Play();
+            _effectCo = StartCoroutine(EnhanceEffectTimer());
+        }
+        
         TokenCountTextUpdate();
-        ResultPopup($"+{_characterData.Enhancement.Value} 강화에 성공하셨습니다.", _characterInfoController._infoUI.EnhanceResultIcons[0]);
+        ResultPopup($"+{_characterData.Enhancement.Value} 강화에 성공하셨습니다.");
         CharacterStats();
         UpdateInfo();
         EnhanceCheck();
     }
 
+    private IEnumerator EnhanceEffectTimer()
+    {
+        float elapsedTime = 0f;
+        while (elapsedTime < 0.2f)
+        {
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        _characterInfoController._enhanceSpecialEffect.Stop(); 
+    }
+    
     /// <summary>
     /// 강화 실패 후 
     /// </summary>
@@ -502,7 +536,7 @@ public class CharacterEnhance : MonoBehaviour
     {
         if (!result)
         {
-            ResultPopup("강화 실패 \n 사유 : 네트워크 오류", _characterInfoController._infoUI.EnhanceResultIcons[2]);
+            ResultPopup("강화 실패 \n 사유 : 네트워크 오류");
             return;
         }
 
@@ -511,13 +545,10 @@ public class CharacterEnhance : MonoBehaviour
         
         
         TokenCountTextUpdate();
-        ResultPopup($"+{_characterData.Enhancement.Value + 1} 강화에 실패하셨습니다. \n 마일리지 적립 +10%", _characterInfoController._infoUI.EnhanceResultIcons[1]);
+        ResultPopup($"+{_characterData.Enhancement.Value + 1} 강화에 실패하셨습니다. \n 마일리지 적립 +{_increaseMileage[_characterData.Enhancement.Value]}%");
         CharacterStats();
         UpdateInfo();
         EnhanceCheck();
-        
-        
-        //TODO: 마일리지 누적 값 수정 필요
         MileageUpdate(_characterData.EnhanceMileagePerMill.Value + _increaseMileage[_characterData.Enhancement.Value]);
         _characterInfoController._infoUI._sliderFillImage.pixelsPerUnitMultiplier += _characterData.EnhanceMileagePerMill.Value * 0.01f;
     }
@@ -534,7 +565,7 @@ public class CharacterEnhance : MonoBehaviour
             {
                 if (!result)
                 {
-                    ResultPopup("마일리지 적립 실패 \n 사유 : 네트워크 오류", _characterInfoController._infoUI.EnhanceResultIcons[2]);
+                    ResultPopup("마일리지 적립 실패 \n 사유 : 네트워크 오류");
                     return;
                 }
                  
@@ -557,11 +588,10 @@ public class CharacterEnhance : MonoBehaviour
     /// 강화 결과 팝업
     /// </summary>
     /// <param name="text">안내 문구</param>
-    private void ResultPopup(string text, Sprite sprite)
+    private void ResultPopup(string text)
     {
         _characterInfoController._infoUI._enhanceResultPopup.SetActive(true);
         _characterInfoController._infoUI._enhanceResultText.text = text;
-        _characterInfoController._infoUI._enhanceResultIcon.sprite = sprite;
     }
 
     /// <summary>
@@ -579,7 +609,13 @@ public class CharacterEnhance : MonoBehaviour
     private void UseMileage()
     {
         if (_characterInfoController.CurCharacterEnhance != this) return;
-
+        
+        if (_effectCo != null)
+        {
+            StopCoroutine(_effectCo);
+            _effectCo = null;
+        }
+        
         GameManager.UserData.StartUpdateStream()
             .SetDBValue(_characterData.Enhancement, _characterData.Enhancement.Value + 1)
             .Submit(result =>
@@ -613,7 +649,6 @@ public class CharacterEnhance : MonoBehaviour
         _characterInfoController.UserDragonCandy = _characterInfoController.UserDragonCandyData.Value;
         _curCharacterToken = GameManager.TableData.GetItemData(_characterData.EnhanceItemID).Number.Value;
         _characterInfoController._infoUI._enhanceText.text = $"+{_characterData.Enhancement.Value.ToString()}";
-        int temp = _characterData.Enhancement.Value;
     }
  
     /// <summary>
