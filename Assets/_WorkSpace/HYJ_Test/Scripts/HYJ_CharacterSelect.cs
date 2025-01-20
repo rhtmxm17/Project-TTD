@@ -47,7 +47,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
     }
 
     /// <summary>
-    /// 유닛 선택 버튼
+    /// 유닛 선택 버튼 초기 설정
     /// </summary>
     /// <param name="manager"></param>사용되는 중앙 매니저
     /// <param name="unitIdx"></param>유닛 고유 번호
@@ -117,7 +117,7 @@ public class HYJ_CharacterSelect : MonoBehaviour
             {
                 Debug.Log("현재 위치에 이미 배치되어 있는 유닛입니다.");
             }
-            else if(SelectM.battleInfo[SelectM.curPos] != SelectM.curUnitIndex)
+            else if(SelectM.battleInfo[SelectM.curPos] != SelectM.curUnitIndex) 
             {
                 Debug.Log("aaaaaaa");
                 UnitChangeUI.SetActive(true);
@@ -162,15 +162,12 @@ public class HYJ_CharacterSelect : MonoBehaviour
     }
 
     /// <summary>
-    /// 음.. 이미지를 생성 삭제하는게 아니라 위치 버튼에 유닛용 이미지가 있어서 그걸 바꾸는 방식
-    ///     1. 이미지를 바꾼다.
-    ///     2. 이미지를 원래대로 만든다.
+    /// 캐릭터 이미지 설정
     /// </summary>
     /// <param name="isOn">true면 캐릭터 이미지로 변경, false면 초기화</param>
     /// <param name="unitIdx">변경할 캐릭터 이미지의 캐릭터 고유 번호</param>
     private void SetBtnChImage(bool isOn,int unitIdx)
     { 
-        //FixMe:GetComponet 사용보단 필드로 넣거나 캐싱하도록 변경
         Image posBtnImg = posBTNImage.GetComponent<Image>();
         Color color = posBTNImage.GetComponent<Image>().color;
         if (isOn)
