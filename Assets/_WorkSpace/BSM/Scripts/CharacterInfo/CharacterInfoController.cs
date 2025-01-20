@@ -236,7 +236,7 @@ public class CharacterInfoController : BaseUI
         
         _enhanceSpecialEffect = Instantiate(_particleSystems[1], _enhanceTab.transform);
         _enhanceSpecialEffect.transform.localPosition = new Vector3(-578f, 25f, 1f);
-        _enhanceSpecialEffect.transform.localScale = new Vector3(130f, 100f, 1f);
+        _enhanceSpecialEffect.transform.localScale = new Vector3(130f, 65f, 1f);
     }
     
     /// <summary>
