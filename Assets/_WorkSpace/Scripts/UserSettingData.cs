@@ -9,6 +9,9 @@ using UnityEngine;
 /// </summary>
 public class UserSettingData : SingletonScriptable<UserSettingData>
 {
+    public enum PanelType { NONE, Story, Adventure }
+    public enum StoryChapterType { NONE, Main, Sub }
+
     public SettingData Data => data;
     private SettingData data;
     private string path;
@@ -25,6 +28,10 @@ public class UserSettingData : SingletonScriptable<UserSettingData>
         public int graphicQualityLevel = 1;
         [EnumNamedArray(typeof(AudioGroup)), Tooltip("음량 설정값")]
         public AudioVolume[] soundScale = new AudioVolume[SoundManager.AudioGroupCount];
+        [EnumNamedArray(typeof(PanelType))]
+        public int[] openedPanel = new int[Enum.GetValues(typeof(PanelType)).Length];
+        [EnumNamedArray(typeof(StoryChapterType))]
+        public int[] storyChapter = new int[Enum.GetValues(typeof(StoryChapterType)).Length];
     }
 
     private void OnEnable()

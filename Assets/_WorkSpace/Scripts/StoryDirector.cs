@@ -75,7 +75,7 @@ public class StoryDirector : BaseUI
     #endregion 초기화 필드
 
     // 진행중인 연출 데이터
-    private StoryDirectingData storyData;
+    public StoryDirectingData StoryData { get; private set; }
 
     /// <summary>
     /// 현재 출력 진행중인 다이얼로그의 tweening<br/>
@@ -125,7 +125,7 @@ public class StoryDirector : BaseUI
 
     public void SetDirectionData(StoryDirectingData storyData)
     {
-        this.storyData = storyData;
+        this.StoryData = storyData;
         dialogueCounter = 0;
         maxDialogueCounter = storyData.Dialogues.Length;
 
@@ -214,7 +214,7 @@ public class StoryDirector : BaseUI
     // 실질적으로 스토리 텍스트를 출력할 함수
     private void StoryPrint(int nameCount)
     {
-        StoryDirectingData.Dialogue dialogue = storyData.Dialogues[nameCount];
+        StoryDirectingData.Dialogue dialogue = StoryData.Dialogues[nameCount];
 
         // 장소 출력
         if (false == string.IsNullOrEmpty(dialogue.Loaction))

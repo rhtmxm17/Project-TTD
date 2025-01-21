@@ -98,7 +98,7 @@ public class IdleReward : MonoBehaviour
         ItemGain goldGain = new ItemGain()
         {
             item = GameManager.TableData.GetItemData(1),
-            gain = timeRewardMult * (150 + 10 * clearedStages) // 분당 골드: 150 + 10 * 스테이지
+            gain = timeRewardMult * (150 + 15 * clearedStages) // 분당 골드: 150 + 15 * 스테이지
         };
 
         ItemGain yonggwaGain = new ItemGain()
@@ -154,7 +154,36 @@ public class IdleReward : MonoBehaviour
         {
             // 시간 타이머 관련 및 여기서 코루틴 정지 및 시간 정리 해야함
             spanTime = DateTime.Now - laseReward;
-            timeText.text = $"{spanTime.Hours}:{spanTime.Minutes}:{spanTime.Seconds}";
+            
+            //디테일 추가
+            string hoursText = "";
+            string minutesText = "";
+            string secondsText = "";
+            if ((int)spanTime.Hours < 10)
+            {
+                hoursText = $"0{spanTime.Hours}";
+            }
+            else
+            {
+                hoursText = $"{spanTime.Hours}";
+            }
+            if ((int)spanTime.Minutes < 10)
+            {
+                minutesText = $"0{spanTime.Minutes}";
+            }
+            else
+            {
+                minutesText = $"{spanTime.Minutes}";
+            }
+            if ((int)spanTime.Seconds < 10)
+            {
+                secondsText = $"0{spanTime.Seconds}";
+            }
+            else
+            {
+                secondsText = $"{spanTime.Seconds}";
+            }
+            timeText.text = hoursText + ":" + minutesText + ":" + secondsText;
             
             // 지난 시간이 최대시간에 도달할 경우
             if (spanTime >= maxTimer)

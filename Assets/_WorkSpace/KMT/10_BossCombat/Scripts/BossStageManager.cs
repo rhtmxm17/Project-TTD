@@ -45,7 +45,7 @@ public class BossStageManager : StageManager, IDamageAddable
             return;
 
         score += damage;
-        scoreText.text = score.ToString();
+        scoreText.text = ((long)score).ToString();
     }
 
     protected override IEnumerator StartTimerCO()
