@@ -13,6 +13,7 @@ public class MenuTutorial : MonoBehaviour
         MyRoom,
         Story,
         Adventure,
+        Formation,
     }
 
     [SerializeField] TargetScene targetScene;
