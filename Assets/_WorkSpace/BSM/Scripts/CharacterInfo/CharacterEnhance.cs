@@ -746,14 +746,14 @@ public class CharacterEnhance : MonoBehaviour
         else
         { 
             _characterInfoController._infoUI._enhanceCoinText.color = _characterInfoController.UserGold >= _enhanceGoldCost ? color : Color.red;
-            _characterInfoController._infoUI._enhanceMaterialText.color = _characterInfoController.UserDragonCandy >= _enhanceDragonCandyCost ? color : Color.red;
+            _characterInfoController._infoUI._enhanceMaterialText.color = _characterInfoController.UserDragonCandy + _curCharacterToken >= _enhanceDragonCandyCost ? color : Color.red;
         }
         
         _characterInfoController._infoUI._enhanceButton.interactable =
             _enhanceDragonCandyCost == (_selectedCharacterMaterial + _selectedCommonMaterial) &&
             _beforeEnhanceLevel < _maxEnhanceLevel &&
             _characterInfoController.UserGold >= _enhanceGoldCost &&
-            _characterInfoController.UserDragonCandy >= _enhanceDragonCandyCost;
+            _characterInfoController.UserDragonCandy + _curCharacterToken >= _enhanceDragonCandyCost;
     }
 
     /// <summary>
