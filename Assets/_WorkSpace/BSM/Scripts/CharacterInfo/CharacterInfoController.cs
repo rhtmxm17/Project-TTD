@@ -19,6 +19,9 @@ public class CharacterInfoController : BaseUI
     public ParticleSystem _levelUpSpecialEffect;
     public ParticleSystem _enhanceNormalEffect;
     public ParticleSystem _enhanceSpecialEffect;
+
+    public AudioClip[] CharacterLevelSounds;
+    public AudioClip[] CharacterEnhanceSounds;
     
     [HideInInspector] public CharacterInfoUI _infoUI;
     [HideInInspector] public List<CharacterInfo> _characterInfos;

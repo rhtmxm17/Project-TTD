@@ -508,10 +508,12 @@ public class CharacterEnhance : MonoBehaviour
         if (_curEnhanceType == EnhanceType.ENHANCE)
         {
             _characterInfoController._enhanceNormalEffect.Play();
+            SoundManager.Instance.PlaySFX(_characterInfoController.CharacterEnhanceSounds[0]);
         }
         else if (_curEnhanceType == EnhanceType.MILEAGE)
         {
             _characterInfoController._enhanceSpecialEffect.Play();
+            SoundManager.Instance.PlaySFX(_characterInfoController.CharacterEnhanceSounds[1]);
             _effectCo = StartCoroutine(EnhanceEffectTimer());
         }
         
@@ -598,7 +600,7 @@ public class CharacterEnhance : MonoBehaviour
         _characterInfoController._infoUI._faceIconImage.sprite = _characterInfoController._infoUI.FaceIcons[1];
         
         _faceEffectCo = StartCoroutine(FaceIconRoutine(_characterInfoController._infoUI._faceIconImage, _characterInfoController._infoUI._speechBubbleImage, false));
-
+        SoundManager.Instance.PlaySFX(_characterInfoController.CharacterEnhanceSounds[2]);
         
         TokenCountTextUpdate();
         ResultPopup($"+{_characterData.Enhancement.Value + 1} 강화에 실패하셨습니다. \n 마일리지 적립 +{_increaseMileage[_characterData.Enhancement.Value]}%");

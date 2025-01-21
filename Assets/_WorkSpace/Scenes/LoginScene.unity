@@ -1299,6 +1299,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2014309242}
   - component: {fileID: 2014309243}
+  - component: {fileID: 2014309244}
   m_Layer: 5
   m_Name: PanelManager
   m_TagString: Untagged
@@ -1344,6 +1345,20 @@ MonoBehaviour:
   Nickname: 
   Email: 
   IsVerified: 0
+--- !u!114 &2014309244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2014309241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fe10022def1a574a8a772193f2b24af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bgmClip: {fileID: 8300000, guid: 75bd18325305ba64187614d294ef01ff, type: 3}
+  clipScale: 1
 --- !u!1001 &1267842358826194712
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1351,6 +1366,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1143510768}
     m_Modifications:
+    - target: {fileID: 1267842356986507550, guid: 9fce41e9256e57a4294478ee094f0b8e,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -1.9999542
+      objectReference: {fileID: 0}
     - target: {fileID: 1267842357998350832, guid: 9fce41e9256e57a4294478ee094f0b8e,
         type: 3}
       propertyPath: m_Name
@@ -1460,6 +1480,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1267842358172142810, guid: 9fce41e9256e57a4294478ee094f0b8e,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -1.0000153
+      objectReference: {fileID: 0}
+    - target: {fileID: 1267842358856312231, guid: 9fce41e9256e57a4294478ee094f0b8e,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -1.9999542
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9fce41e9256e57a4294478ee094f0b8e, type: 3}
