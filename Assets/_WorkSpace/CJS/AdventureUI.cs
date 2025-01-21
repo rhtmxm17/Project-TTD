@@ -140,6 +140,18 @@ public class AdventureUI : BaseUI
     {
         SimpleInfoPopup instance = Instantiate(popupPrefab, GameManager.PopupCanvas);
         instance.Title.text = data.StageName;
+        // 스테이지 이미지
+        if(data.SpriteImage != null)
+        {
+            instance.Image.sprite = data.SpriteImage;
+        }
+        // 스테이지 설명
+        if(data.Description != null)
+        {
+            instance.Description.text = data.Description;
+        }
+        
+        
 
         StageSceneChangeArgs sceneChangeArgs = new StageSceneChangeArgs()
         {
