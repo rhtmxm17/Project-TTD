@@ -86,15 +86,15 @@ public class CombatCamera : MonoBehaviour
     IEnumerator ShakeCO()
     {
         yield return null;
-        shakeCameraParent.localPosition = new Vector3(-shakeDistance, shakeDistance, 0);
+        shakeCameraParent.localPosition = new Vector3(-shakeDistance, 0, shakeDistance);
         yield return shakeOffset;
-        shakeCameraParent.localPosition = new Vector3(-shakeDistance, -shakeDistance, 0);
+        shakeCameraParent.localPosition = new Vector3(-shakeDistance, shakeDistance, -shakeDistance);
         yield return shakeOffset;
         shakeCameraParent.localPosition = Vector3.zero;
         yield return shakeOffset;
-        shakeCameraParent.localPosition = new Vector3(shakeDistance, shakeDistance, 0);
+        shakeCameraParent.localPosition = new Vector3(shakeDistance, 0, shakeDistance);
         yield return shakeOffset;
-        shakeCameraParent.localPosition = new Vector3(shakeDistance, -shakeDistance, 0);
+        shakeCameraParent.localPosition = new Vector3(shakeDistance, 0, -shakeDistance);
         yield return shakeOffset;
         shakeCameraParent.localPosition = Vector3.zero;
     }
