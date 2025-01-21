@@ -51,7 +51,7 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     /// BGM을 재생
     /// </summary>
     /// <param name="clip">BGM으로 재생할 오디오 클립</param>
-    /// <param name="volumeScale">음량 배율</param>
+    /// <param name="volumeScale">추가로 적용할 음량 배율</param>
     public void PlayBGM(AudioClip clip, float volumeScale = 1f)
     {
         if (bgmSource.clip == clip) return;
@@ -65,7 +65,7 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     /// BGM을 재생
     /// </summary>
     /// <param name="bgmType">재생할 오디오 클립의 종류</param>
-    /// <param name="volumeScale">음량 배율</param>
+    /// <param name="volumeScale">추가로 적용할 음량 배율</param>
     public void PlayBGM(BGMType bgmType, float volumeScale = 1f)
     {
         AudioClip audio = bgmDictionary.GetAudioClip(bgmType);
