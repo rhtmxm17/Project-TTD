@@ -9,8 +9,10 @@ public class MenuTutorial : MonoBehaviour
     {
         None,
         Lobby,
-        Profile,
-
+        Shop,
+        MyRoom,
+        Story,
+        Adventure,
     }
 
     [SerializeField] TargetScene targetScene;
