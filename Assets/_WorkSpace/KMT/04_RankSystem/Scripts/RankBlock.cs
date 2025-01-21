@@ -36,7 +36,7 @@ public class RankBlock : MonoBehaviour
     public void SetBlockInfo(in string nickname, long score)
     {
         nicknameText.text = nickname;
-        scoreText.text = score.ToString();
+        scoreText.text = string.Format("{0:#,###}", score);
     }
 
 }
