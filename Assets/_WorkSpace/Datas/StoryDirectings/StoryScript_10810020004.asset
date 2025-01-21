@@ -20,7 +20,15 @@ MonoBehaviour:
     Script: "\uADF8\uB7F0\uB370 \uC6A9\uC758 \uC131\uC18C\uC5D0\uC11C \uC8FC\uC778\uB2D8\uC774
       \uC0C8 \uC6A9\uC744 \uC18C\uD658\uD560 \uC218\uB294 \uC788\uB294 \uAC74\uAC00\uC694?"
     timeMult: 1
-    Transitions: []
+    Transitions:
+    - StandingImageId: 0
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 2, y: 5}
+      Scale: 1
+      Type: 2
+      Time: 0
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -48,7 +56,15 @@ MonoBehaviour:
       \uAC00\uC7A5 \uD30C\uC7A5\uC774 \uB9DE\uB294 \uC6A9\uC744 \uBD80\uB974\uB294
       \uAC70\uC57C."
     timeMult: 1
-    Transitions: []
+    Transitions:
+    - StandingImageId: 1
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -91,7 +107,10 @@ MonoBehaviour:
       \uC54A\uB294 \uACBD\uC6B0\uB3C4 \uC788\uC796\uC544\uC694."
     timeMult: 1
     Transitions: []
-    Effects: []
+    Effects:
+    - Effect: {fileID: 2782562690393339995, guid: 54e26827d2286bc4a844bd0d57efe231,
+        type: 3}
+      Position: {x: 3, y: 5}
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
     CamereaTransitionTime: 0.5
@@ -104,7 +123,10 @@ MonoBehaviour:
       \uAC70\uC57C? \uADF8\uAC74 \uB124 \uBB38\uC81C\uAC00 \uC544\uB2C8\uB77C\uB2C8\uAE4C."
     timeMult: 1
     Transitions: []
-    Effects: []
+    Effects:
+    - Effect: {fileID: 7272569536435881635, guid: 2f91d5a04242b1242bb336b14337924f,
+        type: 3}
+      Position: {x: 12.5, y: 5}
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
     CamereaTransitionTime: 0.5
@@ -145,7 +167,10 @@ MonoBehaviour:
       \uC5C6\uB294 \uAC78\uC694\u2026"
     timeMult: 1
     Transitions: []
-    Effects: []
+    Effects:
+    - Effect: {fileID: 6890597470401697367, guid: e736e27797cf4a64fade7183364c919b,
+        type: 3}
+      Position: {x: 6, y: 5}
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
     CamereaTransitionTime: 0.5
@@ -185,7 +210,10 @@ MonoBehaviour:
       \uC788\uB2E8 \uAC70\uC9C0."
     timeMult: 1
     Transitions: []
-    Effects: []
+    Effects:
+    - Effect: {fileID: 2782562690393339995, guid: 54e26827d2286bc4a844bd0d57efe231,
+        type: 3}
+      Position: {x: 9.5, y: 5}
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
     CamereaTransitionTime: 0.5
@@ -250,8 +278,19 @@ MonoBehaviour:
     Speaker: "\uC0B0\uB098"
     Script: "\u2026"
     timeMult: 1
-    Transitions: []
-    Effects: []
+    Transitions:
+    - StandingImageId: 1
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 30, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
+    Effects:
+    - Effect: {fileID: 6890597470401697367, guid: e736e27797cf4a64fade7183364c919b,
+        type: 3}
+      Position: {x: 6, y: 5}
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
     CamereaTransitionTime: 0.5
@@ -262,7 +301,23 @@ MonoBehaviour:
     Speaker: "\uC8FC\uC778\uACF5"
     Script: "\u2026\uC88B\uC544. \uC2DC\uC791\uD560\uAC8C."
     timeMult: 1
-    Transitions: []
+    Transitions:
+    - StandingImageId: 0
+      Active: 0
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 4, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
+    - StandingImageId: 1
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -274,7 +329,15 @@ MonoBehaviour:
     Speaker: 
     Script: "\uCF71."
     timeMult: 1
-    Transitions: []
+    Transitions:
+    - StandingImageId: 1
+      Active: 0
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -319,7 +382,15 @@ MonoBehaviour:
       \uC2E0\uC758 \uB0A0\uAC1C\uB97C \uC6B0\uB9AC\uAC00 \uD384\uB7ED\uC774\uAC8C
       \uD558\uC18C\uC11C."
     timeMult: 1
-    Transitions: []
+    Transitions:
+    - StandingImageId: 1
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -332,7 +403,15 @@ MonoBehaviour:
     Script: "\uADF8\uB9AC\uD558\uC5EC \uC6B0\uB9AC\uAC00 \uB3CC\uC544\uAC08 \uAE38\uC744
       \uC8FC\uC18C\uC11C."
     timeMult: 1
-    Transitions: []
+    Transitions:
+    - StandingImageId: 1
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1.2
+      Type: 1
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -344,7 +423,23 @@ MonoBehaviour:
     Speaker: "\uC0B0\uB098"
     Script: "\u2026"
     timeMult: 1
-    Transitions: []
+    Transitions:
+    - StandingImageId: 1
+      Active: 0
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
+    - StandingImageId: 0
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 4, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -356,7 +451,15 @@ MonoBehaviour:
     Speaker: "\uC8FC\uC778\uACF5"
     Script: "\u2026"
     timeMult: 1
-    Transitions: []
+    Transitions:
+    - StandingImageId: 1
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -368,7 +471,15 @@ MonoBehaviour:
     Speaker: "\uD2F0\uC544"
     Script: "\u2026"
     timeMult: 1
-    Transitions: []
+    Transitions:
+    - StandingImageId: 2
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 14, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -381,7 +492,10 @@ MonoBehaviour:
     Script: "\uC548 \uB418\uB294 \uAC83 \uAC19\uC9C0?"
     timeMult: 1
     Transitions: []
-    Effects: []
+    Effects:
+    - Effect: {fileID: 2782562690393339995, guid: ce5cff0357c360c4c917613e5a4dbb04,
+        type: 3}
+      Position: {x: 12.5, y: 8}
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
     CamereaTransitionTime: 0.5
@@ -392,8 +506,19 @@ MonoBehaviour:
     Speaker: "\uD2F0\uC544"
     Script: "\uD55C \uBC88 \uB354 \uD574\uBCF4\uC790, \uCE5C\uAD6C."
     timeMult: 1
-    Transitions: []
-    Effects: []
+    Transitions:
+    - StandingImageId: 2
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 14, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
+    Effects:
+    - Effect: {fileID: 2782562690393339995, guid: 54e26827d2286bc4a844bd0d57efe231,
+        type: 3}
+      Position: {x: 13, y: 5}
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
     CamereaTransitionTime: 0.5
@@ -406,7 +531,10 @@ MonoBehaviour:
       \uD3C9\uC0DD\uC5D0 \uC138 \uBC88\uC774\uB098 \uC74A\uAE34 \uC2EB\uB2E8 \uB9D0\uC57C."
     timeMult: 1
     Transitions: []
-    Effects: []
+    Effects:
+    - Effect: {fileID: 5573487131540458535, guid: 2a12836e1ff6cc14d81cb4d107cee1d7,
+        type: 3}
+      Position: {x: 12.5, y: 5}
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
     CamereaTransitionTime: 0.5
@@ -511,20 +639,47 @@ MonoBehaviour:
     Speaker: 
     Script: "\uCF70\uC9C1."
     timeMult: 1
-    Transitions: []
+    Transitions:
+    - StandingImageId: 1
+      Active: 0
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0
+    - StandingImageId: 2
+      Active: 0
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 14, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0
+    - StandingImageId: 0
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1.3
+      Type: 1
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
     CamereaTransitionTime: 0.5
     Bgm: {fileID: 0}
-    Sfx: {fileID: 0}
+    Sfx: {fileID: 8300000, guid: 1e9369ca955f5704eb0d0b6a81d243d9, type: 3}
     BackgroundSprite: {fileID: 0}
   - Loaction: 
     Speaker: "\uC0B0\uB098"
     Script: "\uC6B0\uB9AC\uC5D0\uAC8C \uC2E0\uC758 \uC5C5\uC744 \uC54C\uAC8C \uD558\uC18C\uC11C."
     timeMult: 1
     Transitions: []
-    Effects: []
+    Effects:
+    - Effect: {fileID: 6890597470401697367, guid: e736e27797cf4a64fade7183364c919b,
+        type: 3}
+      Position: {x: 12.5, y: 5}
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
     CamereaTransitionTime: 0.5
@@ -535,7 +690,23 @@ MonoBehaviour:
     Speaker: "\uC8FC\uC778\uACF5"
     Script: "\uC0B0\uB098? \uBB50 \uD558\uB294 \uAC70\uC57C?"
     timeMult: 1
-    Transitions: []
+    Transitions:
+    - StandingImageId: 0
+      Active: 0
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0
+    - StandingImageId: 1
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -547,7 +718,23 @@ MonoBehaviour:
     Speaker: "\uC0B0\uB098"
     Script: "\u2026\uC6B0\uB9AC\uAC00 \uB3CC\uC544\uAC08 \uAE38\uC744 \uC8FC\uC18C\uC11C."
     timeMult: 1
-    Transitions: []
+    Transitions:
+    - StandingImageId: 1
+      Active: 0
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0
+    - StandingImageId: 0
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -584,7 +771,15 @@ MonoBehaviour:
     Speaker: "\uC0B0\uB098"
     Script: "\uC6B0\uB9AC\uC5D0\uAC8C \uC2E0\uC758 \uC5C5\uC744 \uC54C\uAC8C \uD558\uC18C\uC11C."
     timeMult: 1
-    Transitions: []
+    Transitions:
+    - StandingImageId: 0
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1.3
+      Type: 1
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -596,7 +791,23 @@ MonoBehaviour:
     Speaker: "\uC8FC\uC778\uACF5"
     Script: "\uC0B0\uB098! \uADF8\uB9CC\uD574!"
     timeMult: 1
-    Transitions: []
+    Transitions:
+    - StandingImageId: 1
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 4, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
+    - StandingImageId: 1
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 7, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -609,20 +820,44 @@ MonoBehaviour:
     Script: "\uB098\uB294 \uC0B0\uB098\uC758 \uC190\uC744 \uC7A1\uC544\uCC44 \uC0B0\uB098\uC758
       \uD488 \uC548\uC5D0\uC11C \uC190\uC218\uAC74\uC744 \uAEBC\uB0B4 \uC9C0\uD608\uD588\uB2E4."
     timeMult: 1
-    Transitions: []
+    Transitions:
+    - StandingImageId: 0
+      Active: 0
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0
+    - StandingImageId: 1
+      Active: 0
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
     CamereaTransitionTime: 0.5
     Bgm: {fileID: 0}
-    Sfx: {fileID: 0}
+    Sfx: {fileID: 8300000, guid: 13b9871eea5d6384ab3d52d4c3ef8058, type: 3}
     BackgroundSprite: {fileID: 0}
   - Loaction: 
     Speaker: "\uC8FC\uC778\uACF5"
     Script: "\uB9D0 \uD588\uC796\uC544. \uD55C \uBC88 \uD574\uC11C \uC548\uB418\uBA74
       \uC18C\uC6A9\uC5C6\uB2E4\uACE0. \uADF8\uB9AC\uACE0 \uC9C4\uC815\uD574."
     timeMult: 1
-    Transitions: []
+    Transitions:
+    - StandingImageId: 1
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -648,8 +883,27 @@ MonoBehaviour:
     Speaker: "\uC0B0\uB098"
     Script: "\uC8C4\uC1A1\u2026\uD574\uC694."
     timeMult: 1
-    Transitions: []
-    Effects: []
+    Transitions:
+    - StandingImageId: 1
+      Active: 0
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
+    - StandingImageId: 0
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
+    Effects:
+    - Effect: {fileID: 6890597470401697367, guid: e736e27797cf4a64fade7183364c919b,
+        type: 3}
+      Position: {x: 12.5, y: 5}
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
     CamereaTransitionTime: 0.5
@@ -661,7 +915,15 @@ MonoBehaviour:
     Script: "\uB108 \uC624\uB298 \uC774\uC0C1\uD574. \uC544\uB2C8, \uC694 \uBA70\uCE60
       \uC804\uBD80\uD130 \uC880 \uADF8\uB7F0 \uAC83 \uAC19\uC544."
     timeMult: 1
-    Transitions: []
+    Transitions:
+    - StandingImageId: 1
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -673,7 +935,15 @@ MonoBehaviour:
     Speaker: "\uC0B0\uB098"
     Script: "\u2026"
     timeMult: 1
-    Transitions: []
+    Transitions:
+    - StandingImageId: 0
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 14, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -686,7 +956,10 @@ MonoBehaviour:
     Script: "\uC548\uB418\uACA0\uB2E4. \uC6B0\uB9AC \uC598\uAE30 \uC880 \uD558\uC790."
     timeMult: 1
     Transitions: []
-    Effects: []
+    Effects:
+    - Effect: {fileID: 2782562690393339995, guid: 54e26827d2286bc4a844bd0d57efe231,
+        type: 3}
+      Position: {x: 9.5, y: 5}
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
     CamereaTransitionTime: 0.5
@@ -723,7 +996,15 @@ MonoBehaviour:
     Script: "\uB3CC\uC544\uBCF4\uB2C8 \uAC70\uAE30\uC5D4 \uD55C \uC18C\uB140\uAC00
       \uC11C \uC788\uC5C8\uB2E4."
     timeMult: 1
-    Transitions: []
+    Transitions:
+    - StandingImageId: 3
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -735,7 +1016,15 @@ MonoBehaviour:
     Speaker: ???
     Script: "\uB3C4\uC6C0, \uD544\uC694\uD558\uC2E0 \uBAA8\uC591\uC774\uC9C0\uC694?"
     timeMult: 1
-    Transitions: []
+    Transitions:
+    - StandingImageId: 3
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1.2
+      Type: 1
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1

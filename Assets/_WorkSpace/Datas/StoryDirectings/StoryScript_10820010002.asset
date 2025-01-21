@@ -15,18 +15,6 @@ MonoBehaviour:
   id: 20
   title: "\uC678\uC804 2\uD654"
   dialogues:
-  - Loaction: "\uC678\uC804 2\uD654"
-    Speaker: 
-    Script: 
-    timeMult: 1
-    Transitions: []
-    Effects: []
-    CameraPosition: {x: 0, y: 5}
-    CameraSize: 1
-    CamereaTransitionTime: 0.5
-    Bgm: {fileID: 0}
-    Sfx: {fileID: 0}
-    BackgroundSprite: {fileID: 0}
   - Loaction: "\uAD50\uC2E4"
     Speaker: "\uC0E4\uBBF8\uB974"
     Script: "\uD558\uB098, \uB458, \uC14B\u2026 \uD2B9\uBCC4 \uAD50\uC2B5\uBC18\uC744
@@ -39,7 +27,7 @@ MonoBehaviour:
     CamereaTransitionTime: 0.5
     Bgm: {fileID: 8300000, guid: 61ffb543e30482b43b31f589f0344753, type: 3}
     Sfx: {fileID: 0}
-    BackgroundSprite: {fileID: 0}
+    BackgroundSprite: {fileID: 21300000, guid: 46460464d910a314f99d9035152f0653, type: 3}
   - Loaction: 
     Speaker: "\uC0E4\uBBF8\uB974"
     Script: "\uC774\uC81C\uB294 \uAE30\uC5B5\uC870\uCC28 \uB098\uC9C0 \uC54A\uC544\uC694."
@@ -83,7 +71,7 @@ MonoBehaviour:
     Script: "\uBE48 \uAD50\uC2E4\uC5D0\uC11C \uB298 \uD63C\uC790."
     timeMult: 1
     Transitions:
-    - StandingImageId: 1
+    - StandingImageId: 0
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -246,7 +234,7 @@ MonoBehaviour:
     Script: "\uADF8\uB294 \uB2E4\uB97C\uAE4C\uC694?"
     timeMult: 1
     Transitions:
-    - StandingImageId: 1
+    - StandingImageId: 0
       Active: 0
       Flip: 0
       ColorMultiply: 1
@@ -254,7 +242,7 @@ MonoBehaviour:
       Scale: 1
       Type: 1
       Time: 0.5
-    - StandingImageId: 2
+    - StandingImageId: 1
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -298,7 +286,7 @@ MonoBehaviour:
     Script: "\u2026."
     timeMult: 1
     Transitions:
-    - StandingImageId: 2
+    - StandingImageId: 1
       Active: 0
       Flip: 0
       ColorMultiply: 1
@@ -306,7 +294,7 @@ MonoBehaviour:
       Scale: 1
       Type: 1
       Time: 0.5
-    - StandingImageId: 1
+    - StandingImageId: 0
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -387,7 +375,7 @@ MonoBehaviour:
       '\uC6A9\uACFC'\uAC00 \uC654\uC5B4\uC694!"
     timeMult: 1
     Transitions:
-    - StandingImageId: 1
+    - StandingImageId: 0
       Active: 0
       Flip: 0
       ColorMultiply: 1
@@ -395,7 +383,7 @@ MonoBehaviour:
       Scale: 1
       Type: 1
       Time: 0.5
-    - StandingImageId: 3
+    - StandingImageId: 2
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -409,14 +397,14 @@ MonoBehaviour:
     CamereaTransitionTime: 0.5
     Bgm: {fileID: 8300000, guid: bf2d1469edd63c24f9fd1a80b760d6e0, type: 3}
     Sfx: {fileID: 8300000, guid: e2a3c7f98d7124949906c1fc5a56e645, type: 3}
-    BackgroundSprite: {fileID: 0}
+    BackgroundSprite: {fileID: 21300000, guid: 546bf2d10dc8b224f842c2a4fe032289, type: 3}
   - Loaction: 
     Speaker: "\uC810\uC6D0"
     Script: "\uC544\uB2F4\uACFC \uC774\uBE0C\uAC00 \uBA39\uC5C8\uB2E4\uB294 \uC120\uC545\uACFC\uAC00
       \uBC14\uB85C \uC774\uB7F0 \uB9DB\uC774\uC5C8\uC744\uAE4C!"
     timeMult: 1
     Transitions:
-    - StandingImageId: 3
+    - StandingImageId: 2
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -424,7 +412,7 @@ MonoBehaviour:
       Scale: 1
       Type: 3
       Time: 0.5
-    - StandingImageId: 3
+    - StandingImageId: 2
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -445,7 +433,7 @@ MonoBehaviour:
       \uD48D\uBD80\uD55C \uACFC\uC999!"
     timeMult: 1
     Transitions:
-    - StandingImageId: 3
+    - StandingImageId: 2
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -466,7 +454,7 @@ MonoBehaviour:
       \uB098\uB220 \uBA39\uB294 \uAC74 \uC5B4\uB5A0\uC2ED\uB2C8\uAE4C!"
     timeMult: 1
     Transitions:
-    - StandingImageId: 3
+    - StandingImageId: 2
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -486,7 +474,7 @@ MonoBehaviour:
     Script: "\uC774\uAC70 \uD558\uB098 \uC8FC\uC138\uC694."
     timeMult: 1
     Transitions:
-    - StandingImageId: 3
+    - StandingImageId: 2
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -494,7 +482,7 @@ MonoBehaviour:
       Scale: 1
       Type: 3
       Time: 0.5
-    - StandingImageId: 1
+    - StandingImageId: 0
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -568,7 +556,7 @@ MonoBehaviour:
     Script: "\uC790, \uC7A0\uAE4C\uC544\uC548!"
     timeMult: 1
     Transitions:
-    - StandingImageId: 3
+    - StandingImageId: 2
       Active: 0
       Flip: 0
       ColorMultiply: 1
@@ -576,7 +564,7 @@ MonoBehaviour:
       Scale: 1
       Type: 1
       Time: 0.5
-    - StandingImageId: 1
+    - StandingImageId: 0
       Active: 0
       Flip: 0
       ColorMultiply: 1
@@ -608,7 +596,7 @@ MonoBehaviour:
     Script: "\uC800\uD76C \uC810\uC6D0\uC774 \uD070 \uC2E4\uB840\uB97C!"
     timeMult: 1
     Transitions:
-    - StandingImageId: 4
+    - StandingImageId: 3
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -628,7 +616,7 @@ MonoBehaviour:
     Script: "\uC548\uB155, \uC9C0\uBD80\uC7A5."
     timeMult: 1
     Transitions:
-    - StandingImageId: 4
+    - StandingImageId: 3
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -636,7 +624,7 @@ MonoBehaviour:
       Scale: 1
       Type: 2
       Time: 0.5
-    - StandingImageId: 1
+    - StandingImageId: 0
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -750,7 +738,7 @@ MonoBehaviour:
       \uB3D9\uBB34\uB97C \uD588\uC2B5\uB2C8\uB2E4.)"
     timeMult: 1
     Transitions:
-    - StandingImageId: 1
+    - StandingImageId: 0
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -824,7 +812,7 @@ MonoBehaviour:
     Script: "\uC0AC\uB78C\uC744 \uD558\uB098 \uC870\uC0AC\uD574 \uC8FC\uBA74 \uC88B\uACA0\uC5B4."
     timeMult: 1
     Transitions:
-    - StandingImageId: 1
+    - StandingImageId: 0
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -838,7 +826,7 @@ MonoBehaviour:
     CamereaTransitionTime: 0.5
     Bgm: {fileID: 0}
     Sfx: {fileID: 0}
-    BackgroundSprite: {fileID: 0}
+    BackgroundSprite: {fileID: 21300000, guid: 68845122bd77b4c4d8e3c4e8def43603, type: 3}
   - Loaction: 
     Speaker: "\uC0C1\uC810 \uC8FC\uC778"
     Script: "\uC800\uD76C\uB294 \uD765\uC2E0\uC18C\uAC00 \uC544\uB2CC\uB370 \uB9D0\uC774\uC8E0."
@@ -1053,7 +1041,7 @@ MonoBehaviour:
     Script: "\uC77C\uC8FC\uC77C."
     timeMult: 1
     Transitions:
-    - StandingImageId: 4
+    - StandingImageId: 3
       Active: 0
       Flip: 0
       ColorMultiply: 1
@@ -1061,7 +1049,7 @@ MonoBehaviour:
       Scale: 1
       Type: 1
       Time: 0.5
-    - StandingImageId: 1
+    - StandingImageId: 0
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -1081,7 +1069,7 @@ MonoBehaviour:
     Script: "\uADF8 \uC815\uB3C4\uBA74 \uC880 \uBE61\uBE61\uD558\uC9C0\uB9CC, \uC5B4\uB5BB\uAC8C\uB4E0\u2026."
     timeMult: 1
     Transitions:
-    - StandingImageId: 1
+    - StandingImageId: 0
       Active: 0
       Flip: 0
       ColorMultiply: 1
@@ -1089,7 +1077,7 @@ MonoBehaviour:
       Scale: 1
       Type: 1
       Time: 0.5
-    - StandingImageId: 4
+    - StandingImageId: 3
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -1127,7 +1115,7 @@ MonoBehaviour:
     Script: "\uADF8 \uC815\uB3C4\uBA74 \uCDA9\uBD84\uD558\uC9C0?"
     timeMult: 1
     Transitions:
-    - StandingImageId: 4
+    - StandingImageId: 3
       Active: 0
       Flip: 0
       ColorMultiply: 1
@@ -1135,7 +1123,7 @@ MonoBehaviour:
       Scale: 1
       Type: 1
       Time: 0.5
-    - StandingImageId: 1
+    - StandingImageId: 0
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -1159,7 +1147,7 @@ MonoBehaviour:
       \uC548 \uB418\uB294, \uAC70\uAE30\uC11C \uC5EC\uAE30\uAE4C\uC9C0 \uB300\uCCB4."
     timeMult: 1
     Transitions:
-    - StandingImageId: 1
+    - StandingImageId: 0
       Active: 0
       Flip: 0
       ColorMultiply: 1
@@ -1167,7 +1155,7 @@ MonoBehaviour:
       Scale: 1
       Type: 1
       Time: 0.5
-    - StandingImageId: 4
+    - StandingImageId: 3
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -1188,7 +1176,7 @@ MonoBehaviour:
       \uCCD0\uC904\uAC8C."
     timeMult: 1
     Transitions:
-    - StandingImageId: 4
+    - StandingImageId: 3
       Active: 0
       Flip: 0
       ColorMultiply: 1
@@ -1196,7 +1184,7 @@ MonoBehaviour:
       Scale: 1
       Type: 1
       Time: 0.5
-    - StandingImageId: 1
+    - StandingImageId: 0
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -1217,7 +1205,7 @@ MonoBehaviour:
       \uD53C\uAC00!"
     timeMult: 1
     Transitions:
-    - StandingImageId: 1
+    - StandingImageId: 0
       Active: 0
       Flip: 0
       ColorMultiply: 1
@@ -1225,7 +1213,7 @@ MonoBehaviour:
       Scale: 1
       Type: 1
       Time: 0.5
-    - StandingImageId: 4
+    - StandingImageId: 3
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -1274,7 +1262,7 @@ MonoBehaviour:
       \uCC3E\uC544\uC640\uC918."
     timeMult: 1
     Transitions:
-    - StandingImageId: 1
+    - StandingImageId: 0
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -1308,7 +1296,7 @@ MonoBehaviour:
       \uC0E4\uBBF8\uB974\uB2D8. \uC544\uC2DC\uC8E0. \uB098\uC911\uC5D0 \uAF2D\u2026."
     timeMult: 1
     Transitions:
-    - StandingImageId: 1
+    - StandingImageId: 0
       Active: 0
       Flip: 0
       ColorMultiply: 1
@@ -1316,7 +1304,7 @@ MonoBehaviour:
       Scale: 1
       Type: 1
       Time: 0.5
-    - StandingImageId: 4
+    - StandingImageId: 3
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -1336,7 +1324,7 @@ MonoBehaviour:
     Script: "(\uBD80\uC2A4\uB7ED)"
     timeMult: 1
     Transitions:
-    - StandingImageId: 4
+    - StandingImageId: 3
       Active: 0
       Flip: 0
       ColorMultiply: 1
@@ -1380,7 +1368,7 @@ MonoBehaviour:
     Script: "\uC7A0\uAE50, \uB204\uAD6C\uC57C? \uD788\uC775, \uBCF5\uBA74!?"
     timeMult: 1
     Transitions:
-    - StandingImageId: 4
+    - StandingImageId: 3
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -1400,7 +1388,7 @@ MonoBehaviour:
     Script: "(\uD6C4\uB2E4\uB2E5)"
     timeMult: 1
     Transitions:
-    - StandingImageId: 5
+    - StandingImageId: 4
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -1420,7 +1408,7 @@ MonoBehaviour:
     Script: "(\uC800 \uC6C0\uC9C1\uC784\uC740....)"
     timeMult: 1
     Transitions:
-    - StandingImageId: 1
+    - StandingImageId: 0
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -1428,7 +1416,7 @@ MonoBehaviour:
       Scale: 1
       Type: 1
       Time: 0.5
-    - StandingImageId: 5
+    - StandingImageId: 4
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -1460,7 +1448,7 @@ MonoBehaviour:
     Script: "\uC9C0\uBD80\uC7A5\uC740 \uC5EC\uAE30\uC5D0 \uC788\uC5B4!"
     timeMult: 1
     Transitions:
-    - StandingImageId: 1
+    - StandingImageId: 0
       Active: 1
       Flip: 0
       ColorMultiply: 1
@@ -1477,14 +1465,12 @@ MonoBehaviour:
     BackgroundSprite: {fileID: 0}
   standingImages:
   - ActorId: 0
-    ImageSprite: {fileID: 0}
-  - ActorId: 1
     ImageSprite: {fileID: 21300000, guid: 19149e0b2692f454bad3ac60c55b22fe, type: 3}
-  - ActorId: 2
+  - ActorId: 1
     ImageSprite: {fileID: 21300000, guid: 30de0ae25ca1c0142a9c56f4f45e6012, type: 3}
+  - ActorId: 2
+    ImageSprite: {fileID: 21300000, guid: 107119df85379094b9cde0ce6b42f8a5, type: 3}
   - ActorId: 3
-    ImageSprite: {fileID: 0}
-  - ActorId: 4
     ImageSprite: {fileID: 21300000, guid: f4af9cc59575c8a4dbb890ecb175e742, type: 3}
-  - ActorId: 5
+  - ActorId: 4
     ImageSprite: {fileID: 0}
