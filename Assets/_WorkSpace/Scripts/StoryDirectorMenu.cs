@@ -16,6 +16,10 @@ public class StoryDirectorMenu : MonoBehaviour
     [SerializeField] HideWindow hideWindow;
     [SerializeField] MenuWindow menuWindow;
 
+    [Space]
+    [SerializeField] RectTransform settingPopupPrefab;
+    [SerializeField] Material autoButtonShaderMaterial;
+
     [System.Serializable]
     private class SkipWindow
     {
@@ -89,6 +93,7 @@ public class StoryDirectorMenu : MonoBehaviour
         menuButton.onClick.AddListener(menuWindow.OpenPopup);
         menuWindow.BackGroundButton.onClick.AddListener(menuWindow.ClosePopup);
         menuWindow.ExitButton.onClick.AddListener(() => Destroy(this.gameObject));
+        menuWindow.SettingButton.onClick.AddListener(() => Instantiate(settingPopupPrefab, menuWindow.GameObject.transform));
     }
 
     private void ToggleAuto()
@@ -96,11 +101,11 @@ public class StoryDirectorMenu : MonoBehaviour
         director.IsAutoPlayMode = !director.IsAutoPlayMode;
         if (director.IsAutoPlayMode)
         {
-            autoButtonImage.color = Color.yellow;
+            autoButtonImage.material = autoButtonShaderMaterial;
         }
         else
         {
-            autoButtonImage.color = Color.white;
+            autoButtonImage.material = null;
         }
     }
 }
