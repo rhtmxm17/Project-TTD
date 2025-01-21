@@ -92,7 +92,10 @@ MonoBehaviour:
       Scale: 1
       Type: 1
       Time: 0.5
-    Effects: []
+    Effects:
+    - Effect: {fileID: 6890597470401697367, guid: e736e27797cf4a64fade7183364c919b,
+        type: 3}
+      Position: {x: 4, y: 5}
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
     CamereaTransitionTime: 0.5
@@ -153,7 +156,7 @@ MonoBehaviour:
       ColorMultiply: 1
       Position: {x: 10.5, y: 4}
       Scale: 1
-      Type: 1
+      Type: 2
       Time: 0.3
     Effects: []
     CameraPosition: {x: 10, y: 5}
@@ -179,11 +182,16 @@ MonoBehaviour:
     Speaker: "\uC0B0\uB098"
     Script: "\uC544\uB2C8\uC5D0\uC694\u2026"
     timeMult: 1
-    Transitions: []
-    Effects:
-    - Effect: {fileID: 2782562690393339995, guid: 54e26827d2286bc4a844bd0d57efe231,
-        type: 3}
-      Position: {x: 9.5, y: 5}
+    Transitions:
+    - StandingImageId: 2
+      Active: 0
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 2, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
+    Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
     CamereaTransitionTime: 0.5
@@ -758,7 +766,7 @@ MonoBehaviour:
       Position: {x: 10.5, y: 5}
       Scale: 1
       Type: 1
-      Time: 0
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -792,7 +800,7 @@ MonoBehaviour:
       Position: {x: 10.5, y: 5}
       Scale: 1
       Type: 1
-      Time: 0
+      Time: 0.5
     - StandingImageId: 2
       Active: 1
       Flip: 0
@@ -852,14 +860,6 @@ MonoBehaviour:
       Scale: 1
       Type: 1
       Time: 0.5
-    - StandingImageId: 3
-      Active: 1
-      Flip: 0
-      ColorMultiply: 1
-      Position: {x: 10.5, y: 5}
-      Scale: 1.5
-      Type: 2
-      Time: 2
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -874,5 +874,3 @@ MonoBehaviour:
     ImageSprite: {fileID: 21300000, guid: 1ed38330caf9f5c4182742880f24b769, type: 3}
   - ActorId: 2
     ImageSprite: {fileID: 21300000, guid: 58787ee730b6a41499ecd516124ba81a, type: 3}
-  - ActorId: 3
-    ImageSprite: {fileID: 21300000, guid: 6e20d862b8a4407469ffc8f58bfca56f, type: 3}

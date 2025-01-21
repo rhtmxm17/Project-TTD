@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2081b49c43630ca44b67d4191f397945, type: 3}
   m_Name: StoryScript_10820010001
   m_EditorClassIdentifier: 
-  id: 19
+  id: 20
   title: "\uC678\uC804 1\uD654"
   dialogues:
   - Loaction: 
@@ -26,7 +26,7 @@ MonoBehaviour:
     CamereaTransitionTime: 0.5
     Bgm: {fileID: 8300000, guid: 61ffb543e30482b43b31f589f0344753, type: 3}
     Sfx: {fileID: 0}
-    BackgroundSprite: {fileID: 21300000, guid: 46460464d910a314f99d9035152f0653, type: 3}
+    BackgroundSprite: {fileID: 21300000, guid: 1b218d5e21edb544fb209232bd625b06, type: 3}
   - Loaction: 
     Speaker: 
     Script: "\uC6B4\uBA85\uC740 \uB300\uB2F4\uD55C \uC790\uB97C \uC88B\uC544\uD55C\uB2E4."
@@ -108,7 +108,15 @@ MonoBehaviour:
     Script: "(\uC774 \uB300\uBA38, \uC544\uB2C8, \uAD50\uC7A5\uC740 \uC81C\uAC00
       \uBC29\uC5D0 \uB4E4\uC5B4\uC11C\uC790 \uB9C8\uC790 \uC2E4\uC5C6\uB294 \uC18C\uB9AC\uB85C)"
     timeMult: 1
-    Transitions: []
+    Transitions:
+    - StandingImageId: 1
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 15, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -670,6 +678,14 @@ MonoBehaviour:
       \uD558\uB294\uAD70\uC694.)"
     timeMult: 1
     Transitions:
+    - StandingImageId: 1
+      Active: 0
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
     - StandingImageId: 0
       Active: 1
       Flip: 0
@@ -1039,7 +1055,7 @@ MonoBehaviour:
     Effects:
     - Effect: {fileID: 2782562690393339995, guid: 54e26827d2286bc4a844bd0d57efe231,
         type: 3}
-      Position: {x: 8.5, y: 5}
+      Position: {x: 8.5, y: 7}
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
     CamereaTransitionTime: 0.5
@@ -1315,7 +1331,7 @@ MonoBehaviour:
     Effects:
     - Effect: {fileID: 2782562690393339995, guid: 1dbfde142d7671c45981f7675f9a779a,
         type: 3}
-      Position: {x: 8.5, y: 5}
+      Position: {x: 8.5, y: 4}
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
     CamereaTransitionTime: 0.5

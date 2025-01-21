@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2081b49c43630ca44b67d4191f397945, type: 3}
   m_Name: StoryScript_10820010002
   m_EditorClassIdentifier: 
-  id: 20
+  id: 21
   title: "\uC678\uC804 2\uD654"
   dialogues:
   - Loaction: "\uAD50\uC2E4"
@@ -27,7 +27,7 @@ MonoBehaviour:
     CamereaTransitionTime: 0.5
     Bgm: {fileID: 8300000, guid: 61ffb543e30482b43b31f589f0344753, type: 3}
     Sfx: {fileID: 0}
-    BackgroundSprite: {fileID: 21300000, guid: 46460464d910a314f99d9035152f0653, type: 3}
+    BackgroundSprite: {fileID: 21300000, guid: cef80bd95379ea344935025c8b4d7e7e, type: 3}
   - Loaction: 
     Speaker: "\uC0E4\uBBF8\uB974"
     Script: "\uC774\uC81C\uB294 \uAE30\uC5B5\uC870\uCC28 \uB098\uC9C0 \uC54A\uC544\uC694."
@@ -85,7 +85,7 @@ MonoBehaviour:
     CamereaTransitionTime: 0.5
     Bgm: {fileID: 0}
     Sfx: {fileID: 0}
-    BackgroundSprite: {fileID: 21300000, guid: cef80bd95379ea344935025c8b4d7e7e, type: 3}
+    BackgroundSprite: {fileID: 0}
   - Loaction: 
     Speaker: "\uC0E4\uBBF8\uB974"
     Script: "\uBB50, \uB2E4\uB978 \uD559\uC0DD\uB4E4\uC774 \uB098\uD0C0\uB098\uC9C0
@@ -1262,6 +1262,14 @@ MonoBehaviour:
       \uCC3E\uC544\uC640\uC918."
     timeMult: 1
     Transitions:
+    - StandingImageId: 3
+      Active: 0
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
     - StandingImageId: 0
       Active: 1
       Flip: 0
@@ -1388,6 +1396,14 @@ MonoBehaviour:
     Script: "(\uD6C4\uB2E4\uB2E5)"
     timeMult: 1
     Transitions:
+    - StandingImageId: 3
+      Active: 0
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
     - StandingImageId: 4
       Active: 1
       Flip: 0
@@ -1452,7 +1468,7 @@ MonoBehaviour:
       Active: 1
       Flip: 0
       ColorMultiply: 1
-      Position: {x: 10.5, y: 5}
+      Position: {x: 10.5, y: 3}
       Scale: 1.5
       Type: 1
       Time: 0.5
@@ -1473,4 +1489,4 @@ MonoBehaviour:
   - ActorId: 3
     ImageSprite: {fileID: 21300000, guid: f4af9cc59575c8a4dbb890ecb175e742, type: 3}
   - ActorId: 4
-    ImageSprite: {fileID: 0}
+    ImageSprite: {fileID: 21300000, guid: a7338c73b07ace2479aa893f66ec2c64, type: 3}

@@ -343,7 +343,7 @@ MonoBehaviour:
       ColorMultiply: 1
       Position: {x: 4, y: 6}
       Scale: 1
-      Type: 1
+      Type: 2
       Time: 0.5
     - StandingImageId: 0
       Active: 1
@@ -351,7 +351,7 @@ MonoBehaviour:
       ColorMultiply: 1
       Position: {x: 4, y: 5}
       Scale: 1
-      Type: 1
+      Type: 2
       Time: 0.5
     - StandingImageId: 2
       Active: 1
@@ -359,7 +359,7 @@ MonoBehaviour:
       ColorMultiply: 1
       Position: {x: 10.5, y: 5}
       Scale: 1
-      Type: 1
+      Type: 2
       Time: 1
     Effects: []
     CameraPosition: {x: 10, y: 5}
@@ -699,7 +699,7 @@ MonoBehaviour:
       ColorMultiply: 1
       Position: {x: 7, y: 5}
       Scale: 1
-      Type: 1
+      Type: 2
       Time: 0.5
     - StandingImageId: 1
       Active: 0
@@ -1102,7 +1102,10 @@ MonoBehaviour:
       Scale: 1
       Type: 1
       Time: 0.5
-    Effects: []
+    Effects:
+    - Effect: {fileID: 2782562690393339995, guid: 2efff579590ce354abf002270cad8b02,
+        type: 3}
+      Position: {x: 10.5, y: 5}
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
     CamereaTransitionTime: 0.5
@@ -1176,14 +1179,6 @@ MonoBehaviour:
       Scale: 1
       Type: 1
       Time: 0.5
-    - StandingImageId: 3
-      Active: 1
-      Flip: 0
-      ColorMultiply: 1
-      Position: {x: 10.5, y: 5}
-      Scale: 1.5
-      Type: 2
-      Time: 2
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -1198,5 +1193,3 @@ MonoBehaviour:
     ImageSprite: {fileID: 21300000, guid: 58787ee730b6a41499ecd516124ba81a, type: 3}
   - ActorId: 2
     ImageSprite: {fileID: 21300000, guid: 1ed38330caf9f5c4182742880f24b769, type: 3}
-  - ActorId: 3
-    ImageSprite: {fileID: 21300000, guid: 6e20d862b8a4407469ffc8f58bfca56f, type: 3}
