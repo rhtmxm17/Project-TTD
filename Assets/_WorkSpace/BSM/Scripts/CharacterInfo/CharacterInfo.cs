@@ -134,10 +134,12 @@ public class CharacterInfo : MonoBehaviour, IPointerClickHandler
         if (_characterLevel % 10 != 0)
         {
             _characterInfoController._levelUpNormalEffect.Play();
+            SoundManager.Instance.PlaySFX(_characterInfoController.CharacterLevelSounds[0]);
         }
         else
         {
             _characterInfoController._levelUpSpecialEffect.Play();
+            SoundManager.Instance.PlaySFX(_characterInfoController.CharacterLevelSounds[1]);
             _effectCo = StartCoroutine(LevelUpEffectTimer());
             _characterInfoController._infoUI._bonusPopup.SetActive(true);
             _characterInfoController._infoUI._bonusLevelText.text = $"{_characterLevel}레벨 달성!";
