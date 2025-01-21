@@ -81,7 +81,7 @@ MonoBehaviour:
     Speaker: "\uC0E4\uBBF8\uB974"
     Script: "\uADF8\uB807\uB2E4\uBA74 \uC81C\uAC00 \uBC30\uB824\uAC00 \uBD80\uC871\uD588\uAD70\uC694.
       \uAD50\uAD00\uC774\uB77C\uBA74 \uB9C8\uB545\uD788 \uD559\uC0DD\uB4E4\uC744
-      \uB9CC\uB098\uAE30 \uC804\uC5D0  \uC0DD\uD65C\uAE30\uB85D\uBD80 \uC815\uB3C8
+      \uB9CC\uB098\uAE30 \uC804\uC5D0\n  \uC0DD\uD65C\uAE30\uB85D\uBD80 \uC815\uB3C8
       \uD30C\uC545\uD574 \uB458 \uAC70\uB77C \uC0DD\uAC01\uD558\uACE0 \uB9D0\uC558\uC5B4\uC694."
     timeMult: 1
     Transitions: []
@@ -93,7 +93,7 @@ MonoBehaviour:
     CameraSize: 1
     CamereaTransitionTime: 0.5
     Bgm: {fileID: 0}
-    Sfx: {fileID: 0}
+    Sfx: {fileID: 8300000, guid: befbd25039fc77a43836eb586ac71ac5, type: 3}
     BackgroundSprite: {fileID: 0}
   - Loaction: 
     Speaker: "\uC8FC\uC778\uACF5"
@@ -178,6 +178,14 @@ MonoBehaviour:
       Scale: 1
       Type: 2
       Time: 1
+    - StandingImageId: 1
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 8, y: 5}
+      Scale: 1
+      Type: 2
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -188,10 +196,18 @@ MonoBehaviour:
   - Loaction: 
     Speaker: 
     Script: "\uD145 \uBE48 \uAD50\uC2E4\uC758 \uC790\uB9AC\uB4E4\uC740 \uD55C \uC790\uB9AC\uB97C
-      \uC81C\uC678\uD558\uACE0\uB294 \uB204\uAC00 \uC549\uC558\uB358 \uD754\uC801\uC774\uB77C\uACE4
+      \uC81C\uC678\uD558\uACE0\uB294 \uB204\uAC00 \uC549\uC558\uB358 \uD754\uC801\uC774\uB77C\uACE4\n
       \uBCF4\uC774\uC9C0\uB3C4 \uC54A\uC558\uB2E4."
     timeMult: 1
     Transitions:
+    - StandingImageId: 1
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 10.5, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
     - StandingImageId: 0
       Active: 0
       Flip: 0
@@ -218,7 +234,7 @@ MonoBehaviour:
       Active: 1
       Flip: 0
       ColorMultiply: 1
-      Position: {x: 10.5, y: 5}
+      Position: {x: 10.5, y: 4}
       Scale: 1
       Type: 1
       Time: 0.5
@@ -328,7 +344,7 @@ MonoBehaviour:
   - Loaction: 
     Speaker: 
     Script: "\uADF8\uB7F0\uB370 \uB4F1\uAD50 \uAC70\uBD80 \uD559\uC0DD\uB4E4 \uBB38\uC81C\uB9CC
-      \uC544\uB2C8\uBA74 \uD55C \uBA85\uB9CC \uAC00\uB974\uCE58\uBA74 \uB418\uB2C8 
+      \uC544\uB2C8\uBA74 \uD55C \uBA85\uB9CC \uAC00\uB974\uCE58\uBA74 \uB418\uB2C8\n 
       \uC77C\uC740 \uD3B8\uD55C \uAC70 \uC544\uB2CC\uAC00? \uC65C \uC774\uB9AC \uC790\uC8FC
       \uBC14\uB00C\uC5C8\uC9C0?"
     timeMult: 1
@@ -438,7 +454,7 @@ MonoBehaviour:
     CameraSize: 1
     CamereaTransitionTime: 0.5
     Bgm: {fileID: 0}
-    Sfx: {fileID: 0}
+    Sfx: {fileID: 8300000, guid: befbd25039fc77a43836eb586ac71ac5, type: 3}
     BackgroundSprite: {fileID: 0}
   - Loaction: 
     Speaker: 
@@ -477,7 +493,7 @@ MonoBehaviour:
   - Loaction: 
     Speaker: "\uC0E4\uBBF8\uB974"
     Script: "\uC9C0\uB3C4\uC790\uB97C \uC815\uD560 \uC2DC\uAE30\uC5D0 \uC815\uB2F9\uD55C
-      \uAD8C\uB9AC\uB97C \uD589\uC0AC\uD558\uC9C0 \uC54A\uB294 \uC5BC\uAC04\uC774\uB4E4\uC740 
+      \uAD8C\uB9AC\uB97C \uD589\uC0AC\uD558\uC9C0 \uC54A\uB294 \uC5BC\uAC04\uC774\uB4E4\uC740\n 
       \uACE0\uB824\uD560 \uAC00\uCE58\uAC00 \uC5C6\uC73C\uB2C8\uAE4C\uC694. \uCC2C\uC131
       1\uD45C\uB85C \uB2F9\uB2F9\uD788 \uB2F9\uC120\uB410\uC9C0\uC694."
     timeMult: 1
@@ -653,7 +669,7 @@ MonoBehaviour:
   - Loaction: 
     Speaker: "\uC0E4\uBBF8\uB974"
     Script: "\uB124. \uADF8\uB9AC\uACE0 \uC774\uAC74 \uCC98\uC74C\uC5D0 \uB9D0\uC500\uB4DC\uB838\uB358
-      \uAD50\uAD00\uB2D8\uC758 \uBB38\uC81C\uB97C \uD574\uACB0\uD558\uB294 \uAC83\uC73C\uB85C\uB3C4 
+      \uAD50\uAD00\uB2D8\uC758 \uBB38\uC81C\uB97C \uD574\uACB0\uD558\uB294 \uAC83\uC73C\uB85C\uB3C4\n 
       \uC774\uC5B4\uC9C0\uB294 \uAC83\uC774\uC5D0\uC694."
     timeMult: 1
     Transitions: []
@@ -707,7 +723,7 @@ MonoBehaviour:
     CameraSize: 1
     CamereaTransitionTime: 0.5
     Bgm: {fileID: 0}
-    Sfx: {fileID: 0}
+    Sfx: {fileID: 8300000, guid: befbd25039fc77a43836eb586ac71ac5, type: 3}
     BackgroundSprite: {fileID: 0}
   - Loaction: 
     Speaker: "\uC0E4\uBBF8\uB974"
@@ -725,9 +741,9 @@ MonoBehaviour:
   - Loaction: 
     Speaker: "\uC0E4\uBBF8\uB974"
     Script: "\uAC70\uAE30\uB2E4 \uC6A9\uC774 \uB110\uB824\uC788\uB294 \uC774\uACF3\uC5D0
-      \uAD73\uC774 \uD30C\uD2B8\uB108 \uB9D0\uACE0\uB3C4 \uC6A9\uC744  \uC138 \uB9C8\uB9AC\uB098
+      \uAD73\uC774 \uD30C\uD2B8\uB108 \uB9D0\uACE0\uB3C4 \uC6A9\uC744\n  \uC138 \uB9C8\uB9AC\uB098
       \uB370\uB824 \uC628 \uC810\uC774 \uC774\uC0C1\uD574\uC11C \uC870\uC0AC\uD574
-      \uBCF4\uB2C8, \uC548\uC7A5\uC774\uB098 \uBA4D\uC5D0 \uC790\uAD6D \uD558\uB098 
+      \uBCF4\uB2C8, \uC548\uC7A5\uC774\uB098 \uBA4D\uC5D0 \uC790\uAD6D \uD558\uB098\n 
       \uC5C6\uB354\uAD70\uC694. \uC5BC\uB9C8 \uC804\uAE4C\uC9C0 \uC57C\uC0DD \uC6A9\uC774\uC5C8\uB358
       \uBAA8\uC591\uC774\uC8E0?"
     timeMult: 1
@@ -786,7 +802,7 @@ MonoBehaviour:
     CameraSize: 1
     CamereaTransitionTime: 0.5
     Bgm: {fileID: 0}
-    Sfx: {fileID: 0}
+    Sfx: {fileID: 8300000, guid: befbd25039fc77a43836eb586ac71ac5, type: 3}
     BackgroundSprite: {fileID: 0}
   - Loaction: 
     Speaker: 
@@ -825,8 +841,8 @@ MonoBehaviour:
     Speaker: "\uC0E4\uBBF8\uB974"
     Script: "\uAD50\uB0B4 \uC0C1\uC810\uC740 \uC81C\uAD6D\uCABD \uC0C1\uD68C\uB791
       \uB2FF\uC544 \uC788\uC5B4\uC11C \uD544\uC694\uD55C \uBB3C\uAC74\uC740 \uB300\uCCB4\uB85C
-      \uC81C\uAC00  \uC54C\uC544\uBD10 \uB4DC\uB9B4 \uC218 \uC788\uC5B4\uC694. \uC6A9\uB3C4
-      \uB9C8\uCC2C\uAC00\uC9C0\uACE0\uC694."
+      \uC81C\uAC00\n  \uC54C\uC544\uBD10 \uB4DC\uB9B4 \uC218 \uC788\uC5B4\uC694.
+      \uC6A9\uB3C4 \uB9C8\uCC2C\uAC00\uC9C0\uACE0\uC694."
     timeMult: 1
     Transitions: []
     Effects: []
@@ -852,7 +868,7 @@ MonoBehaviour:
   - Loaction: 
     Speaker: "\uC0E4\uBBF8\uB974"
     Script: "\uAD50\uAD00\uB2D8\uC758 \uD638\uAC10\u2026 \uC774\uB77C\uACE0 \uB9D0\uD558\uACE0
-      \uC2F6\uC9C0\uB9CC, \uAC89\uCE58\uB808\uB97C \uB0B4\uB824\uB193\uACE0 \uB9D0\uD558\uC790\uBA74 
+      \uC2F6\uC9C0\uB9CC, \uAC89\uCE58\uB808\uB97C \uB0B4\uB824\uB193\uACE0 \uB9D0\uD558\uC790\uBA74\n 
       \uAD50\uAD00\uB2D8\uC774 \uC2E4\uC81C\uB85C \uC804\uD22C\uD558\uB294 \uBAA8\uC2B5\uC744
       \uBCF4\uB294 \uAC70\uC5D0\uC694."
     timeMult: 1
@@ -910,7 +926,7 @@ MonoBehaviour:
   - Loaction: 
     Speaker: "\uC0E4\uBBF8\uB974"
     Script: "\uC544\uB9C8 \uC778\uC9C0\uB3C4\uB9CC \uB193\uACE0 \uBCF4\uBA74 \uAE30\uC0AC\uC758
-      \uB098\uB77C\uB77C\uACE0 \uC790\uCE6D\uD558\uB294 \uC774\uACF3\uBCF4\uB2E4 
+      \uB098\uB77C\uB77C\uACE0 \uC790\uCE6D\uD558\uB294 \uC774\uACF3\uBCF4\uB2E4\n 
       \uB354 \uB192\uC744\uC9C0\uB3C4 \uBAA8\uB974\uACA0\uB124\uC694. \uADF8\uB7EC\uB2C8\uAE4C,
       \uBD80\uB514."
     timeMult: 1
@@ -942,7 +958,7 @@ MonoBehaviour:
     Speaker: "\uC0E4\uBBF8\uB974"
     Script: "\uD760? \uC774\uC720\uB97C \uB9D0\uD574\uC8FC\uC2DC\uACA0\uC5B4\uC694?
       \uC800\uB294 \uAD50\uAD00\uB2D8 \uC0DD\uAC01\uBCF4\uB2E4 \uB354 \uB9CE\uC740
-      \uAC78  \uB4DC\uB9B4 \uC218 \uC788\uC5B4\uC694."
+      \uAC78\n  \uB4DC\uB9B4 \uC218 \uC788\uC5B4\uC694."
     timeMult: 1
     Transitions: []
     Effects:
@@ -1017,7 +1033,7 @@ MonoBehaviour:
   - Loaction: 
     Speaker: "\uC8FC\uC778\uACF5"
     Script: "\uB2E4\uB978 \uBC29\uC2DD\uC758 \uC218\uC5C5\uC744 \uD560 \uAC70\uC57C.
-      \uC804\uD22C\uC5D0 \uC788\uC5B4\uC11C\uC758 \uAD50\uAD00 \uC5ED\uD560\uC740 
+      \uC804\uD22C\uC5D0 \uC788\uC5B4\uC11C\uC758 \uAD50\uAD00 \uC5ED\uD560\uC740\n 
       \uC5B4\uB5BB\uAC8C\uB4E0 \uC81C\uB300\uB85C \uD560 \uC218 \uC788\uC744 \uAC70\uB77C
       \uBD10."
     timeMult: 1
@@ -1072,10 +1088,18 @@ MonoBehaviour:
       Active: 1
       Flip: 0
       ColorMultiply: 1
-      Position: {x: 19, y: 5}
+      Position: {x: 17, y: 5}
       Scale: 1
       Type: 2
       Time: 1
+    - StandingImageId: 2
+      Active: 1
+      Flip: 0
+      ColorMultiply: 1
+      Position: {x: 16, y: 5}
+      Scale: 1
+      Type: 1
+      Time: 0.5
     Effects: []
     CameraPosition: {x: 10, y: 5}
     CameraSize: 1
@@ -1114,3 +1138,5 @@ MonoBehaviour:
     ImageSprite: {fileID: 21300000, guid: 30de0ae25ca1c0142a9c56f4f45e6012, type: 3}
   - ActorId: 1
     ImageSprite: {fileID: 21300000, guid: 19149e0b2692f454bad3ac60c55b22fe, type: 3}
+  - ActorId: 2
+    ImageSprite: {fileID: 21300000, guid: e23a4eff1a2a09347a3a630d202ec036, type: 3}

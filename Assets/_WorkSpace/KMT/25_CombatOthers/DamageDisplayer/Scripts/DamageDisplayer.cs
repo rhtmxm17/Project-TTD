@@ -40,6 +40,8 @@ public class ObjectPool<T> where T : Component
     }
 }
 
+public enum DamagedColorType { NONE, WEAK, CRITICAL}
+
 public class DamageDisplayer : MonoBehaviour
 {
     [SerializeField]
@@ -58,9 +60,9 @@ public class DamageDisplayer : MonoBehaviour
     /// <param name="damageAmount">데미지 크기[수치를 소수점 아래 두자리까지 표기]</param>
     /// <param name="isDamage">데미지여부 [ false인 경우 회복 효과 ]</param>
     /// <param name="position">출력할 위치</param>
-    public void PlayTextDisplay(float damageAmount, bool isDamage, Vector3 position)
+    public void PlayTextDisplay(float damageAmount, bool isDamage, Vector3 position, DamagedColorType colorType = DamagedColorType.NONE)
     {
-        textPool.GetItem().SetDamageText(damageAmount, isDamage, position, textPool);
+        textPool.GetItem().SetDamageText(damageAmount, isDamage, position, textPool, colorType);
     }
 
 }

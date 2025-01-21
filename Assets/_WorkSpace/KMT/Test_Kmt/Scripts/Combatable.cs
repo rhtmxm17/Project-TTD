@@ -387,6 +387,24 @@ public class Combatable : MonoBehaviour
 
         damage = DamageCalculator.Calc(damage, igDefRate, defense.Value * DefFloorBuff + defBuffAmount, defConst, atackerType, characterData.StatusTable.type);
 
+        int damageElemental = ElementalDamageGrid.GetDamageRateInt(atackerType, characterData.StatusTable.type);
+        DamagedColorType colorType = DamagedColorType.NONE;
+
+        switch (damageElemental)
+        {
+            case -1:
+                colorType = DamagedColorType.WEAK;
+                break;
+            case 0:
+                colorType = DamagedColorType.NONE;
+                break;
+            case 1:
+                colorType = DamagedColorType.CRITICAL;
+                break;
+            default:
+                break;
+        }
+
         //View의 setvalue등을 연결하기.
 
         if (!IsNoDamage)
@@ -394,7 +412,7 @@ public class Combatable : MonoBehaviour
             hp.Value -= damage;
         }
         onDamagedEvent?.Invoke(damage);
-        StageManager.Instance.DamageDisplayer.PlayTextDisplay(damage, true, transform.position + Vector3.forward * CharacterSizeRadius * 3);
+        StageManager.Instance.DamageDisplayer.PlayTextDisplay(damage, true, transform.position + Vector3.forward * CharacterSizeRadius * 3, colorType);
         StageManager.Instance.DamagedEffectDisplayer.PlayDamagedParticle(transform.position, characterModel.ModelSize * 0.5f);
 
         if (hp.Value < 0)
