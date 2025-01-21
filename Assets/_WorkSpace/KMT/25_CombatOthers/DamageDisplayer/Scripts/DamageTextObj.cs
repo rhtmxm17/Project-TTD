@@ -9,9 +9,12 @@ public class DamageTextObj : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI text;
 
-
+    [SerializeField]
+    Color criticalDamageColor;
     [SerializeField]
     Color damageColor;
+    [SerializeField]
+    Color weakDamageColor;
     [SerializeField]
     Color HeadColor;
 
@@ -31,12 +34,35 @@ public class DamageTextObj : MonoBehaviour
     /// <param name="isDamage">데미지여부 [ false인 경우 회복 효과 ]</param>
     /// <param name="position">시작 위치 [ 본인의 위치 ]</param>
     /// <param name="objPool">사용되고 복귀시킬 오브젝트 풀</param>
-    public void SetDamageText(float amount, bool isDamage, Vector3 position, ObjectPool<DamageTextObj> objPool)
+    public void SetDamageText(float amount, bool isDamage, Vector3 position, ObjectPool<DamageTextObj> objPool, DamagedColorType type)
     {
         gameObject.SetActive(true);
         canvasGroup.alpha = 1;
         text.text = amount < 0.00001f && isDamage? "막힘" : amount.ToString("0.##");
-        text.color = isDamage ? damageColor : HeadColor;
+
+        if (isDamage)
+        {
+            switch (type)
+            {
+                case DamagedColorType.NONE:
+                    text.color = damageColor;
+                    break;
+                case DamagedColorType.CRITICAL:
+                    text.color = criticalDamageColor;
+                    break;
+                case DamagedColorType.WEAK:
+                    text.color = weakDamageColor;
+                    break;
+                default:
+                    text.color = damageColor;
+                    break;
+            }
+        }
+        else
+        {
+            text.color = HeadColor;
+        }
+
         transform.position = position;
          
         Sequence seq = DOTween.Sequence();
