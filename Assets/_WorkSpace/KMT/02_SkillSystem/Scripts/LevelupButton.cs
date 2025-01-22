@@ -18,6 +18,8 @@ public class LevelupButton : MonoBehaviour
     Image levelBgPanel;
     [SerializeField]
     TextMeshProUGUI levelText;
+    [SerializeField]
+    Image skillCooldownImg;
 
     [field: SerializeField]
     public Image iconImg { get; private set; }
@@ -114,6 +116,7 @@ public class LevelupButton : MonoBehaviour
     {
         StopCoroutine(levelupCoroutine);
         skillButton.interactable = false;
+        skillCooldownImg.fillAmount = 1f;
         IsAlive = false;
     }
 
