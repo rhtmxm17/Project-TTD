@@ -20,7 +20,7 @@ public class MonsterWaveSetter : MonoBehaviour
         {
 
             Combatable charObj = Instantiate(monsterPrefab, new Vector3(monsterData.pose.x, 0, monsterData.pose.y), Quaternion.identity, transform);
-            charObj.onDeadEvent.AddListener((charobj) => { StageManager.Instance.AddPartyCost(1); });
+            charObj.onDeadEvent.AddListener((charobj) => { StageManager.Instance.AddPartyCost(5f); });
             charObj.InitializeWithLevel(group, monsterData.character, monsterData.level); // 스테이지 정보에 입력된 레벨로 생성
 
             characters.Add(charObj);

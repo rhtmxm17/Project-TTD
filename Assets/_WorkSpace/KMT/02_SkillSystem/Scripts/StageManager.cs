@@ -47,8 +47,7 @@ public class StageManager : MonoBehaviour
     float monsterWaveOffset;
 
     [Header("Party Gauge")]
-    [SerializeField]
-    float MaxPartyCost;
+    private float MaxPartyCost = 100f;
 
     //TODO : 이것도 스테이지별로 파라미터 지정하기.
     [Header("Timer")]
@@ -180,11 +179,12 @@ public class StageManager : MonoBehaviour
 
     IEnumerator StartPartyCostCO()
     {
+        float maxCostInv = 1f / MaxPartyCost;
         while (true)
         {
-            PartyCost = Math.Clamp(PartyCost + Time.deltaTime / 3, 0, MaxPartyCost);
+            PartyCost = Math.Clamp(PartyCost + Time.deltaTime * 2.5f, 0, MaxPartyCost);
             costText.text = ((int)PartyCost).ToString();
-            costSlider.value = PartyCost / MaxPartyCost;
+            costSlider.value = PartyCost * maxCostInv;
             yield return null;
         }
     }

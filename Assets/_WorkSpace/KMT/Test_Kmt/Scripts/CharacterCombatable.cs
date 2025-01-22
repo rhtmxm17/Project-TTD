@@ -82,8 +82,8 @@ public class CharacterCombatable : Combatable
         stageLevel.Value = 1;
 
         //레벨업 스텟 상승치 지정.
-        levelIncreasement[2] = new StatIncreaseBlock(maxHp.Value * 0.1f, attackPoint.Value * 0.1f, defense.Value * 0.1f, 1);
-        levelIncreasement[3] = new StatIncreaseBlock(maxHp.Value * 0.15f, attackPoint.Value * 0.15f, defense.Value * 0.15f, 2);
+        levelIncreasement[2] = new StatIncreaseBlock(maxHp.Value * 0.1f, attackPoint.Value * 0.1f, defense.Value * 0.1f, 20);
+        levelIncreasement[3] = new StatIncreaseBlock(maxHp.Value * 0.15f, attackPoint.Value * 0.15f, defense.Value * 0.15f, 30);
 
         levelupSkillBtnImg = levelupButton.iconImg;
         levelupSkillBtnImg.sprite = characterModel.GetComponent<CharacterIcon>().skillIcon;
