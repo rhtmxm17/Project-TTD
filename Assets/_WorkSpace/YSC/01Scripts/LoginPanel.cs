@@ -84,6 +84,10 @@ public class LoginPanel : BaseUI
         // 인증메일 팝업창
         GetUI("EmailAuthPopup");
         
+        // ExitButton
+        GetUI<Button>("ExitButton").onClick.AddListener(() => Close("LoginPanel"));
+        
+        
     }
     
     /// <summary>
